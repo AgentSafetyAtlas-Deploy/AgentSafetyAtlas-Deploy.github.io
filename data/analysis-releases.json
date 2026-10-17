@@ -1,0 +1,60 @@
+{
+ "current": "A2",
+ "policy": "The observation report is versioned apart from the data: a candidate is computed once a month and published after review.",
+ "versions": [
+  {
+   "analysisVersion": "A2",
+   "baseRelease": "R070",
+   "dataCutoff": "2026-10-13",
+   "computedOn": "2026-10-16",
+   "publishedOn": "2026-10-17",
+   "note": "Adds RQ5: the tail and the gaps (backtest of tail terms, rising tail terms, structural gaps, attack/defence imbalance, missing bridges, recurring open problems); all other sections recomputed on R070.",
+   "headline": {
+    "Works analysed": 8995,
+    "Citation routes": 52459,
+    "Routes with a sentence (%)": 83.7,
+    "Candidate clusters": 247,
+    "Benchmarks used by others": 113,
+    "Countries": 87,
+    "Doubling time (months)": 9.4,
+    "Cross-tradition citations (%)": 6.9,
+    "… expected from sizes (%)": 45.1,
+    "Boundary works (%)": 1.5,
+    "Held-out surveys": 56,
+    "Salience Recall@50": 0.205,
+    "Citations Recall@50": 0.188,
+    "Salience new work in top 20": 0.44,
+    "Citations new work in top 20": 0.005,
+    "New-star share (%)": 35.3,
+    "Band top-10 overlap": 0.038
+   }
+  },
+  {
+   "analysisVersion": "A1",
+   "baseRelease": "R069",
+   "dataCutoff": "2026-10-08",
+   "computedOn": "2026-10-12",
+   "publishedOn": "2026-10-12",
+   "note": "First analysis version (R069): observation report RQ1-RQ4, lenses, key findings; basis of paper draft v0.4.",
+   "headline": {
+    "Works analysed": 8889,
+    "Citation routes": 51379,
+    "Routes with a sentence (%)": 83.8,
+    "Candidate clusters": 256,
+    "Benchmarks used by others": 112,
+    "Countries": 87,
+    "Doubling time (months)": 9.4,
+    "Cross-tradition citations (%)": 7.2,
+    "… expected from sizes (%)": 45.4,
+    "Boundary works (%)": 1.5,
+    "Held-out surveys": 54,
+    "Salience Recall@50": 0.21,
+    "Citations Recall@50": 0.189,
+    "Salience new work in top 20": 0.447,
+    "Citations new work in top 20": 0.006,
+    "New-star share (%)": 35.2,
+    "Band top-10 overlap": 0.038
+   }
+  }
+ ]
+}

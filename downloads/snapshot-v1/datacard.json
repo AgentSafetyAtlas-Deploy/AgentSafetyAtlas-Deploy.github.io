@@ -1,0 +1,116 @@
+{
+ "name": "Agent Safety Atlas research universe",
+ "version": "v1",
+ "status": "draft",
+ "release": "R070",
+ "cutoff": "2026-10-13",
+ "worksDatedThrough": "2026-10-13",
+ "builtOn": "2026-10-16",
+ "scopePolicy": "agent-safety-v3 (5,649 works), agent-safety-v4 (3,312 works), unrecorded (34 works)",
+ "description": "Deduplicated research works on the safety and security of LLM-based and learned agents, with typed relations that keep their basis, editorial clusters, automatic candidate clusters, institutions, and the observation report computed on this release.",
+ "counts": {
+  "works": 9009,
+  "withdrawnKept": 14,
+  "citationRoutes": 52459,
+  "citationWithSentence": 43784,
+  "benchmarkUseRoutes": 640,
+  "institutions": 1610,
+  "candidateClusters": 247,
+  "summariesLeftOut": 0
+ },
+ "relationTypes": {
+  "cites": "A's Semantic Scholar reference list contains B; contexts and intents are Semantic Scholar's when available (record-level otherwise)",
+  "uses_benchmark": "a sentence in A's full text evaluates on, adopts or reports results on benchmark B; spot-check precision 86.1% (n = 79), roughly half of uses found"
+ },
+ "definitions": {
+  "newStarMonths": 6,
+  "referenceGroup": "(cluster, publication year, form), falling back to (cluster, year) then year",
+  "minGroup": 8,
+  "clusters": 19,
+  "galaxies": 8
+ },
+ "sources": [
+  {
+   "source": "arXiv (OAI-PMH metadata)",
+   "used_for": "titles, first-submission dates, identifiers",
+   "terms": "arXiv states its metadata is available under CC0 1.0",
+   "check": false
+  },
+  {
+   "source": "Semantic Scholar Academic Graph API",
+   "used_for": "reference lists, citation counts, citing sentences and intents",
+   "terms": "Semantic Scholar API License Agreement; attribution required",
+   "check": true
+  },
+  {
+   "source": "OpenAlex",
+   "used_for": "publication leads, abstracts for screening",
+   "terms": "CC0 1.0",
+   "check": false
+  },
+  {
+   "source": "Crossref",
+   "used_for": "DOI publication records",
+   "terms": "bibliographic metadata facts; Crossref states most metadata has no use restrictions",
+   "check": true
+  },
+  {
+   "source": "dblp (monthly XML snapshot)",
+   "used_for": "venue matching",
+   "terms": "CC0 1.0",
+   "check": false
+  },
+  {
+   "source": "ROR",
+   "used_for": "institution identities, countries, organisation types",
+   "terms": "CC0 1.0",
+   "check": false
+  },
+  {
+   "source": "Conference and journal proceedings pages",
+   "used_for": "venue, title and author verification",
+   "terms": "bibliographic facts with source URLs; no text redistributed",
+   "check": true
+  },
+  {
+   "source": "GitHub API",
+   "used_for": "repository links and stars (dated snapshots)",
+   "terms": "GitHub Terms of Service; repository metadata only",
+   "check": true
+  },
+  {
+   "source": "Paper full texts (arXiv HTML/PDF, open-access copies)",
+   "used_for": "benchmark-use sentences (read locally)",
+   "terms": "not redistributed; only short quoted sentences as evidence",
+   "check": true
+  },
+  {
+   "source": "SPECTER2 (allenai/specter2)",
+   "used_for": "content vectors for layout, candidate clusters and relevance",
+   "terms": "model released under Apache 2.0; vectors not redistributed, 2-D positions only",
+   "check": false
+  },
+  {
+   "source": "Atlas editorial layer",
+   "used_for": "scope decisions, clusters, forms, summaries, audits",
+   "terms": "licence to be chosen by the owner (for example CC BY 4.0)",
+   "check": true
+  }
+ ],
+ "knownLimits": [
+  "Coverage depends on the sources; a missing relation means not recorded, not unrelated.",
+  "Institution addresses are not nationalities; 21% of works have no located institution.",
+  "Benchmark use is matched by name in local full texts: a lower bound with ~85% precision.",
+  "Attack/defence labels in the onset analysis are title keywords and are not audited.",
+  "Statuses of hypotheses are observations on one release, not tests on held-out data.",
+  "11 registry (ROR) matches judged wrong were corrected: 67 papers re-attributed to the institution printed in the paper (data-sources/corrections/)."
+ ],
+ "recompute": [
+  "python collect_citation_graph.py   # Semantic Scholar records (ids cached)",
+  "python collect_citation_contexts.py # citing sentences (optional)",
+  ".venv-specter2/bin/python embed_specter2.py",
+  "python build_starmap.py && python build_findings.py",
+  "python build_snapshot.py --version v1 --status draft"
+ ],
+ "citation": "DOI to be assigned when the release is deposited"
+}

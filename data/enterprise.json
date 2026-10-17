@@ -1,0 +1,3329 @@
+{
+  "meta": {
+    "id": "ENTERPRISE",
+    "version": 2,
+    "updated": "2026-09-12",
+    "status": "curated_collection",
+    "coverage": "purposive_sample_not_market_census",
+    "batches": [
+      {
+        "id": "EP001",
+        "cutoff": "2026-09-09",
+        "label": {
+          "zh": "首批企业试刊",
+          "en": "Initial enterprise pilot"
+        }
+      },
+      {
+        "id": "EP002",
+        "cutoff": "2026-09-12",
+        "label": {
+          "zh": "商业报告结构化增量",
+          "en": "Business report enrichment"
+        }
+      }
+    ],
+    "reportFundingSample": {
+      "eventIds": [
+        "ep002-c04",
+        "ep002-c05",
+        "ep002-c08",
+        "ep002-c11",
+        "ep002-c12"
+      ],
+      "amount": 306400000,
+      "currency": "USD",
+      "count": 5
+    },
+    "cutoff": "2026-09-12",
+    "fundingSample": {
+      "count": 8,
+      "amount": 335150000,
+      "currency": "USD",
+      "eventIds": [
+        "money-trojai-seed-2024",
+        "money-lasso-seed-2023",
+        "money-patronus-series-a-2024",
+        "ep002-c04",
+        "ep002-c05",
+        "ep002-c08",
+        "ep002-c11",
+        "ep002-c12"
+      ]
+    },
+    "counts": {
+      "companies": 16,
+      "money": 16,
+      "reports": 14,
+      "cases": 12,
+      "prices": 9,
+      "scenarios": 1
+    },
+    "reportCounts": {
+      "external": 13,
+      "editorial": 1
+    }
+  },
+  "companies": [
+    {
+      "id": "co-trojai",
+      "name": "TrojAI",
+      "url": "https://troj.ai/",
+      "role": "security_provider",
+      "summary": {
+        "en": "Provides runtime protection for Agent workflows and MCP tools. A10 announced its acquisition of TrojAI in June 2026.",
+        "zh": "为 Agent 工作流和 MCP 工具提供运行时防护。A10 于 2026 年 6 月公告已收购 TrojAI。"
+      },
+      "products": [
+        {
+          "name": "TrojAI Defend for MCP",
+          "summary": {
+            "en": "The vendor describes server registration, tool approval, traffic inspection and reapproval after metadata changes.",
+            "zh": "厂商描述的控制包括服务器注册、工具审批、流量检查，以及元数据变更后的重新审批。"
+          },
+          "stage": {
+            "en": "Launch announced · 13 Nov 2025",
+            "zh": "已公告发布 · 2025-11-13"
+          },
+          "pricing": {
+            "en": "Price not established from the checked launch page.",
+            "zh": "已核查的发布页未确认具体价格。"
+          },
+          "sources": [
+            {
+              "title": "TrojAI Defend for MCP launch",
+              "url": "https://troj.ai/blog/agentic-ai-defend-for-mcp-model-context-protocol/",
+              "locator": "13 Nov 2025; registry, tool approval and change detection sections"
+            }
+          ]
+        }
+      ],
+      "tags": [
+        "mcp",
+        "prompt_injection",
+        "runtime"
+      ],
+      "sources": [
+        {
+          "title": "TrojAI Defend for MCP launch",
+          "url": "https://troj.ai/blog/agentic-ai-defend-for-mcp-model-context-protocol/",
+          "locator": "13 Nov 2025; MCP controls"
+        },
+        {
+          "title": "A10 acquisition announcement",
+          "url": "https://www.a10networks.com/news/press-releases/a10-networks-acquires-trojai-inc-expanding-ai-roadmap/",
+          "locator": "15 June 2026; opening and integration outlook"
+        }
+      ],
+      "batchId": "EP001",
+      "cutoff": "2026-09-09",
+      "entityKind": "acquired_company",
+      "owner": "A10 Networks"
+    },
+    {
+      "id": "lasso-security",
+      "name": "Lasso Security",
+      "url": "https://www.lasso.security/",
+      "role": "AI security vendor",
+      "summary": {
+        "en": "Enterprise AI security vendor addressing agent behavior, runtime policy enforcement and security testing. This pilot highlights one product and one historical funding round.",
+        "zh": "面向企业提供 Agent 行为监测、运行时政策防护和安全测试。本次样例选取一个产品与一轮历史融资。"
+      },
+      "products": [
+        {
+          "name": "Intent Deputy",
+          "summary": {
+            "en": "Lasso describes session-context analysis and behavioral baselines to detect when agents depart from their authorized purpose, with audit evidence for security teams. Capabilities are vendor claims; no independent efficacy test is included.",
+            "zh": "Lasso 称产品结合会话上下文与行为基线，识别 Agent 偏离授权目的的行为，并为安全团队提供审计依据。能力来自厂商声明，本样例未包含独立效果测试。"
+          },
+          "stage": {
+            "en": "Launch announced on 2026-02-17; formal GA status not established by the checked announcement.",
+            "zh": "2026-02-17 宣布发布；已核查公告未明确正式 GA 状态。"
+          },
+          "pricing": {
+            "en": "Not disclosed in the checked product announcement; demo contact is provided.",
+            "zh": "已核查产品公告未披露价格，提供预约演示入口。"
+          },
+          "sources": [
+            {
+              "title": "Lasso Security Introduces Intent Deputy",
+              "url": "https://www.lasso.security/resources/intent-deputy-ai-agent-security",
+              "locator": "2026-02-17 dateline; Introducing Intent Deputy; four core capabilities; Book a Demo"
+            }
+          ]
+        },
+        {
+          "name": "LEAP CPU guardrails",
+          "summary": {
+            "en": "Lasso announced CPU-based guardrails alongside its USD 30m funding. Low latency and no-GPU claims are vendor assertions.",
+            "zh": "Lasso 随 3,000 万美元融资公告推出 CPU 护栏；低延迟、无需 GPU 等属于厂商主张。"
+          },
+          "stage": {
+            "en": "Dateline 2 Sep 2026; page dated 3 Sep.",
+            "zh": "正文电头 2026-09-02，网页署日 09-03。"
+          },
+          "pricing": {
+            "en": "No comparable public price established from the reviewed sources.",
+            "zh": "本批来源未确认可比的公开价格。"
+          },
+          "sources": [
+            {
+              "title": "Lasso LEAP 与 3000 万美元融资公告",
+              "url": "https://www.lasso.security/resources/lasso-security-announces-future-of-ai-security-with-cpu-based-guardrails",
+              "accessedOn": "2026-09-12"
+            }
+          ],
+          "batchId": "EP002",
+          "cutoff": "2026-09-12"
+        }
+      ],
+      "tags": [
+        "Runtime protection",
+        "Agent behavior",
+        "Security testing"
+      ],
+      "sources": [
+        {
+          "title": "Lasso Security Introduces Intent Deputy",
+          "url": "https://www.lasso.security/resources/intent-deputy-ai-agent-security",
+          "locator": "Product introduction and company platform description; reused from B004"
+        },
+        {
+          "title": "Securing AI Agents at Glide Identity",
+          "url": "https://www.lasso.security/case-study/glide-identity",
+          "locator": "The Solution: Agentic Red Teaming; Runtime Protection & Policy Guardrails; vendor-hosted case"
+        },
+        {
+          "title": "Lasso LEAP 与 3000 万美元融资公告",
+          "url": "https://www.lasso.security/resources/lasso-security-announces-future-of-ai-security-with-cpu-based-guardrails",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "batchId": "EP001",
+      "cutoff": "2026-09-09",
+      "observedOn": "2026-09-12",
+      "updatedInBatches": [
+        "EP002"
+      ]
+    },
+    {
+      "id": "patronus-ai",
+      "name": "Patronus AI",
+      "url": "https://www.patronus.ai/",
+      "role": "AI evaluation and supervision vendor",
+      "summary": {
+        "en": "AI evaluation and supervision provider helping engineering teams inspect agent traces and diagnose failures. This pilot highlights Percival and one historical funding round.",
+        "zh": "提供 AI 评估与监督产品，帮助工程团队分析 Agent 执行轨迹、定位失败。本次样例选取 Percival 与一轮历史融资。"
+      },
+      "products": [
+        {
+          "name": "Percival",
+          "summary": {
+            "en": "Analyzes agent traces for planning errors, tool misuse and context misunderstandings, then suggests improvements. Patronus reports coverage of more than 20 failure modes; effectiveness was not independently reproduced here.",
+            "zh": "分析 Agent 轨迹中的规划错误、工具误用与上下文理解偏差，并提出改进建议。厂商称覆盖 20 余类失败模式；本样例未独立复现其效果。"
+          },
+          "stage": {
+            "en": "Self-serve solution announced on 2025-05-14; product page provides integration documentation.",
+            "zh": "2025-05-14 宣布推出自助产品；产品页提供集成文档。"
+          },
+          "pricing": {
+            "en": "Not disclosed on the checked Percival product page or launch release; contact is provided.",
+            "zh": "已核查 Percival 产品页与发布稿未披露价格，提供联系入口。"
+          },
+          "sources": [
+            {
+              "title": "Patronus AI — Percival",
+              "url": "https://www.patronus.ai/percival",
+              "locator": "What is Percival; Why we created Percival; Percival Integrations; Contact Us"
+            },
+            {
+              "title": "Patronus AI Unveils First Scalable Supervision Solution for Agentic Systems",
+              "url": "https://www.prnewswire.com/news-releases/patronus-ai-unveils-first-scalable-supervision-solution-for-agentic-systems-302455117.html",
+              "locator": "2025-05-14 dateline; self-serve launch; four failure categories; company-supplied release"
+            }
+          ]
+        }
+      ],
+      "tags": [
+        "Agent evaluation",
+        "Trace analysis",
+        "Developer tools"
+      ],
+      "sources": [
+        {
+          "title": "Patronus AI — Percival",
+          "url": "https://www.patronus.ai/percival",
+          "locator": "Agentic Supervision; What is Percival; reused from B007"
+        }
+      ],
+      "batchId": "EP001",
+      "cutoff": "2026-09-09"
+    },
+    {
+      "id": "microsoft",
+      "name": "Microsoft",
+      "role": "security_provider",
+      "entityKind": "company_or_product_provider",
+      "owner": null,
+      "observedOn": "2026-09-12",
+      "summary": {
+        "en": "Agent identities and Agent 365 connect governance, identity and enterprise security services.",
+        "zh": "Agent 身份与 Agent 365 连接身份治理和现有企业安全服务。"
+      },
+      "products": [
+        {
+          "name": "Entra Agent ID / Agent 365",
+          "summary": {
+            "en": "Agent identities and Agent 365 connect governance, identity and enterprise security services.",
+            "zh": "Agent 身份与 Agent 365 连接身份治理和现有企业安全服务。"
+          },
+          "stage": {
+            "en": "Agent 365 commercially listed as of 12 Sep 2026; capability depth depends on integration.",
+            "zh": "截至 2026-09-12 Agent 365 已提供购买入口；各项能力依赖集成深度。"
+          },
+          "pricing": {
+            "en": "USD 15 per user per month, paid yearly; prerequisite suites and coverage must be checked.",
+            "zh": "每用户每月 15 美元，年付；需核对基础套装、许可条件与覆盖。"
+          },
+          "sources": [
+            {
+              "title": "Microsoft Entra Agent 身份文档",
+              "url": "https://learn.microsoft.com/en-us/entra/agent-id/what-are-agent-identities",
+              "accessedOn": "2026-09-12"
+            },
+            {
+              "title": "Microsoft 美国价目",
+              "url": "https://www.microsoft.com/en-us/microsoft-agent-365",
+              "accessedOn": "2026-09-12"
+            },
+            {
+              "title": "Agent 365 官方许可 FAQ",
+              "url": "https://www.microsoft.com/licensing/faqs/122",
+              "accessedOn": "2026-09-12"
+            }
+          ]
+        }
+      ],
+      "limitations": {
+        "en": "Capabilities and stage reflect the cited vendor or transaction sources, not independent effectiveness tests. Profiles include acquired brands and are not counts of independent vendors.",
+        "zh": "能力与阶段依据所引厂商或交易方资料，不是独立效果测试。档案包含已被收购的品牌，不能视为独立供应商数量。"
+      },
+      "tags": [
+        "identity",
+        "authorization",
+        "governance"
+      ],
+      "sources": [
+        {
+          "title": "Microsoft Entra Agent 身份文档",
+          "url": "https://learn.microsoft.com/en-us/entra/agent-id/what-are-agent-identities",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Microsoft 美国价目",
+          "url": "https://www.microsoft.com/en-us/microsoft-agent-365",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Agent 365 官方许可 FAQ",
+          "url": "https://www.microsoft.com/licensing/faqs/122",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "aws",
+      "name": "Amazon Web Services",
+      "role": "security_provider",
+      "entityKind": "company_or_product_provider",
+      "owner": null,
+      "observedOn": "2026-09-12",
+      "summary": {
+        "en": "AgentCore Policy allows or denies tool requests routed through Gateway, outside agent code.",
+        "zh": "AgentCore Policy 在 Agent 代码之外允许或拒绝经 Gateway 路由的工具请求。"
+      },
+      "products": [
+        {
+          "name": "AgentCore Policy / Gateway / Bedrock Guardrails",
+          "summary": {
+            "en": "AgentCore Policy allows or denies tool requests routed through Gateway, outside agent code.",
+            "zh": "AgentCore Policy 在 Agent 代码之外允许或拒绝经 Gateway 路由的工具请求。"
+          },
+          "stage": {
+            "en": "Policy GA announced 3 Mar 2026.",
+            "zh": "Policy 于 2026-03-03 公告正式可用。"
+          },
+          "pricing": {
+            "en": "Policy USD 0.000025 per authorization request; Gateway and Guardrails are separate meters.",
+            "zh": "Policy 每次授权请求 0.000025 美元；Gateway 与 Guardrails 分别计费。"
+          },
+          "sources": [
+            {
+              "title": "AWS AgentCore Policy 正式可用公告",
+              "url": "https://aws.amazon.com/about-aws/whats-new/2026/03/policy-amazon-bedrock-agentcore-generally-available/",
+              "accessedOn": "2026-09-12"
+            },
+            {
+              "title": "AgentCore 价目",
+              "url": "https://aws.amazon.com/bedrock/agentcore/pricing/",
+              "accessedOn": "2026-09-12"
+            },
+            {
+              "title": "AWS Bedrock Guardrails 定价",
+              "url": "https://aws.amazon.com/bedrock/pricing/",
+              "accessedOn": "2026-09-12"
+            }
+          ]
+        }
+      ],
+      "limitations": {
+        "en": "Capabilities and stage reflect the cited vendor or transaction sources, not independent effectiveness tests. Profiles include acquired brands and are not counts of independent vendors.",
+        "zh": "能力与阶段依据所引厂商或交易方资料，不是独立效果测试。档案包含已被收购的品牌，不能视为独立供应商数量。"
+      },
+      "tags": [
+        "authorization",
+        "tool-calls",
+        "guardrails"
+      ],
+      "sources": [
+        {
+          "title": "AWS AgentCore Policy 正式可用公告",
+          "url": "https://aws.amazon.com/about-aws/whats-new/2026/03/policy-amazon-bedrock-agentcore-generally-available/",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "AgentCore 价目",
+          "url": "https://aws.amazon.com/bedrock/agentcore/pricing/",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "AWS Bedrock Guardrails 定价",
+          "url": "https://aws.amazon.com/bedrock/pricing/",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "noma-security",
+      "name": "Noma Security",
+      "role": "security_provider",
+      "entityKind": "company_or_product_provider",
+      "owner": null,
+      "observedOn": "2026-09-12",
+      "summary": {
+        "en": "AI security platform with agent and MCP discovery, access control, runtime checks and red teaming.",
+        "zh": "AI 安全平台，覆盖 Agent 与 MCP 发现、访问控制、运行时检查及红队。"
+      },
+      "products": [
+        {
+          "name": "Noma Platform / Agentic Access Control",
+          "summary": {
+            "en": "AI security platform with agent and MCP discovery, access control, runtime checks and red teaming.",
+            "zh": "AI 安全平台，覆盖 Agent 与 MCP 发现、访问控制、运行时检查及红队。"
+          },
+          "stage": {
+            "en": "Agent and MCP access-control launch announced 2 Jun 2026.",
+            "zh": "2026-06-02 公告 Agent 与 MCP 访问控制。"
+          },
+          "pricing": {
+            "en": "Marketplace lists USD 200,000 for a 12-month platform dimension; asset coverage unspecified.",
+            "zh": "Marketplace 列示 12 个月平台维度 200,000 美元，资产覆盖量未明示。"
+          },
+          "sources": [
+            {
+              "title": "Noma Agent 与 MCP 访问控制公告",
+              "url": "https://noma.security/blog/noma-launches-agentic-access-control-to-govern-ai-agents-and-mcp-servers-across-the-enterprise",
+              "accessedOn": "2026-09-12"
+            },
+            {
+              "title": "Noma 1 亿美元 B 轮融资",
+              "url": "https://noma.security/blog/noma-security-raises-100m-to-drive-adoption-of-ai-agent-security",
+              "accessedOn": "2026-09-12"
+            },
+            {
+              "title": "Noma Marketplace",
+              "url": "https://aws.amazon.com/marketplace/pp/prodview-kd2qklag2zzym",
+              "accessedOn": "2026-09-12"
+            },
+            {
+              "title": "UiPath 原始供应商清单",
+              "url": "https://assets.ctfassets.net/5965pury2lcm/3MgR815xOJmx2r6UgXAqtp/85fac99ea073630ef53cdcbac00a2bff/20251118_UiPath_Subprocessors_List.pdf",
+              "accessedOn": "2026-09-12"
+            },
+            {
+              "title": "Kantar 与 Noma 案例",
+              "url": "https://noma.security/blog/kantar-secures-the-explosion-of-ai-agents-with-noma",
+              "accessedOn": "2026-09-12"
+            }
+          ]
+        }
+      ],
+      "limitations": {
+        "en": "Capabilities and stage reflect the cited vendor or transaction sources, not independent effectiveness tests. Profiles include acquired brands and are not counts of independent vendors.",
+        "zh": "能力与阶段依据所引厂商或交易方资料，不是独立效果测试。档案包含已被收购的品牌，不能视为独立供应商数量。"
+      },
+      "tags": [
+        "mcp",
+        "authorization",
+        "red-teaming"
+      ],
+      "sources": [
+        {
+          "title": "Noma Agent 与 MCP 访问控制公告",
+          "url": "https://noma.security/blog/noma-launches-agentic-access-control-to-govern-ai-agents-and-mcp-servers-across-the-enterprise",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Noma 1 亿美元 B 轮融资",
+          "url": "https://noma.security/blog/noma-security-raises-100m-to-drive-adoption-of-ai-agent-security",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Noma Marketplace",
+          "url": "https://aws.amazon.com/marketplace/pp/prodview-kd2qklag2zzym",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "UiPath 原始供应商清单",
+          "url": "https://assets.ctfassets.net/5965pury2lcm/3MgR815xOJmx2r6UgXAqtp/85fac99ea073630ef53cdcbac00a2bff/20251118_UiPath_Subprocessors_List.pdf",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Kantar 与 Noma 案例",
+          "url": "https://noma.security/blog/kantar-secures-the-explosion-of-ai-agents-with-noma",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "witnessai",
+      "name": "WitnessAI",
+      "role": "security_provider",
+      "entityKind": "company_or_product_provider",
+      "owner": null,
+      "observedOn": "2026-09-12",
+      "summary": {
+        "en": "Enterprise AI usage and application security, with expanded agent security capabilities announced in January 2026.",
+        "zh": "企业 AI 使用和应用安全；2026 年 1 月公告扩展 Agent 安全能力。"
+      },
+      "products": [
+        {
+          "name": "WitnessAI Enterprise / Agentic Visibility / WitnessProtect",
+          "summary": {
+            "en": "Enterprise AI usage and application security, with expanded agent security capabilities announced in January 2026.",
+            "zh": "企业 AI 使用和应用安全；2026 年 1 月公告扩展 Agent 安全能力。"
+          },
+          "stage": {
+            "en": "Vendor-announced capabilities and Marketplace purchase dimensions.",
+            "zh": "依据厂商能力公告与 Marketplace 购买维度。"
+          },
+          "pricing": {
+            "en": "Separate listed dimensions: Enterprise minimum USD 180,000/year; Visibility minimum USD 60,000/year; Protect USD 300,000/12 months. Not a mandatory bundle.",
+            "zh": "不同挂牌维度：Enterprise 最低每年 180,000 美元；Visibility 最低每年 60,000 美元；Protect 12 个月 300,000 美元，不代表强制捆绑。"
+          },
+          "sources": [
+            {
+              "title": "WitnessAI 5800 万美元战略融资",
+              "url": "https://witness.ai/resources/witnessai-raises-58-million-for-global-expansion-and-announces-new-ways-to-secure-ai-agents/",
+              "accessedOn": "2026-09-12"
+            },
+            {
+              "title": "WitnessAI Marketplace",
+              "url": "https://aws.amazon.com/marketplace/pp/prodview-5h2rg6gvjyywg",
+              "accessedOn": "2026-09-12"
+            }
+          ]
+        }
+      ],
+      "limitations": {
+        "en": "Capabilities and stage reflect the cited vendor or transaction sources, not independent effectiveness tests. Profiles include acquired brands and are not counts of independent vendors.",
+        "zh": "能力与阶段依据所引厂商或交易方资料，不是独立效果测试。档案包含已被收购的品牌，不能视为独立供应商数量。"
+      },
+      "tags": [
+        "runtime",
+        "visibility",
+        "data-security"
+      ],
+      "sources": [
+        {
+          "title": "WitnessAI 5800 万美元战略融资",
+          "url": "https://witness.ai/resources/witnessai-raises-58-million-for-global-expansion-and-announces-new-ways-to-secure-ai-agents/",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "WitnessAI Marketplace",
+          "url": "https://aws.amazon.com/marketplace/pp/prodview-5h2rg6gvjyywg",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "hiddenlayer",
+      "name": "HiddenLayer",
+      "role": "security_provider",
+      "entityKind": "company_or_product_provider",
+      "owner": null,
+      "observedOn": "2026-09-12",
+      "summary": {
+        "en": "Its September 2026 financing announcement includes Agentic Runtime and Agent Harness Security in its AI-security expansion.",
+        "zh": "2026 年 9 月融资公告将 Agentic Runtime 与 Agent Harness Security 纳入 AI 安全扩张方向。"
+      },
+      "products": [
+        {
+          "name": "Agentic Runtime / Agent Harness Security",
+          "summary": {
+            "en": "Its September 2026 financing announcement includes Agentic Runtime and Agent Harness Security in its AI-security expansion.",
+            "zh": "2026 年 9 月融资公告将 Agentic Runtime 与 Agent Harness Security 纳入 AI 安全扩张方向。"
+          },
+          "stage": {
+            "en": "Vendor announcement; independent performance not established here.",
+            "zh": "厂商公告；本批未确认独立性能。"
+          },
+          "pricing": {
+            "en": "No comparable public price established from the reviewed sources.",
+            "zh": "本批来源未确认可比的公开价格。"
+          },
+          "sources": [
+            {
+              "title": "HiddenLayer 1 亿美元 B 轮融资",
+              "url": "https://www.hiddenlayer.com/news/hiddenlayer-100m-series-b-ai-security",
+              "accessedOn": "2026-09-12"
+            }
+          ]
+        }
+      ],
+      "limitations": {
+        "en": "Capabilities and stage reflect the cited vendor or transaction sources, not independent effectiveness tests. Profiles include acquired brands and are not counts of independent vendors.",
+        "zh": "能力与阶段依据所引厂商或交易方资料，不是独立效果测试。档案包含已被收购的品牌，不能视为独立供应商数量。"
+      },
+      "tags": [
+        "runtime",
+        "execution-environment"
+      ],
+      "sources": [
+        {
+          "title": "HiddenLayer 1 亿美元 B 轮融资",
+          "url": "https://www.hiddenlayer.com/news/hiddenlayer-100m-series-b-ai-security",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "promptfoo",
+      "name": "Promptfoo",
+      "role": "security_provider",
+      "entityKind": "acquired_company",
+      "owner": "OpenAI",
+      "observedOn": "2026-09-12",
+      "summary": {
+        "en": "Red teaming and evaluation company; its current About page states that it is part of OpenAI. Historical financing is retained separately.",
+        "zh": "红队与评测公司；当前 About 页已说明属于 OpenAI，历史融资仍单独保留。"
+      },
+      "products": [
+        {
+          "name": "Promptfoo red teaming and evaluation",
+          "summary": {
+            "en": "Red teaming and evaluation company; its current About page states that it is part of OpenAI. Historical financing is retained separately.",
+            "zh": "红队与评测公司；当前 About 页已说明属于 OpenAI，历史融资仍单独保留。"
+          },
+          "stage": {
+            "en": "Part of OpenAI as of observation; exact legal closing date not established here.",
+            "zh": "观察时已属于 OpenAI；本批未确认确切法律交割日。"
+          },
+          "pricing": {
+            "en": "No comparable public price established from the reviewed sources.",
+            "zh": "本批来源未确认可比的公开价格。"
+          },
+          "sources": [
+            {
+              "title": "Promptfoo 1840 万美元 A 轮融资",
+              "url": "https://www.promptfoo.dev/blog/series-a-announcement/",
+              "accessedOn": "2026-09-12"
+            },
+            {
+              "title": "Promptfoo 当前公司状态",
+              "url": "https://www.promptfoo.dev/about/",
+              "accessedOn": "2026-09-12"
+            }
+          ]
+        }
+      ],
+      "limitations": {
+        "en": "Capabilities and stage reflect the cited vendor or transaction sources, not independent effectiveness tests. Profiles include acquired brands and are not counts of independent vendors.",
+        "zh": "能力与阶段依据所引厂商或交易方资料，不是独立效果测试。档案包含已被收购的品牌，不能视为独立供应商数量。"
+      },
+      "tags": [
+        "red-teaming",
+        "evaluation"
+      ],
+      "sources": [
+        {
+          "title": "Promptfoo 1840 万美元 A 轮融资",
+          "url": "https://www.promptfoo.dev/blog/series-a-announcement/",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Promptfoo 当前公司状态",
+          "url": "https://www.promptfoo.dev/about/",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "robust-intelligence",
+      "name": "Robust Intelligence",
+      "role": "security_provider",
+      "entityKind": "acquired_company",
+      "owner": "Cisco",
+      "observedOn": "2026-09-12",
+      "summary": {
+        "en": "Model and AI application security capabilities acquired by Cisco.",
+        "zh": "Cisco 收购的模型与 AI 应用安全能力。"
+      },
+      "products": [
+        {
+          "name": "Robust Intelligence AI security",
+          "summary": {
+            "en": "Model and AI application security capabilities acquired by Cisco.",
+            "zh": "Cisco 收购的模型与 AI 应用安全能力。"
+          },
+          "stage": {
+            "en": "Cisco legal closing documented as 23 Sep 2024.",
+            "zh": "Cisco 法律文件列示 2024-09-23 完成交割。"
+          },
+          "pricing": {
+            "en": "No comparable public price established from the reviewed sources.",
+            "zh": "本批来源未确认可比的公开价格。"
+          },
+          "sources": [
+            {
+              "title": "Cisco 交割附件",
+              "url": "https://d18rn0p25nwr6d.cloudfront.net/CIK-0000858877/8ef1e309-8b64-4f46-8eff-75e456861296.pdf",
+              "accessedOn": "2026-09-12"
+            }
+          ]
+        }
+      ],
+      "limitations": {
+        "en": "Capabilities and stage reflect the cited vendor or transaction sources, not independent effectiveness tests. Profiles include acquired brands and are not counts of independent vendors.",
+        "zh": "能力与阶段依据所引厂商或交易方资料，不是独立效果测试。档案包含已被收购的品牌，不能视为独立供应商数量。"
+      },
+      "tags": [
+        "model-security",
+        "ai-application-security"
+      ],
+      "sources": [
+        {
+          "title": "Cisco 交割附件",
+          "url": "https://d18rn0p25nwr6d.cloudfront.net/CIK-0000858877/8ef1e309-8b64-4f46-8eff-75e456861296.pdf",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "invariant-labs",
+      "name": "Invariant Labs",
+      "role": "security_provider",
+      "entityKind": "acquired_company",
+      "owner": "Snyk",
+      "observedOn": "2026-09-12",
+      "summary": {
+        "en": "Agent and MCP security research and defenses acquired by Snyk.",
+        "zh": "Snyk 收购的 Agent 与 MCP 安全研究和防护能力。"
+      },
+      "products": [
+        {
+          "name": "Invariant Agent / MCP security",
+          "summary": {
+            "en": "Agent and MCP security research and defenses acquired by Snyk.",
+            "zh": "Snyk 收购的 Agent 与 MCP 安全研究和防护能力。"
+          },
+          "stage": {
+            "en": "Snyk announced it had acquired Invariant on 24 Jun 2025.",
+            "zh": "Snyk 于 2025-06-24 宣布已收购 Invariant。"
+          },
+          "pricing": {
+            "en": "No comparable public price established from the reviewed sources.",
+            "zh": "本批来源未确认可比的公开价格。"
+          },
+          "sources": [
+            {
+              "title": "Invariant MCP Tool Poisoning 原始披露",
+              "url": "https://invariantlabs.ai/blog/mcp-security-notification-tool-poisoning-attacks",
+              "accessedOn": "2026-09-12"
+            },
+            {
+              "title": "Snyk 收购 Invariant Labs 公告",
+              "url": "https://snyk.io/es/news/snyk-acquires-invariant-labs-to-accelerate-agentic-ai-security-innovation/",
+              "accessedOn": "2026-09-12"
+            }
+          ]
+        }
+      ],
+      "limitations": {
+        "en": "Capabilities and stage reflect the cited vendor or transaction sources, not independent effectiveness tests. Profiles include acquired brands and are not counts of independent vendors.",
+        "zh": "能力与阶段依据所引厂商或交易方资料，不是独立效果测试。档案包含已被收购的品牌，不能视为独立供应商数量。"
+      },
+      "tags": [
+        "mcp",
+        "tool-poisoning"
+      ],
+      "sources": [
+        {
+          "title": "Invariant MCP Tool Poisoning 原始披露",
+          "url": "https://invariantlabs.ai/blog/mcp-security-notification-tool-poisoning-attacks",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Snyk 收购 Invariant Labs 公告",
+          "url": "https://snyk.io/es/news/snyk-acquires-invariant-labs-to-accelerate-agentic-ai-security-innovation/",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "protect-ai",
+      "name": "Protect AI",
+      "role": "security_provider",
+      "entityKind": "acquired_company",
+      "owner": "Palo Alto Networks",
+      "observedOn": "2026-09-12",
+      "summary": {
+        "en": "Acquired AI-security capabilities integrated into Palo Alto Networks Prisma AIRS across scanning, posture, red teaming and runtime.",
+        "zh": "被收购的 AI 安全能力整合至 Palo Alto Networks Prisma AIRS，覆盖扫描、姿态、红队与运行时。"
+      },
+      "products": [
+        {
+          "name": "Prisma AIRS / acquired Protect AI capabilities",
+          "summary": {
+            "en": "Acquired AI-security capabilities integrated into Palo Alto Networks Prisma AIRS across scanning, posture, red teaming and runtime.",
+            "zh": "被收购的 AI 安全能力整合至 Palo Alto Networks Prisma AIRS，覆盖扫描、姿态、红队与运行时。"
+          },
+          "stage": {
+            "en": "Acquisition completed 22 Jul 2025.",
+            "zh": "2025-07-22 完成收购。"
+          },
+          "pricing": {
+            "en": "No comparable public price established from the reviewed sources.",
+            "zh": "本批来源未确认可比的公开价格。"
+          },
+          "sources": [
+            {
+              "title": "Palo Alto Networks 完成 Protect AI 收购",
+              "url": "https://investors.paloaltonetworks.com/news-releases/news-release-details/palo-alto-networks-completes-acquisition-protect-ai",
+              "accessedOn": "2026-09-12"
+            },
+            {
+              "title": "PANW FY2026 10-K",
+              "url": "https://www.sec.gov/Archives/edgar/data/1327567/000132756726000023/panw-20260731.htm",
+              "accessedOn": "2026-09-12"
+            },
+            {
+              "title": "TELUS 产品评估案例",
+              "url": "https://www.paloaltonetworks.com/customers/telus-digital-secures-customer-trust-and-innovation",
+              "accessedOn": "2026-09-12"
+            }
+          ]
+        }
+      ],
+      "limitations": {
+        "en": "Capabilities and stage reflect the cited vendor or transaction sources, not independent effectiveness tests. Profiles include acquired brands and are not counts of independent vendors.",
+        "zh": "能力与阶段依据所引厂商或交易方资料，不是独立效果测试。档案包含已被收购的品牌，不能视为独立供应商数量。"
+      },
+      "tags": [
+        "red-teaming",
+        "runtime",
+        "ai-platform"
+      ],
+      "sources": [
+        {
+          "title": "Palo Alto Networks 完成 Protect AI 收购",
+          "url": "https://investors.paloaltonetworks.com/news-releases/news-release-details/palo-alto-networks-completes-acquisition-protect-ai",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "PANW FY2026 10-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1327567/000132756726000023/panw-20260731.htm",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "TELUS 产品评估案例",
+          "url": "https://www.paloaltonetworks.com/customers/telus-digital-secures-customer-trust-and-innovation",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "aim-security",
+      "name": "Aim Security",
+      "role": "security_provider",
+      "entityKind": "acquired_company",
+      "owner": "Cato Networks",
+      "observedOn": "2026-09-12",
+      "summary": {
+        "en": "AI security capabilities acquired by Cato for integration with its SASE platform.",
+        "zh": "Cato 为接入其 SASE 平台而收购的 AI 安全能力。"
+      },
+      "products": [
+        {
+          "name": "Aim AI security / Cato integration",
+          "summary": {
+            "en": "AI security capabilities acquired by Cato for integration with its SASE platform.",
+            "zh": "Cato 为接入其 SASE 平台而收购的 AI 安全能力。"
+          },
+          "stage": {
+            "en": "Cato announced it had acquired Aim on 3 Sep 2025.",
+            "zh": "Cato 于 2025-09-03 宣布已收购 Aim。"
+          },
+          "pricing": {
+            "en": "No comparable public price established from the reviewed sources.",
+            "zh": "本批来源未确认可比的公开价格。"
+          },
+          "sources": [
+            {
+              "title": "Aim Labs EchoLeak 原始研究 Cato 迁移页",
+              "url": "https://www.catonetworks.com/blog/breaking-down-echoleak/",
+              "accessedOn": "2026-09-12"
+            },
+            {
+              "title": "Cato 收购公告",
+              "url": "https://www.catonetworks.com/news/cato-acquires-aim-security-to-extend-sase-leadership-and-secure-enterprise-ai-transformation/",
+              "accessedOn": "2026-09-12"
+            }
+          ]
+        }
+      ],
+      "limitations": {
+        "en": "Capabilities and stage reflect the cited vendor or transaction sources, not independent effectiveness tests. Profiles include acquired brands and are not counts of independent vendors.",
+        "zh": "能力与阶段依据所引厂商或交易方资料，不是独立效果测试。档案包含已被收购的品牌，不能视为独立供应商数量。"
+      },
+      "tags": [
+        "data-security",
+        "sase"
+      ],
+      "sources": [
+        {
+          "title": "Aim Labs EchoLeak 原始研究 Cato 迁移页",
+          "url": "https://www.catonetworks.com/blog/breaking-down-echoleak/",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Cato 收购公告",
+          "url": "https://www.catonetworks.com/news/cato-acquires-aim-security-to-extend-sase-leadership-and-secure-enterprise-ai-transformation/",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "prompt-security",
+      "name": "Prompt Security",
+      "role": "security_provider",
+      "entityKind": "acquired_company",
+      "owner": "SentinelOne",
+      "observedOn": "2026-09-12",
+      "summary": {
+        "en": "AI usage, data and runtime security company acquired by SentinelOne. This is distinct from Promptfoo.",
+        "zh": "SentinelOne 收购的 AI 使用、数据和运行时安全公司；与 Promptfoo 是不同公司。"
+      },
+      "products": [
+        {
+          "name": "Prompt Security",
+          "summary": {
+            "en": "AI usage, data and runtime security company acquired by SentinelOne. This is distinct from Promptfoo.",
+            "zh": "SentinelOne 收购的 AI 使用、数据和运行时安全公司；与 Promptfoo 是不同公司。"
+          },
+          "stage": {
+            "en": "Acquisition completed 5 Sep 2025.",
+            "zh": "2025-09-05 完成收购。"
+          },
+          "pricing": {
+            "en": "No comparable public price established from the reviewed sources.",
+            "zh": "本批来源未确认可比的公开价格。"
+          },
+          "sources": [
+            {
+              "title": "SentinelOne FY2026 10-K",
+              "url": "https://www.sec.gov/Archives/edgar/data/1583708/000158370826000020/s-20260131.htm",
+              "accessedOn": "2026-09-12"
+            },
+            {
+              "title": "Prompt 交割 8-K",
+              "url": "https://www.sec.gov/Archives/edgar/data/1583708/000110465925088079/tm2525181d1_8k.htm",
+              "accessedOn": "2026-09-12"
+            }
+          ]
+        }
+      ],
+      "limitations": {
+        "en": "Capabilities and stage reflect the cited vendor or transaction sources, not independent effectiveness tests. Profiles include acquired brands and are not counts of independent vendors.",
+        "zh": "能力与阶段依据所引厂商或交易方资料，不是独立效果测试。档案包含已被收购的品牌，不能视为独立供应商数量。"
+      },
+      "tags": [
+        "runtime",
+        "data-security"
+      ],
+      "sources": [
+        {
+          "title": "SentinelOne FY2026 10-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1583708/000158370826000020/s-20260131.htm",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Prompt 交割 8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1583708/000110465925088079/tm2525181d1_8k.htm",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "koi",
+      "name": "Koi",
+      "role": "security_provider",
+      "entityKind": "acquired_company",
+      "owner": "Palo Alto Networks",
+      "observedOn": "2026-09-12",
+      "summary": {
+        "en": "Agent endpoint and software-environment security acquired by Palo Alto Networks.",
+        "zh": "Palo Alto Networks 收购的 Agent 端点和软件环境安全能力。"
+      },
+      "products": [
+        {
+          "name": "Koi agentic endpoint security",
+          "summary": {
+            "en": "Agent endpoint and software-environment security acquired by Palo Alto Networks.",
+            "zh": "Palo Alto Networks 收购的 Agent 端点和软件环境安全能力。"
+          },
+          "stage": {
+            "en": "Acquisition completed 14 Apr 2026.",
+            "zh": "2026-04-14 完成收购。"
+          },
+          "pricing": {
+            "en": "No comparable public price established from the reviewed sources.",
+            "zh": "本批来源未确认可比的公开价格。"
+          },
+          "sources": [
+            {
+              "title": "PANW FY2026 10-K",
+              "url": "https://www.sec.gov/Archives/edgar/data/1327567/000132756726000023/panw-20260731.htm",
+              "accessedOn": "2026-09-12"
+            },
+            {
+              "title": "Koi 完成公告",
+              "url": "https://investors.paloaltonetworks.com/news-releases/news-release-details/palo-alto-networks-completes-acquisition-koi-secure-agentic",
+              "accessedOn": "2026-09-12"
+            }
+          ]
+        }
+      ],
+      "limitations": {
+        "en": "Capabilities and stage reflect the cited vendor or transaction sources, not independent effectiveness tests. Profiles include acquired brands and are not counts of independent vendors.",
+        "zh": "能力与阶段依据所引厂商或交易方资料，不是独立效果测试。档案包含已被收购的品牌，不能视为独立供应商数量。"
+      },
+      "tags": [
+        "endpoint",
+        "software-environment"
+      ],
+      "sources": [
+        {
+          "title": "PANW FY2026 10-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1327567/000132756726000023/panw-20260731.htm",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Koi 完成公告",
+          "url": "https://investors.paloaltonetworks.com/news-releases/news-release-details/palo-alto-networks-completes-acquisition-koi-secure-agentic",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "virtue-ai",
+      "name": "Virtue AI",
+      "role": "security_provider",
+      "entityKind": "acquired_company",
+      "owner": "Fortinet",
+      "observedOn": "2026-09-12",
+      "summary": {
+        "en": "Red teaming, agent and runtime security capabilities acquired by Fortinet.",
+        "zh": "Fortinet 收购的红队、Agent 与运行时安全能力。"
+      },
+      "products": [
+        {
+          "name": "Virtue AI security",
+          "summary": {
+            "en": "Red teaming, agent and runtime security capabilities acquired by Fortinet.",
+            "zh": "Fortinet 收购的红队、Agent 与运行时安全能力。"
+          },
+          "stage": {
+            "en": "Fortinet announced it had acquired Virtue AI on 17 Aug 2026.",
+            "zh": "Fortinet 于 2026-08-17 宣布已收购 Virtue AI。"
+          },
+          "pricing": {
+            "en": "No comparable public price established from the reviewed sources.",
+            "zh": "本批来源未确认可比的公开价格。"
+          },
+          "sources": [
+            {
+              "title": "Fortinet 收购公告",
+              "url": "https://www.fortinet.com/corporate/about-us/newsroom/press-releases/2026/fortinet-advances-continuous-ai-protection-with-the-acquisition-of-virtue-ai",
+              "accessedOn": "2026-09-12"
+            }
+          ]
+        }
+      ],
+      "limitations": {
+        "en": "Capabilities and stage reflect the cited vendor or transaction sources, not independent effectiveness tests. Profiles include acquired brands and are not counts of independent vendors.",
+        "zh": "能力与阶段依据所引厂商或交易方资料，不是独立效果测试。档案包含已被收购的品牌，不能视为独立供应商数量。"
+      },
+      "tags": [
+        "red-teaming",
+        "runtime"
+      ],
+      "sources": [
+        {
+          "title": "Fortinet 收购公告",
+          "url": "https://www.fortinet.com/corporate/about-us/newsroom/press-releases/2026/fortinet-advances-continuous-ai-protection-with-the-acquisition-of-virtue-ai",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    }
+  ],
+  "money": [
+    {
+      "id": "money-trojai-seed-2024",
+      "type": "funding",
+      "companyId": "co-trojai",
+      "date": "2024-04-03",
+      "amount": 5750000,
+      "currency": "USD",
+      "round": "Additional seed",
+      "participants": [
+        {
+          "name": "Flying Fish",
+          "role": "lead"
+        },
+        {
+          "name": "Build Ventures",
+          "role": "participant"
+        },
+        {
+          "name": "Techstars",
+          "role": "participant"
+        },
+        {
+          "name": "Alteryx Ventures",
+          "role": "participant"
+        },
+        {
+          "name": "Flybridge Capital Partners",
+          "role": "participant"
+        }
+      ],
+      "summary": {
+        "en": "TrojAI announced USD 5.75 million in additional seed capital. Flying Fish led the round.",
+        "zh": "TrojAI 公告新增 575 万美元种子资金，由 Flying Fish 领投。"
+      },
+      "limitations": {
+        "en": "Company-level financing; not revenue, cumulative funding or spending specifically allocated to Agent safety. Individual investor contributions were not disclosed in the release.",
+        "zh": "公司级融资，不是收入、累计融资或专门分配给 Agent 安全的投入。公告未披露各投资者出资份额。"
+      },
+      "sources": [
+        {
+          "title": "TrojAI seed financing announcement",
+          "url": "https://www.prnewswire.com/news-releases/trojai-raises-5-75m-in-seed-funding-to-secure-ai-in-the-enterprise-302106426.html",
+          "locator": "3 April 2024; dateline, amount and investor paragraph"
+        }
+      ],
+      "batchId": "EP001",
+      "cutoff": "2026-09-09"
+    },
+    {
+      "id": "money-trojai-acquisition-2026",
+      "type": "acquisition",
+      "companyId": "co-trojai",
+      "date": "2026-06-15",
+      "amount": null,
+      "currency": null,
+      "round": "",
+      "acquirer": "A10 Networks",
+      "transactionStatus": "completed",
+      "participants": [
+        {
+          "name": "A10 Networks",
+          "role": "acquirer"
+        }
+      ],
+      "summary": {
+        "en": "A10 announced that it had acquired TrojAI, adding Agent testing and runtime protection capabilities.",
+        "zh": "A10 公告已收购 TrojAI，获得 Agent 测试与运行时防护能力。"
+      },
+      "limitations": {
+        "en": "The announcement did not disclose consideration. Further portfolio integration was prospective.",
+        "zh": "该公告未披露交易对价，进一步产品整合属于后续计划。"
+      },
+      "sources": [
+        {
+          "title": "A10 Networks acquires TrojAI",
+          "url": "https://www.a10networks.com/news/press-releases/a10-networks-acquires-trojai-inc-expanding-ai-roadmap/",
+          "locator": "15 June 2026; completed acquisition and future integration wording"
+        }
+      ],
+      "batchId": "EP001",
+      "cutoff": "2026-09-09"
+    },
+    {
+      "id": "money-lasso-seed-2023",
+      "type": "funding",
+      "companyId": "lasso-security",
+      "date": "2023-11-20",
+      "amount": 6000000,
+      "currency": "USD",
+      "round": "Seed",
+      "participants": [
+        {
+          "name": "Entrée Capital",
+          "role": "lead"
+        },
+        {
+          "name": "Samsung Next",
+          "role": "participant"
+        }
+      ],
+      "summary": {
+        "en": "Lasso announced a $6M seed round to expand its team and LLM security offerings.",
+        "zh": "Lasso 公布 600 万美元种子轮，计划用于扩大团队与完善 LLM 安全产品。"
+      },
+      "limitations": {
+        "en": "Historical round, not latest funding or lifetime total. Company financing predates Intent Deputy; its Agent Safety allocation is unknown. Investor shares and valuation were not disclosed. The round amount is counted once.",
+        "zh": "历史轮次，不代表最新融资或累计融资。融资早于 Intent Deputy，Agent Safety 专项投入未知。各投资方份额及估值未披露；整轮金额仅统计一次。"
+      },
+      "sources": [
+        {
+          "title": "Lasso Security Emerges from Stealth With $6 Million Seed Funding",
+          "url": "https://www.lasso.security/resources/lasso-security-funding-announcement-2023",
+          "locator": "2023-11-20 dateline; first funding paragraph; stated use of funds; B004 REC-C06-B004-0001"
+        }
+      ],
+      "batchId": "EP001",
+      "cutoff": "2026-09-09"
+    },
+    {
+      "id": "money-patronus-series-a-2024",
+      "type": "funding",
+      "companyId": "patronus-ai",
+      "date": "2024-05-22",
+      "amount": 17000000,
+      "currency": "USD",
+      "round": "Series A",
+      "participants": [
+        {
+          "name": "Notable Capital",
+          "role": "lead"
+        },
+        {
+          "name": "Lightspeed Venture Partners",
+          "role": "participant"
+        },
+        {
+          "name": "Datadog",
+          "role": "participant"
+        },
+        {
+          "name": "Factorial Capital",
+          "role": "participant"
+        },
+        {
+          "name": "Gokul Rajaram",
+          "role": "participant"
+        }
+      ],
+      "summary": {
+        "en": "Patronus announced a $17M Series A for research, engineering, sales, evaluation models and benchmarks. Notable's investor-side article also confirms its lead role.",
+        "zh": "Patronus 公布 1,700 万美元 A 轮，用于研究、工程、销售、评估模型与基准建设。Notable 的投资方文章另行确认领投角色。"
+      },
+      "limitations": {
+        "en": "Historical round, not latest funding or lifetime total. Covers company-wide AI evaluation; allocation to Agent Safety or Percival is unknown. Listed participants are a subset; individual checks and valuation are undisclosed. Investor commentary is not independent product validation.",
+        "zh": "历史轮次，不代表最新融资或累计融资。融资覆盖公司 AI 评估业务，Agent Safety 或 Percival 专项投入未知。此处列出部分参投方；各方出资额及估值未披露。投资方观点不等于独立产品验证。"
+      },
+      "sources": [
+        {
+          "title": "Patronus AI Raises $17 million To Detect LLM Mistakes at Scale",
+          "url": "https://www.patronus.ai/announcements/patronus-ai-raises-17-million-to-detect-llm-mistakes-at-scale",
+          "locator": "2024-05-22 dateline; round amount and participants; use of funds; B007 REC-C06-B007-0002"
+        },
+        {
+          "title": "Why Notable Capital is Excited about Patronus AI",
+          "url": "https://www.notablecap.com/blog/why-notable-capital-is-excited-about-patronus-ai",
+          "locator": "2024-05-22 byline; opening investment paragraph confirming lead role and $17M round"
+        }
+      ],
+      "batchId": "EP001",
+      "cutoff": "2026-09-09"
+    },
+    {
+      "id": "ep002-c01",
+      "companyId": "robust-intelligence",
+      "type": "acquisition",
+      "date": "2024-09-23",
+      "dateBasis": "completed",
+      "amount": null,
+      "currency": "USD",
+      "round": "Acquisition",
+      "status": "completed",
+      "amountBasis": "undisclosed_or_not_verified",
+      "scope": "adjacent_model_security",
+      "participants": [
+        {
+          "name": "Cisco",
+          "role": "acquirer"
+        }
+      ],
+      "summary": {
+        "en": "Cisco announced/completed the acquisition of Robust Intelligence; amount undisclosed in reviewed sources.",
+        "zh": "Cisco 于 2024-09-23 完成 Robust Intelligence 收购；本批来源未确认独立交易对价。"
+      },
+      "limitations": {
+        "en": "Cisco blog completion update dated 2024-09-24 is not the legal closing date; S-8 exhibit 99.2 specifies 2024-09-23. No verified standalone purchase consideration.",
+        "zh": "Cisco 博客的 09-24 更新日不是法律交割日；广义模型与应用安全，不是全部 Agent 专属投入。"
+      },
+      "sources": [
+        {
+          "title": "Cisco 交割附件",
+          "url": "https://d18rn0p25nwr6d.cloudfront.net/CIK-0000858877/8ef1e309-8b64-4f46-8eff-75e456861296.pdf",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "announcedOn": "2024-08-26",
+      "completedOn": "2024-09-23",
+      "pageDatedOn": null,
+      "observedOn": "2026-09-12",
+      "priorDisclosures": [],
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "ep002-c02",
+      "companyId": "invariant-labs",
+      "type": "acquisition",
+      "date": "2025-06-24",
+      "dateBasis": "announced",
+      "amount": null,
+      "currency": "USD",
+      "round": "Acquisition",
+      "status": "announced_as_acquired",
+      "amountBasis": "not_disclosed_in_reviewed_material",
+      "scope": "agent_security_core",
+      "participants": [
+        {
+          "name": "Snyk",
+          "role": "acquirer"
+        }
+      ],
+      "summary": {
+        "en": "Snyk announced/completed the acquisition of Invariant Labs; amount undisclosed in reviewed sources.",
+        "zh": "Snyk 于 2025-06-24 宣布已收购 Invariant Labs；所读公告未披露金额。"
+      },
+      "limitations": {
+        "en": "Exact legal closing date not separately stated.",
+        "zh": "公告称已收购，未另行确认确切法律交割日；未知金额保留为空。"
+      },
+      "sources": [
+        {
+          "title": "Snyk 收购 Invariant Labs 公告",
+          "url": "https://snyk.io/es/news/snyk-acquires-invariant-labs-to-accelerate-agentic-ai-security-innovation/",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "announcedOn": "2025-06-24",
+      "completedOn": null,
+      "pageDatedOn": null,
+      "observedOn": "2026-09-12",
+      "priorDisclosures": [],
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "ep002-c03",
+      "companyId": "protect-ai",
+      "type": "acquisition",
+      "date": "2025-07-22",
+      "dateBasis": "completed",
+      "amount": 635000000,
+      "currency": "USD",
+      "round": "Acquisition",
+      "status": "completed",
+      "amountBasis": "purchase_consideration_FY2026_10K_rounded_to_millions",
+      "scope": "broad_ai_security_including_agents",
+      "participants": [
+        {
+          "name": "Palo Alto Networks",
+          "role": "acquirer"
+        }
+      ],
+      "summary": {
+        "en": "Protect AI: acquisition; 635 million USD.",
+        "zh": "Protect AI 收购于 2025-07-22 完成；PANW FY2026 10-K 将会计对价取整列示为 6.35 亿美元。"
+      },
+      "limitations": {
+        "en": "Latest filing presentation rounds amounts to whole millions. Not attributable entirely to Agent security; not revenue.",
+        "zh": "FY2025 详细值 634.5 百万美元与 FY2026 取整值是同一交易，不可重复相加；也不是全部 Agent 专属投入。"
+      },
+      "sources": [
+        {
+          "title": "Palo Alto Networks 完成 Protect AI 收购",
+          "url": "https://investors.paloaltonetworks.com/news-releases/news-release-details/palo-alto-networks-completes-acquisition-protect-ai",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "PANW FY2026 10-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1327567/000132756726000023/panw-20260731.htm",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "PANW FY2025 财报",
+          "url": "https://investors.paloaltonetworks.com/static-files/821765bc-6121-4f8e-b898-1755b8e26ac8",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "announcedOn": null,
+      "completedOn": "2025-07-22",
+      "pageDatedOn": null,
+      "observedOn": "2026-09-12",
+      "priorDisclosures": [
+        {
+          "amount_usd_m": 634.5,
+          "amount_basis": "FY2025_10K_purchase_consideration",
+          "cash_usd_m": 607.4,
+          "replacement_awards_in_consideration_usd_m": 27.1
+        }
+      ],
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "ep002-c04",
+      "companyId": "promptfoo",
+      "type": "funding",
+      "date": "2025-07-29",
+      "dateBasis": "announced",
+      "amount": 18400000,
+      "currency": "USD",
+      "round": "Series A",
+      "status": "company_announced_raised",
+      "amountBasis": "single_funding_round",
+      "scope": "broad_ai_security_including_agents",
+      "participants": [
+        {
+          "name": "Insight Partners",
+          "role": "lead"
+        },
+        {
+          "name": "Andreessen Horowitz",
+          "role": "participant"
+        }
+      ],
+      "summary": {
+        "en": "Promptfoo: announced financing; 18.4 million USD.",
+        "zh": "Promptfoo 于 2025-07-29 公告 1,840 万美元 A 轮，Insight Partners 领投，a16z 参与。公司当前已属于 OpenAI。"
+      },
+      "limitations": {
+        "en": "Historical financing event; Promptfoo is now part of OpenAI per current company About page. Exact legal closing date, valuation and current independent status not inferred.",
+        "zh": "历史融资有效，但不得据此将公司列为截至观察日仍独立。融资不是收购价、收入或 Agent 专属投入。"
+      },
+      "sources": [
+        {
+          "title": "Promptfoo 1840 万美元 A 轮融资",
+          "url": "https://www.promptfoo.dev/blog/series-a-announcement/",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Promptfoo 当前公司状态",
+          "url": "https://www.promptfoo.dev/about/",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "announcedOn": "2025-07-29",
+      "completedOn": null,
+      "pageDatedOn": null,
+      "observedOn": "2026-09-12",
+      "priorDisclosures": [],
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "ep002-c05",
+      "companyId": "noma-security",
+      "type": "funding",
+      "date": "2025-07-31",
+      "dateBasis": "announced",
+      "amount": 100000000,
+      "currency": "USD",
+      "round": "Series B",
+      "status": "company_announced_raised",
+      "amountBasis": "single_funding_round",
+      "scope": "broad_ai_security_including_agents",
+      "participants": [
+        {
+          "name": "Evolution Equity Partners",
+          "role": "lead"
+        },
+        {
+          "name": "Ballistic Ventures",
+          "role": "participant"
+        },
+        {
+          "name": "Glilot Capital",
+          "role": "participant"
+        }
+      ],
+      "summary": {
+        "en": "Noma Security: announced financing; 100 million USD.",
+        "zh": "Noma 于 2025-07-31 公告 1 亿美元 B 轮，由 Evolution Equity Partners 领投。"
+      },
+      "limitations": {
+        "en": "No absolute ARR or Agent revenue split in reviewed announcement.",
+        "zh": "所读公告未给出绝对 ARR 或 Agent 收入拆分，不能用挂牌价乘客户数推算收入。"
+      },
+      "sources": [
+        {
+          "title": "Noma 1 亿美元 B 轮融资",
+          "url": "https://noma.security/blog/noma-security-raises-100m-to-drive-adoption-of-ai-agent-security",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "announcedOn": "2025-07-31",
+      "completedOn": null,
+      "pageDatedOn": null,
+      "observedOn": "2026-09-12",
+      "priorDisclosures": [],
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "ep002-c06",
+      "companyId": "aim-security",
+      "type": "acquisition",
+      "date": "2025-09-03",
+      "dateBasis": "announced",
+      "amount": null,
+      "currency": "USD",
+      "round": "Acquisition",
+      "status": "announced_as_acquired",
+      "amountBasis": "not_disclosed_in_reviewed_material",
+      "scope": "broad_ai_security_including_agents",
+      "participants": [
+        {
+          "name": "Cato Networks",
+          "role": "acquirer"
+        }
+      ],
+      "summary": {
+        "en": "Cato Networks announced/completed the acquisition of Aim Security; amount undisclosed in reviewed sources.",
+        "zh": "Cato 于 2025-09-03 宣布已收购 Aim Security；交易金额未披露。"
+      },
+      "limitations": {
+        "en": "$409m funding round and $300m ARR in same announcement belong to Cato, not Aim or this deal. Exact legal closing date not separately stated.",
+        "zh": "同一公告中的 Cato 4.09 亿美元融资与 3 亿美元 ARR 不属于 Aim 或这笔收购。"
+      },
+      "sources": [
+        {
+          "title": "Cato 收购公告",
+          "url": "https://www.catonetworks.com/news/cato-acquires-aim-security-to-extend-sase-leadership-and-secure-enterprise-ai-transformation/",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "announcedOn": "2025-09-03",
+      "completedOn": null,
+      "pageDatedOn": null,
+      "observedOn": "2026-09-12",
+      "priorDisclosures": [],
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "ep002-c07",
+      "companyId": "prompt-security",
+      "type": "acquisition",
+      "date": "2025-09-05",
+      "dateBasis": "completed",
+      "amount": 160223000,
+      "currency": "USD",
+      "round": "Acquisition",
+      "status": "completed",
+      "amountBasis": "fair_value_of_total_consideration_transferred_FY2026_10K_preliminary_PPA",
+      "scope": "broad_ai_security_including_agents",
+      "participants": [
+        {
+          "name": "SentinelOne",
+          "role": "acquirer"
+        }
+      ],
+      "summary": {
+        "en": "Prompt Security: acquisition; 160.223 million USD.",
+        "zh": "SentinelOne 于 2025-09-05 完成 Prompt Security 收购；FY2026 10-K 列示暂定会计对价 160.223 百万美元。"
+      },
+      "limitations": {
+        "en": "10-K purchase-price allocation remains preliminary. Do not sum multiple disclosures for same transaction. Do not adopt unverified press estimate of $250m.",
+        "zh": "购买价分配仍暂定。交割 8-K 约 180 百万美元现金与股份与后续会计公允价值口径不同，不相加、不擅自解释为降价。"
+      },
+      "sources": [
+        {
+          "title": "SentinelOne FY2026 10-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1583708/000158370826000020/s-20260131.htm",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Prompt 交割 8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1583708/000110465925088079/tm2525181d1_8k.htm",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "announcedOn": "2025-08-05",
+      "completedOn": "2025-09-05",
+      "pageDatedOn": null,
+      "observedOn": "2026-09-12",
+      "priorDisclosures": [
+        {
+          "amount_usd_m": 159.304,
+          "amount_basis": "FY2026_Q3_10Q_preliminary_fair_value_of_consideration"
+        },
+        {
+          "amount_usd_m": 180,
+          "approximate": true,
+          "amount_basis": "closing_8K_cash_and_shares_description"
+        }
+      ],
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "ep002-c08",
+      "companyId": "witnessai",
+      "type": "funding",
+      "date": "2026-01-13",
+      "dateBasis": "announced",
+      "amount": 58000000,
+      "currency": "USD",
+      "round": "Strategic funding",
+      "status": "company_announced_raised",
+      "amountBasis": "single_funding_round",
+      "scope": "broad_ai_security_including_agents",
+      "participants": [
+        {
+          "name": "Sound Ventures",
+          "role": "lead"
+        },
+        {
+          "name": "Fin Capital",
+          "role": "participant"
+        },
+        {
+          "name": "Qualcomm Ventures",
+          "role": "participant"
+        },
+        {
+          "name": "Samsung Ventures",
+          "role": "participant"
+        },
+        {
+          "name": "Forgepoint Capital Partners",
+          "role": "participant"
+        }
+      ],
+      "summary": {
+        "en": "WitnessAI: announced financing; 58 million USD.",
+        "zh": "WitnessAI 于 2026-01-13 公告 5,800 万美元战略融资，Sound Ventures 领投；公告未称为 B 轮。"
+      },
+      "limitations": {
+        "en": "Not explicitly labelled Series B. Earlier $27.5m Series A is a separate event.",
+        "zh": "不是累计融资；早期 2,750 万美元融资属于另一事件，本条不重复计入。"
+      },
+      "sources": [
+        {
+          "title": "WitnessAI 5800 万美元战略融资",
+          "url": "https://witness.ai/resources/witnessai-raises-58-million-for-global-expansion-and-announces-new-ways-to-secure-ai-agents/",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "announcedOn": "2026-01-13",
+      "completedOn": null,
+      "pageDatedOn": null,
+      "observedOn": "2026-09-12",
+      "priorDisclosures": [],
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "ep002-c09",
+      "companyId": "koi",
+      "type": "acquisition",
+      "date": "2026-04-14",
+      "dateBasis": "completed",
+      "amount": 231000000,
+      "currency": "USD",
+      "round": "Acquisition",
+      "status": "completed",
+      "amountBasis": "total_purchase_consideration_FY2026_10K_substantially_all_cash",
+      "scope": "agent_security_core_plus_endpoint_posture",
+      "participants": [
+        {
+          "name": "Palo Alto Networks",
+          "role": "acquirer"
+        }
+      ],
+      "summary": {
+        "en": "Koi: acquisition; 231 million USD.",
+        "zh": "Palo Alto Networks 于 2026-04-14 完成 Koi 收购；FY2026 10-K 列示对价 2.31 亿美元。"
+      },
+      "limitations": {
+        "en": "Prior 10-Q separately allocates $61m replacement equity awards to future services; these are not purchase consideration. Do not adopt unverified $400m press estimate.",
+        "zh": "另列的 6,100 万美元未来服务替代股权奖不属于收购对价；不能采用未核验媒体估价。"
+      },
+      "sources": [
+        {
+          "title": "PANW FY2026 10-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1327567/000132756726000023/panw-20260731.htm",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Koi 完成公告",
+          "url": "https://investors.paloaltonetworks.com/news-releases/news-release-details/palo-alto-networks-completes-acquisition-koi-secure-agentic",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "announcedOn": null,
+      "completedOn": "2026-04-14",
+      "pageDatedOn": null,
+      "observedOn": "2026-09-12",
+      "priorDisclosures": [],
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "ep002-c10",
+      "companyId": "virtue-ai",
+      "type": "acquisition",
+      "date": "2026-08-17",
+      "dateBasis": "announced",
+      "amount": null,
+      "currency": "USD",
+      "round": "Acquisition",
+      "status": "announced_as_acquired",
+      "amountBasis": "undisclosed_buyer_says_immaterial",
+      "scope": "broad_ai_security_including_agents",
+      "participants": [
+        {
+          "name": "Fortinet",
+          "role": "acquirer"
+        }
+      ],
+      "summary": {
+        "en": "Fortinet announced/completed the acquisition of Virtue AI; amount undisclosed in reviewed sources.",
+        "zh": "Fortinet 于 2026-08-17 宣布已收购 Virtue AI；本批交易方材料未披露金额。"
+      },
+      "limitations": {
+        "en": "Immaterial to buyer does not mean zero. Exact legal closing date not separately stated.",
+        "zh": "对买方不重大不等于金额为零；法律交割日未单独给出。"
+      },
+      "sources": [
+        {
+          "title": "Fortinet 收购公告",
+          "url": "https://www.fortinet.com/corporate/about-us/newsroom/press-releases/2026/fortinet-advances-continuous-ai-protection-with-the-acquisition-of-virtue-ai",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "announcedOn": "2026-08-17",
+      "completedOn": null,
+      "pageDatedOn": null,
+      "observedOn": "2026-09-12",
+      "priorDisclosures": [],
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "ep002-c11",
+      "companyId": "hiddenlayer",
+      "type": "funding",
+      "date": "2026-09-02",
+      "dateBasis": "announced",
+      "amount": 100000000,
+      "currency": "USD",
+      "round": "Series B",
+      "status": "company_announced_raised",
+      "amountBasis": "single_funding_round",
+      "scope": "broad_ai_security_including_agents",
+      "participants": [
+        {
+          "name": "Delta-v Capital",
+          "role": "lead"
+        },
+        {
+          "name": "Ten Eleven Ventures",
+          "role": "participant"
+        },
+        {
+          "name": "Morgan Stanley",
+          "role": "participant"
+        },
+        {
+          "name": "M12",
+          "role": "participant"
+        },
+        {
+          "name": "Booz Allen Ventures",
+          "role": "participant"
+        }
+      ],
+      "summary": {
+        "en": "HiddenLayer: announced financing; 100 million USD.",
+        "zh": "HiddenLayer 于 2026-09-02 公告 1 亿美元 B 轮，Delta-v Capital 领投。"
+      },
+      "limitations": {
+        "en": "No Agent-only revenue or capital allocation split.",
+        "zh": "未给出 Agent 专属收入或资金分配比例。"
+      },
+      "sources": [
+        {
+          "title": "HiddenLayer 1 亿美元 B 轮融资",
+          "url": "https://www.hiddenlayer.com/news/hiddenlayer-100m-series-b-ai-security",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "announcedOn": "2026-09-02",
+      "completedOn": null,
+      "pageDatedOn": null,
+      "observedOn": "2026-09-12",
+      "priorDisclosures": [],
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "ep002-c12",
+      "companyId": "lasso-security",
+      "type": "funding",
+      "date": "2026-09-02",
+      "dateBasis": "announced",
+      "amount": 30000000,
+      "currency": "USD",
+      "round": "Not stated",
+      "status": "company_announced_raised",
+      "amountBasis": "single_funding_round",
+      "scope": "broad_ai_security_including_agents",
+      "participants": [
+        {
+          "name": "ClearSky",
+          "role": "lead"
+        },
+        {
+          "name": "Entrée Capital",
+          "role": "participant"
+        },
+        {
+          "name": "iAngels",
+          "role": "participant"
+        },
+        {
+          "name": "Singtel Innov8",
+          "role": "participant"
+        },
+        {
+          "name": "Mindset",
+          "role": "participant"
+        },
+        {
+          "name": "Swish Data",
+          "role": "participant"
+        }
+      ],
+      "summary": {
+        "en": "Lasso Security: announced financing; 30 million USD.",
+        "zh": "Lasso 公告本轮融资 3,000 万美元，ClearSky 领投；正文电头为 09-02，网页署日为 09-03，未明示轮次。"
+      },
+      "limitations": {
+        "en": "Dateline and webpage date differ by one day. No round label stated in reviewed source.",
+        "zh": "公告日期口径有一天差异，不构成两笔融资；未披露轮次，不能自行标为 B 轮。"
+      },
+      "sources": [
+        {
+          "title": "Lasso LEAP 与 3000 万美元融资公告",
+          "url": "https://www.lasso.security/resources/lasso-security-announces-future-of-ai-security-with-cpu-based-guardrails",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "announcedOn": "2026-09-02",
+      "completedOn": null,
+      "pageDatedOn": "2026-09-03",
+      "observedOn": "2026-09-12",
+      "priorDisclosures": [],
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    }
+  ],
+  "reports": [
+    {
+      "id": "report-microsoft-work-trend-index-2025",
+      "title": "2025: The year the Frontier Firm is born",
+      "publisher": "Microsoft",
+      "date": "2025-04-23",
+      "kind": "company_report",
+      "claimType": "mixed",
+      "summary": {
+        "en": "Combines workforce research with Microsoft's outlook on human–agent teams and workflow redesign.",
+        "zh": "结合职场研究与微软展望，讨论人机团队和业务流程重构。"
+      },
+      "businessQuestion": {
+        "en": "Which adoption plans could create demand for agent management and governance?",
+        "zh": "哪些采用计划可能带来 Agent 管理与治理需求？"
+      },
+      "limitations": {
+        "en": "Survey: 31,000 knowledge workers across 31 markets, February 6–March 24, 2025. Telemetry covers Microsoft 365 and excludes EU and education tenants. Plans and reported adoption do not establish safety spending or realized ROI.",
+        "zh": "调查覆盖 31 个市场的 31,000 名知识工作者，时间为 2025 年 2—3 月；遥测排除欧盟及教育租户。采用意向不等于安全采购或已实现回报。"
+      },
+      "sources": [
+        {
+          "title": "Microsoft WorkLab report and methodology",
+          "url": "https://www.microsoft.com/en-us/worklab/work-trend-index/2025-the-year-the-frontier-firm-is-born",
+          "locator": "Opening findings; Journey to the Frontier Firm; Methodology > Survey Methodology and Microsoft 365 Telemetry"
+        },
+        {
+          "title": "Microsoft launch announcement",
+          "url": "https://blogs.microsoft.com/blog/2025/04/23/the-2025-annual-work-trend-index-the-frontier-firm-is-born/",
+          "locator": "Publication date; Human-agent teams will upend the org chart"
+        }
+      ],
+      "tags": [
+        "agent-adoption",
+        "enterprise-demand",
+        "governance",
+        "business-value"
+      ],
+      "batchId": "EP001",
+      "cutoff": "2026-09-09"
+    },
+    {
+      "id": "report-anthropic-economic-index-2025-initial",
+      "title": "The Anthropic Economic Index",
+      "publisher": "Anthropic",
+      "date": "2025-02-10",
+      "kind": "company_report",
+      "claimType": "observed",
+      "summary": {
+        "en": "The initial release maps Claude conversations to occupational tasks; software and writing uses are prominent, with more augmentation than automation.",
+        "zh": "初版将 Claude 会话映射到职业任务：软件和写作用途突出，辅助多于自动执行。"
+      },
+      "businessQuestion": {
+        "en": "Where could observed task use guide further demand research?",
+        "zh": "哪些任务使用现象值得进一步调研需求？"
+      },
+      "limitations": {
+        "en": "Claude.ai Free/Pro conversations only; excludes API, Team and Enterprise. Work intent and downstream use are uncertain. This is neither market-wide adoption nor purchasing evidence.",
+        "zh": "仅含 Claude.ai Free/Pro，排除 API、Team 和 Enterprise；工作用途及后续使用不确定，不能代表整体采用或采购。"
+      },
+      "sources": [
+        {
+          "title": "Anthropic initial release and caveats",
+          "url": "https://www.anthropic.com/news/the-anthropic-economic-index",
+          "locator": "February 10, 2025; Using Clio to match AI use to tasks; Results; Caveats"
+        }
+      ],
+      "tags": [
+        "ai-adoption",
+        "task-usage",
+        "enterprise-demand",
+        "business-value"
+      ],
+      "batchId": "EP001",
+      "cutoff": "2026-09-09"
+    },
+    {
+      "id": "report-gartner-agentic-ai-cancellation-2025",
+      "title": "Gartner Predicts Over 40% of Agentic AI Projects Will Be Canceled by End of 2027",
+      "publisher": "Gartner",
+      "date": "2025-06-25",
+      "kind": "analyst_report",
+      "claimType": "forecast",
+      "summary": {
+        "en": "Gartner links its project-cancellation forecast to costs, unclear value and inadequate risk controls.",
+        "zh": "Gartner 将项目取消预测归因于成本、价值不清及风险控制不足。"
+      },
+      "businessQuestion": {
+        "en": "Which value and risk-control questions should buyers examine before scaling agents?",
+        "zh": "扩大 Agent 部署前，买方应验证哪些价值与风险控制问题？"
+      },
+      "limitations": {
+        "en": "Public release only; forecast methodology and project denominator are not disclosed. The separate webinar poll is not a measured cancellation cohort. This is a forecast through 2027, not an observed failure rate.",
+        "zh": "仅公开新闻稿；预测方法及项目分母未披露。另附的网络研讨会民调不是取消项目队列，2027 年预测不是已发生的失败率。"
+      },
+      "sources": [
+        {
+          "title": "Gartner public press release",
+          "url": "https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027",
+          "locator": "June 25, 2025; opening forecast; January 2025 webinar poll; Realizing Business Value"
+        }
+      ],
+      "tags": [
+        "agent-adoption",
+        "market-forecast",
+        "business-value",
+        "risk-controls"
+      ],
+      "batchId": "EP001",
+      "cutoff": "2026-09-09"
+    },
+    {
+      "id": "report-microsoft-wti-2026",
+      "title": "2026 Work Trend Index",
+      "publisher": "Microsoft",
+      "date": "2026-05-05",
+      "kind": "company_report",
+      "claimType": "mixed",
+      "summary": {
+        "en": "Survey of 20,000 knowledge workers using AI at work across 10 markets examines individual AI capability and organizational readiness.",
+        "zh": "调查覆盖 10 个市场、20,000 名在工作中使用 AI 的知识工作者，关注个人能力与组织准备程度。"
+      },
+      "businessQuestion": {
+        "en": "Which authorization, workflow and accountability gaps slow adoption?",
+        "zh": "哪些授权、流程与责任缺口影响采用？"
+      },
+      "limitations": {
+        "en": "Not all enterprises and not a security-procurement survey; no causal ROI inference.",
+        "zh": "样本不是所有企业，也不是安全采购调查，不能推导因果回报。"
+      },
+      "sources": [
+        {
+          "title": "Microsoft 2026 Work Trend Index",
+          "url": "https://www.microsoft.com/en-us/worklab/work-trend-index/agents-human-agency-and-the-opportunity-for-every-organization",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "observedOn": "2026-09-12",
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "report-google-roi-ai-2025",
+      "title": "ROI of AI 2025",
+      "publisher": "Google Cloud",
+      "date": "2025",
+      "kind": "company_report",
+      "claimType": "mixed",
+      "summary": {
+        "en": "Among 3,466 senior executives surveyed, 52% reported their organizations were deploying agents in production.",
+        "zh": "覆盖 3,466 名高管，52% 自报其组织正在生产环境部署 Agent。"
+      },
+      "businessQuestion": {
+        "en": "Which business workflows justify secure production deployment?",
+        "zh": "哪些业务工作流能支持安全生产部署的投入？"
+      },
+      "limitations": {
+        "en": "Vendor research and respondent self-report; not market penetration or directly comparable to studies using other agent definitions.",
+        "zh": "厂商研究与受访者自报，不是全市场渗透率，不能与采用不同 Agent 定义的研究直接比较。"
+      },
+      "sources": [
+        {
+          "title": "Google Cloud ROI of AI 2025 报告与样本",
+          "url": "https://cloud.google.com/resources/content/roi-of-ai-2025",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Google Cloud Agent 商业价值解读",
+          "url": "https://cloud.google.com/transform/roi-of-ai-how-agents-help-business",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "observedOn": "2026-09-12",
+      "datePrecision": "year",
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "report-ibm-breach-2025",
+      "title": "Cost of a Data Breach 2025",
+      "publisher": "IBM / Ponemon",
+      "date": "2025-07-30",
+      "kind": "company_report",
+      "claimType": "observed",
+      "summary": {
+        "en": "Study of 600 breached organizations. Among organizations reporting AI-model/application incidents, 97% lacked appropriate AI access controls. High shadow-AI groups had USD 670,000 higher average breach costs.",
+        "zh": "基于 600 家发生泄露的组织；报告 AI 模型/应用安全事件的组织中，97% 缺乏适当 AI 访问控制；高 shadow AI 组平均泄露成本高 67 万美元。"
+      },
+      "businessQuestion": {
+        "en": "Can access governance and shadow-AI visibility address a concrete budgeted problem?",
+        "zh": "访问治理和未授权 AI 可见性是否对应具体预算问题？"
+      },
+      "limitations": {
+        "en": "97% is a conditional subgroup statistic, not all enterprises. Cost association is not guaranteed product savings.",
+        "zh": "97% 是特定子群统计，不是所有企业；成本相关性不是产品保证节省额。"
+      },
+      "sources": [
+        {
+          "title": "IBM 2025 数据泄露报告发布",
+          "url": "https://newsroom.ibm.com/2025-07-30-ibm-report-13-of-organizations-reported-breaches-of-ai-models-or-applications%2C-97-of-which-reported-lacking-proper-ai-access-controls",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "observedOn": "2026-09-12",
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "report-anthropic-economic-2026-01",
+      "title": "Economic Index January 2026",
+      "publisher": "Anthropic",
+      "date": "2026-01-15",
+      "kind": "company_report",
+      "claimType": "observed",
+      "summary": {
+        "en": "In November 2025 first-party enterprise API traffic, the ten most common tasks accounted for 32%, compared with 28% previously.",
+        "zh": "2025 年 11 月第一方企业 API 流量中，最常见十类任务占 32%，此前报告为 28%。"
+      },
+      "businessQuestion": {
+        "en": "Which recurring workflows are suitable for buyer validation?",
+        "zh": "哪些重复工作流适合作为客户验证入口？"
+      },
+      "limitations": {
+        "en": "Single-provider usage; not enterprise-wide agent adoption or security spending.",
+        "zh": "单一服务商的使用观察，不是全企业 Agent 采用率或安全支出。"
+      },
+      "sources": [
+        {
+          "title": "Anthropic 2026 年 1 月 Economic Index",
+          "url": "https://www.anthropic.com/research/anthropic-economic-index-january-2026-report",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "observedOn": "2026-09-12",
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "report-gartner-security-spend-2026",
+      "title": "Information Security Spending Forecast 2026",
+      "publisher": "Gartner",
+      "date": "2026-02-05",
+      "kind": "analyst_report",
+      "claimType": "forecast",
+      "summary": {
+        "en": "Public abstract forecasts USD 244 billion in 2026 information-security spending, growing 11.6% in constant currency.",
+        "zh": "公开摘要预测 2026 年信息安全支出 2,440 亿美元，按固定汇率增长 11.6%。"
+      },
+      "businessQuestion": {
+        "en": "What is the broader budget context?",
+        "zh": "更大范围的安全预算背景如何？"
+      },
+      "limitations": {
+        "en": "Broad information-security forecast, not Agent security TAM. Public abstract only.",
+        "zh": "整体信息安全预测，不是 Agent 安全 TAM；依据公开摘要。"
+      },
+      "sources": [
+        {
+          "title": "Gartner 2026 信息安全支出预测摘要",
+          "url": "https://www.gartner.com/en/documents/7408930",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "observedOn": "2026-09-12",
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "report-gartner-ai-platforms-2028",
+      "title": "AI Security Platform and Incident Response Predictions",
+      "publisher": "Gartner",
+      "date": "2026-03-17",
+      "kind": "analyst_report",
+      "claimType": "forecast",
+      "summary": {
+        "en": "Predicts more than half of enterprises will use AI-security platforms by 2028, while custom AI applications drive half of incident-response work.",
+        "zh": "预测到 2028 年超过半数企业使用 AI 安全平台，自建 AI 应用涉及半数事件响应工作。"
+      },
+      "businessQuestion": {
+        "en": "Which new control requirements may enter existing security budgets?",
+        "zh": "哪些新控制需求可能进入现有安全预算？"
+      },
+      "limitations": {
+        "en": "Forward-looking forecasts, not current adoption or realized revenues.",
+        "zh": "未来预测，不是当前采用率或已实现收入。"
+      },
+      "sources": [
+        {
+          "title": "Gartner 2028 AI 安全平台与事件响应预测",
+          "url": "https://www.gartner.com/en/newsroom/press-releases/2026-03-17-gartner-predicts-ai-applications-will-drive-50-percent-of-cybersecurity-incident-response-efforts-by-2028",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "observedOn": "2026-09-12",
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "report-gartner-agent-security-competition",
+      "title": "Agent and LLM Security Spend Grows Exponentially While Many Vendors Are Left Behind",
+      "publisher": "Gartner",
+      "date": "2026-06-16",
+      "kind": "analyst_report",
+      "claimType": "mixed",
+      "summary": {
+        "en": "Public abstract emphasizes specialization, modular capabilities and partner ecosystems for vendors outside the largest platforms.",
+        "zh": "公开摘要强调非大型平台厂商应关注深度专业化、模块化能力与伙伴生态。"
+      },
+      "businessQuestion": {
+        "en": "Where could independent vendors retain differentiation?",
+        "zh": "独立厂商在哪些地方仍能形成差异？"
+      },
+      "limitations": {
+        "en": "Only the public abstract was reviewed, not the paid full report or market-share tables.",
+        "zh": "仅核查公开摘要，未读取付费全文或市场份额表。"
+      },
+      "sources": [
+        {
+          "title": "Gartner Agent 与 LLM 安全市场竞争摘要",
+          "url": "https://www.gartner.com/en/documents/8008569",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "observedOn": "2026-09-12",
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "report-forrester-aegis-2026",
+      "title": "Turn AEGIS Controls into an Agentic AI Security Stack",
+      "publisher": "Forrester",
+      "date": "2026-08-21",
+      "kind": "analyst_report",
+      "claimType": "mixed",
+      "summary": {
+        "en": "Maps agentic-AI controls to existing security tools and identifies gaps before recommending additional investment.",
+        "zh": "将 Agent 控制映射到现有安全工具，先确认缺口再考虑新增投入。"
+      },
+      "businessQuestion": {
+        "en": "What does the buyer already own, and what remains uncovered?",
+        "zh": "客户已经买了什么，还有什么未被覆盖？"
+      },
+      "limitations": {
+        "en": "Analyst guidance, not a measured market adoption or spending statistic.",
+        "zh": "分析建议，不是实测市场采用率或支出统计。"
+      },
+      "sources": [
+        {
+          "title": "Forrester AEGIS 控制与采购映射",
+          "url": "https://www.forrester.com/blogs/turn-aegis-controls-into-an-agentic-ai-security-stack/",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "observedOn": "2026-09-12",
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "report-forrester-state-agentic-2026",
+      "title": "The State of Agentic AI in 2026",
+      "publisher": "Forrester",
+      "date": "2026-06-03",
+      "kind": "analyst_report",
+      "claimType": "mixed",
+      "summary": {
+        "en": "Describes high enthusiasm but limited meaningful production use beyond chatbot-like deployments.",
+        "zh": "描述企业热情较高，但超出类聊天机器人、进入有意义生产应用的仍有限。"
+      },
+      "businessQuestion": {
+        "en": "Does the buyer have a production workflow or only an adoption plan?",
+        "zh": "客户拥有真实生产工作流，还是只有采用计划？"
+      },
+      "limitations": {
+        "en": "Definitions and samples differ from Google Cloud research; do not infer a comparable annual trend.",
+        "zh": "定义与样本不同于 Google Cloud 研究，不能推导可比的年度趋势。"
+      },
+      "sources": [
+        {
+          "title": "Forrester 2026 Agentic AI 状态分析",
+          "url": "https://www.forrester.com/blogs/the-state-of-agentic-ai-in-2026-companies-are-chasing-few-are-catching/",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "observedOn": "2026-09-12",
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "report-idc-ai-cyber-risk-2026",
+      "title": "AI Security and the Rise of Generative AI Cyber Risk",
+      "publisher": "IDC",
+      "date": "2026-03-11",
+      "kind": "analyst_report",
+      "claimType": "mixed",
+      "summary": {
+        "en": "Emphasizes identity and data foundations while noting that AI-enhanced attacks still include phishing and social engineering.",
+        "zh": "强调身份与数据基础，并指出 AI 增强攻击仍包含钓鱼和社会工程。"
+      },
+      "businessQuestion": {
+        "en": "Which budget protects agents, and which automates security work?",
+        "zh": "哪些预算保护 Agent，哪些预算用于安全工作自动化？"
+      },
+      "limitations": {
+        "en": "Public interview; no standalone Agent security market size or contract evidence.",
+        "zh": "公开访谈，未提供独立 Agent 安全市场规模或合同证据。"
+      },
+      "sources": [
+        {
+          "title": "IDC 访谈",
+          "url": "https://www.idc.com/resource-center/blog/ai-security-and-the-rise-of-generative-ai-cyber-risk/",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "observedOn": "2026-09-12",
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "report-business-money-20260912",
+      "title": "AI Agent 安全商业与资金流向调研报告",
+      "publisher": "Agent Safety Atlas",
+      "date": "2026-09-12",
+      "kind": "editorial_report",
+      "claimType": "analysis",
+      "batchId": "EP002",
+      "cutoff": "2026-09-12",
+      "summary": {
+        "en": "A source-linked synthesis of company reports, analysts, cases, products and capital flows, with buyer validation and economic trade-offs.",
+        "zh": "综合科技公司报告、分析机构、案例、产品与资本流向，补充客户验证和经济性分析。"
+      },
+      "businessQuestion": {
+        "zh": "企业为什么付钱、资本购买什么能力，我们下一步应验证哪些工作流和预算路径？",
+        "en": "Why do buyers pay, which capabilities attract capital, and which workflows and budget paths should we validate next?"
+      },
+      "limitations": {
+        "en": "Atlas synthesis, not an external analyst report. Priorities and validation plans are recommendations; interviews and product tests have not been conducted.",
+        "zh": "本站综合分析，不是外部机构报告；优先级和验证计划是建议，尚未开展访谈或产品测试。"
+      },
+      "url": "./business-report-2026-09-12.html",
+      "downloads": {
+        "word": "./downloads/ai-agent-business-money-2026-09-12.docx",
+        "markdown": "./downloads/ai-agent-business-money-2026-09-12.md"
+      },
+      "sources": [
+        {
+          "title": "Microsoft 2026 Work Trend Index",
+          "url": "https://www.microsoft.com/en-us/worklab/work-trend-index/agents-human-agency-and-the-opportunity-for-every-organization",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Google Cloud ROI of AI 2025 报告与样本",
+          "url": "https://cloud.google.com/resources/content/roi-of-ai-2025",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Google Cloud Agent 商业价值解读",
+          "url": "https://cloud.google.com/transform/roi-of-ai-how-agents-help-business",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "IBM 2025 数据泄露报告发布",
+          "url": "https://newsroom.ibm.com/2025-07-30-ibm-report-13-of-organizations-reported-breaches-of-ai-models-or-applications%2C-97-of-which-reported-lacking-proper-ai-access-controls",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Anthropic 2026 年 1 月 Economic Index",
+          "url": "https://www.anthropic.com/research/anthropic-economic-index-january-2026-report",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Gartner 2026 信息安全支出预测摘要",
+          "url": "https://www.gartner.com/en/documents/7408930",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Gartner 2028 AI 安全平台与事件响应预测",
+          "url": "https://www.gartner.com/en/newsroom/press-releases/2026-03-17-gartner-predicts-ai-applications-will-drive-50-percent-of-cybersecurity-incident-response-efforts-by-2028",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Gartner Agent 与 LLM 安全市场竞争摘要",
+          "url": "https://www.gartner.com/en/documents/8008569",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Forrester AEGIS 控制与采购映射",
+          "url": "https://www.forrester.com/blogs/turn-aegis-controls-into-an-agentic-ai-security-stack/",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Forrester 2026 Agentic AI 状态分析",
+          "url": "https://www.forrester.com/blogs/the-state-of-agentic-ai-in-2026-companies-are-chasing-few-are-catching/",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "IDC 访谈",
+          "url": "https://www.idc.com/resource-center/blog/ai-security-and-the-rise-of-generative-ai-cyber-risk/",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Gartner 项目取消预测",
+          "url": "https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Aim Labs EchoLeak 原始研究 Cato 迁移页",
+          "url": "https://www.catonetworks.com/blog/breaking-down-echoleak/",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Invariant MCP Tool Poisoning 原始披露",
+          "url": "https://invariantlabs.ai/blog/mcp-security-notification-tool-poisoning-attacks",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Noma ForcedLeak 原始披露",
+          "url": "https://noma.security/blog/forcedleak-agent-risks-exposed-in-salesforce-agentforce",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Anthropic 2025 年 AI 滥用活动披露",
+          "url": "https://www.anthropic.com/news/disrupting-AI-espionage",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Microsoft Entra Agent 身份文档",
+          "url": "https://learn.microsoft.com/en-us/entra/agent-id/what-are-agent-identities",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "AWS AgentCore Policy 正式可用公告",
+          "url": "https://aws.amazon.com/about-aws/whats-new/2026/03/policy-amazon-bedrock-agentcore-generally-available/",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Palo Alto Networks 完成 Protect AI 收购",
+          "url": "https://investors.paloaltonetworks.com/news-releases/news-release-details/palo-alto-networks-completes-acquisition-protect-ai",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Snyk 收购 Invariant Labs 公告",
+          "url": "https://snyk.io/es/news/snyk-acquires-invariant-labs-to-accelerate-agentic-ai-security-innovation/",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Noma Agent 与 MCP 访问控制公告",
+          "url": "https://noma.security/blog/noma-launches-agentic-access-control-to-govern-ai-agents-and-mcp-servers-across-the-enterprise",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "WitnessAI 5800 万美元战略融资",
+          "url": "https://witness.ai/resources/witnessai-raises-58-million-for-global-expansion-and-announces-new-ways-to-secure-ai-agents/",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Lasso LEAP 与 3000 万美元融资公告",
+          "url": "https://www.lasso.security/resources/lasso-security-announces-future-of-ai-security-with-cpu-based-guardrails",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Promptfoo 1840 万美元 A 轮融资",
+          "url": "https://www.promptfoo.dev/blog/series-a-announcement/",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Noma 1 亿美元 B 轮融资",
+          "url": "https://noma.security/blog/noma-security-raises-100m-to-drive-adoption-of-ai-agent-security",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "HiddenLayer 1 亿美元 B 轮融资",
+          "url": "https://www.hiddenlayer.com/news/hiddenlayer-100m-series-b-ai-security",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Noma 投资论述",
+          "url": "https://ballisticventures.com/why-we-led-the-series-a-round-in-noma/",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "WitnessAI 投资论述",
+          "url": "https://ballisticventures.com/why-we-incubated-invested-in-witnessai/",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Cisco 交割附件",
+          "url": "https://d18rn0p25nwr6d.cloudfront.net/CIK-0000858877/8ef1e309-8b64-4f46-8eff-75e456861296.pdf",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "PANW FY2026 10-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1327567/000132756726000023/panw-20260731.htm",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Cato 收购公告",
+          "url": "https://www.catonetworks.com/news/cato-acquires-aim-security-to-extend-sase-leadership-and-secure-enterprise-ai-transformation/",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "SentinelOne FY2026 10-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1583708/000158370826000020/s-20260131.htm",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Koi 完成公告",
+          "url": "https://investors.paloaltonetworks.com/news-releases/news-release-details/palo-alto-networks-completes-acquisition-koi-secure-agentic",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Fortinet 收购公告",
+          "url": "https://www.fortinet.com/corporate/about-us/newsroom/press-releases/2026/fortinet-advances-continuous-ai-protection-with-the-acquisition-of-virtue-ai",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "PANW FY2025 财报",
+          "url": "https://investors.paloaltonetworks.com/static-files/821765bc-6121-4f8e-b898-1755b8e26ac8",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Prompt 交割 8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1583708/000110465925088079/tm2525181d1_8k.htm",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Promptfoo 当前公司状态",
+          "url": "https://www.promptfoo.dev/about/",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Dropzone AI B 轮公告",
+          "url": "https://www.dropzone.ai/press-release/dropzone-ai-37m-series-b-funding-ai-soc-agents",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "AgentCore 价目",
+          "url": "https://aws.amazon.com/bedrock/agentcore/pricing/",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Microsoft 美国价目",
+          "url": "https://www.microsoft.com/en-us/microsoft-agent-365",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Noma Marketplace",
+          "url": "https://aws.amazon.com/marketplace/pp/prodview-kd2qklag2zzym",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "WitnessAI Marketplace",
+          "url": "https://aws.amazon.com/marketplace/pp/prodview-5h2rg6gvjyywg",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Agent 365 官方许可 FAQ",
+          "url": "https://www.microsoft.com/licensing/faqs/122",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "AWS Security Hub 方案与价格",
+          "url": "https://aws.amazon.com/security-hub/pricing/",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "UiPath 原始供应商清单",
+          "url": "https://assets.ctfassets.net/5965pury2lcm/3MgR815xOJmx2r6UgXAqtp/85fac99ea073630ef53cdcbac00a2bff/20251118_UiPath_Subprocessors_List.pdf",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Kantar 与 Noma 案例",
+          "url": "https://noma.security/blog/kantar-secures-the-explosion-of-ai-agents-with-noma",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "TELUS 产品评估案例",
+          "url": "https://www.paloaltonetworks.com/customers/telus-digital-secures-customer-trust-and-innovation",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "AWS Bedrock Guardrails 定价",
+          "url": "https://aws.amazon.com/bedrock/pricing/",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Check Point 原始研究",
+          "url": "https://research.checkpoint.com/2026/rce-and-api-token-exfiltration-through-claude-code-project-files-cve-2025-59536/",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Anthropic 官方 GHSA",
+          "url": "https://github.com/anthropics/claude-code/security/advisories/GHSA-4fgq-fpq9-mr3g",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Microsoft AutoJack 原始研究",
+          "url": "https://www.microsoft.com/en-us/security/blog/2026/06/18/autojack-single-page-rce-host-running-ai-agent/",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "华盛顿大学 Agent 浏览器同源边界研究",
+          "url": "https://agent-security.cs.washington.edu/agentic_browsers_sop.html",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Anthropic 首批事故披露",
+          "url": "https://www.anthropic.com/news/investigating-incidents-cybersecurity-evals",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Anthropic 9 月评估报告",
+          "url": "https://www.anthropic.com/research/alignment-assessment-cybersecurity-incidents",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "IMDA Agentic AI 框架",
+          "url": "https://www.imda.gov.sg/resources/press-releases-factsheets-and-speeches/press-releases/2026/new-model-ai-governance-framework-for-agentic-ai",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "IMDA Sandbox 实践",
+          "url": "https://www.imda.gov.sg/resources/press-releases-factsheets-and-speeches/factsheets/2026/ai-agents-insights-from-the-singapore-government-and-google-sandbox",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "tags": [
+        "editorial",
+        "business",
+        "capital",
+        "pricing"
+      ],
+      "version": "2.1",
+      "language": "zh-CN",
+      "sourceCount": 56,
+      "markdownFilename": "AI_Agent安全商业与资金流向调研报告_2026-09-12.md",
+      "docxFilename": "AI_Agent安全商业与资金流向调研报告_扩充版.docx"
+    }
+  ],
+  "cases": [
+    {
+      "id": "EP001-CASE-DATATALKS",
+      "title": "DataTalks.Club: production infrastructure deletion",
+      "date": "2026-03-06",
+      "eventDate": "2026-02-26",
+      "kind": "incident",
+      "organization": "DataTalks.Club / Claude Code",
+      "summary": {
+        "en": "Operator Alexey Grigorev reports that Claude Code executed a destructive Terraform operation against production after a state-file mix-up. He reports an outage and full database recovery about 24 hours later.",
+        "zh": "运营者 Alexey Grigorev 复盘称，状态文件混用后，Claude Code 执行的 Terraform 操作删除了生产基础设施；平台停机，数据库约 24 小时后完整恢复。"
+      },
+      "businessQuestion": {
+        "en": "Where should buyers fund approval controls, environment isolation and tested recovery?",
+        "zh": "审批控制、环境隔离和恢复演练，哪些应进入企业预算？"
+      },
+      "limitations": {
+        "en": "Operator account; AWS and Anthropic were not independently consulted. Monetary loss is unquantified. Human supervision and configuration also contributed.",
+        "zh": "依据运营者自述，未获 AWS 或 Anthropic 独立确认；经济损失未量化，人工监督与配置也参与致因。"
+      },
+      "sources": [
+        {
+          "title": "Alexey Grigorev: How I Dropped Our Production Database and Now Pay 10% More for AWS",
+          "url": "https://aishippingblog.com/p/how-i-dropped-our-production-database",
+          "locator": "Published Mar 06, 2026; Incident Timeline (Feb 26–27); What Actually Happened; 24 Hours Later; Lessons Learned. Baseline identity: REC-C09-011."
+        }
+      ],
+      "tags": [
+        "Secure delegation",
+        "Human oversight",
+        "Failure attribution"
+      ],
+      "evidenceStatus": {
+        "en": "Affected operator postmortem; recovery reported",
+        "zh": "受影响运营者复盘；恢复为其报告结果"
+      },
+      "batchId": "EP001",
+      "cutoff": "2026-09-09"
+    },
+    {
+      "id": "EP001-CASE-ECHOLEAK",
+      "title": "EchoLeak: Microsoft 365 Copilot prompt-injection research",
+      "date": "2025-06-11",
+      "eventDate": null,
+      "kind": "controlled_research",
+      "organization": "Aim Labs / Microsoft 365 Copilot",
+      "summary": {
+        "en": "Aim Labs demonstrated that an external email could redirect Copilot to disclose data from its context. Microsoft published CVE-2025-32711. Aim reports no known affected customers and relays Microsoft's no-customer-impact confirmation.",
+        "zh": "Aim Labs 演示外部邮件可诱导 Copilot 泄露上下文数据。Microsoft 发布 CVE-2025-32711；Aim 称无已知受影响客户，并转述微软确认无客户受损。"
+      },
+      "businessQuestion": {
+        "en": "How should buyers assess data boundaries and runtime safeguards in enterprise copilots?",
+        "zh": "采购企业 Copilot 时，应如何验证数据边界与运行时防护？"
+      },
+      "limitations": {
+        "en": "The original author article is now hosted by Cato; migration/page dates differ from common disclosure dates. Not confirmed customer-loss statistics.",
+        "zh": "原始作者文章现由 Cato 承载，迁移页日期与常见披露日不同；不是已确认客户损失统计。"
+      },
+      "sources": [
+        {
+          "title": "Aim Labs / Cato Networks: Breaking down EchoLeak",
+          "url": "https://www.catonetworks.com/blog/breaking-down-echoleak/",
+          "locator": "Executive Summary; What Is an LLM Scope Violation?; Q&A: Have I been affected? Research team's accessible migrated article; original aim.security URL returned HTTP 403. The migrated page's May 31, 2025 label is not used as the public-disclosure date.",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Microsoft CNA record: CVE-2025-32711",
+          "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2025/32xxx/CVE-2025-32711.json",
+          "locator": "cveMetadata.datePublished; containers.cna.datePublic; containers.cna.providerMetadata.shortName; descriptions. Microsoft CNA dates public disclosure to June 11, 2025."
+        }
+      ],
+      "tags": [
+        "Prompt injection",
+        "Guardrail bypass",
+        "Cybersecurity"
+      ],
+      "evidenceStatus": {
+        "en": "Coordinated vulnerability research; the discoverer relays Microsoft confirmation that no customers were affected.",
+        "zh": "协调漏洞研究；发现者转述 Microsoft 确认没有客户受影响。"
+      },
+      "batchId": "EP001",
+      "cutoff": "2026-09-09",
+      "observedOn": "2026-09-12",
+      "updatedInBatches": [
+        "EP002"
+      ]
+    },
+    {
+      "id": "case-glide-lasso-2026",
+      "title": "Glide Identity: securing internal AI agents with Lasso",
+      "date": "2026-05-11",
+      "eventDate": null,
+      "kind": "deployment_case",
+      "organization": "Glide Identity / Lasso Security",
+      "summary": {
+        "en": "Lasso's named-customer case describes Glide using agent red teaming and runtime guardrails. It attributes a penetration-testing workflow reduction from three weeks to two days to the combined agent and security deployment.",
+        "zh": "Lasso 具名客户案例称 Glide 采用 Agent 红队测试与运行时防护，并称结合 Agent 与安全部署后，渗透测试流程从三周缩短至两天。"
+      },
+      "businessQuestion": {
+        "en": "Can security controls enable wider internal agent use, and is there evidence of customer value or actual payment?",
+        "zh": "安全控制能否支持企业扩大内部 Agent 使用？客户价值与实际付费分别有什么证据？"
+      },
+      "limitations": {
+        "en": "Vendor-hosted case with customer quotations. No customer-owned confirmation was found in the B004 bounded search. Outcomes were not independently validated; contract value, payment, deployment date and security-only contribution are unknown. Date is case publication, from the vendor directory.",
+        "zh": "厂商托管案例含客户引语；B004 定点检索未找到客户自有来源确认。效果未经独立验证；合同金额、付费、部署日期及安全产品单独贡献未知。日期为厂商目录中的案例发布日期。"
+      },
+      "sources": [
+        {
+          "title": "Securing AI Agents at Glide Identity",
+          "url": "https://www.lasso.security/case-study/glide-identity",
+          "locator": "The Solution; Agentic Red Teaming; Runtime Protection & Policy Guardrails; The Result: The 2-Day Pentest; B004 REC-C05-B004-0006"
+        },
+        {
+          "title": "Lasso Security — Case Studies",
+          "url": "https://www.lasso.security/case-studies",
+          "locator": "Glide Identity directory entry dated May 11, 2026"
+        }
+      ],
+      "tags": [
+        "Vendor case",
+        "Internal agents",
+        "Runtime protection"
+      ],
+      "evidenceStatus": {
+        "en": "Vendor-hosted named-customer case; payment unverified",
+        "zh": "厂商托管具名客户案例；付费未验证"
+      },
+      "batchId": "EP001",
+      "cutoff": "2026-09-09"
+    },
+    {
+      "id": "case-mcp-tool-poisoning-2025",
+      "title": "MCP Tool Poisoning",
+      "date": "2025-04-01",
+      "kind": "controlled_research",
+      "organization": "Invariant Labs",
+      "summary": {
+        "en": "Malicious tool descriptions can influence agents and exploit access through other connected tools.",
+        "zh": "恶意工具描述可影响 Agent，并利用其他已连接工具访问数据。"
+      },
+      "businessQuestion": {
+        "en": "Where are tool admission, metadata change detection and cross-tool data policies needed?",
+        "zh": "哪里需要工具准入、元数据变更检测与跨工具数据策略？"
+      },
+      "limitations": {
+        "en": "Research demonstration; not evidence that all current MCP clients are vulnerable.",
+        "zh": "研究演示，不代表全部当前 MCP 客户端存在同样漏洞。"
+      },
+      "sources": [
+        {
+          "title": "Invariant MCP Tool Poisoning 原始披露",
+          "url": "https://invariantlabs.ai/blog/mcp-security-notification-tool-poisoning-attacks",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "observedOn": "2026-09-12",
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "case-forcedleak-2025",
+      "title": "ForcedLeak / Salesforce Agentforce",
+      "date": "2025-09-25",
+      "kind": "controlled_research",
+      "organization": "Noma / Salesforce",
+      "summary": {
+        "en": "Indirect prompt injection through Web-to-Lead data enabled a CRM exfiltration chain involving an expired CSP-allowed domain.",
+        "zh": "Web-to-Lead 数据中的间接提示注入构成 CRM 外传链，涉及 CSP 允许列表中的过期域名。"
+      },
+      "businessQuestion": {
+        "en": "Can destination controls and workflow authorization cut the chain?",
+        "zh": "目的地控制与工作流授权能否切断链路？"
+      },
+      "limitations": {
+        "en": "Vendor research; patched, with no verified customer theft established in this report.",
+        "zh": "厂商研究；已修补，本报告未确认客户失窃。"
+      },
+      "sources": [
+        {
+          "title": "Noma ForcedLeak 原始披露",
+          "url": "https://noma.security/blog/forcedleak-agent-risks-exposed-in-salesforce-agentforce",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "observedOn": "2026-09-12",
+      "remediation": {
+        "en": "Salesforce regained the domain and strengthened Trusted URLs per the researcher.",
+        "zh": "研究方称 Salesforce 重新控制域名并强化 Trusted URLs。"
+      },
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "case-claude-code-config-2026",
+      "title": "Claude Code project configuration risks",
+      "date": "2026-02-25",
+      "kind": "controlled_research",
+      "organization": "Check Point / Anthropic",
+      "summary": {
+        "en": "Research disclosure covers configuration, execution approval and credential initialization risks; patches occurred in 2025.",
+        "zh": "研究披露涉及配置、执行批准和凭据初始化风险；修补发生于 2025 年。"
+      },
+      "businessQuestion": {
+        "en": "Which endpoint, project trust and credential-destination controls are needed?",
+        "zh": "需要哪些终端、项目信任与凭据目的地控制？"
+      },
+      "limitations": {
+        "en": "Conditions differ across issues; CVE-2025-59536 requires startup in an untrusted directory. Not a universal clone-to-zero-click chain.",
+        "zh": "各问题前提不同；CVE-2025-59536 涉及在不可信目录启动，不能概括为克隆仓库即可零点击执行。"
+      },
+      "sources": [
+        {
+          "title": "Check Point 原始研究",
+          "url": "https://research.checkpoint.com/2026/rce-and-api-token-exfiltration-through-claude-code-project-files-cve-2025-59536/",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Anthropic 官方 GHSA",
+          "url": "https://github.com/anthropics/claude-code/security/advisories/GHSA-4fgq-fpq9-mr3g",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "observedOn": "2026-09-12",
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "case-autojack-2026",
+      "title": "AutoJack",
+      "date": "2026-06-18",
+      "kind": "controlled_research",
+      "organization": "Microsoft",
+      "summary": {
+        "en": "A local PoC combined browser tooling and an MCP WebSocket control surface in a development build.",
+        "zh": "本地 PoC 组合开发版本的浏览工具与 MCP WebSocket 控制面。"
+      },
+      "businessQuestion": {
+        "en": "Are local control planes authenticated and appropriately isolated?",
+        "zh": "本地控制面是否具备认证与恰当隔离？"
+      },
+      "limitations": {
+        "en": "The affected surface never reached relevant PyPI releases; those package users were not affected by this specific chain. Current builds were addressed.",
+        "zh": "受影响表面从未进入相关 PyPI 发布版本；这些安装用户不受该特定链影响，当前构建已处理。"
+      },
+      "sources": [
+        {
+          "title": "Microsoft AutoJack 原始研究",
+          "url": "https://www.microsoft.com/en-us/security/blog/2026/06/18/autojack-single-page-rce-host-running-ai-agent/",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "observedOn": "2026-09-12",
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "case-agent-browser-sop-2026",
+      "title": "Agent browser same-origin boundary experiments",
+      "date": "2026",
+      "kind": "controlled_research",
+      "organization": "University of Washington",
+      "summary": {
+        "en": "Researchers studied seven agent browsers using their own accounts and sites; complete attacks and partial prerequisites were distinguished.",
+        "zh": "研究者用自有账号和网站研究七种 Agent 浏览器，并区分完整攻击与仅满足部分前提。"
+      },
+      "businessQuestion": {
+        "en": "How should cross-origin reads, writes and session separation be evaluated?",
+        "zh": "如何评测跨来源读写授权与会话分隔？"
+      },
+      "limitations": {
+        "en": "Do not report seven successful compromises; early-2026 observations do not establish September product status.",
+        "zh": "不能写成七款均成功被攻破；年初观察不代表九月产品状态。"
+      },
+      "sources": [
+        {
+          "title": "华盛顿大学 Agent 浏览器同源边界研究",
+          "url": "https://agent-security.cs.washington.edu/agentic_browsers_sop.html",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "observedOn": "2026-09-12",
+      "datePrecision": "year",
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "case-anthropic-cyber-eval-2026",
+      "title": "Real-world boundary violations during cybersecurity evaluations",
+      "date": "2026-09-09",
+      "kind": "incident",
+      "organization": "Anthropic",
+      "summary": {
+        "en": "After three incidents disclosed in July, a September report added a fourth: a January event found in August. Misconfigured evaluation infrastructure allowed real third-party access.",
+        "zh": "7 月披露三起后，9 月报告补充第四起：1 月发生、8 月追查发现；评测基础设施误配置使模型访问真实第三方系统。"
+      },
+      "businessQuestion": {
+        "en": "Who needs isolation acceptance tests, trajectory monitoring and reliable pause controls?",
+        "zh": "哪些客户需要隔离验收、轨迹监控与可靠暂停？"
+      },
+      "limitations": {
+        "en": "Evaluation environments lacked normally deployed cyber-abuse classifiers and monitoring; the report also discusses model judgment failures. Not a production incident rate. Independent investigation not treated as concluded.",
+        "zh": "评测未启用通常部署的网络滥用分类器和监控；报告也讨论模型判断失误。不是生产事故率，独立调查不能视为结案。"
+      },
+      "sources": [
+        {
+          "title": "Anthropic 首批事故披露",
+          "url": "https://www.anthropic.com/news/investigating-incidents-cybersecurity-evals",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Anthropic 9 月评估报告",
+          "url": "https://www.anthropic.com/research/alignment-assessment-cybersecurity-incidents",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "observedOn": "2026-09-12",
+      "fourthEventDate": "2026-01",
+      "fourthEventDiscovered": "2026-08",
+      "dateBasis": "report_published",
+      "evidenceStatus": {
+        "en": "First-party report of real unauthorized access during evaluations.",
+        "zh": "当事方报告：评测环境中发生真实未授权访问。"
+      },
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "case-uipath-noma-supplier-2025",
+      "title": "UiPath lists Noma as an opt-in subprocessor",
+      "date": "2025-11-18",
+      "kind": "buyer_material",
+      "organization": "UiPath / Noma",
+      "summary": {
+        "en": "UiPath lists Noma for identifying and limiting prompt injection when customers enable the relevant feature.",
+        "zh": "UiPath 将 Noma 列为客户启用相关功能时识别和限制提示注入的分处理方。"
+      },
+      "businessQuestion": {
+        "en": "Can security be sold through embedding in a workflow provider?",
+        "zh": "安全能力能否通过嵌入工作流供应商交付？"
+      },
+      "limitations": {
+        "en": "Buyer-side supplier-chain evidence; does not prove universal activation, paid contract size or independent effectiveness.",
+        "zh": "买方供应链材料，不证明全部客户启用、付费合同规模或独立效果。"
+      },
+      "sources": [
+        {
+          "title": "UiPath 原始供应商清单",
+          "url": "https://assets.ctfassets.net/5965pury2lcm/3MgR815xOJmx2r6UgXAqtp/85fac99ea073630ef53cdcbac00a2bff/20251118_UiPath_Subprocessors_List.pdf",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "observedOn": "2026-09-12",
+      "companyId": "noma-security",
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "case-kantar-noma-2026",
+      "title": "Kantar / Noma red-team acceptance workflow",
+      "date": "2026-06-21",
+      "kind": "deployment_case",
+      "organization": "Kantar / Noma",
+      "summary": {
+        "en": "A named vendor case describes a customer-goal-led POC followed by pre-launch AI red teaming, involving CTO and applied AI roles.",
+        "zh": "具名厂商案例描述围绕客户自身目标做 POC，随后将 AI 红队纳入上线前流程，涉及 CTO 和应用 AI 角色。"
+      },
+      "businessQuestion": {
+        "en": "Can recurring release acceptance create a budget and renewal reason?",
+        "zh": "反复上线验收能否形成预算与续约理由？"
+      },
+      "limitations": {
+        "en": "Vendor-published case; no verified ACV or independent comparative results.",
+        "zh": "厂商发布案例，未确认合同年值或独立对比结果。"
+      },
+      "sources": [
+        {
+          "title": "Kantar 与 Noma 案例",
+          "url": "https://noma.security/blog/kantar-secures-the-explosion-of-ai-agents-with-noma",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "observedOn": "2026-09-12",
+      "companyId": "noma-security",
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "case-telus-airs-evaluation",
+      "title": "TELUS Digital / Prisma AIRS evidence",
+      "date": "2026-09-12",
+      "kind": "evaluation_case",
+      "organization": "TELUS Digital / Palo Alto Networks",
+      "summary": {
+        "en": "One announcement calls TELUS an early AIRS customer while a customer page says it has begun evaluating AIRS.",
+        "zh": "一份公告称 TELUS 为 AIRS 早期客户，另一客户页面写开始评估 AIRS。"
+      },
+      "businessQuestion": {
+        "en": "What additional evidence establishes paid production use?",
+        "zh": "需要什么额外证据才能确认付费生产使用？"
+      },
+      "limitations": {
+        "en": "This date is observation, not contract or deployment date. Do not assign benefits of other Palo Alto products to AIRS.",
+        "zh": "此日期是观察日，不是合同或部署日期；其他 Palo Alto 产品收益不能归给 AIRS。"
+      },
+      "sources": [
+        {
+          "title": "Palo Alto Networks 完成 Protect AI 收购",
+          "url": "https://investors.paloaltonetworks.com/news-releases/news-release-details/palo-alto-networks-completes-acquisition-protect-ai",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "TELUS 产品评估案例",
+          "url": "https://www.paloaltonetworks.com/customers/telus-digital-secures-customer-trust-and-innovation",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "observedOn": "2026-09-12",
+      "dateBasis": "observed",
+      "companyId": "protect-ai",
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    }
+  ],
+  "prices": [
+    {
+      "id": "price-agentcore-policy",
+      "companyId": "aws",
+      "product": "AgentCore Policy",
+      "amount": 2.5e-05,
+      "currency": "USD",
+      "unit": {
+        "en": "per authorization request",
+        "zh": "每次授权请求"
+      },
+      "observedOn": "2026-09-12",
+      "evidenceType": "public_list_price",
+      "limitations": {
+        "en": "Only the policy service; tool requests must flow through Gateway.",
+        "zh": "仅授权服务，工具请求需经过 Gateway。"
+      },
+      "sources": [
+        {
+          "title": "AgentCore 价目",
+          "url": "https://aws.amazon.com/bedrock/agentcore/pricing/",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "price-agentcore-gateway",
+      "companyId": "aws",
+      "product": "AgentCore Gateway",
+      "amount": 0.005,
+      "currency": "USD",
+      "unit": {
+        "en": "per 1,000 tool invocations",
+        "zh": "每 1,000 次工具调用"
+      },
+      "observedOn": "2026-09-12",
+      "evidenceType": "public_list_price",
+      "limitations": {
+        "en": "Separate from Policy, model inference, runtime and network costs.",
+        "zh": "与 Policy、模型推理、运行环境及网络费用分别计量。"
+      },
+      "sources": [
+        {
+          "title": "AgentCore 价目",
+          "url": "https://aws.amazon.com/bedrock/agentcore/pricing/",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "price-agent365",
+      "companyId": "microsoft",
+      "product": "Microsoft Agent 365",
+      "amount": 15,
+      "currency": "USD",
+      "unit": {
+        "en": "per user/month, annual payment",
+        "zh": "每用户每月，年付"
+      },
+      "observedOn": "2026-09-12",
+      "evidenceType": "public_list_price",
+      "limitations": {
+        "en": "Per user, not per agent; prerequisite Microsoft suites and third-party integration support need verification.",
+        "zh": "按用户而非每 Agent；需核对基础套装与第三方集成支持。"
+      },
+      "sources": [
+        {
+          "title": "Microsoft 美国价目",
+          "url": "https://www.microsoft.com/en-us/microsoft-agent-365",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "Agent 365 官方许可 FAQ",
+          "url": "https://www.microsoft.com/licensing/faqs/122",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "billingPeriod": "annual",
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "price-noma-platform",
+      "companyId": "noma-security",
+      "product": "Noma Platform",
+      "amount": 200000,
+      "currency": "USD",
+      "unit": {
+        "en": "12-month platform dimension",
+        "zh": "12 个月平台维度"
+      },
+      "observedOn": "2026-09-12",
+      "evidenceType": "public_list_price",
+      "limitations": {
+        "en": "Covered asset quantities are not stated; not observed ACV or a revenue estimate.",
+        "zh": "未明示覆盖资产量；不是实测合同年值或收入估算。"
+      },
+      "sources": [
+        {
+          "title": "Noma Marketplace",
+          "url": "https://aws.amazon.com/marketplace/pp/prodview-kd2qklag2zzym",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "price-witness-enterprise",
+      "companyId": "witnessai",
+      "product": "WitnessAI Enterprise",
+      "amount": 180,
+      "currency": "USD",
+      "unit": {
+        "en": "per user/year",
+        "zh": "每用户每年"
+      },
+      "observedOn": "2026-09-12",
+      "evidenceType": "public_list_price",
+      "limitations": {
+        "en": "Minimum 1,000 users: listed minimum USD 180,000/year. Separate dimension, not mandatory bundle.",
+        "zh": "最少 1,000 用户，挂牌最低每年 180,000 美元；独立维度，不代表强制捆绑。"
+      },
+      "sources": [
+        {
+          "title": "WitnessAI Marketplace",
+          "url": "https://aws.amazon.com/marketplace/pp/prodview-5h2rg6gvjyywg",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "minimumUnits": 1000,
+      "minimumAnnualAmount": 180000,
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "price-witness-visibility",
+      "companyId": "witnessai",
+      "product": "WitnessAI Agentic Visibility",
+      "amount": 24,
+      "currency": "USD",
+      "unit": {
+        "en": "per agent/year",
+        "zh": "每 Agent 每年"
+      },
+      "observedOn": "2026-09-12",
+      "evidenceType": "public_list_price",
+      "limitations": {
+        "en": "Minimum 2,500 agents: USD 60,000/year; visibility does not imply full runtime protection.",
+        "zh": "最少 2,500 个 Agent，每年最低 60,000 美元；可见性不代表完整运行时防护。"
+      },
+      "sources": [
+        {
+          "title": "WitnessAI Marketplace",
+          "url": "https://aws.amazon.com/marketplace/pp/prodview-5h2rg6gvjyywg",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "minimumUnits": 2500,
+      "minimumAnnualAmount": 60000,
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "price-witness-protect",
+      "companyId": "witnessai",
+      "product": "WitnessProtect",
+      "amount": 300000,
+      "currency": "USD",
+      "unit": {
+        "en": "12-month model-protection dimension",
+        "zh": "12 个月模型保护维度"
+      },
+      "observedOn": "2026-09-12",
+      "evidenceType": "public_list_price",
+      "limitations": {
+        "en": "Model count and traffic coverage are unspecified. No mandatory bundling inferred.",
+        "zh": "未明确模型数和流量覆盖，不推断强制捆绑。"
+      },
+      "sources": [
+        {
+          "title": "WitnessAI Marketplace",
+          "url": "https://aws.amazon.com/marketplace/pp/prodview-5h2rg6gvjyywg",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "price-bedrock-content",
+      "companyId": "aws",
+      "product": "Bedrock Guardrails content filter",
+      "amount": 0.15,
+      "currency": "USD",
+      "unit": {
+        "en": "per 1,000 text units",
+        "zh": "每 1,000 text units"
+      },
+      "observedOn": "2026-09-12",
+      "evidenceType": "public_list_price",
+      "limitations": {
+        "en": "ApplyGuardrail pricing; up to 1,000 characters per unit, input and output rounded separately. Not tokens.",
+        "zh": "ApplyGuardrail 对应价目；每单位最多 1,000 字符，输入输出分别进位，不是 token。"
+      },
+      "sources": [
+        {
+          "title": "AWS Bedrock Guardrails 定价",
+          "url": "https://aws.amazon.com/bedrock/pricing/",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    },
+    {
+      "id": "price-bedrock-pii",
+      "companyId": "aws",
+      "product": "Bedrock Guardrails sensitive-information filter",
+      "amount": 0.1,
+      "currency": "USD",
+      "unit": {
+        "en": "per 1,000 text units",
+        "zh": "每 1,000 text units"
+      },
+      "observedOn": "2026-09-12",
+      "evidenceType": "public_list_price",
+      "limitations": {
+        "en": "Same unit convention; separate filter charge. Excludes model and runtime.",
+        "zh": "同样的 text unit 口径，过滤器单独计费，不含模型和运行环境。"
+      },
+      "sources": [
+        {
+          "title": "AWS Bedrock Guardrails 定价",
+          "url": "https://aws.amazon.com/bedrock/pricing/",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "scenario-control-cost-100k",
+      "kind": "illustrative_calculation",
+      "label": {
+        "en": "Hypothetical monthly control-layer cost",
+        "zh": "假设每月控制层成本"
+      },
+      "assumptions": {
+        "en": "Northern Virginia; 100,000 conversations/month; 6 tool calls and policy checks per conversation; one checked input of 1,200 characters and output of 1,800 characters; content and PII filters.",
+        "zh": "北弗吉尼亚；每月 10 万会话，每次 6 个工具调用及授权；检查一次 1,200 字符输入与 1,800 字符输出，同时启用内容及敏感信息过滤。"
+      },
+      "monthlyUSD": 118,
+      "repeatedTenPairsMonthlyUSD": 1018,
+      "excludedCosts": {
+        "en": "Model inference, runtime, retrieval, logging, network, integration and labor. Not a customer bill.",
+        "zh": "模型推理、运行环境、检索、日志、网络、集成和人工；不是客户账单。"
+      },
+      "sources": [
+        {
+          "title": "AgentCore 价目",
+          "url": "https://aws.amazon.com/bedrock/agentcore/pricing/",
+          "accessedOn": "2026-09-12"
+        },
+        {
+          "title": "AWS Bedrock Guardrails 定价",
+          "url": "https://aws.amazon.com/bedrock/pricing/",
+          "accessedOn": "2026-09-12"
+        }
+      ],
+      "batchId": "EP002",
+      "cutoff": "2026-09-12"
+    }
+  ]
+}

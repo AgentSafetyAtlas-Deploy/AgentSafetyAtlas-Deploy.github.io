@@ -1,0 +1,193 @@
+{
+  "_terms": {
+    "alignment": [
+      "对齐",
+      "目标",
+      "奖励",
+      "奖励黑客",
+      "目标泛化",
+      "规格博弈"
+    ],
+    "safe-rl": [
+      "安全强化学习",
+      "约束策略",
+      "安全探索",
+      "强化学习"
+    ],
+    "deception-control": [
+      "欺骗",
+      "伪装",
+      "破坏",
+      "不可信模型",
+      "控制",
+      "藏拙"
+    ],
+    "human-control": [
+      "人工审批",
+      "人在回路",
+      "人类控制",
+      "自主权",
+      "关停",
+      "可纠正"
+    ],
+    "oversight": [
+      "监督",
+      "监控",
+      "互补",
+      "黑盒",
+      "弱监督",
+      "审计",
+      "辩论"
+    ],
+    "runtime-monitoring": [
+      "运行时",
+      "监控",
+      "轨迹",
+      "工具调用轨迹",
+      "互补监督",
+      "黑盒",
+      "拦截",
+      "护栏"
+    ],
+    "formal-guarantees": [
+      "形式化",
+      "证明",
+      "可证明",
+      "不变量",
+      "验证",
+      "屏蔽"
+    ],
+    "prompt-injection": [
+      "提示注入",
+      "间接注入",
+      "恶意网页",
+      "网页",
+      "工具返回",
+      "不可信内容",
+      "注入"
+    ],
+    "jailbreaks": [
+      "越狱",
+      "有害请求",
+      "拒绝",
+      "对抗提示"
+    ],
+    "privacy": [
+      "隐私",
+      "泄露",
+      "外泄",
+      "机密",
+      "个人信息",
+      "敏感数据"
+    ],
+    "memory-retrieval": [
+      "记忆",
+      "检索",
+      "投毒",
+      "污染",
+      "长期",
+      "跨会话",
+      "经验",
+      "知识库"
+    ],
+    "supply-chain": [
+      "供应链",
+      "MCP",
+      "协议",
+      "插件",
+      "依赖",
+      "技能",
+      "软件包"
+    ],
+    "tool-execution": [
+      "工具执行",
+      "工具使用",
+      "沙箱",
+      "浏览器",
+      "电脑操作",
+      "编程agent",
+      "函数调用"
+    ],
+    "permissions": [
+      "权限",
+      "身份",
+      "授权",
+      "最小权限",
+      "访问控制",
+      "能力限制"
+    ],
+    "embodied": [
+      "具身",
+      "机器人",
+      "物理",
+      "自动驾驶",
+      "碰撞",
+      "导航"
+    ],
+    "multi-agent": [
+      "多智能体",
+      "多agent",
+      "共谋",
+      "协作",
+      "通信",
+      "委托",
+      "多代理"
+    ],
+    "evaluation": [
+      "评测",
+      "基准",
+      "测试集",
+      "评估",
+      "测量",
+      "效用"
+    ],
+    "red-teaming": [
+      "红队",
+      "自适应攻击",
+      "攻击生成",
+      "压力测试",
+      "攻击者"
+    ],
+    "non-adversarial": [
+      "非对抗",
+      "事故",
+      "意外",
+      "副作用",
+      "可靠性",
+      "恢复",
+      "失误"
+    ]
+  },
+  "_examples": {
+    "monitor": "给使用工具的 Agent 做互补黑盒安全监督",
+    "memory": "阻止记忆投毒影响 Agent 后续任务",
+    "web": "保护浏览器 Agent 不受恶意网页指令影响",
+    "multi": "评测多 Agent 共谋与不安全委托"
+  },
+  "Does optimizing the measured goal still serve the user?": "优化指标时，是否仍在完成用户真正的目标？",
+  "Learn a policy while respecting explicit safety constraints.": "让策略学习始终满足明确的安全约束。",
+  "Study what happens when the agent itself is untrusted.": "当执行者本身不可信，系统如何保持可控？",
+  "Decide when and how a person should stay in control.": "明确人应该在何时、以什么方式保留控制权。",
+  "Make limited supervision useful against stronger agents.": "在监督能力有限时，如何看住更强的执行者？",
+  "Detect unsafe behavior and intervene during execution.": "在执行过程中识别风险，并选择何时介入。",
+  "Express the assumptions under which a guarantee holds.": "把安全保证及其成立条件写成可验证的约束。",
+  "Keep external content from becoming an instruction.": "阻止网页、文件或工具返回越过指令的信任边界。",
+  "Test the boundary between a request and a disallowed action.": "研究有害请求如何诱导行为，以及拒绝机制的边界。",
+  "Trace where private information can leave an agent workflow.": "追踪私人信息在 agent 工作流中如何暴露或流出。",
+  "Understand attacks that persist through retrieved memories.": "理解风险如何经由记忆与检索持续影响后续任务。",
+  "Follow trust across tools, dependencies and extensions.": "检查工具、插件、技能与依赖链上的信任传递。",
+  "Make risky actions observable, bounded and recoverable.": "让高风险工具动作可观察、有限制、可恢复。",
+  "Limit what an agent is allowed to do, even if it is misled.": "即使 agent 被误导，也限制它能够执行的动作。",
+  "Connect learned decisions to physical-world safety.": "把学习系统的决策与物理世界的安全约束连接起来。",
+  "Examine risks introduced by agents interacting with agents.": "研究多个 agent 交互、协作或共谋带来的风险。",
+  "Choose what to measure before comparing defenses.": "先明确应该测什么，再比较攻击与防御。",
+  "Search for failures under an explicit attacker model.": "在明确攻击者能力的条件下，系统寻找失败案例。",
+  "Study harmful outcomes without assuming an attacker.": "即使没有攻击者，也要理解错误如何转化为安全后果。",
+  "AgentSpec uses explicit triggers, predicates and enforcement rules for runtime constraints; compare this design with a learned monitor.": "AgentSpec 用触发器、谓词与执行规则表达运行时约束，可与学习式监督者对照。",
+  "A guard agent checks user-defined requirements with knowledge-enabled reasoning, offering a concrete separate-monitor design.": "以独立 guard agent 和知识推理检查用户约束，为单独监督者提供一个具体实现。",
+  "Study an implemented guard-agent approach before deciding what information your supervisor must observe.": "先研究一个已有 guard-agent 实现，再决定自己的监督者必须观察哪些信息。",
+  "CaMeL separates trusted control flow from untrusted data and enforces capabilities around tool calls; its evaluation includes AgentDojo.": "CaMeL 将可信控制流与不可信数据分开，并在工具调用时执行能力约束；论文在 AgentDojo 上评测。",
+  "CaMeL connects data-flow restrictions with tool capabilities, a useful comparison for privilege-control approaches.": "CaMeL 将数据流限制与工具能力联系起来，可用于对照其他权限控制方案。",
+  "AgentSpec makes execution constraints explicit; inspect its code-agent setting separately from embodied and driving experiments.": "AgentSpec 将执行约束显式化；阅读时分开核查代码 Agent、具身与驾驶实验。",
+  "MemoryGraft studies poisoned experience retrieval and reports persistent effects across sessions, extending the reading route beyond knowledge-base poisoning.": "MemoryGraft 研究经验记忆投毒并报告跨会话影响，将阅读线从知识库污染扩展到经验复用。"
+}

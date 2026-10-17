@@ -1,0 +1,156 @@
+/* Research paths · star map (research-starmap.js) */
+.sky-root{margin:0 0 28px}
+.sky{--sky-ink:#e8f1ee;--sky-muted:#9fb8b2;--sky-line:rgba(160,205,195,.22);--sky-panel:#0b1d1b;color:var(--sky-ink)}
+.sky-hero{position:relative;height:min(640px,64vw);min-height:360px;border-radius:18px;overflow:hidden;background:#061311;box-shadow:0 18px 40px rgba(6,19,17,.18)}
+.sky-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:grab;touch-action:pan-y}
+.sky-overlay{position:absolute;left:28px;top:24px;max-width:420px;pointer-events:none}
+.sky-overlay>*{pointer-events:auto}
+.sky-eyebrow{display:block;font-size:11px;letter-spacing:.14em;color:#d4e966;font-weight:600;margin-bottom:8px}
+.sky-overlay h2{margin:0 0 8px;font-size:30px;line-height:1.15;letter-spacing:-.5px;color:#fff}
+.sky-overlay p{margin:0 0 14px;color:var(--sky-muted);font-size:14px;line-height:1.55;max-width:380px}
+.sky-search{position:relative;max-width:360px}
+.sky-search input{width:100%;box-sizing:border-box;border:1px solid rgba(212,233,102,.35);background:rgba(6,19,17,.72);color:#fff;border-radius:10px;padding:10px 12px;font-size:14px}
+.sky-search input::placeholder{color:#88a39c}
+.sky-suggest{list-style:none;margin:6px 0 0;padding:0;background:rgba(9,26,24,.96);border-radius:10px;max-height:300px;overflow:auto}
+.sky-suggest:empty{display:none}
+.sky-suggest li button{display:flex;justify-content:space-between;gap:10px;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--sky-line);color:var(--sky-ink);padding:8px 10px;font-size:13px;cursor:pointer}
+.sky-suggest li button:hover,.sky-suggest li button:focus{background:rgba(212,233,102,.1)}
+.sky-suggest li button span{color:var(--sky-muted);flex-shrink:0}
+.sky-suggest .sky-small{padding:6px 10px}
+.sky-tools{position:absolute;right:16px;top:16px;display:flex;gap:6px}
+.sky-ctx{display:block;font-size:12px;line-height:1.5;color:#a9c3bc;border-left:2px solid rgba(212,233,102,.4);padding:3px 9px;margin-top:5px;quotes:none}
+.sky-ctx[hidden]{display:none}
+.sky-ctx-tag{display:inline-block;font-size:10.5px;font-weight:650;color:#d4e966;margin-right:6px;letter-spacing:.2px}
+.sky-band{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--sky-ink);background:rgba(6,19,17,.7);border:1px solid rgba(212,233,102,.35);border-radius:8px;padding:2px 4px 2px 10px}
+.sky-band select{background:#0e2724;color:#e8f1ee;border:0;border-radius:6px;font-size:12.5px;padding:4px 6px}
+.sky-tools button,.sky-paper-actions button,.sky-rel-actions button,.sky-more,.sky-crumbs button{border:1px solid rgba(212,233,102,.35);background:rgba(6,19,17,.7);color:var(--sky-ink);border-radius:8px;padding:6px 10px;font-size:12.5px;cursor:pointer}
+.sky-tools button:hover,.sky-paper-actions button:hover,.sky-rel-actions button:hover,.sky-more:hover,.sky-crumbs button:hover{border-color:#d4e966;color:#fff}
+.sky-tip{position:absolute;z-index:3;max-width:300px;background:rgba(9,26,24,.96);border:1px solid var(--sky-line);border-radius:10px;padding:8px 10px;font-size:12.5px;line-height:1.4;pointer-events:none}
+.sky-tip b{display:block;color:#fff;font-weight:600;margin-bottom:3px}
+.sky-tip span{color:var(--sky-muted)}
+.sky-legend{position:absolute;left:16px;bottom:14px;right:16px;max-width:640px;background:rgba(6,19,17,.78);border-radius:10px;padding:8px 12px;font-size:12.5px;color:var(--sky-muted)}
+.sky-legend summary{cursor:pointer;color:var(--sky-ink)}
+.sky-legend ul{margin:8px 0 2px;padding-left:18px;line-height:1.5}
+.sky-key{display:inline-flex;align-items:center;gap:4px;margin:2px 8px 0 0;white-space:nowrap}
+.sky-key i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.sky-panel{margin-top:16px;background:var(--sky-panel);border-radius:18px;padding:22px 24px 26px;scroll-margin-top:90px}
+.sky-crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:13px;margin-bottom:16px;color:var(--sky-muted)}
+.sky-crumbs b{color:#d4e966;font-weight:600}
+.sky-panel h3{margin:0 0 6px;color:#fff;font-size:20px;letter-spacing:-.2px}
+.sky-panel h3 span{color:var(--sky-muted);font-weight:400;font-size:14px}
+.sky-panel h4{margin:0 0 4px;color:#fff;font-size:15px}
+.sky-small{color:var(--sky-muted);font-size:12.5px;line-height:1.5;margin:4px 0 8px}
+.sky-note{color:var(--sky-muted);font-size:12.5px;line-height:1.55;margin:10px 0 0}
+.sky-topic-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-top:14px}
+.sky-topic-card{display:grid;grid-template-columns:12px 1fr;gap:2px 10px;align-items:center;text-align:left;background:rgba(255,255,255,.03);border:1px solid var(--sky-line);border-radius:12px;padding:12px 14px;color:var(--sky-ink);cursor:pointer}
+.sky-topic-card i{width:10px;height:10px;border-radius:50%;background:var(--c);box-shadow:0 0 10px var(--c);grid-row:span 2}
+.sky-topic-card b{font-weight:600;font-size:14px}
+.sky-topic-card span{color:var(--sky-muted);font-size:12px}
+.sky-topic-card:hover,.sky-topic-card:focus{border-color:var(--c);background:rgba(255,255,255,.06)}
+.sky-system-wrap{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(260px,1fr);gap:22px;align-items:start}
+.sky-system{width:100%;height:auto;display:block}
+.sky-ring{fill:none;stroke:rgba(160,205,195,.16);stroke-width:1}
+.sky-ring.is-unknown{stroke-dasharray:3 5}
+.sky-ring-label{fill:#7f9c95;font-size:10px}
+.sky-ring-tick{stroke:rgba(160,205,195,.12);stroke-dasharray:2 4}
+.sky-sector{fill:transparent;stroke:rgba(160,205,195,.1);cursor:pointer}
+.sky-sector:hover{fill:rgba(212,233,102,.05)}
+.sky-sector.is-outside{cursor:default}
+.sky-sys-star{opacity:.9;cursor:pointer}
+.sky-sys-star.is-attached{opacity:.5}
+.sky-sys-star:hover{stroke:#fff;stroke-width:1.5}
+.sky-sector-label{cursor:pointer;fill:#dce9e5;font-size:11.5px}
+.sky-sector-label.is-outside{fill:#7f9c95;cursor:default}
+.sky-sector-label:hover text,.sky-sector-label:focus text{fill:#d4e966}
+.sky-sector-count{fill:#7f9c95;font-size:10px}
+.sky-sun-name{fill:#06110f;font-weight:700;font-size:12px}
+.sky-sun-count{fill:#163b3a;font-size:10.5px}
+.sky-edge{stroke:#8fd3c4;stroke-width:1.1;opacity:.75;fill:none}
+.sky-edge-shared_refs{stroke-dasharray:5 4;stroke:#c9b8f0}
+.sky-edge-cocited{stroke-dasharray:7 3 1.5 3;stroke:#f0c98a}
+.sky-edge-similar{stroke-dasharray:1.5 3.5;stroke:#9fb8b2;opacity:.6}
+.sky-thread-list{display:flex;flex-direction:column;gap:8px;max-height:760px;overflow:auto;padding-right:4px}
+.sky-thread-card{display:flex;flex-direction:column;gap:3px;text-align:left;background:rgba(255,255,255,.03);border:1px solid var(--sky-line);border-radius:12px;padding:10px 12px;color:var(--sky-ink);cursor:pointer}
+.sky-thread-card:hover,.sky-thread-card:focus{border-color:#d4e966}
+.sky-thread-top{display:flex;justify-content:space-between;gap:10px}
+.sky-thread-top b{font-weight:600;font-size:13.5px}
+.sky-thread-top em{font-style:normal;color:#d4e966;font-size:13px}
+.sky-thread-meta{font-size:12px;color:var(--sky-muted)}
+.sky-thread-ex{font-size:12px;color:#c4d6d1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sky-const-head p{color:var(--sky-muted);font-size:13px;margin:0 0 10px}
+.sky-const-svg,.sky-paper-svg{width:100%;height:auto;display:block;background:radial-gradient(circle at 50% 45%,#12312d,#081614);border-radius:14px}
+.sky-node{cursor:pointer}
+.sky-node circle{stroke:rgba(6,19,17,.8);stroke-width:1}
+.sky-node:hover circle,.sky-node:focus circle{stroke:#fff;stroke-width:2}
+.sky-node text{fill:#e8f1ee;font-size:10.5px;paint-order:stroke;stroke:#081614;stroke-width:3px;pointer-events:none}
+.sky-node.is-bright text{font-weight:600}
+.sky-node.is-seed circle{stroke:#d4e966;stroke-width:3}
+.sky-lists{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-top:18px}
+.sky-lists ol,.sky-rel-list{margin:6px 0 0;padding-left:18px;font-size:13px;line-height:1.45}
+.sky-lists li{margin-bottom:7px;color:var(--sky-muted)}
+.sky-lists li span,.sky-bg li span{display:block;font-size:12px;color:var(--sky-muted)}
+.sky-link{background:none;border:0;padding:0;color:#e8f1ee;text-align:left;font:inherit;cursor:pointer}
+.sky-link:hover,.sky-link:focus{color:#d4e966;text-decoration:underline}
+.sky-bg summary{cursor:pointer;color:#c4d6d1;font-size:12.5px;margin-top:6px}
+.sky-bg a,.sky-rel-list a{color:#c4d6d1}
+.sky-paper-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:14px;flex-wrap:wrap}
+.sky-paper-head h3{max-width:760px}
+.sky-paper-head p{color:var(--sky-muted);font-size:13px;margin:0}
+.sky-paper-actions{display:flex;gap:6px;flex-wrap:wrap}
+.sky-paper-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,1fr);gap:22px;align-items:start}
+.sky-tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.sky-tabs button{border:1px solid var(--sky-line);background:none;color:var(--sky-muted);border-radius:999px;padding:5px 10px;font-size:12.5px;cursor:pointer}
+.sky-tabs button[aria-pressed=true]{border-color:#d4e966;color:#06110f;background:#d4e966}
+.sky-tabs button span{opacity:.75}
+.sky-hops{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--sky-muted);margin:4px 0 8px}
+.sky-rel-list{max-height:620px;overflow:auto;padding-right:6px}
+.sky-rel{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--sky-line)}
+.sky-rel-meta{display:block;font-size:12px;color:var(--sky-muted);margin-top:2px}
+.sky-rel-why{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.sky-why{font-size:11px;border-radius:999px;padding:1px 7px;background:rgba(143,211,196,.12);color:#bfe3da}
+.sky-why-coupling{background:rgba(201,184,240,.14);color:#dcd0f7}
+.sky-why-cocited{background:rgba(240,201,138,.14);color:#f3dcb4}
+.sky-why-similar{background:rgba(159,184,178,.14);color:#c6d6d2}
+.sky-rel-actions{display:flex;flex-direction:column;gap:4px;flex-shrink:0}
+.sky-rel-actions button{padding:4px 8px;font-size:11.5px}
+.sky-hop{margin-top:16px!important}
+.sky-hop span{color:var(--sky-muted);font-weight:400}
+.sky-more{margin-top:8px}
+@media(max-width:900px){.sky-system-wrap,.sky-paper-grid{grid-template-columns:1fr}.sky-thread-list{max-height:none}}
+@media(max-width:640px){.sky-hero{height:520px;border-radius:14px}.sky-overlay{left:16px;right:16px;top:16px}.sky-overlay h2{font-size:22px}.sky-overlay p{font-size:13px}.sky-tools{top:auto;bottom:58px;right:12px}.sky-panel{padding:16px 14px 20px;border-radius:14px}.sky-legend{left:10px;right:10px;bottom:10px}.sky-rel{flex-direction:column}.sky-rel-actions{flex-direction:row}}
+@media(max-width:640px){.sky-tools{flex-wrap:wrap;justify-content:flex-end;left:16px}}
+@media(prefers-reduced-motion:reduce){.sky-panel{scroll-behavior:auto}}
+.sky-connect{margin-top:14px;border-top:1px solid var(--sky-line);padding-top:10px}
+.sky-connect summary{cursor:pointer;color:#fff;font-weight:600;font-size:14px}
+.sky-csearch{margin:10px 0 4px;max-width:100%}
+.sky-path{border:1px solid var(--sky-line);border-radius:10px;padding:8px 12px;margin:8px 0}
+.sky-path-head{font-size:12px;color:#d4e966}
+.sky-path ol{margin:6px 0;padding-left:18px;font-size:12.5px;line-height:1.5;color:#c4d6d1}
+.sky-path b{color:#8fd3c4;font-weight:600}
+.sky-const-svg .sky-edge-cites{opacity:.42}
+/* hover link: a sector and its candidate cluster card light up together, other sectors dim */
+.sky-ring,.sky-ring-tick,.sky-ring-label{pointer-events:none}
+.sky-sys-star,.sky-edge,.sky-sector-label{transition:opacity .15s}
+.sky-system-wrap.is-th-focus .sky-sys-star,.sky-system-wrap.is-th-focus .sky-edge{opacity:.12}
+.sky-system-wrap.is-th-focus .sky-sys-star.is-on{opacity:1}
+.sky-system-wrap.is-th-focus .sky-sys-star.is-attached.is-on{opacity:.75}
+.sky-system-wrap.is-th-focus .sky-edge.is-on{opacity:.95}
+.sky-system-wrap.is-th-focus .sky-sector-label:not(.is-on){opacity:.35}
+.sky-sector.is-on{fill:rgba(212,233,102,.09);stroke:rgba(212,233,102,.6);stroke-width:1.5}
+.sky-sector.is-outside.is-on{fill:rgba(200,215,210,.06);stroke:rgba(200,215,210,.45)}
+.sky-sector-label.is-on text{fill:#d4e966}
+.sky-sector-label.is-outside.is-on text{fill:#dce9e5}
+.sky-thread-card.is-on{border-color:#d4e966;background:rgba(212,233,102,.08)}
+.sky-small.is-on{color:#dce9e5}
+/* candidate cluster in 3-D (mountConst3d) */
+.sky-c3d{position:relative;border-radius:14px;overflow:hidden;background:#081614}
+.sky-c3d canvas{display:block;width:100%;height:clamp(380px,48vw,580px);cursor:grab;touch-action:pan-y}
+.sky-c3d canvas:focus-visible{outline:2px solid #d4e966;outline-offset:-2px}
+.sky-c3d-labels{position:absolute;inset:0;pointer-events:none}
+.sky-c3d-label{position:absolute;left:0;top:0;pointer-events:auto;background:none;border:0;padding:1px 4px;color:#e8f1ee;font:600 11.5px/1.2 inherit;font-family:inherit;white-space:nowrap;text-shadow:0 0 3px #081614,0 0 6px #081614;cursor:pointer;transition:opacity .15s}
+.sky-c3d-label:hover,.sky-c3d-label:focus-visible{color:#d4e966}
+.sky-c3d-tip{position:absolute;max-width:300px;pointer-events:none;background:rgba(6,19,17,.94);border:1px solid rgba(160,205,195,.3);border-radius:8px;padding:7px 10px;color:#e8f1ee;font-size:12.5px;line-height:1.4;z-index:120}
+.sky-c3d-tip span{display:block;color:#9fb8b2;font-size:11.5px;margin-top:3px}
+.sky-c3d-hint{position:absolute;right:12px;bottom:8px;margin:0;color:#7f9c95;font-size:11.5px;pointer-events:none}
+.sky-c3d.is-paper canvas{height:clamp(360px,40vw,480px)}
+.sky-c3d-label.is-seed{color:#fff;font-size:12.5px}

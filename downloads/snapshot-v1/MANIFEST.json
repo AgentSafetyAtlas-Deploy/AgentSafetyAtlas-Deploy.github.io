@@ -1,0 +1,89 @@
+{
+ "version": "v1",
+ "status": "draft",
+ "release": "R070",
+ "analysisVersion": "A2",
+ "builtOn": "2026-10-16",
+ "counts": {
+  "works": 9009,
+  "withdrawnKept": 14,
+  "citationRoutes": 52459,
+  "citationWithSentence": 43784,
+  "benchmarkUseRoutes": 640,
+  "institutions": 1610,
+  "candidateClusters": 247,
+  "summariesLeftOut": 0
+ },
+ "files": [
+  {
+   "path": "clusters.json",
+   "bytes": 651878,
+   "sha256": "9f909b01314c962b3fee3ab6d772a85d0b4000f75b25dac17114f73ec28e4a5e"
+  },
+  {
+   "path": "datacard.json",
+   "bytes": 4472,
+   "sha256": "38d4684ed75e4bfe5e1ecec4b049f702e97ec8734f1a33331b134b16965a8375"
+  },
+  {
+   "path": "findings.json",
+   "bytes": 863486,
+   "sha256": "670630d3682a58f7671cd8c5db12bdcd4af55d4cec552ad42c1ea67b5ad58991"
+  },
+  {
+   "path": "institutions.jsonl",
+   "bytes": 202791,
+   "sha256": "4099d7f2b7e24ce08fbe86a6a34015621338f1e420afe0a0138b3e11e5583b5d"
+  },
+  {
+   "path": "relations-01.jsonl",
+   "bytes": 20971041,
+   "sha256": "3b4d76e114b0a58b4a50996f9b5ae053f51e81e5648e05564dc8e5363e9a4c00"
+  },
+  {
+   "path": "relations-02.jsonl",
+   "bytes": 4953137,
+   "sha256": "de0665df733bbaa9638ddc9b6e39d1a860c5c67b72b299b1d223afc8e8f4a8ef"
+  },
+  {
+   "path": "starmap-bands.json",
+   "bytes": 128686,
+   "sha256": "07592c09059e9cd9f4a25b4a43da43d01327fdafc8080da0ab3e0e2a78a86d59"
+  },
+  {
+   "path": "works.jsonl",
+   "bytes": 15545585,
+   "sha256": "a599fe59b23e7b316ddc8caf3cfb0d8732490b46cd7d4e2b89267af69486ae37"
+  },
+  {
+   "path": "scripts/build_findings.py",
+   "bytes": 120873,
+   "sha256": "46b4f8b2fd5950f40d8fdff0f12f2f496cda02ba551f29ddf3d15127b2b6b960"
+  },
+  {
+   "path": "scripts/build_snapshot.py",
+   "bytes": 19579,
+   "sha256": "b4a20bd0f594c545c31ef2c7502678f52dc1672c7cad586b46936a09d2b3552b"
+  },
+  {
+   "path": "scripts/build_starmap.py",
+   "bytes": 17156,
+   "sha256": "3a60a471bd1443769ccc652b172a9ac41778078c6f1535dd5c797126592aab6a"
+  },
+  {
+   "path": "scripts/collect_citation_contexts.py",
+   "bytes": 6074,
+   "sha256": "d1c47a50d4886b640e2fba6ac64c2bc3ebfe82f9d5ceb2f413d2f9f4955dea12"
+  },
+  {
+   "path": "scripts/collect_citation_graph.py",
+   "bytes": 11260,
+   "sha256": "85dd90619d665052e6d0b2952badf67c7873a5b6f129381216aec5562e7ab6c4"
+  },
+  {
+   "path": "scripts/embed_specter2.py",
+   "bytes": 5125,
+   "sha256": "32d7028ebc2ec17fb1a7b94349ac8f96b2ac6b6ca1211a264b4669535480c338"
+  }
+ ]
+}
