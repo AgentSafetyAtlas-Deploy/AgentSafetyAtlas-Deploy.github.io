@@ -610,34 +610,141 @@ function milestoneModel() {
   return {n, from, kinds, rows, late, lateDef, both};
 }
 
+// ------------------------------------------------------------------------------------------------ topic: models (findings.models2026)
+// Which models 2026 papers work with: a generation counts when the paper body names it at least twice (models_analysis.py)
+const M_OPEN = '#5e8c2e', M_CLOSED = '#336aab', M_BOTH = '#8aa39e';
+const mMonth = m => T(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][+m.slice(5) - 1], `${+m.slice(5)} 月`);
+const mNote = () => { const M = P.models2026; return T(`${num(M.papers)} of the ${num(M.worksInYear)} works of ${M.year} have a full text here; a model counts for a paper when one of its generations is named at least ${M.minMentions} times in the body (before the references). ${mMonth(M.months[M.months.length - 1])} is still incomplete.`, `${M.year} 年的 ${num(M.worksInYear)} 项工作中有 ${num(M.papers)} 项有全文；论文正文（参考文献之前）至少点名 ${M.minMentions} 次的模型才算这篇论文用了它。${mMonth(M.months[M.months.length - 1])}数据尚不完整。`); };
+const BM = {
+  mtop() {
+    const M = P.models2026, gs = M.generations.filter(g => g.kind === 'llm' || g.kind === 'vlm').slice(0, 20), max = gs[0]?.share || 1;
+    const row = g => { const key = 'L' + Math.random().toString(36).slice(2, 9); lists.set(key, {ids: g.ids, heading: T(`${g.label}: latest works naming it`, `${g.label}：最近点名它的工作`)});
+      return `<button class="ln-mrow" data-fd-list="${key}" data-tip="${esc(T(`${g.label} · ${g.family} · released ${g.release || '—'} · named twice or more in ${num(g.papers)} papers, at least once in ${num(g.anyMention)}`, `${g.label} · ${g.family} · 发布 ${g.release || '—'} · ${num(g.papers)} 篇点名两次以上，${num(g.anyMention)} 篇至少一次`))}"><span>${esc(g.label)}<small>${g.release || ''}</small></span>${barCell(g.share, max, g.open ? M_OPEN : M_CLOSED)}<b>${pctf(g.share)}</b></button>`; };
+    return `<p class="fd-note"><span class="ln-key-sw" style="background:${M_OPEN}"></span>${T('open weights', '开源权重')} <span class="ln-key-sw" style="background:${M_CLOSED}"></span>${T('API only', '仅闭源 API')} · ${T('share of papers with a full text; click a row for the latest works', '占有全文论文的比例；点击一行查看最近的论文')}</p><div class="ln-mrows">${gs.map(row).join('')}</div><p class="fd-note">${mNote()} ${T(`A paper names a median of ${M.perPaper.median} language models; ${pctf(M.perPaper.fivePlus)} name five or more.`, `一篇论文中位点名 ${M.perPaper.median} 个语言模型；${pctf(M.perPaper.fivePlus)} 点名五个以上。`)}</p>`;
+  },
+  mfamily() {
+    const M = P.models2026, fams = M.families.filter(f => !['Guard', 'VLA', 'Other VLM'].includes(f.family)).slice(0, 6);
+    return `${lineChart(M.months.map(mMonth), fams.map((f, i) => ({label: f.family, color: SERIES[i], values: f.byMonth})), {partialLast: true})}<p class="fd-note">${T('Share of the month\'s papers (with a full text) naming any generation of the family at least twice. A paper can name several families.', '当月有全文的论文中，至少两次点名该家族任一代模型的比例。一篇论文可以点名多个家族。')}</p>`;
+  },
+  mopen() {
+    const M = P.models2026, rows = M.openClosed;
+    const seg = (v, c, l) => v ? `<span style="width:${v}%;background:${c}" data-tip="${esc(`${l}: ${pctf(v)}`)}"></span>` : '';
+    return `<p class="fd-note"><span class="ln-key-sw" style="background:${M_OPEN}"></span>${T('open weights only', '只用开源权重')} <span class="ln-key-sw" style="background:${M_BOTH}"></span>${T('both', '两类都用')} <span class="ln-key-sw" style="background:${M_CLOSED}"></span>${T('API only', '只用闭源 API')}</p>
+    <div class="ln-stack">${rows.map((r, i) => `<div class="ln-stack-row${i === rows.length - 1 ? ' is-partial' : ''}"><span>${mMonth(r.month)}</span><i>${seg(r.openOnly, M_OPEN, T('open weights only', '只用开源权重'))}${seg(r.both, M_BOTH, T('both', '两类都用'))}${seg(r.closedOnly, M_CLOSED, T('API only', '只用闭源 API'))}</i><small>${num(r.papers)}</small></div>`).join('')}</div>
+    <p class="fd-note">${T('Among papers naming a language or vision-language model twice; the number on the right is how many.', '在至少两次点名语言或视觉语言模型的论文中计算；右侧是论文数。')}</p>`;
+  },
+  mfrontier() {
+    const F = P.models2026.frontier, labels = [T('0–2 mo', '0–2 月'), T('3–5', '3–5'), T('6–8', '6–8'), T('9–11', '9–11'), T('12–17', '12–17'), T('18–23', '18–23'), T('24+', '24+')];
+    return `<div class="fd-tiles"><div class="fd-tile"><h4>${T('Months from the newest model to the paper', '论文点名的最新模型发布了几个月')}</h4>${bars(F.hist, labels, INK, {fmt: v => num(v)})}<small>${T('papers', '论文数')}</small></div>
+      ${tile(T('Papers whose newest model is under 7 months old', '最新模型发布不足 7 个月的论文'), T('share by month', '各月比例'), F.byMonth.map(r => r.within6), P.models2026.months.map(mMonth), COLORS.attention, v => pctf(v, 0))}
+      ${tile(T('Median distance to the frontier', '离前沿的中位距离'), T('months, by month', '个月，按月'), F.byMonth.map(r => r.median), P.models2026.months.map(mMonth), COLORS.supply, v => v == null ? '—' : v + T(' mo', ' 月'))}</div>
+    <p class="fd-note">${T(`For each paper, the newest language model it names twice: its release month (first OpenRouter listing in the snapshot of 2026-10-07; vendor announcement for older models) against the paper's month. ${num(F.papers)} papers.`, `每篇论文取它点名两次以上的最新语言模型：发布月份（2026-10-07 OpenRouter 快照中的首次上架月份；更早的模型用厂商发布月份）与论文月份之差。共 ${num(F.papers)} 篇。`)}</p>`;
+  },
+  mkind() {
+    const K = P.models2026.byKind, names = {digital: T('Digital agents', '数字智能体'), physical: T('Physical agents', '物理智能体'), rl: T('RL agents in simulators', '仿真中的强化学习智能体'), none: T('No concrete agent', '没有具体的智能体')};
+    return `<table class="fd-table"><thead><tr><th>${T('Agent kind', '智能体类型')}</th><th>${T('Papers', '论文')}</th><th>${T('Name a model', '点名模型')}</th><th>${T('Most named families', '点名最多的家族')}</th></tr></thead><tbody>${Object.entries(K).map(([k, r]) => `<tr><th>${names[k]}</th><td>${num(r.papers)}</td><td>${pctf(100 * r.named / Math.max(1, r.papers), 0)}</td><td>${Object.entries(r.families).slice(0, 5).map(([f, v]) => `${esc(f)} ${pctf(v, 0)}`).join(' · ')}</td></tr>`).join('')}</tbody></table>
+    <p class="fd-note">${T('Agent kind from the current facet labels (agent settings); shares are of all papers of that kind with a full text.', '智能体类型来自当前的标注（agent 场景）；比例以该类型有全文的全部论文为分母。')}</p>`;
+  },
+  mcountry() {
+    const C2 = P.models2026.byCountry, fams = [...new Set([...Object.keys(C2.US.families), ...Object.keys(C2.CN.families)])].filter(f => !['Guard', 'VLA', 'Other VLM'].includes(f)).slice(0, 9);
+    return `<table class="fd-table"><thead><tr><th>${T('Family', '家族')}</th><th>${flag('US')}${esc(country('US'))} (${num(C2.US.papers)})</th><th>${flag('CN')}${esc(country('CN'))} (${num(C2.CN.papers)})</th></tr></thead><tbody>${fams.map(f => { const a = C2.US.families[f] || 0, b = C2.CN.families[f] || 0; return `<tr><th>${esc(f)}</th><td>${barCell(a, 50, M_CLOSED)}${pctf(a, 0)}</td><td>${barCell(b, 50, M_OPEN)}${pctf(b, 0)}</td></tr>`; }).join('')}</tbody></table>
+    <p class="fd-note">${T('Papers whose located institutions are all in one country; share of that country\'s papers with a full text.', '只计所有已定位机构都在同一国家的论文；比例以该国有全文的论文为分母。')}</p>`;
+  },
+  mguard() {
+    const M = P.models2026, gs = M.generations.filter(g => g.kind === 'vla' || g.kind === 'guard'), max = Math.max(...gs.map(g => g.share), 0.1);
+    const row = g => { const key = 'L' + Math.random().toString(36).slice(2, 9); lists.set(key, {ids: g.ids, heading: g.label});
+      return `<button class="ln-mrow" data-fd-list="${key}"><span>${esc(g.label)}<small>${g.kind === 'vla' ? T('robot policy', '机器人策略') : T('guard model', '护栏模型')}</small></span>${barCell(g.share, max, g.kind === 'vla' ? COLORS.supply : COLORS.connection)}<b>${num(g.papers)}</b></button>`; };
+    return `<div class="ln-mrows">${gs.sort((a, b) => b.papers - a.papers).map(row).join('')}</div><p class="fd-note">${T('Number of papers naming each at least twice. Vision-language-action models (robot policies) and guard models are counted apart from the language models above.', '至少两次点名的论文数。视觉-语言-动作模型（机器人策略）和护栏模型与上面的语言模型分开统计。')}</p>`;
+  },
+};
+// ------------------------------------------------------------------------------------------------ topic: open source (findings.oss)
+// The open-source side of agent safety against the papers (oss_analysis.py): growth, research lines, paper code, attention
+const O_TYPES = () => ({tool: T('Tools', '工具'), research_implementation: T('Paper implementations', '论文实现'), evaluation: T('Evaluation', '评测'), dataset: T('Datasets', '数据集'),
+  execution_environment: T('Execution environments', '执行环境'), framework_module: T('Framework modules', '框架模块'), infrastructure: T('Infrastructure', '基础设施'), other: T('Other', '其他')});
+const O_ROLES = () => ({attack: T('Attacks', '攻击'), defense: T('Defences', '防御'), benchmark: T('Benchmarks', '基准'), measurement: T('Measurements', '测量'), analysis_theory: T('Analysis & theory', '分析与理论'), system_tool: T('Systems & tools', '系统与工具'), survey_position: T('Surveys & positions', '综述与立场')});
+const repoLink = r => `<a href="https://github.com/${esc(r)}" target="_blank" rel="noopener">${esc(r)}</a>`;
+const BO = {
+  ogrowth() {
+    const g = P.oss.growth, k = Math.max(0, g.months.indexOf('2024-01')), ms = g.months.slice(k), lab = ms.map(m => m.slice(2).replace('-', '.'));
+    return `<div class="fd-tiles">${tile(T('Repositories created', '新建仓库'), T('per month; the last month is incomplete', '每月；最后一个月不完整'), g.repos.slice(k), lab, COLORS.supply, v => num(v))}${tile(T('Works first posted', '首次公开的论文'), T('per month; the last month is incomplete', '每月；最后一个月不完整'), g.papers.slice(k), lab, INK, v => num(v))}</div>
+    <p class="fd-note">${T(`Doubling time from a log-linear fit of monthly counts, ${g.window[0]} to ${g.window[1]}. Repositories in the agent-security group, forks and mirrors left out; metrics captured ${P.oss.capture}.`, `翻倍时间按 ${g.window[0]} 至 ${g.window[1]} 的月度数量做对数线性拟合。仓库为 agent 安全组，不含 fork 与镜像；数据采集于 ${P.oss.capture}。`)}</p>`;
+  },
+  otypes() {
+    const d = P.oss.types, keys = ['tool', 'research_implementation', 'evaluation', 'dataset'], cols = {tool: COLORS.supply, research_implementation: M_CLOSED, evaluation: COLORS.attention, dataset: COLORS.connection}, names = O_TYPES();
+    const rows = d.halves.map((h, i) => { const tot = d.total[i] || 1; return {h, tot: d.total[i], seg: keys.map(k => [k, 100 * d.counts[k][i] / tot])}; }).filter(r => r.tot);
+    return `<p class="fd-note">${keys.map(k => `<span class="ln-key-sw" style="background:${cols[k]}"></span>${names[k]}`).join(' ')}</p><div class="ln-stack">${rows.map((r, i) => `<div class="ln-stack-row${i === rows.length - 1 ? ' is-partial' : ''}"><span>${r.h}</span><i>${r.seg.map(([k, v]) => v ? `<span style="width:${v}%;background:${cols[k]}" data-tip="${esc(`${names[k]} ${r.h}: ${pctf(v)}`)}"></span>` : '').join('')}</i><small>${num(r.tot)}</small></div>`).join('')}</div>
+    <p class="fd-note">${T('Share of the repositories created in each half-year, by what they offer; the number on the right is how many were created.', '各半年新建仓库按类型的构成；右侧是新建数量。')}</p>`;
+  },
+  ogap() {
+    const ls = [...P.oss.lines].filter(l => l.ratio != null).sort((a, b) => b.ratio - a.ratio), max = Math.max(...ls.flatMap(l => [l.repoShare, l.paperShare]));
+    const row = l => { const key = 'L' + Math.random().toString(36).slice(2, 9); lists.set(key, {heading: T(`${cl(l.cluster)}: most-starred repositories`, `${cl(l.cluster)}：星数最多的仓库`), html: `<ol class="fd-drawer-list">${l.top.map(r => `<li>${repoLink(r)}</li>`).join('')}</ol>`});
+      return `<button class="ln-orow" data-fd-list="${key}"><span>${esc(cl(l.cluster))}</span><i><em style="width:${(100 * l.paperShare / max).toFixed(1)}%;background:${INK}"></em><em style="width:${(100 * l.repoShare / max).toFixed(1)}%;background:${COLORS.supply}"></em></i><b class="${l.ratio >= 1 ? 'ln-up' : 'ln-down'}">×${l.ratio.toFixed(2)}</b></button>`; };
+    return `<p class="fd-note"><span class="ln-key-sw" style="background:${INK}"></span>${T('share of papers', '论文份额')} <span class="ln-key-sw" style="background:${COLORS.supply}"></span>${T('share of repositories', '仓库份额')} · ${T('ratio = repositories ÷ papers; click a line for its most-starred repositories', '比值 = 仓库份额 ÷ 论文份额；点击一行看星数最多的仓库')}</p><div class="ln-orows">${ls.map(row).join('')}</div>
+    <p class="fd-note">${T('Both shares are fractional: a work or repository in several clusters counts in part in each. Repository clusters come from the same 19-cluster taxonomy, read from the README and description.', '两种份额都按比例计：属于多个星团的论文或仓库在每个星团各计一部分。仓库的星团来自同一套 19 星团分类，依据 README 与描述判定。')}</p>`;
+  },
+  ocode() {
+    const c = P.oss.code, names = O_ROLES(), rows = Object.entries(c.byRole).sort((a, b) => b[1].withCode - a[1].withCode), max = Math.max(...rows.map(r => r[1].withCode));
+    return `<div class="fd-hbars">${rows.map(([k, r]) => `<div class="fd-hbar"><span>${names[k]} <small>(${num(r.papers)})</small></span>${barCell(r.withCode, max, COLORS.attention)}<b>${pctf(r.withCode)}</b></div>`).join('')}</div>
+    <p class="fd-note">${T(`Share of works, by main contribution type, whose own code is a verified repository in the open-source set (${num(P.oss.papersWithCode)} works in all). By year: ${c.years.map((y, i) => `${y} ${pctf(c.byYear[i])}`).join(' · ')}; recent works are linked later.`, `按主要贡献类型，有已核实自有代码仓库的工作比例（共 ${num(P.oss.papersWithCode)} 项）。按年份：${c.years.map((y, i) => `${y} ${pctf(c.byYear[i])}`).join(' · ')}；近期工作的链接补得较晚。`)}</p>`;
+  },
+  ofate() {
+    const f = P.oss.fate, cols = [['paperCode', T('Paper code', '论文代码')], ['paperCodeOverAYear', T('Paper code over a year old', '建立超过一年的论文代码')], ['tools', T('Tools (no paper)', '工具（无论文）')]];
+    const rows = [['repos', T('Repositories', '仓库数'), v => num(v)], ['medianStars', T('Median stars', '星数中位数'), v => num(v)], ['under10', T('Under 10 stars', '不足 10 颗星'), v => pctf(v)],
+      ['pushed180', T('Pushed in the last 180 days', '近 180 天有更新'), v => pctf(v)], ['noLicence', T('No licence (not open source)', '没有许可证（法律上不算开源）'), v => pctf(v)], ['medianAgeDays', T('Median age (days)', '中位年龄（天）'), v => num(v)]];
+    return `<table class="fd-table"><thead><tr><th></th>${cols.map(([, l]) => `<th>${l}</th>`).join('')}</tr></thead><tbody>${rows.map(([k, l, fmt]) => `<tr><th>${l}</th>${cols.map(([c]) => `<td>${fmt(f[c][k])}</td>`).join('')}</tr>`).join('')}</tbody></table>
+    <p class="fd-note">${T(`At the capture of ${P.oss.capture}. A repository without a licence file can be read but not legally reused.`, `采集于 ${P.oss.capture}。没有许可证文件的仓库可以看，但在法律上不能被复用。`)}</p>`;
+  },
+  owho() {
+    const w = P.oss.who;
+    return `<table class="fd-table"><thead><tr><th>${T('Organization', '组织')}</th><th>${T('Repositories', '仓库')}</th><th>${T('Stars', '星数')}</th></tr></thead><tbody>${w.topOrgsByStars.slice(0, 10).map(o => `<tr><th><a href="https://github.com/${esc(o.owner)}" target="_blank" rel="noopener">${esc(o.owner)}</a></th><td>${num(o.repos)}</td><td>${num(o.stars)}</td></tr>`).join('')}</tbody></table>
+    <p class="fd-note">${T('GitHub organizations owning repositories in the set, by stars; individual developers are not listed (only institution-level aggregates are published).', '按星数排列的 GitHub 组织；不列个人开发者（只公布机构层面的汇总）。')}</p>`;
+  },
+  oconc() {
+    const c = P.oss.concentration, names = O_TYPES();
+    return `<table class="fd-table"><thead><tr><th>${T('Repository', '仓库')}</th><th>${T('Stars', '星数')}</th><th>${T('Type', '类型')}</th><th>${T('Created', '建立')}</th></tr></thead><tbody>${c.topRepos.slice(0, 10).map(r => `<tr><th>${repoLink(r.repo)}</th><td>${num(r.stars)}</td><td>${names[r.type] || esc(r.type || '')}</td><td>${esc(r.created)}</td></tr>`).join('')}</tbody></table>
+    <p class="fd-note">${T(P.oss.disclaimer, '星数和 fork 数是 GitHub 上的关注度，不代表采用、有效或认可。')}</p>`;
+  },
+};
 // ================================================================================================ lenses and questions
 // three parts (owner decision 2026-10-18): Landscape (what papers are about: where they sit, and how the lines connect;
 // attack, defence and evaluation are content and live here), Players (countries, then institutions), Trajectory (time,
 // seen from the head and the long tail). The resource check moved to the universe page, beside the mechanisms it tests.
 // Old links to former lenses open the chapter that now holds most of their questions.
-const LENS_ALL = ['structure', 'connect', 'lead', 'evolve'];
+const LENS_ALL = ['structure', 'connect', 'lead', 'evolve', 'models', 'oss'];
 const LENS_LEGACY = {targets: 'structure', tail: 'evolve', attack: 'structure', navigate: 'key'};
 const lensIds = () => LENS_ALL;
 const PARTS = t => [['landscape', t('Landscape', '版图'), t('What is studied, and how the lines connect', '研究什么，彼此怎样衔接'), ['structure', 'connect']],
   ['players', t('Players', '力量'), t('Which countries and institutions drive it', '哪些国家与机构在推动'), ['lead']],
   ['trajectory', t('Trajectory', '走向'), t('How the head and the long tail change over time', '头部与长尾在时间中怎样变化'), ['evolve']]];
+// topic boards beside the three parts (owner request 2026-10-18)
+const TOPICS = t => [['models', t('Topic: models', '专题 · 模型'), t('Which models 2026 papers work with', '2026 年论文在用哪些模型'), ['models']],
+  ['oss', t('Topic: open source', '专题 · 开源'), t('Repositories against the papers', '开源仓库与论文对照'), ['oss']]];
 export function lensMeta(t) {
   return {structure: [t('Positioning', '定位'), t('Where works sit: agents, risks, attacks, defences and evaluation', '论文落在哪里：研究对象、风险、攻防与评测')],
     connect: [t('Connection', '衔接'), t('What connects research lines, and how knowledge flows between them', '研究线之间靠什么连接，知识怎样流动')],
     lead: [t('Players', '力量'), t('Which countries and institutions open, lead and shape the field', '哪些国家与机构开创、引领、塑造这个领域')],
-    evolve: [t('Trajectory', '走向'), t('How the field moves over time, seen from the head and the long tail', '领域在时间中怎样变化：从头部看，也从长尾看')]};
+    evolve: [t('Trajectory', '走向'), t('How the field moves over time, seen from the head and the long tail', '领域在时间中怎样变化：从头部看，也从长尾看')],
+    models: [t('Topic: models', '专题 · 模型'), t('Which foundation models the latest papers work with, and how close to the frontier', '最新论文在用哪些基础模型，离前沿有多近')],
+    oss: [t('Topic: open source', '专题 · 开源'), t('What the open-source side builds, where it meets the papers, and what becomes of paper code', '开源在做什么，与论文在哪里交汇，论文代码后来怎样')]};
 }
 // groups inside a chapter (the Connection chapter has its own, CR_GROUPS); a question not listed follows at the end
 const LN_GROUPS = () => ({
   structure: [['object', T('What is studied', '研究对象与边界'), T('agents, venues and the edges of the field', '智能体、发表场所与领域边界'), ['scope', 'traditions', 'venues', 'settings']],
     ['risk', T('Risks and entry points', '风险与入口'), T('where harm comes from and how attacks get in', '风险从哪来，攻击从哪进'), ['risk', 'surfaces', 'gaps']],
-    ['attackdef', T('Attack, defence and evaluation', '攻防与评测'), T('what is attacked, how it is defended, how well it is tested', '攻什么、怎么守、检验得怎样'), ['balance', 'imbalance', 'mechanisms', 'adaptive', 'realism', 'models']]],
-  lead: [['countries', T('Countries', '国家'), T('where the work comes from, and how the map shifts', '研究来自哪里，格局怎样变化'), ['shares', 'rising', 'directions', 'pioneers', 'geoconc', 'punch', 'apart', 'country']],
+    ['attackdef', T('Attack, defence and evaluation', '攻防与评测'), T('what is attacked, how it is defended, how well it is tested', '攻什么、怎么守、检验得怎样'), ['balance', 'imbalance', 'mechanisms', 'adaptive', 'realism']]],
+  lead: [['countries', T('Countries', '国家'), T('where the work comes from, and how the map shifts', '研究来自哪里，格局怎样变化'), ['shares', 'rising', 'directions', 'pioneers', 'geoconc', 'punch', 'apart']],
     ['institutions', T('Institutions', '机构'), T('who produces, who supplies, who sets the pace', '谁产出、谁供给、谁定节奏'), ['concentration', 'influence', 'industry', 'bigteams', 'newcomers', 'people']]],
   evolve: [['pace', T('Pace', '节奏'), T('how fast the field grows, and where its weight moves', '长得多快，重心往哪移'), ['growth', 'shift', 'diversify', 'path']],
     ['head', T('The head', '头部'), T('the big lines: when attacks, defences and benchmarks took shape', '大方向：攻击、防御、基准各在什么时候成形'), ['onset', 'timeline']],
     ['tail', T('The long tail', '长尾'), T("where next year's directions are now", '下一年的方向，现在在哪里'), ['shape', 'backtest', 'rising', 'terms', 'diffusion']],
-    ['frontier', T('Open questions', '前沿与机会'), T('what is asked and not yet taken up', '提出了、还没人接手的问题'), ['radar', 'open', 'next']]]});
+    ['frontier', T('Open questions', '前沿与机会'), T('what is asked and not yet taken up', '提出了、还没人接手的问题'), ['radar', 'open', 'next']]],
+  models: [['what', T('What is used', '用哪些模型'), T('generations, families, open or closed', '哪一代、哪一家、开源还是闭源'), ['mtop', 'mfamily', 'mopen']],
+    ['fresh', T('How fresh', '离前沿多远'), T('the distance from the newest model to the paper', '论文用的最新模型发布了多久'), ['mfrontier']],
+    ['where', T('Who uses what', '谁在用、用在哪'), T('by agent kind and by country; robot policies and guard models', '按智能体类型、按国家；机器人策略与护栏模型'), ['mkind', 'mcountry', 'mguard']],
+    ['long', T('Since 2023', '长期对照'), T('the families named in experiments, every year since 2023', '2023 年以来每年实验中点名的模型家族'), ['models', 'country']]],
+  oss: [['growth', T('Growth', '生长'), T('how fast, and what kind of repositories', '长得多快，长出什么'), ['ogrowth', 'otypes']],
+    ['papers', T('Against the papers', '与论文对照'), T('which lines have tools, which papers release code', '哪些方向有开源，哪些论文放代码'), ['ogap', 'ocode', 'ofate']],
+    ['people', T('Who and where', '谁在做、关注在哪'), T('organizations and the concentration of attention', '组织与关注的集中'), ['owho', 'oconc']]]});
 // ------------------------------------------------------------------------------------------------ second-round analyses (findings.deeper)
 const B3 = {
   punch() {
@@ -1263,6 +1370,30 @@ function questionPool() {
         : ['adaptive', T('Are defences tested against adaptive attacks?', '防御是否经过自适应攻击检验？'), T('Waiting for the facet labels.', '等待 LLM 标签。'), B.pending(T('The facet labelling records, for each defence, whether its abstract reports tests against adaptive attacks.', 'LLM 标签会为每项防御记录其摘要是否报告了自适应攻击检验。'))],
       ...(fx.evaluation ? [['realism', T('How realistic are the evaluations?', '评测有多接近真实？'), T(`Among attack, defence and benchmark papers, simulated environments went to ${pctf(lastOf(fx.evaluation.share.simulated_environment))}; real systems stay at ${pctf(lastOf(fx.evaluation.share.real_system))}.`, `在攻击、防御与基准论文中，模拟环境升到 ${pctf(lastOf(fx.evaluation.share.simulated_environment))}；真实系统一直只有 ${pctf(lastOf(fx.evaluation.share.real_system))}。`), B.facetMultiples('evaluation', EVAL_NAMES(), T('Share per half-year of attack, defence and benchmark papers by how results are obtained.', '每半年攻击、防御与基准论文按结果获取方式的比例。'))]] : []),
     ],
+    models2026: !P.models2026 ? [] : (() => { const M = P.models2026, g = M.generations.filter(x => x.kind === 'llm' || x.kind === 'vlm'), F = M.frontier, fam = M.families, oc = M.openClosed.slice(-4, -1),
+        avg = k => oc.reduce((s, r) => s + r[k], 0) / Math.max(1, oc.length), C2 = M.byCountry, fb = F.byMonth, early = fb.slice(0, 2), late = fb.slice(-5, -1), mid = v => v.map(r => r.median).sort((a, b) => a - b)[v.length >> 1];
+      const gl = x => `${x.label} ${pctf(x.share)}`, vla = M.generations.filter(x => x.kind === 'vla').reduce((s, x) => s + x.papers, 0), guard = M.generations.filter(x => x.kind === 'guard').sort((a, b) => b.papers - a.papers);
+      return [
+        ['mtop', T(`Which models do ${M.year} papers work with?`, `${M.year} 年的论文在用哪些模型？`), T(`Most named: ${g.slice(0, 3).map(gl).join(', ')}; by family, ${fam.slice(0, 3).map(f => `${f.family} ${pctf(f.share)}`).join(', ')}.`, `点名最多的是 ${g.slice(0, 3).map(gl).join('、')}；按家族，${fam.slice(0, 3).map(f => `${f.family} ${pctf(f.share)}`).join('、')}。`), BM.mtop()],
+        ['mfamily', T('How do the families move month by month?', '各家族逐月怎样变化？'), (() => { const q = fam.find(f => f.family === 'Qwen'), gp = fam.find(f => f.family === 'GPT'), l = v => v.byMonth[v.byMonth.length - 2], f0 = v => v.byMonth[0];
+          return T(`GPT ${pctf(f0(gp))} → ${pctf(l(gp))} and Qwen ${pctf(f0(q))} → ${pctf(l(q))} of papers (${mMonth(M.months[0])} → ${mMonth(M.months[M.months.length - 2])}).`, `GPT ${pctf(f0(gp))} → ${pctf(l(gp))}，Qwen ${pctf(f0(q))} → ${pctf(l(q))}（${mMonth(M.months[0])} → ${mMonth(M.months[M.months.length - 2])}）。`); })(), BM.mfamily()],
+        ['mopen', T('Open weights or a closed API?', '开源权重还是闭源 API？'), T(`Mostly both: in the last full months ${pctf(avg('both'), 0)} of papers use both, ${pctf(avg('openOnly'), 0)} open weights only, ${pctf(avg('closedOnly'), 0)} an API only.`, `多数两类都用：最近几个完整月份，${pctf(avg('both'), 0)} 的论文两类都用，${pctf(avg('openOnly'), 0)} 只用开源权重，${pctf(avg('closedOnly'), 0)} 只用闭源 API。`), BM.mopen()],
+        ['mfrontier', T('How far behind the frontier are the models tested?', '论文用的模型离前沿有多远？'), T(`A median of ${F.median} months: ${pctf(F.within6)} of papers name a model released within the previous six months, ${pctf(F.over12)} none newer than a year; the median fell from ${mid(early)} months (${mMonth(fb[0].month)}–${mMonth(fb[1].month)}) to ${mid(late)} (${mMonth(late[0].month)}–${mMonth(late[late.length - 1].month)}).`, `中位 ${F.median} 个月：${pctf(F.within6)} 的论文用到发布不足半年的模型，${pctf(F.over12)} 用到的最新模型也已超过一年；中位距离从 ${mid(early)} 个月（${mMonth(fb[0].month)}–${mMonth(fb[1].month)}）降到 ${mid(late)} 个月（${mMonth(late[0].month)}–${mMonth(late[late.length - 1].month)}）。`), BM.mfrontier()],
+        ['mkind', T('Do different agents run on different models?', '不同智能体用的模型一样吗？'), T(`Digital-agent papers name GPT ${pctf(M.byKind.digital.families.GPT, 0)} and Qwen ${pctf(M.byKind.digital.families.Qwen, 0)}; physical-agent papers name models far less often and ${pctf(M.byKind.physical.vla, 0)} use a robot policy model (VLA).`, `数字智能体论文点名 GPT ${pctf(M.byKind.digital.families.GPT, 0)}、Qwen ${pctf(M.byKind.digital.families.Qwen, 0)}；物理智能体论文点名模型少得多，${pctf(M.byKind.physical.vla, 0)} 用到机器人策略模型（VLA）。`), BM.mkind()],
+        ['mcountry', T(`Do US and Chinese papers use different models in ${M.year}?`, `${M.year} 年中美论文用的模型不同吗？`), T(`GPT about equally (${pctf(C2.US.families.GPT, 0)} vs ${pctf(C2.CN.families.GPT, 0)}); Chinese papers name Qwen ${pctf(C2.CN.families.Qwen, 0)}, DeepSeek ${pctf(C2.CN.families.DeepSeek, 0)} and GLM ${pctf(C2.CN.families.GLM, 0)}, against ${pctf(C2.US.families.Qwen, 0)}, ${pctf(C2.US.families.DeepSeek, 0)} and ${pctf(C2.US.families.GLM, 0)} in US papers.`, `GPT 相近（${pctf(C2.US.families.GPT, 0)} 对 ${pctf(C2.CN.families.GPT, 0)}）；中国论文点名 Qwen ${pctf(C2.CN.families.Qwen, 0)}、DeepSeek ${pctf(C2.CN.families.DeepSeek, 0)}、GLM ${pctf(C2.CN.families.GLM, 0)}，美国论文分别为 ${pctf(C2.US.families.Qwen, 0)}、${pctf(C2.US.families.DeepSeek, 0)}、${pctf(C2.US.families.GLM, 0)}。`), BM.mcountry()],
+        ['mguard', T('Which robot policies and guard models appear?', '用到哪些机器人策略模型和护栏模型？'), T(`${num(vla)} papers name a robot policy model (VLA); among guard models ${guard[0].label} leads with ${num(guard[0].papers)} papers.`, `${num(vla)} 篇论文点名机器人策略模型（VLA）；护栏模型中 ${guard[0].label} 最多，${num(guard[0].papers)} 篇。`), BM.mguard()],
+      ]; })(),
+    oss: !P.oss ? [] : (() => { const O = P.oss, g = O.growth, ls = [...O.lines].filter(l => l.ratio != null).sort((a, b) => b.ratio - a.ratio), cr = O.code.byRole, f = O.fate, ty = O.types, w = O.who, c = O.concentration;
+      const hi = ls.slice(0, 3), lo = ls.slice(-3).reverse(), li = l => `${cl(l.cluster)} ×${l.ratio.toFixed(2)}`, hk = ty.halves.length - 1, h0 = Math.max(0, ty.halves.indexOf('2025H2'));
+      return [
+        ['ogrowth', T('Is open source growing faster than the papers?', '开源比论文长得快吗？'), T(`Yes: new repositories double about every ${g.doublingRepos} months, new works every ${g.doublingPapers}; ${pctf(g.since2026)} of the ${num(O.repos)} repositories were created in ${new Date(O.capture).getFullYear()}.`, `是的：新建仓库约每 ${g.doublingRepos} 个月翻一番，新论文约每 ${g.doublingPapers} 个月；${num(O.repos)} 个仓库中有 ${pctf(g.since2026)} 建于 ${new Date(O.capture).getFullYear()} 年。`), BO.ogrowth()],
+        ['otypes', T('What does the open-source side build?', '开源在做什么？'), T(`More and more tools: ${num(ty.counts.tool[h0])} tools were created in ${ty.halves[h0]}, ${num(ty.counts.tool[hk - 1])} in ${ty.halves[hk - 1]}, against ${num(ty.counts.research_implementation[hk - 1])} paper implementations.`, `工具越来越多：${ty.halves[h0]} 新建工具 ${num(ty.counts.tool[h0])} 个，${ty.halves[hk - 1]} 达到 ${num(ty.counts.tool[hk - 1])} 个，同期论文实现 ${num(ty.counts.research_implementation[hk - 1])} 个。`), BO.otypes()],
+        ['ogap', T('Which lines have tools, and which only papers?', '哪些研究线有开源，哪些只有论文？'), T(`Open source crowds into ${hi.map(li).join(', ')} (share of repositories against share of papers); ${lo.map(li).join(', ')} are mostly papers.`, `开源扎堆在 ${hi.map(li).join('、')}（仓库份额 ÷ 论文份额）；${lo.map(li).join('、')} 基本只有论文。`), BO.ogap()],
+        ['ocode', T('Which papers release their code?', '哪些论文公开了代码？'), T(`Benchmarks most (${pctf(cr.benchmark.withCode)}), then measurements ${pctf(cr.measurement.withCode)}, attacks ${pctf(cr.attack.withCode)} and defences ${pctf(cr.defense.withCode)}; surveys ${pctf(cr.survey_position.withCode)}.`, `基准论文最多（${pctf(cr.benchmark.withCode)}），其次是测量 ${pctf(cr.measurement.withCode)}、攻击 ${pctf(cr.attack.withCode)}、防御 ${pctf(cr.defense.withCode)}；综述 ${pctf(cr.survey_position.withCode)}。`), BO.ocode()],
+        ['ofate', T('What happens to paper code?', '论文代码后来怎样了？'), T(`Little attention and little upkeep: a median of ${num(f.paperCode.medianStars)} stars; of the code over a year old, ${pctf(f.paperCodeOverAYear.pushed180)} was pushed in the last six months (tools: ${pctf(f.tools.pushed180)}), and ${pctf(f.paperCode.noLicence)} of paper code has no licence.`, `关注少、维护少：中位 ${num(f.paperCode.medianStars)} 颗星；建立超过一年的论文代码只有 ${pctf(f.paperCodeOverAYear.pushed180)} 在近半年有更新（工具为 ${pctf(f.tools.pushed180)}）；${pctf(f.paperCode.noLicence)} 的论文代码没有许可证。`), BO.ofate()],
+        ['owho', T('Who builds it?', '谁在做开源？'), T(`Mostly individuals: organizations own ${pctf(w.organizations)} of the repositories but hold ${pctf(w.orgStarShare)} of the stars; the most-starred organizations are ${w.topOrgsByStars.slice(0, 3).map(o => o.owner).join(', ')}.`, `大多是个人：组织拥有 ${pctf(w.organizations)} 的仓库，却占 ${pctf(w.orgStarShare)} 的星；星数最多的组织是 ${w.topOrgsByStars.slice(0, 3).map(o => o.owner).join('、')}。`), BO.owho()],
+        ['oconc', T('Where does attention go?', '关注集中在哪里？'), T(`To very few: the top 1% of repositories hold ${pctf(c.top1pct)} of all stars and the top 10 ${pctf(c.top10)}; ${pctf(c.under10)} have fewer than 10 stars.`, `集中在极少数：前 1% 的仓库占全部星数的 ${pctf(c.top1pct)}，前 10 个占 ${pctf(c.top10)}；${pctf(c.under10)} 的仓库不足 10 颗星。`), BO.oconc()],
+      ]; })(),
     targets: [
       ['models', T('Which models are put to the test?', '大家在测哪些模型？'), T(`GPT went from ${pctf(md.share.GPT[0])} to ${pctf(md.share.GPT[mi])} of works naming a model (${md.years[0]}→${md.years[mi]}); Claude rose to ${pctf(md.share.Claude[mi])}, Qwen from ${pctf(md.share.Qwen[0])} to ${pctf(md.share.Qwen[mi])}.`, `点名模型的工作中，GPT 从 ${pctf(md.share.GPT[0])} 降到 ${pctf(md.share.GPT[mi])}（${md.years[0]}→${md.years[mi]}）；Claude 升到 ${pctf(md.share.Claude[mi])}，Qwen 从 ${pctf(md.share.Qwen[0])} 升到 ${pctf(md.share.Qwen[mi])}。`), B.models()],
       ['country', T('Do US and Chinese papers test different models?', '中美论文测的模型不同吗？'), T(`Yes: works from ${country('CN')} name Qwen ${pctf(bc.CN.share.Qwen, 0)} and DeepSeek ${pctf(bc.CN.share.DeepSeek, 0)} of the time, works from ${country('US')} ${pctf(bc.US.share.Qwen, 0)} and ${pctf(bc.US.share.DeepSeek, 0)}.`, `是的：${country('CN')}的工作点名 Qwen 的比例为 ${pctf(bc.CN.share.Qwen, 0)}、DeepSeek ${pctf(bc.CN.share.DeepSeek, 0)}；${country('US')}的工作分别为 ${pctf(bc.US.share.Qwen, 0)} 和 ${pctf(bc.US.share.DeepSeek, 0)}。`), B.modelsByCountry()],
@@ -1295,11 +1426,11 @@ function questionPool() {
   return Q;
 }
 // where each question sits: by default the lens of its group; the questions below move to the research question they answer
-const PLACE = {'connect:traditions': 'structure', 'connect:venues': 'structure', 'tail:gaps': 'structure', 'tail:imbalance': 'structure', 'targets:models': 'structure',
-  'evolve:reading': 'connect', 'tail:bridges': 'connect', 'attack:comparable': 'connect', 'navigate:newcomers': 'lead', 'targets:country': 'lead',
+const PLACE = {'connect:traditions': 'structure', 'connect:venues': 'structure', 'tail:gaps': 'structure', 'tail:imbalance': 'structure', 'targets:models': 'models',
+  'evolve:reading': 'connect', 'tail:bridges': 'connect', 'attack:comparable': 'connect', 'navigate:newcomers': 'lead', 'targets:country': 'models',
   'attack:timeline': 'evolve', 'tail:shape': 'evolve', 'navigate:next': 'evolve'};
 // navigate: the resource check (pilot, bands, nova) is shown on the universe page through renderEvidence, not in a chapter
-const HOME_LENS = {people: 'connect', scope: 'structure', evolve: 'evolve', connect: 'connect', lead: 'lead', attack: 'structure', targets: 'structure', tail: 'evolve', navigate: 'universe'};
+const HOME_LENS = {people: 'connect', scope: 'structure', evolve: 'evolve', connect: 'connect', lead: 'lead', attack: 'structure', targets: 'structure', tail: 'evolve', navigate: 'universe', models2026: 'models', oss: 'oss'};
 const RENAME = {'evolve:timeline': 'onset'};  // two questions named "timeline" share the Trajectory chapter
 const ORDER = () => ({...Object.fromEntries(Object.entries(LN_GROUPS()).map(([k, gs]) => [k, gs.flatMap(g => g[3])])),
   connect: ['layers', 'reading', 'notreading', 'bridges', 'buildson', 'hubs', 'supply', 'comparable', 'lifecycle', 'inflation', 'collab'],
@@ -1329,7 +1460,7 @@ function shell(inner, extraClass = '') {
 }
 // the headline findings, in reading order: [lens, question id]; each card opens its question under the lens
 const KEY_FINDINGS = [['structure', 'scope'], ['structure', 'traditions'], ['structure', 'venues'], ['structure', 'settings'], ['structure', 'balance'],
-  ['structure', 'adaptive'], ['structure', 'models'], ['connect', 'hubs'], ['connect', 'inflation'], ['connect', 'buildson'], ['lead', 'apart'], ['lead', 'punch'],
+  ['structure', 'adaptive'], ['models', 'mtop'], ['models', 'mfrontier'], ['oss', 'ogap'], ['oss', 'ofate'], ['connect', 'hubs'], ['connect', 'inflation'], ['connect', 'buildson'], ['lead', 'apart'], ['lead', 'punch'],
   ['lead', 'pioneers'], ['lead', 'bigteams'], ['lead', 'newcomers'], ['evolve', 'growth'], ['evolve', 'shift'], ['evolve', 'diffusion'], ['evolve', 'backtest']];
 function keyFindings(meta) {
   const cache = {}, cards = KEY_FINDINGS.map(([lens, qid]) => { const q = (cache[lens] ??= lensQuestions(lens)).find(x => x[0] === qid); return q && q[2] ? [lens, q] : null; }).filter(Boolean);
@@ -1337,7 +1468,7 @@ function keyFindings(meta) {
   <p class="fd-note">${T('The strongest results across the three parts. Every number belongs to the analysis version named above; open a card for the evidence, method notes and the papers behind it. Smaller observations are under Notes.', '版图、力量、走向三部分中最重要的结论。所有数字都属于上方注明的分析版本；点开卡片可看到证据、方法说明和背后的论文。较小的观察放在“小发现”。')}</p></section>
   <div class="ln-keys">${cards.map(([lens, [qid, q, a]]) => `<button class="ln-key" data-ln-goto="${lens}:${qid}"><span class="ln-key-lens">${chapterName(meta, lens)}</span><b>${q}</b><em>${esc(a)}</em><span class="ln-key-go">${T('Evidence', '看证据')} →</span></button>`).join('')}</div>`;
 }
-const partOf = id => PARTS(T).find(p => p[3].includes(id));
+const partOf = id => [...PARTS(T), ...TOPICS(T)].find(p => p[3].includes(id));
 const chapterName = (meta, id) => { const p = partOf(id); return p && p[3].length > 1 ? `${p[1]} · ${meta[id][0]}` : meta[id][0]; };
 function grouped(id, qs) {  // [[group head or null, questions]] in reading order; nothing is dropped
   const gs = LN_GROUPS()[id], byq = new Map(qs.map(q => [q[0], q])), used = new Set();
@@ -1350,18 +1481,20 @@ export function renderLens(ctx) {
   setup(ctx); lists.clear();
   const meta = {key: [T('Key findings', '重要发现'), T('The strongest results of the three parts', '三部分中最重要的结论')], ...lensMeta(T)};
   const want = LENS_LEGACY[C.state.lens] || C.state.lens, id = lensIds().includes(want) ? want : 'key', qs = id === 'key' ? [] : lensQuestions(id), part = partOf(id);
-  const tabs = `<nav class="ln-tabs" aria-label="${T('Parts', '部分')}">${[['key', meta.key[0], meta.key[1], ['key']], ...PARTS(T)].map(([k, name, sub, chapters]) => { const on = k === 'key' ? id === 'key' : part?.[0] === k;
-    return `<button data-ln-lens="${chapters[0]}" class="${on ? 'active' : ''}" aria-current="${on ? 'page' : 'false'}"><b>${name}</b><small>${sub}</small></button>`; }).join('')}</nav>`
+  const tabs = `<nav class="ln-tabs" aria-label="${T('Parts', '部分')}">${[['key', meta.key[0], meta.key[1], ['key']], ...PARTS(T), ...TOPICS(T)].map(([k, name, sub, chapters]) => { const on = k === 'key' ? id === 'key' : part?.[0] === k;
+    return `<button data-ln-lens="${chapters[0]}" class="${on ? 'active' : ''}${TOPICS(T).some(x => x[0] === k) ? ' is-topic' : ''}" aria-current="${on ? 'page' : 'false'}"><b>${name}</b><small>${sub}</small></button>`; }).join('')}</nav>`
     + (part && part[3].length > 1 ? `<nav class="ln-chapters" aria-label="${T('Chapters', '章节')}">${part[3].map((k, i) => `<button data-ln-lens="${k}" aria-current="${k === id ? 'page' : 'false'}"><span>${i + 1}</span><b>${meta[k][0]}</b><small>${meta[k][1]}</small></button>`).join('')}</nav>` : '');
   const lead = `<section class="ln-lead"><span class="fd-kicker">${part ? part[1] : ''}${part && part[3].length > 1 ? ' · ' + meta[id][0] : ''} · ${versionKicker()}</span><h2>${meta[id]?.[1] || ''}</h2>${versionNote()}`;
   if (id === 'key') return shell(`${tabs}${keyFindings(meta)}`);
   if (id === 'connect' && P.connect) { crStop(); cr.q = ''; cr.focus = -1; return shell(`${tabs}${lead}</section>${crLens(qs)}`, 'cr-lens'); }
   const groups = grouped(id, qs);
+  const extra = id === 'models' && P.models2026 ? `<p class="fd-note">${mNote()} ${T(`Release months: ${P.models2026.releaseSource}.`, '发布月份：2026-10-07 AI Model Observatory 快照中的 OpenRouter 首次上架月份；更早的模型用厂商发布月份。')}</p>`
+    : id === 'oss' && P.oss ? `<p class="fd-note">${T(`${num(P.oss.repos)} repositories in the agent-security group of the open-source set (forks and mirrors left out), metrics captured ${P.oss.capture}. ${P.oss.disclaimer}`, `开源集中 agent 安全组的 ${num(P.oss.repos)} 个仓库（不含 fork 与镜像），数据采集于 ${P.oss.capture}。星数和 fork 数是 GitHub 上的关注度，不代表采用、有效或认可。`)} <a href="#oss">${T('Open the repository table', '打开开源仓库表')} →</a></p>` : '';
   let n = 0;
   const list = `<ol class="ln-qlist">${groups.map(([g, gq]) => `${g ? `<li class="ln-qgroup">${g[1]}</li>` : ''}${gq.map(([qid, q, a]) => `<li><button data-ln-q="${qid}"><span class="ln-qn">${String(++n).padStart(2, '0')}</span><span><b>${q}</b><em>${esc(a)}</em></span></button></li>`).join('')}`).join('')}</ol>`;
   n = 0;
   const blocks = groups.map(([g, gq]) => `${g ? `<div class="ln-group-head" id="g-${g[0]}"><h2>${g[1]}</h2>${g[2] ? `<p>${g[2]}</p>` : ''}</div>` : ''}${gq.map(([qid, q, a, body]) => `<section class="fd-section ln-q" id="q-${qid}"><div class="ln-qhead"><span class="ln-qn">${String(++n).padStart(2, '0')}</span><div><h2>${q}</h2><p class="ln-answer">${esc(a)}</p></div></div>${body}</section>`).join('')}`).join('');
-  return shell(`${tabs}${lead}${list}</section>${blocks}`);
+  return shell(`${tabs}${lead}${extra}${list}</section>${blocks}`);
 }
 // the resource check, shown on the universe page beside the mechanisms it tests: one question's answer and evidence
 export function evidenceAnswer(ctx, qid) { setup(ctx); return lensQuestions('universe').find(q => q[0] === qid) || null; }
