@@ -154,3 +154,28 @@
 .sky-c3d-hint{position:absolute;right:12px;bottom:8px;margin:0;color:#7f9c95;font-size:11.5px;pointer-events:none}
 .sky-c3d.is-paper canvas{height:clamp(360px,40vw,480px)}
 .sky-c3d-label.is-seed{color:#fff;font-size:12.5px}
+/* the panel as a stack of levels that stay open (2026-10-18): 1 a cluster (row of clusters above its disc), 2 a candidate cluster, 3 a paper */
+.sky-level{scroll-margin-top:90px}
+.sky-level+.sky-level{margin-top:26px;padding-top:22px;border-top:1px solid var(--sky-line)}
+.sky-level-head{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 12px;margin-bottom:12px}
+.sky-level-kicker{flex:none;font-size:11.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#06130f;background:#d4e966;border-radius:999px;padding:2px 10px}
+.sky-level-head h3{margin:0;flex:1 1 auto;min-width:0}
+.sky-level-close{margin-left:auto;border:1px solid rgba(212,233,102,.35);background:rgba(6,19,17,.7);color:var(--sky-ink);border-radius:8px;padding:5px 10px;font:inherit;font-size:12.5px;cursor:pointer}
+.sky-level-close:hover,.sky-level-close:focus{border-color:#d4e966;color:#fff}
+.sky-level.is-empty .sky-level-kicker{background:transparent;color:#d4e966;box-shadow:inset 0 0 0 1px rgba(212,233,102,.5)}
+.sky-level-hint{margin:0;padding:14px 16px;border:1px dashed rgba(160,205,195,.35);border-radius:12px;color:var(--sky-muted);font-size:13px;line-height:1.55}
+.sky-topic-card.is-active{border-color:var(--c);background:rgba(255,255,255,.09);box-shadow:inset 0 0 0 1px var(--c)}
+.sky-topic-card.is-active b{color:#fff}
+.sky-sector.is-picked{fill:rgba(212,233,102,.13);stroke:#d4e966;stroke-width:2}
+.sky-sector-label.is-picked text{fill:#d4e966;font-weight:600}
+.sky-system-wrap.is-th-focus .sky-sector-label.is-picked{opacity:1}
+.sky-thread-card.is-picked{border-color:#d4e966;background:rgba(212,233,102,.08)}
+@media(max-width:640px){.sky-level-close{margin-left:0}}
+.sky-chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 6px}
+.sky-chip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--sky-line);background:rgba(255,255,255,.03);color:var(--sky-ink);border-radius:999px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer;white-space:nowrap}
+.sky-chip i{width:8px;height:8px;border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c);flex:none}
+.sky-chip span{color:var(--sky-muted);font-size:11.5px}
+.sky-chip:hover,.sky-chip:focus-visible{border-color:var(--c);background:rgba(255,255,255,.06)}
+.sky-chip.is-active{border-color:var(--c);background:rgba(255,255,255,.1);box-shadow:inset 0 0 0 1px var(--c);color:#fff;font-weight:600}
+.sky-chip.is-active span{color:#dce9e5}
+@media(max-width:640px){.sky-chips{flex-wrap:nowrap;overflow-x:auto;scroll-snap-type:x proximity;padding-bottom:6px;margin-right:-4px}.sky-chip{scroll-snap-align:center}}

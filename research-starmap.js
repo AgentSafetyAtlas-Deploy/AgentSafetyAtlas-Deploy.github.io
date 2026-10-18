@@ -142,13 +142,6 @@ function reasonChips(why, t) {
 }
 
 // ------------------------------------------------------------------ markup
-const crumbs = (v, t, topicLabel) => {
-  const items = [[t('Universe', '星空'), 'universe']];
-  if (v.topic !== '') items.push([topicLabel(sky.topics[+v.topic]?.name) + ' · ' + t('cluster', '星团'), 'system']);
-  if (v.thread !== '') items.push([t('Candidate cluster', '候选星团') + ' ' + (sky.threads[+v.thread]?.label.slice(0, 2).join(' · ') || ''), 'thread']);
-  if (v.paper !== '') items.push([t('Paper', '论文'), 'paper']);
-  return `<nav class="sky-crumbs" aria-label="${t('Where you are in the map', '你在星图中的位置')}">${items.map(([label, mode], k) => k === items.length - 1 ? `<b>${esc(label)}</b>` : `<button data-sky-go="${mode}">${esc(label)}</button>`).join('<span>›</span>')}</nav>`;
-};
 
 function bandName(b, t) {
   return {influence: t('Influence (within its group)', '影响（参照组内）'), bridge: t('Bridge (links clusters)', '桥梁（连接星团）'), resource: t('Resource (benchmark used by others)', '资源（被采用的基准）'),
@@ -536,29 +529,50 @@ export function mountStarmap(root, ctx) {
     state.skyTopic = v.topic === '' ? '' : String(v.topic); state.skyThread = v.thread === '' ? '' : String(v.thread); state.skyPaper = v.paper === '' ? '' : sky.ids[v.paper];
     ctx.writeHash?.();
   }
-  async function draw(scroll) {
-    sync(); pending3d = null;
-    let html = crumbs(v, t, topicLabel);
-    if (v.paper !== '') {
-      const r = await rel(v.paper), {ranked} = related(r);
-      u.focus(v.paper, ranked.slice(0, 14).map(x => x.i));
-      html += await paperView(v.paper, c, v);
-    } else {
+  // The panel is a stack of levels that stay open: 1 a cluster, chosen from the row of clusters right above its disc of
+  // candidate clusters, 2 one candidate cluster, 3 one paper. Choosing something opens the next level below without closing
+  // those above, and the largest cluster is open by default so the disc is visible without a click. Only a level whose
+  // content changed is redrawn, so the 3-D views and the turning disc above keep their state.
+  const defaultTopic = sky.topics.map((tp, k) => [tp.count || 0, k]).sort((a, b) => b[0] - a[0])[0][1], drawn = {};
+  panel.innerHTML = [1, 2, 3].map(n => `<section class="sky-level" data-sky-level="${n}"></section>`).join('');
+  const head = (n, title, close) => `<div class="sky-level-head"><span class="sky-level-kicker">${t(`Level ${n}`, `第${'一二三'[n - 1]}层`)}</span><h3>${title}</h3>${close ? `<button class="sky-level-close" data-sky-close="${n}">${t('Close', '收起')}</button>` : ''}</div>`;
+  const hint = text => `<p class="sky-level-hint">${text}</p>`;
+  async function draw(scrollTo) {
+    sync();
+    const topicK = v.topic !== '' ? +v.topic : defaultTopic;
+    // the 3-D sky above follows explicit choices only, so its first view is the whole universe
+    if (v.paper !== '') {const r = await rel(v.paper), {ranked} = related(r); u.focus(v.paper, ranked.slice(0, 14).map(x => x.i));}
+    else {
       u.focus(-1);
-      if (v.thread !== '') {u.highlight(new Set([...sky.threads[v.thread].members, ...(sky.threads[v.thread].attached || [])]), true); html += await constellation(+v.thread, c);}
-      else if (v.topic !== '') {u.highlight(new Set(sky.topics_of.map((ts, i) => ts.includes(+v.topic) ? i : -1).filter(i => i >= 0)), true); html += solar(+v.topic, c);}
-      else {u.highlight(null, true); html += ctx.hideOverview ? '' : overview(c);}
+      if (v.thread !== '') u.highlight(new Set([...sky.threads[v.thread].members, ...(sky.threads[v.thread].attached || [])]), true);
+      else if (v.topic !== '') u.highlight(new Set(sky.topics_of.map((ts, i) => ts.includes(+v.topic) ? i : -1).filter(i => i >= 0)), true);
+      else u.highlight(null, true);
     }
-    panel.innerHTML = html;
-    panel.hidden = !!ctx.hideOverview && v.paper === '' && v.topic === '' && v.thread === '';
-    spin();
-    if (pending3d) mount3d(panel, () => u.st.motion && !reduceMotion(), c.t);
-    fillBackground();
-    fillContexts(panel, t);
-    if (scroll) panel.scrollIntoView({block: 'start', behavior: reduceMotion() ? 'instant' : 'smooth'});
+    const name = topicLabel(sky.topics[topicK].name);
+    const want = {1: `disc:${topicK}`, 2: v.thread === '' ? '' : `thread:${v.thread}`,
+      3: v.paper === '' ? '' : JSON.stringify([v.paper, v.tab, v.more, v.hops, v.connectB, v.csim, v.history.length])};
+    for (const n of [1, 2, 3]) {
+      if (drawn[n] === want[n]) continue;
+      const sec = panel.querySelector(`[data-sky-level="${n}"]`);
+      pending3d = null;
+      let body;
+      if (n === 1) body = head(1, t(`Cluster “${name}” and its candidate clusters`, `星团“${name}”和它的候选星团`)) + clusterRow(c, topicK) + solar(topicK, c);
+      else if (n === 2) body = v.thread === '' ? head(2, t('Candidate cluster', '候选星团')) + hint(t('Click a sector or a card in the disc above to open that candidate cluster here: its papers in 3-D, and its prior, derivative, latest and bridge works.', '在上面的星盘里点一个扇区或一张卡片，这里会展开那个候选星团：论文的 3-D 图，以及前序、后续、最新和桥梁论文。'))
+        : head(2, t('Candidate cluster', '候选星团'), true) + await constellation(+v.thread, c);
+      else body = v.paper === '' ? head(3, t('Paper', '论文')) + hint(t('Click any star, in the sky or in the levels above, to open that paper here with everything related to it.', '点击任意一颗星（上方星空或以上各层里），这里会展开那篇论文和与它相关的全部论文。'))
+        : head(3, t('Paper', '论文'), true) + await paperView(v.paper, c, v);
+      sec.innerHTML = body; drawn[n] = want[n];
+      sec.classList.toggle('is-empty', want[n] === '');
+      if (pending3d) mount3d(sec, () => u.st.motion && !reduceMotion(), c.t);
+      if (n === 1) {spin(); const row = sec.querySelector('.sky-chips'), on = row?.querySelector('.is-active'); if (on) row.scrollLeft = on.offsetLeft - (row.clientWidth - on.offsetWidth) / 2;}
+      fillBackground(sec); fillContexts(sec, t);
+    }
+    // the chosen cluster and candidate cluster stay marked on the levels above
+    for (const el of panel.querySelectorAll('[data-sky-level="1"] [data-th]')) el.classList.toggle('is-picked', v.thread !== '' && el.dataset.th === String(v.thread));
+    if (scrollTo) panel.querySelector(`[data-sky-level="${scrollTo}"]`)?.scrollIntoView({block: 'start', behavior: reduceMotion() ? 'instant' : 'smooth'});
   }
-  async function fillBackground() {
-    for (const ol of panel.querySelectorAll('[data-sky-bglist]')) {
+  async function fillBackground(scope) {
+    for (const ol of scope.querySelectorAll('[data-sky-bglist]')) {
       const bg = await loadBackground(), items = ol.dataset.skyBglist.split(',').filter(Boolean).map(s => s.split(':').map(Number));
       ol.innerHTML = items.map(([b, n]) => {const e = bg[b]; return e ? `<li><a href="https://www.semanticscholar.org/paper/${esc(e.s2)}" target="_blank" rel="noopener">${esc(e.title)}</a><span>${e.year || '—'} · ${t('cited by ', '被 ')}${e.atlasCiting}${t(' Atlas papers', ' 篇 Atlas 论文引用')}${n ? ` · ${n}${t(' here', ' 篇在此')}` : ''}</span></li>` : '';}).join('');
     }
@@ -568,14 +582,17 @@ export function mountStarmap(root, ctx) {
     if (next.paper !== undefined && next.paper !== '' && v.paper !== '' && next.paper !== v.paper && !back) v.history.push(v.paper);
     if (next.paper === '') v.history = [];
     Object.assign(v, {tab: 'all', more: false, connectB: ''}, next);
-    draw(true);
+    draw(next.paper !== undefined && next.paper !== '' ? 3 : next.thread !== undefined && next.thread !== '' ? 2 : next.topic !== undefined && next.topic !== '' ? 1 : 0);
   }
   root.addEventListener('click', e => {
-    const b = e.target.closest('[data-sky-cb],[data-sky-cclear],[data-sky-route-many],[data-sky-go],[data-sky-thread],[data-sky-star],[data-sky-tab],[data-sky-open],[data-sky-route],[data-sky-seed],[data-sky-back],[data-sky-more],[data-sky-topic],[data-sky-zoom],[data-sky-reset],[data-sky-motion]');
+    const b = e.target.closest('[data-sky-close],[data-sky-cb],[data-sky-cclear],[data-sky-route-many],[data-sky-go],[data-sky-thread],[data-sky-star],[data-sky-tab],[data-sky-open],[data-sky-route],[data-sky-seed],[data-sky-back],[data-sky-more],[data-sky-topic],[data-sky-zoom],[data-sky-reset],[data-sky-motion]');
     if (!b) return;
     const d = b.dataset;
-    if (d.skyCb !== undefined) {v.connectB = +d.skyCb; draw(false); return;}
-    if ('skyCclear' in d) {v.connectB = ''; draw(false); return;}
+    if (d.skyClose) {if (d.skyClose === '2') v.thread = ''; else {v.paper = ''; v.history = [];} draw(0); return;}
+    // a cluster chosen in the row stays in view: its disc redraws right below it
+    if (b.matches('.sky-chip')) {Object.assign(v, {topic: +d.skyTopic, thread: '', paper: '', tab: 'all', more: false, connectB: '', history: []}); draw(0); return;}
+    if (d.skyCb !== undefined) {v.connectB = +d.skyCb; draw(0); return;}
+    if ('skyCclear' in d) {v.connectB = ''; draw(0); return;}
     if (d.skyRouteMany) {
       const host = document.querySelector('.research-paths'); if (!host) { ctx.handOff?.('seed', sky.ids[+d.skyRouteMany.split(',')[0]]); return; }
       for (const k of d.skyRouteMany.split(',')) {const btn = document.createElement('button'); btn.hidden = true; btn.dataset.rxAdd = sky.ids[+k]; host.appendChild(btn); btn.click(); btn.remove();}
@@ -585,8 +602,8 @@ export function mountStarmap(root, ctx) {
     else if (d.skyThread !== undefined && d.skyThread !== '') {const k = +d.skyThread; go({topic: sky.topics.findIndex(tp => tp.name === sky.threads[k].topic), thread: k, paper: ''});}
     else if (d.skyStar !== undefined) go({paper: +d.skyStar});
     else if (d.skyTopic !== undefined) go({topic: +d.skyTopic, thread: '', paper: ''});
-    else if (d.skyTab) {v.tab = d.skyTab; v.more = false; draw(false);}
-    else if ('skyMore' in d) {v.more = true; draw(false);}
+    else if (d.skyTab) {v.tab = d.skyTab; v.more = false; draw(0);}
+    else if ('skyMore' in d) {v.more = true; draw(0);}
     else if (d.skyOpen) ctx.openPaper?.(sky.ids[+d.skyOpen]);
     else if (d.skyRoute || d.skySeed) {
       // hand the paper to the explorer below, so the route and seeds keep a single implementation
@@ -603,9 +620,9 @@ export function mountStarmap(root, ctx) {
     else if ('skyMotion' in d) setMotion(!u.st.motion);
   });
   root.addEventListener('change', e => {
-    if (e.target.matches('[data-sky-band]')) {band = e.target.value; state.skyBand = band === 'influence' ? '' : band; ctx.writeHash?.(); u.kick(); const n = root.querySelector('[data-sky-bandnote]'); if (n) n.innerHTML = `<b>${t('Brightness depends on the observer.', '亮度取决于观测者。')}</b> ${t('Size follows the band chosen above: ', '大小随上方选择的波段变化：')}${bandName(band, t)} — ${bandNote(t)}${t('.', '。')}`; draw(false); return;}
-    if (e.target.matches('[data-sky-hops]')) {v.hops = e.target.checked ? '2' : ''; draw(false);}
-    else if (e.target.matches('[data-sky-csim]')) {v.csim = e.target.checked; draw(false);}
+    if (e.target.matches('[data-sky-band]')) {band = e.target.value; state.skyBand = band === 'influence' ? '' : band; ctx.writeHash?.(); u.kick(); const n = root.querySelector('[data-sky-bandnote]'); if (n) n.innerHTML = `<b>${t('Brightness depends on the observer.', '亮度取决于观测者。')}</b> ${t('Size follows the band chosen above: ', '大小随上方选择的波段变化：')}${bandName(band, t)} — ${bandNote(t)}${t('.', '。')}`; draw(0); return;}
+    if (e.target.matches('[data-sky-hops]')) {v.hops = e.target.checked ? '2' : ''; draw(0);}
+    else if (e.target.matches('[data-sky-csim]')) {v.csim = e.target.checked; draw(0);}
   });
   root.addEventListener('submit', e => {if (e.target.matches('[data-sky-cform]')) {e.preventDefault(); e.target.querySelector('[data-sky-cb]')?.click();}});
   root.addEventListener('input', e => {
@@ -641,12 +658,12 @@ export function mountStarmap(root, ctx) {
     sug.innerHTML = hits.sort((a, b) => sky.cites[b] - sky.cites[a]).slice(0, 8).map(i => `<li><button data-sky-star="${i}">${esc(titleOf(i))}<span>${yearOf(i) || ''}</span></button></li>`).join('') + (hits.length ? `<li class="sky-small">${hits.length} ${t('matching stars lit', '颗匹配的星已点亮')}</li>` : `<li class="sky-small">${t('No title matches.', '没有匹配的标题。')}</li>`);
   });
   root.querySelector('[data-sky-search]').addEventListener('submit', e => {e.preventDefault(); sug.querySelector('[data-sky-star]')?.click();});
-  draw(false);
+  draw(0);
 }
 
-function overview(ctx) {
+function clusterRow(ctx, active) {
   const {t, topicLabel} = ctx, m = sky.meta.coverage;
-  const cards = sky.topics.map((tp, k) => ({tp, k, n: sky.threads.filter(th => th.topic === tp.name && !th.unclustered).length})).sort((a, b) => (b.tp.count || 0) - (a.tp.count || 0))
-    .map(({tp, k, n}) => `<button class="sky-topic-card" data-sky-topic="${k}" style="--c:${sky.light[tp.theme]}"><i></i><b>${esc(topicLabel(tp.name))}</b><span>${(tp.count || 0).toLocaleString()} ${t('papers', '篇')} · ${n} ${t('candidate clusters', '个候选星团')}</span></button>`).join('');
-  return `<div class="sky-overview"><h3>${t('Enter a cluster', '进入一个星团')}</h3><p class="sky-small">${t('Each topic is a cluster (星团) and each theme group a galaxy (星系). Inside a cluster, candidate clusters are groups found automatically from paper content; they are candidates, not an expert taxonomy. Papers can belong to several clusters.', '每个专题是一个星团，每个主题大类是一个星系。星团里的候选星团是根据论文内容自动找到的分组，只是候选，不是专家分类。一篇论文可以属于多个星团。')} ${t(`${m.worksWithAtlasLink.toLocaleString()} papers have at least one recorded citation link inside the Atlas.`, `${m.worksWithAtlasLink.toLocaleString()} 篇论文至少有一条 Atlas 内部引用关系。`)}</p><div class="sky-topic-grid">${cards}</div></div>`;
+  const chips = sky.topics.map((tp, k) => ({tp, k})).sort((a, b) => (b.tp.count || 0) - (a.tp.count || 0))
+    .map(({tp, k}) => `<button class="sky-chip${k === active ? ' is-active' : ''}" data-sky-topic="${k}" aria-pressed="${k === active}" style="--c:${sky.light[tp.theme]}"><i></i>${esc(topicLabel(tp.name))}<span>${(tp.count || 0).toLocaleString()}</span></button>`).join('');
+  return `<p class="sky-small">${t('Choose a cluster (星团, one topic); its colour is its galaxy (星系, theme group). Below, the disc shows its candidate clusters: groups found automatically from paper content, candidates rather than an expert taxonomy. Papers can belong to several clusters.', '选择一个星团（一个专题），颜色表示它所属的星系（主题大类）。下面的星盘显示它的候选星团：根据论文内容自动找到的分组，只是候选，不是专家分类。一篇论文可以属于多个星团。')} ${t(`${m.worksWithAtlasLink.toLocaleString()} papers have at least one recorded citation link inside the Atlas.`, `${m.worksWithAtlasLink.toLocaleString()} 篇论文至少有一条 Atlas 内部引用关系。`)}</p><div class="sky-chips" role="group" aria-label="${t('Clusters', '星团')}">${chips}</div>`;
 }
