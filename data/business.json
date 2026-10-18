@@ -26574,6 +26574,31 @@
       "renewalStatus": "unknown"
     },
     {
+      "id": "buyer-REC-C05-B003-0017",
+      "title": "CORDIS Periodic Report for the DeepKeep Project",
+      "date": "2026-08-03",
+      "evidenceLevel": "project_report",
+      "companyId": "biz-deepkeep",
+      "summary": {
+        "en": "CORDIS Periodic Report for the DeepKeep Project. See the original source for the attributed claims.",
+        "zh": "欧盟 CORDIS 的第一期项目报告称 DeepKeep 平台达到 TRL7，原型已在运行环境中通过涵盖 vision、language 与 agentic AI 的 POC 和部署演示，其中包括 air-gapped 企业安装；报告还称 guardrails 扩展至工具误用、不安全动作序列与跨会话数据泄露。"
+      },
+      "sources": [
+        {
+          "url": "https://cordis.europa.eu/project/id/101218086",
+          "title": "CORDIS DeepKeep Project Fact Sheet"
+        },
+        {
+          "url": "https://cordis.europa.eu/project/id/101218086/reporting",
+          "title": "CORDIS Periodic Report for the DeepKeep Project"
+        }
+      ],
+      "detailId": "REC-C05-B003-0017",
+      "paymentStatus": "unknown",
+      "contractAmount": null,
+      "renewalStatus": "unknown"
+    },
+    {
       "id": "buyer-REC-C05-B003-0016",
       "title": "TrueFoundry Qualitative Test of DeepKeep AI Firewall Custom Guardrail",
       "date": "2026-08-31",
@@ -26619,31 +26644,6 @@
         }
       ],
       "detailId": "REC-C05-B006-0003",
-      "paymentStatus": "unknown",
-      "contractAmount": null,
-      "renewalStatus": "unknown"
-    },
-    {
-      "id": "buyer-REC-C05-B003-0017",
-      "title": "CORDIS Periodic Report for the DeepKeep Project",
-      "date": "2026-08-03",
-      "evidenceLevel": "project_report",
-      "companyId": "biz-deepkeep",
-      "summary": {
-        "en": "CORDIS Periodic Report for the DeepKeep Project. See the original source for the attributed claims.",
-        "zh": "欧盟 CORDIS 的第一期项目报告称 DeepKeep 平台达到 TRL7，原型已在运行环境中通过涵盖 vision、language 与 agentic AI 的 POC 和部署演示，其中包括 air-gapped 企业安装；报告还称 guardrails 扩展至工具误用、不安全动作序列与跨会话数据泄露。"
-      },
-      "sources": [
-        {
-          "url": "https://cordis.europa.eu/project/id/101218086",
-          "title": "CORDIS DeepKeep Project Fact Sheet"
-        },
-        {
-          "url": "https://cordis.europa.eu/project/id/101218086/reporting",
-          "title": "CORDIS Periodic Report for the DeepKeep Project"
-        }
-      ],
-      "detailId": "REC-C05-B003-0017",
       "paymentStatus": "unknown",
       "contractAmount": null,
       "renewalStatus": "unknown"
@@ -34142,11 +34142,11 @@
           "distinctURLs": 16
         },
         {
-          "host": "assets.publishing.service.gov.uk",
+          "host": "lasso.security",
           "distinctURLs": 14
         },
         {
-          "host": "lasso.security",
+          "host": "assets.publishing.service.gov.uk",
           "distinctURLs": 14
         },
         {

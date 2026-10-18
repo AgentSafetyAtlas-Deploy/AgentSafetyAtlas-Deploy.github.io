@@ -1,7 +1,34 @@
 {
- "current": "A3.6",
+ "current": "A3.7",
  "policy": "The observation report is versioned apart from the data: a candidate is computed once a month and published after review.",
  "versions": [
+  {
+   "analysisVersion": "A3.7",
+   "baseRelease": "R070",
+   "dataCutoff": "2026-10-13",
+   "computedOn": "2026-10-18",
+   "publishedOn": "2026-10-18",
+   "note": "Owner review step: opportunities in the cold.",
+   "headline": {
+    "Works analysed": 8995,
+    "Citation routes": 52459,
+    "Routes with a sentence (%)": 83.7,
+    "Candidate clusters": 247,
+    "Benchmarks used by others": 113,
+    "Countries": 87,
+    "Doubling time (months)": 9.4,
+    "Cross-tradition citations (%)": 6.9,
+    "… expected from sizes (%)": 45.1,
+    "Boundary works (%)": 1.5,
+    "Held-out surveys": 56,
+    "Salience Recall@50": 0.205,
+    "Citations Recall@50": 0.188,
+    "Salience new work in top 20": 0.44,
+    "Citations new work in top 20": 0.005,
+    "New-star share (%)": 35.3,
+    "Band top-10 overlap": 0.038
+   }
+  },
   {
    "analysisVersion": "A3.6",
    "baseRelease": "R070",
