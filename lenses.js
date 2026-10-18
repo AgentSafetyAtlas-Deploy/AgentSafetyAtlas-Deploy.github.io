@@ -274,13 +274,23 @@ export function bindLenses(ctx, root = document.querySelector('.fd')) {
   setup(ctx);
   if (!root) return;
   const tip = root.querySelector('.fd-tip');
-  root.addEventListener('input', e => { if (e.target.matches('[data-cr-month]')) { const was = cr.timer; crStop(); cr.m = +e.target.value; crRedraw('month'); if (was) { const b = root.querySelector('[data-cr-play]'); if (b) b.textContent = '▶'; } } });
-  crBind(root); psBind(root);
+  root.addEventListener('input', e => { if (e.target.matches('[data-tj-month]')) { tjStop(); tj.m = +e.target.value; tjRedraw('month'); return; } if (e.target.matches('[data-cr-month]')) { const was = cr.timer; crStop(); cr.m = +e.target.value; crRedraw('month'); if (was) { const b = root.querySelector('[data-cr-play]'); if (b) b.textContent = '▶'; } } });
+  crBind(root); psBind(root); tjBind(root); plBind(root);
   root.querySelector('[data-ps-inner]')?.addEventListener('change', e => { if (e.target.matches('[data-ps-role]')) { psStop(); ps.role = +e.target.value; ps.hl = null; psRedraw(); } });
   root.addEventListener('click', e => {
-    const el = e.target.closest('[data-ps-y],[data-ps-year],[data-ps-play],[data-ps-open],[data-ps-show],[data-ps-cell],[data-cr-view],[data-cr-level],[data-cr-layer],[data-cr-win],[data-cr-play],[data-cr-open],[data-cr-show],[data-cr-pair],[data-cr-unit],[data-fd-ids],[data-fd-paper],[data-fd-list],[data-fd-jump],[data-fd-layer],[data-fd-pair],[data-fd-bench],[data-ln-lens],[data-ln-goto],[data-ln-q],[data-ln-ms-kind],[data-ln-insight],.fd-close');
+    const el = e.target.closest('[data-pl-view],[data-pl-year],[data-pl-play],[data-pl-open],[data-pl-show],[data-pl-cc],[data-tj-play],[data-tj-open],[data-tj-show],[data-tj-line],[data-ps-y],[data-ps-year],[data-ps-play],[data-ps-open],[data-ps-show],[data-ps-cell],[data-cr-view],[data-cr-level],[data-cr-layer],[data-cr-win],[data-cr-play],[data-cr-open],[data-cr-show],[data-cr-pair],[data-cr-unit],[data-fd-ids],[data-fd-paper],[data-fd-list],[data-fd-jump],[data-fd-layer],[data-fd-pair],[data-fd-bench],[data-ln-lens],[data-ln-goto],[data-ln-q],[data-ln-ms-kind],[data-ln-insight],.fd-close');
     if (!el) return;
     if (el.matches('.fd-close')) { root.querySelector('.fd-drawer').hidden = true; return; }
+    if (el.dataset.plView) { plStop(); pl.view = el.dataset.plView; pl.hl = null; pl.arc = null; plRedraw(); return; }
+    if (el.dataset.plYear) { plStop(); pl.year = +el.dataset.plYear; plRedraw(); return; }
+    if ('plPlay' in el.dataset) { plPlay(); return; }
+    if (el.dataset.plOpen) { const art = el.closest('.cr-card'), open = el.getAttribute('aria-expanded') === 'true'; el.setAttribute('aria-expanded', String(!open)); art.querySelector('.cr-body').hidden = open; plActivate(el.dataset.plOpen); return; }
+    if (el.dataset.plShow) { plActivate(el.dataset.plShow); root.querySelector('[data-pl-stage]')?.scrollIntoView({block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'}); return; }
+    if (el.dataset.plCc) { plCountryDrawer(el.dataset.plCc); return; }
+    if ('tjPlay' in el.dataset) { tjPlay(); return; }
+    if (el.dataset.tjOpen) { const art = el.closest('.cr-card'), open = el.getAttribute('aria-expanded') === 'true'; el.setAttribute('aria-expanded', String(!open)); art.querySelector('.cr-body').hidden = open; tjActivate(el.dataset.tjOpen); return; }
+    if (el.dataset.tjShow) { tjActivate(el.dataset.tjShow); root.querySelector('[data-tj-stage]')?.scrollIntoView({block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'}); return; }
+    if (el.dataset.tjLine) { tjDrawer(+el.dataset.tjLine); return; }
     if (el.dataset.psY) { psStop(); ps.y = el.dataset.psY; ps.hl = null; psRedraw(); return; }
     if (el.dataset.psYear) { psStop(); ps.year = el.dataset.psYear; psRedraw(); return; }
     if ('psPlay' in el.dataset) { psPlay(); return; }
@@ -309,7 +319,7 @@ export function bindLenses(ctx, root = document.querySelector('.fd')) {
     if (el.dataset.lnGoto) {
       const [lens, qid] = el.dataset.lnGoto.split(':');
       ctx.state.lens = lens; ctx.writeHash(); ctx.render();
-      requestAnimationFrame(() => { const h = document.querySelector(`#q-${qid} [data-cr-open], #q-${qid} [data-ps-open]`); if (h && h.getAttribute('aria-expanded') !== 'true') h.click(); document.getElementById('q-' + qid)?.scrollIntoView({block: 'start'}); });
+      requestAnimationFrame(() => { const h = document.querySelector(`#q-${qid} [data-cr-open], #q-${qid} [data-ps-open], #q-${qid} [data-tj-open], #q-${qid} [data-pl-open]`); if (h && h.getAttribute('aria-expanded') !== 'true') h.click(); document.getElementById('q-' + qid)?.scrollIntoView({block: 'start'}); });
       return;
     }
     if (el.dataset.lnQ) { document.getElementById('q-' + el.dataset.lnQ)?.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start'}); return; }
@@ -742,7 +752,7 @@ const LN_GROUPS = () => ({
   lead: [['countries', T('Countries', '国家'), T('where the work comes from, and how the map shifts', '研究来自哪里，格局怎样变化'), ['shares', 'rising', 'directions', 'pioneers', 'geoconc', 'punch', 'apart']],
     ['institutions', T('Institutions', '机构'), T('who produces, who supplies, who sets the pace', '谁产出、谁供给、谁定节奏'), ['concentration', 'influence', 'industry', 'bigteams', 'newcomers', 'people']]],
   evolve: [['pace', T('Pace', '节奏'), T('how fast the field grows, and where its weight moves', '长得多快，重心往哪移'), ['growth', 'shift', 'diversify', 'path']],
-    ['head', T('The head', '头部'), T('the big lines: when attacks, defences and benchmarks took shape', '大方向：攻击、防御、基准各在什么时候成形'), ['onset', 'timeline']],
+    ['head', T('The head', '头部'), T('the big lines: who stays, who arrives, how fast they grow', '大方向：谁留下、谁进来、长得多快'), ['hturnover', 'hpace', 'onset', 'timeline']],
     ['tail', T('The long tail', '长尾'), T("where next year's directions are now", '下一年的方向，现在在哪里'), ['shape', 'backtest', 'rising', 'terms', 'diffusion']],
     ['frontier', T('Open questions', '前沿与机会'), T('what is asked and not yet taken up', '提出了、还没人接手的问题'), ['radar', 'open', 'next']]],
   models: [['what', T('What is used', '用哪些模型'), T('generations, families, open or closed', '哪一代、哪一家、开源还是闭源'), ['mtop', 'mfamily', 'mopen']],
@@ -1039,6 +1049,266 @@ const BP = {
     return lineChart(P.position.years.map((y, i) => i ? String(y) : `≤${y}`), ks.map((k, i) => ({label: names[key][k], color: PS_COLORS[P.position.dims[key].indexOf(k) % 8], values: data[k]})), {partialLast: true});
   },
 };
+// ------------------------------------------------------------------------------------------------ Trajectory part: head and tail over time (findings.trajectory)
+// Each candidate cluster (a research line found from paper content) is a dot: size (works in the 12 months up to the month
+// shown, log scale) against growth (those 12 months against the 12 before). The dashed line is the head/tail cut: the
+// largest lines left of nothing hold half of all works. Play the months to see lines cross from the tail into the head.
+const tj = {m: null, q: '', hl: null, timer: 0, focus: -1};
+const tjLast = () => P.trajectory.months.length - 1;
+const tjTrail = (l, m) => { let s = 0; for (let k = Math.max(0, m - 11); k <= m; k++) s += l.counts[k]; return s; };
+function tjHead(m) {  // the smallest set of the largest lines holding half the works (as in trajectory_analysis.head_set)
+  const L = P.trajectory.lines, sizes = L.map(l => tjTrail(l, m)), order = sizes.map((_, k) => k).sort((a, b) => sizes[b] - sizes[a] || a - b), tot = sizes.reduce((s, x) => s + x, 0) || 1;
+  const set = new Set(); let acc = 0;
+  for (const k of order) { if (acc >= tot / 2 || !sizes[k]) break; set.add(k); acc += sizes[k]; }
+  const cut = Math.min(...[...set].map(k => sizes[k]));
+  return {set, cut, sizes};
+}
+const tjMonth = m => P.trajectory.months[m];
+function tjSvg() {
+  const T0 = P.trajectory, L = T0.lines, m = tj.m, {set, cut, sizes} = tjHead(m), W = 640, H = 430, left = 44, right = 14, top = 14, bottom = 34;
+  const maxS = Math.max(...L.map(l => tjTrail(l, tjLast()))), lx = v => Math.log10(v + 1), x = v => left + (W - left - right) * lx(v) / lx(maxS);
+  const g = (l, mm) => Math.log2((tjTrail(l, mm) + 1) / (tjTrail(l, mm - 12) + 1)), gy = v => top + (H - top - bottom) * (1 - (Math.max(-3, Math.min(6, v)) + 3) / 9);
+  const hl = tj.hl ? new Set(tj.hl) : null, narrow = matchMedia('(max-width: 640px)').matches;
+  const grid = [-2, -1, 0, 1, 2, 3, 4, 5].map(v => `<line x1="${left}" x2="${W - right}" y1="${gy(v)}" y2="${gy(v)}" class="${v === 0 ? 'tj-zero' : 'fd-grid'}"/><text x="${left - 6}" y="${gy(v) + 4}" text-anchor="end" class="fd-axis">${v >= 0 ? '×' + 2 ** v : '×1/' + 2 ** -v}</text>`).join('')
+    + [1, 3, 10, 30, 100, 300].filter(v => v <= maxS).map(v => `<line x1="${x(v)}" x2="${x(v)}" y1="${top}" y2="${H - bottom}" class="fd-grid"/><text x="${x(v)}" y="${H - bottom + 14}" text-anchor="middle" class="fd-axis">${v}</text>`).join('');
+  const cutX = x(cut);
+  const trailPath = k => { const pts = []; for (let mm = Math.max(T0.first, m - 12); mm <= m; mm++) { const s = tjTrail(L[k], mm); if (s) pts.push(`${x(s).toFixed(1)},${gy(g(L[k], mm)).toFixed(1)}`); } return pts.length > 1 ? `<polyline points="${pts.join(' ')}" class="tj-trail" stroke="${P.meta.galaxies[L[k].galaxy]?.color || INK}"/>` : ''; };
+  const order = L.map((_, k) => k).filter(k => sizes[k] > 0).sort((a, b) => sizes[a] - sizes[b]);
+  const dots = order.map(k => { const l = L[k], s = sizes[k], on = hl ? hl.has(k) : null, head = set.has(k);
+    const tip = T(`${l.label} · ${l.cluster != null ? cl(l.cluster) : ''}: ${s} works in the 12 months to ${tjMonth(m)}, ×${((s + 1) / (tjTrail(l, m - 12) + 1)).toFixed(1)} on the year before · ${head ? 'head' : 'long tail'}`, `${l.label} · ${l.cluster != null ? cl(l.cluster) : ''}：截至 ${tjMonth(m)} 的 12 个月 ${s} 项工作，是前一年的 ${((s + 1) / (tjTrail(l, m - 12) + 1)).toFixed(1)} 倍 · ${head ? '头部' : '长尾'}`);
+    return `<circle class="tj-dot${head ? ' is-head' : ''}${on === true ? ' is-hl' : on === false ? ' is-dim' : ''}" cx="${x(s).toFixed(1)}" cy="${gy(g(l, m)).toFixed(1)}" r="${(2.5 + 2.2 * Math.sqrt(s / 10)).toFixed(1)}" fill="${P.meta.galaxies[l.galaxy]?.color || INK}" data-tj-line="${k}" data-tip="${esc(tip)}"/>`; }).join('');
+  // a few labels, largest first, skipped where they would sit on one already placed
+  const placed = [], labels = (hl ? [...hl].sort((a, b) => sizes[b] - sizes[a]) : order.slice(-6).reverse()).filter(k => sizes[k] > 0).map(k => {
+    const lx0 = x(sizes[k]) + 6, ly0 = gy(g(L[k], m)) - 6, text = L[k].label.split(' · ').slice(0, 2).join(' · '), w = text.length * (narrow ? 8 : 5.6);
+    if (lx0 + w > W - right + 40 || placed.some(([a, b, c]) => Math.abs(b - ly0) < 13 && lx0 < a + c && a < lx0 + w) || placed.length >= (narrow ? 3 : 6)) return '';
+    placed.push([lx0, ly0, w]);
+    return `<text x="${lx0.toFixed(1)}" y="${ly0.toFixed(1)}" class="tj-label">${esc(text)}</text>`; }).join('');
+  const trails = (hl && hl.size <= 15 ? [...hl] : []).map(trailPath).join('') + (tj.focus >= 0 ? trailPath(tj.focus) : '');
+  return `<svg class="tj-map${hl ? ' has-hl' : ''}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${T('Research lines by size and growth', '研究线的规模与增长')}">${grid}
+    <rect x="${cutX}" y="${top}" width="${W - right - cutX}" height="${H - top - bottom}" class="tj-headzone"/><line x1="${cutX}" x2="${cutX}" y1="${top}" y2="${H - bottom}" class="tj-cut"/>
+    <text x="${cutX + 6}" y="${H - bottom - 8}" class="tj-zone">${T(`head · ${set.size} lines`, `头部 · ${set.size} 条线`)}</text><text x="${cutX - 6}" y="${H - bottom - 8}" text-anchor="end" class="tj-zone">${T('long tail', '长尾')}</text>
+    ${trails}${dots}${labels}
+    <text x="${W - right}" y="${H - 4}" text-anchor="end" class="fd-axis">${T('works in the last 12 months (log) →', '近 12 个月工作数（对数）→')}</text><text x="4" y="${top - 2}" class="fd-axis">${T('↑ growth on the year before', '↑ 比前一年增长')}</text></svg>`;
+}
+function tjTimeline() {
+  const T0 = P.trajectory, M = T0.months.length, first = T0.first, ticks = T0.months.map((mm, k) => k >= first && mm.endsWith('-01') ? `<span style="left:${(100 * (k - first) / (M - 1 - first)).toFixed(2)}%">${mm.slice(0, 4)}</span>` : '').join('');
+  return `<div class="cr-time"><button class="cr-play" data-tj-play aria-label="${tj.timer ? T('Pause', '暂停') : T('Play month by month', '逐月播放')}">${tj.timer ? '❚❚' : '▶'}</button>
+    <div class="cr-track tj-track"><input type="range" class="tj-range" min="${first}" max="${M - 1}" value="${tj.m}" data-tj-month aria-label="${T('Month', '月份')}"><div class="cr-ticks">${ticks}</div></div>
+    <div class="cr-time-side"><b data-tj-when>${tjMonth(tj.m)}</b></div></div>`;
+}
+const tjNote = () => T(`Dots: the ${P.trajectory.lines.length} candidate clusters (research lines found from paper content), coloured by galaxy, as large as their works in the last 12 months; growth above ×32 is drawn at the top. Right of the dashed line: the head, the largest lines that together hold half of all works; left: the long tail. Hover a line for its trail; click it for its latest works.`, `每个点是一条候选研究线（共 ${P.trajectory.lines.length} 条，按论文内容自动发现），颜色是所属星系，大小是近 12 个月的工作数；增长超过 32 倍的画在顶端。虚线右边是头部：合起来占全部工作一半的最大几条线；左边是长尾。把鼠标放在一条线上看它的轨迹，点击看它最新的工作。`);
+function tjStageInner() { return `<div class="cr-figure" data-tj-fig>${tjSvg()}</div>${tjTimeline()}<p class="fd-note">${tjNote()}</p>`; }
+function tjStage() {
+  if (tj.m == null) tj.m = tjLast();
+  return `<section class="cr-stage tj-stage" data-tj-stage><span class="fd-kicker">${T('THE HEAD AND THE TAIL', '全局视图 · 头部与长尾')}</span><h3>${T('Research lines month by month: size against growth', '研究线逐月变化：规模 × 增长')}</h3>
+    <p class="fd-note cr-intro">${T('Press play to watch lines move: those crossing the dashed line enter the head. Each finding on the right sets the view to what it describes.', '按播放看研究线怎样移动：越过虚线的线进入头部。右边每条发现都会把这里切到它说的那种情况。')}</p>
+    <div data-tj-inner>${tjStageInner()}</div></section>`;
+}
+function tjConfig(qid) {
+  const T0 = P.trajectory, c = {m: tjLast(), hl: null, note: ''};
+  if (!T0) return c;
+  const notes = {growth: T('View: all lines now; press play to watch the field grow from 2023.', '视图：现在的全部研究线；按播放看领域从 2023 年起怎样长大。'),
+    shift: T('View: the lines of the clusters gaining share are lit.', '视图：亮出份额上升的星团里的研究线。'),
+    diversify: T('View: the head and the tail now; more lines in the head means a less concentrated field.', '视图：现在的头部与长尾；头部的线越多，领域越分散。'),
+    path: T('View: all lines now.', '视图：现在的全部研究线。'),
+    hturnover: T('View: the lines that entered the head in the last 12 months, with their trails.', '视图：近 12 个月新进入头部的研究线，带轨迹。'),
+    hpace: T('View: the head as it stood a year ago, lit; compare its growth with the rest.', '视图：亮出一年前的头部；对照它和其他线的增长。'),
+    onset: T('View: all lines; the timeline below shows when attacks, defences and benchmarks took shape per cluster.', '视图：全部研究线；下面的时间线是各星团攻击、防御、基准成形的时间。'),
+    timeline: T('View: all lines now.', '视图：现在的全部研究线。'),
+    shape: T('View: the cut between head and tail now.', '视图：现在头部与长尾的分界。'),
+    backtest: T('View: last year\'s entrants into the head, with the path they took from the tail.', '视图：去年进入头部的研究线，以及它们从长尾走上来的路径。'),
+    rising: T('View: tail lines growing fastest now.', '视图：现在长尾里增长最快的研究线。'),
+    terms: T('View: all lines now; title terms are listed in the evidence.', '视图：现在的全部研究线；标题术语见证据。'),
+    diffusion: T('View: all lines now.', '视图：现在的全部研究线。'),
+    radar: T('View: all lines now.', '视图：现在的全部研究线。'), open: T('View: all lines now.', '视图：现在的全部研究线。'), next: T('View: tail lines growing fastest now.', '视图：现在长尾里增长最快的研究线。')};
+  const cfg = {hturnover: {hl: T0.entered.slice(0, 12)}, backtest: {hl: T0.entered.slice(0, 12)}, hpace: {hl: T0.headYearAgo}, rising: {hl: T0.tailRising}, next: {hl: T0.tailRising},
+    shift: {hl: (P.trajectory.shiftClusters || []).length ? T0.lines.map((l, k) => P.trajectory.shiftClusters.includes(l.cluster) ? k : -1).filter(k => k >= 0) : null}, growth: {m: T0.first}}[qid] || {};
+  return {...c, ...cfg, note: notes[qid] || ''};
+}
+function tjRedraw(part) {
+  const s = document.querySelector('[data-tj-inner]'); if (!s) return;
+  if (part !== 'month') { s.innerHTML = tjStageInner(); return; }
+  s.querySelector('[data-tj-fig]').innerHTML = tjSvg(); s.querySelector('[data-tj-when]').textContent = tjMonth(tj.m);
+}
+function tjStop() { if (tj.timer) { clearInterval(tj.timer); tj.timer = 0; } }
+function tjPlay() {
+  if (tj.timer) { tjStop(); tjRedraw(); return; }
+  if (tj.m >= tjLast()) tj.m = P.trajectory.first;
+  tj.timer = setInterval(() => { if (!document.querySelector('[data-tj-stage]')) return tjStop(); tj.m = Math.min(tjLast(), tj.m + 1); const r = document.querySelector('[data-tj-month]'); if (r) r.value = tj.m; tjRedraw('month'); if (tj.m >= tjLast()) { tjStop(); tjRedraw(); } }, 220);
+  tjRedraw();
+}
+function tjActivate(qid) {
+  if (tj.q === qid) return;
+  const c = tjConfig(qid); tjStop();
+  Object.assign(tj, {q: qid, m: c.m, hl: c.hl, focus: -1});
+  for (const el of document.querySelectorAll('.cr-card[data-tj-card]')) el.classList.toggle('is-active', el.dataset.tjCard === qid);
+  tjRedraw();
+}
+function tjDrawer(k) {
+  const l = P.trajectory.lines[k];
+  openDrawer(`${l.label}${l.cluster != null ? ' · ' + cl(l.cluster) : ''}`, `<p class="fd-note">${T(`${num(l.works)} works in this candidate cluster; the latest ${l.recent.length}:`, `这条候选研究线共 ${num(l.works)} 项工作；最新的 ${l.recent.length} 项：`)}</p>${paperRows(l.recent)}`);
+}
+function tjCards(qs) {
+  const byq = Object.fromEntries(qs.map(q => [q[0], q])), used = new Set(), gs = LN_GROUPS().evolve;
+  let n = 0;
+  const card = id => { const [qid, q, a, body] = byq[id]; used.add(qid); n++;
+    return `<article class="cr-card" id="q-${qid}" data-tj-card="${qid}"><button class="cr-card-head" data-tj-open="${qid}" aria-expanded="false"><span class="ln-qn">${String(n).padStart(2, '0')}</span><span class="cr-card-text"><b>${q}</b><em>${esc(a)}</em></span><i class="cx-chev" aria-hidden="true"></i></button>
+      <p class="fd-note cr-config"><span>${tjConfig(qid).note}</span><button class="cr-show" data-tj-show="${qid}">${T('Show on the view ↑', '在全局视图上看 ↑')}</button></p><div class="cr-body" hidden>${body}</div></article>`; };
+  const groups = gs.map(([key, name, sub, ids]) => { const got = ids.filter(id => byq[id]); return got.length ? `<section class="cr-group"><h3>${name}<small>${sub}</small></h3>${got.map(card).join('')}</section>` : ''; }).join('');
+  const rest = qs.filter(q => !used.has(q[0]));
+  return groups + (rest.length ? `<section class="cr-group"><h3>${T('More', '其他')}</h3>${rest.map(q => card(q[0])).join('')}</section>` : '');
+}
+const tjLens = qs => `<div class="cr-wrap">${tjStage()}<div class="cr-cards">${tjCards(qs)}</div></div>`;
+let tjObserver = null;
+function tjBind(root) {
+  tjObserver?.disconnect(); tjObserver = null;
+  const st = root.querySelector('[data-tj-stage]'); if (!st) return;
+  st.addEventListener('mouseover', e => { const d = e.target.closest('[data-tj-line]'); const k = d ? +d.dataset.tjLine : -1; if (k !== tj.focus && !tj.timer) { tj.focus = k; tjRedraw('month'); } });
+  st.addEventListener('mouseleave', () => { if (tj.focus >= 0) { tj.focus = -1; tjRedraw('month'); } });
+  if ('IntersectionObserver' in window && matchMedia('(min-width: 1100px)').matches) {
+    tjObserver = new IntersectionObserver(ens => { for (const en of ens) if (en.isIntersecting) tjActivate(en.target.dataset.tjCard); }, {rootMargin: '-40% 0px -55% 0px'});
+    root.querySelectorAll('.cr-card[data-tj-card]').forEach(el => tjObserver.observe(el));
+  }
+}
+const BT = {
+  turnover() {
+    const t = P.trajectory.turnover;
+    return `<table class="fd-table"><thead><tr><th>${T('Year', '年份')}</th><th>${T('Lines in the head', '头部研究线')}</th><th>${T('Entered from the tail', '从长尾进入')}</th><th>${T('Left for the tail', '退回长尾')}</th></tr></thead><tbody>${t.map(r => `<tr><th>${r.year}${r.partial ? '*' : ''}</th><td>${r.head}</td><td>${r.entered} (${pctf(r.enteredShare, 0)})</td><td>${r.left}</td></tr>`).join('')}</tbody></table>
+    <p class="fd-note">${T('Head at the end of each year against the head twelve months earlier (* to the latest month). The head is the smallest set of the largest candidate clusters holding half the works of the last 12 months.', '每年年底的头部与 12 个月前的头部对比（* 为截至最新月份）。头部是近 12 个月合起来占一半工作的最大几条候选研究线。')}</p>
+    <h4>${T('Entered the head in the last 12 months', '近 12 个月进入头部的研究线')}</h4><ol class="fd-drawer-list">${P.trajectory.entered.slice(0, 12).map(k => `<li><button class="fd-link" data-tj-line="${k}">${esc(P.trajectory.lines[k].label)}</button><small>${P.trajectory.lines[k].cluster != null ? esc(cl(P.trajectory.lines[k].cluster)) : ''}</small></li>`).join('')}</ol>`;
+  },
+  pace() {
+    const p = P.trajectory.pace;
+    return lineChart(p.map(r => r.month.replace('-', '.')), [{label: T('Last year\'s head', '一年前的头部'), color: SERIES[0], values: p.map(r => 100 * (r.head - 1))}, {label: T('All other lines', '其余研究线'), color: SERIES[1], values: p.map(r => 100 * (r.tail - 1))}], {partialLast: false})
+      + `<p class="fd-note">${T('Growth of works in the last 12 months against the 12 months before, in percent, for the lines that were in the head a year earlier and for all others (so promotion into the head does not flatter it).', '近 12 个月工作数相对前 12 个月的增长（%），分别对一年前在头部的研究线和其余全部研究线计算（这样进入头部的线不会把头部的增长抬高）。')}</p>`;
+  },
+};
+// ------------------------------------------------------------------------------------------------ Players part: the power map (findings.players)
+// Countries on a world map (bubble = works that year or in one cluster; colour = share of the year's most-cited tenth ÷
+// share of works; arcs = works shared by two countries) and institutions on an output × influence plane (size =
+// benchmarks others use, colour = sector). The findings scroll beside it and set it to what they describe.
+const pl = {view: 'map', year: null, cluster: -1, hl: null, arc: null, q: '', timer: 0};
+let plGeo = null, plGeoLoading = null;
+function plLoadGeo() {
+  if (plGeo || plGeoLoading) return plGeoLoading;
+  plGeoLoading = fetch('./data/countries.json').then(r => r.json()).then(j => { plGeo = Object.fromEntries((j.countries || []).map(c => [c.cc, c])); plRedraw(); }).catch(() => {});
+  return plGeoLoading;
+}
+const PL_SECTOR = () => ({academia: [T('Universities', '高校'), '#336aab'], industry: [T('Companies', '企业'), '#c26541'], public: [T('Public research', '公共研究机构'), '#5e8c2e'], other: [T('Other', '其他'), '#8a9a97']});
+const plRatioColor = r => r == null ? '#8a9a97' : r >= 1.25 ? '#c26541' : r >= 1.05 ? '#d9946f' : r > 0.95 ? '#9aa8a5' : r > 0.75 ? '#7d9cc4' : '#336aab';
+function plMapSvg() {
+  const D = P.players, yi = D.years.indexOf(pl.year ?? D.years[D.years.length - 1]), byC = pl.cluster >= 0 ? D.byCluster[pl.cluster] : null;
+  const land = plGeo ? Object.values(plGeo).map(c => `<path d="${c.d}" class="pl-land${pl.hl?.countries?.includes(c.cc) ? ' is-hl' : ''}" data-pl-cc="${c.cc}"/>`).join('') : `<text x="480" y="200" text-anchor="middle" class="fd-axis">${T('Loading the map…', '正在加载地图…')}</text>`;
+  const val = cc => byC ? byC[cc] || 0 : D.countries[cc]?.works[yi] || 0, max = Math.max(...D.order.map(val), 1), maxR = byC ? 52 : 48;
+  const hlc = pl.hl?.countries ? new Set(pl.hl.countries) : null;
+  const bubbles = plGeo ? D.order.filter(cc => plGeo[cc] && val(cc) > 0).sort((a, b) => val(b) - val(a)).map(cc => {
+    const c = D.countries[cc], g = plGeo[cc], v = val(cc), r = Math.max(3.5, maxR * Math.sqrt(v / max)), ratio = !byC && c.topShare[yi] != null && c.share[yi] ? c.topShare[yi] / c.share[yi] : null, on = hlc ? hlc.has(cc) : null;
+    const tip = byC ? T(`${country(cc)}: ${pctf(v)} of ${cl(pl.cluster)} works since ${D.instSince}`, `${country(cc)}：${D.instSince} 年以来“${cl(pl.cluster)}”工作的 ${pctf(v)}`)
+      : T(`${country(cc)} ${D.years[yi]}: ${num(Math.round(v))} works (${pctf(c.share[yi])} of located works); most-cited tenth ${pctf(c.topShare[yi])}${ratio ? ` (×${ratio.toFixed(2)})` : ''}`, `${country(cc)} ${D.years[yi]}：${num(Math.round(v))} 项工作（占已定位工作 ${pctf(c.share[yi])}）；被引前 10% 中占 ${pctf(c.topShare[yi])}${ratio ? `（${ratio.toFixed(2)} 倍）` : ''}`);
+    return `<circle class="pl-bub${on === true ? ' is-hl' : on === false ? ' is-dim' : ''}" cx="${g.lx}" cy="${g.ly}" r="${r.toFixed(1)}" fill="${byC ? COLORS.attention : plRatioColor(ratio)}" data-pl-cc="${cc}" data-tip="${esc(tip)}"/>${r > 11 ? `<text x="${g.lx}" y="${g.ly + 4}" text-anchor="middle" class="pl-cc">${cc}</text>` : ''}`; }).join('') : '';
+  const pairs = !byC && plGeo ? Object.entries(D.pairs[D.years[yi]] || {}).slice(0, 18) : [], pmax = Math.max(...pairs.map(p => p[1]), 1);
+  const arcs = pairs.map(([k, n]) => { const [a, b] = k.split('|'), A = plGeo[a], B = plGeo[b]; if (!A || !B) return ''; const mx = (A.lx + B.lx) / 2, my = (A.ly + B.ly) / 2 - Math.hypot(B.lx - A.lx, B.ly - A.ly) * 0.28, on = pl.arc ? pl.arc === k : null;
+    return `<path class="pl-arc${on === true ? ' is-hl' : on === false ? ' is-dim' : ''}" d="M${A.lx},${A.ly} Q${mx.toFixed(1)},${my.toFixed(1)} ${B.lx},${B.ly}" stroke-width="${(1.2 + 7 * n / pmax).toFixed(1)}" data-tip="${esc(T(`${country(a)} – ${country(b)} ${D.years[yi]}: ${n} works with institutions in both`, `${country(a)} – ${country(b)} ${D.years[yi]}：${n} 项两国机构合作的工作`))}"/>`; }).join('');
+  return `<svg class="pl-map${hlc || pl.arc ? ' has-hl' : ''}" viewBox="0 40 960 340" role="img" aria-label="${T('Countries in agent safety', 'Agent 安全中的国家')}">${land}${arcs}${bubbles}</svg>`;
+}
+function plInstSvg() {
+  const D = P.players, I = D.institutions, W = 640, H = 430, left = 46, right = 16, top = 30, bottom = 36, sec = PL_SECTOR(), narrow = matchMedia('(max-width: 640px)').matches;
+  const xMax = Math.max(...I.map(r => r.works)), xMin = D.minWorks, yMax = Math.min(60, Math.ceil(Math.max(...I.map(r => r.topShare)) / 10) * 10);
+  const x = v => left + (W - left - right) * Math.log(v / xMin) / Math.log(xMax / xMin), y = v => top + (H - top - bottom) * (1 - Math.min(v, yMax) / yMax), sMax = Math.max(...I.map(r => r.supply), 1);
+  const hl = pl.hl?.inst ? new Set(pl.hl.inst) : null;
+  const grid = [0, 10, 20, 30, 40, 50, 60].filter(v => v <= yMax).map(v => `<line x1="${left}" x2="${W - right}" y1="${y(v)}" y2="${y(v)}" class="fd-grid"/><text x="${left - 6}" y="${y(v) + 4}" text-anchor="end" class="fd-axis">${v}%</text>`).join('')
+    + [15, 30, 60, 120].filter(v => v <= xMax && v >= xMin).map(v => `<line x1="${x(v)}" x2="${x(v)}" y1="${top}" y2="${H - bottom}" class="fd-grid"/><text x="${x(v)}" y="${H - bottom + 14}" text-anchor="middle" class="fd-axis">${v}</text>`).join('')
+    + `<line x1="${left}" x2="${W - right}" y1="${y(D.fieldTopShare)}" y2="${y(D.fieldTopShare)}" class="pl-avg"/><text x="${W - right}" y="${y(D.fieldTopShare) - 5}" text-anchor="end" class="fd-axis">${T(`field ${pctf(D.fieldTopShare)}`, `全领域 ${pctf(D.fieldTopShare)}`)}</text>`;
+  const order = [...I].sort((a, b) => b.supply - a.supply);
+  const dots = order.map(r => { const on = hl ? hl.has(r.id) : null, rad = 3 + 13 * Math.sqrt(r.supply / sMax);
+    return `<circle class="pl-inst${on === true ? ' is-hl' : on === false ? ' is-dim' : ''}" cx="${x(r.works).toFixed(1)}" cy="${y(r.topShare).toFixed(1)}" r="${rad.toFixed(1)}" fill="${sec[r.sector][1]}" data-pl-inst="${esc(r.id)}" data-tip="${esc(T(`${r.name} (${r.country ? country(r.country) : '—'}, ${sec[r.sector][0]}): ${num(Math.round(r.works))} works since ${D.instSince}, ${pctf(r.topShare)} among the most-cited tenth, benchmarks used ${num(Math.round(r.supply))} times by others; first work ${r.first}`, `${r.name}（${r.country ? country(r.country) : '—'}，${sec[r.sector][0]}）：${D.instSince} 年以来 ${num(Math.round(r.works))} 项工作，${pctf(r.topShare)} 进入被引前 10%，基准被他人使用 ${num(Math.round(r.supply))} 次；首项工作 ${r.first} 年`))}"/>`; }).join('');
+  const want = hl ? I.filter(r => hl.has(r.id)) : [...I.slice(0, 5), ...[...I].sort((a, b) => b.topShare - a.topShare).slice(0, 4)];
+  const short = s => s.replace(/^University of /, 'U. ').replace(/ University$/, ' U.').replace(/University of California, /, 'UC ').slice(0, 26);
+  const placed = [], labels = want.map(r => { const nm = short(r.name), w = nm.length * (narrow ? 8 : 5.8), lx0 = Math.min(x(r.works) + 7, W - right - w), ly0 = y(r.topShare) - 7;
+    if (placed.some(([a, b, c]) => Math.abs(b - ly0) < 13 && lx0 < a + c + 4 && a < lx0 + w + 4) || placed.length >= (narrow ? 4 : 9)) return '';
+    placed.push([lx0, ly0, w]); return `<text x="${lx0.toFixed(1)}" y="${ly0.toFixed(1)}" class="tj-label">${esc(nm)}</text>`; }).join('');
+  return `<svg class="pl-plane${hl ? ' has-hl' : ''}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${T('Institutions: output against influence', '机构：产出 × 影响')}">${grid}${dots}${labels}
+    <text x="${W - right}" y="${H - 4}" text-anchor="end" class="fd-axis">${T(`works since ${D.instSince} (log) →`, `${D.instSince} 年以来工作数（对数）→`)}</text><text x="4" y="12" class="fd-axis">${T('↑ share of works among the year\'s most-cited tenth', '↑ 进入当年被引前 10% 的比例')}</text></svg>`;
+}
+function plControls() {
+  const D = P.players, seg = (attr, items, cur) => `<span class="cx-seg">${items.map(([k, l]) => `<button data-${attr}="${k}" aria-pressed="${String(k) === String(cur)}">${l}</button>`).join('')}</span>`;
+  const map = pl.view === 'map';
+  return `<div class="cr-controls">${seg('pl-view', [['map', T('Countries', '国家地图')], ['inst', T('Institutions', '机构')]], pl.view)}${map ? `<label class="ps-role">${T('Cluster', '星团')} <select data-pl-cluster><option value="-1">${T('all works, by year', '全部工作，按年')}</option>${P.meta.clusters.map((_, k) => `<option value="${k}"${k === pl.cluster ? ' selected' : ''}>${esc(cl(k))}</option>`).join('')}</select></label>` : ''}</div>
+    ${map && pl.cluster < 0 ? `<div class="cr-controls">${seg('pl-year', D.years.map(y => [y, String(y)]), pl.year)}<button class="cr-play" data-pl-play aria-label="${T('Play the years', '逐年播放')}">${pl.timer ? '❚❚' : '▶'}</button></div>` : ''}`;
+}
+function plLegend() {
+  if (pl.view === 'inst') return `<div class="ps-legend">${Object.values(PL_SECTOR()).map(([l, c]) => `<span><i style="background:${c}"></i>${l}</span>`).join('')}<span>${T('size: benchmarks used by others', '大小：基准被他人使用的次数')}</span></div>`;
+  if (pl.cluster >= 0) return `<p class="fd-note">${T(`Bubble: the country's share of ${cl(pl.cluster)} works since ${P.players.instSince}.`, `气泡：该国在 ${P.players.instSince} 年以来“${cl(pl.cluster)}”工作中的份额。`)}</p>`;
+  return `<div class="ps-legend">${[[1.3, T('cited above its share', '被引高于份额')], [1, T('about even', '大致相当')], [0.7, T('below', '低于份额')]].map(([r, l]) => `<span><i style="background:${plRatioColor(r)}"></i>${l}</span>`).join('')}<span>${T('size: works; arcs: works shared by two countries', '大小：工作数；弧线：两国机构合作的工作')}</span></div>`;
+}
+function plStageInner() { return `${plControls()}<div class="cr-figure" data-pl-fig>${pl.view === 'map' ? plMapSvg() : plInstSvg()}</div>${plLegend()}<p class="fd-note">${pl.view === 'map' ? T('Located works only; a work with institutions in several countries counts in part for each. The most-cited tenth is computed within each publication year; recent years are still collecting citations.', '只计已定位的工作；一项工作有多国机构时各计一部分。被引前 10% 在每个发表年份内计算；近年的论文引用仍在累积。') : T(`Institutions with at least ${P.players.minWorks} works since ${P.players.instSince} (fractional over a work's institutions). Hover for details.`, `${P.players.instSince} 年以来至少 ${P.players.minWorks} 项工作的机构（一项工作的多个机构各计一部分）。悬停查看详情。`)}</p>`; }
+function plStage() {
+  if (pl.year == null) pl.year = P.players.years[P.players.years.length - 1];
+  return `<section class="cr-stage pl-stage" data-pl-stage><span class="fd-kicker">${T('THE POWER MAP', '全局视图 · 力量地图')}</span><h3>${T('Who does agent safety: countries and institutions', '谁在做 agent 安全：国家与机构')}</h3>
+    <p class="fd-note cr-intro">${T('Countries on the map, institutions on an output × influence plane. Each finding on the right sets the view to what it describes.', '国家看地图，机构看“产出 × 影响”平面。右边每条发现都会把这里切到它说的那种情况。')}</p>
+    <div data-pl-inner>${plStageInner()}</div></section>`;
+}
+function plConfig(qid) {
+  const D = P.players, c = {view: 'map', year: D?.years[D.years.length - 1], cluster: -1, hl: null, arc: null, note: ''};
+  if (!D) return c;
+  const idx = n => P.meta.clusters.indexOf(n), I = D.institutions, last = D.years[D.years.length - 1];
+  const notes = {shares: T('Map: works by country in the latest year; press play from 2020.', '地图：最近一年各国的工作数；按播放从 2020 年看起。'),
+    rising: T('Map: the fastest-growing countries are lit.', '地图：亮出增长最快的国家。'), directions: T('Map: one cluster where the lead differs.', '地图：一个主导国家不同的星团。'),
+    pioneers: T('Map: a cluster whose lead moved after its first works.', '地图：一个起步之后领先者换了的星团。'), geoconc: T('Map: the cluster most dependent on one country.', '地图：最依赖单一国家的星团。'),
+    punch: T('Map: colour is citation share against output share.', '地图：颜色是被引份额与产出份额之比。'), apart: T('Map: the China–US arc against the other partners.', '地图：中美之间的弧线与其他合作伙伴对照。'),
+    concentration: T('Institutions: the ten largest are lit.', '机构：亮出产出最多的十家。'), influence: T('Institutions: size is benchmark supply; the top suppliers are lit.', '机构：大小是基准供给；亮出供给最多的几家。'),
+    industry: T('Institutions: companies are lit.', '机构：亮出企业。'), bigteams: T('Institutions: all, by output and influence.', '机构：全部，按产出与影响。'),
+    newcomers: T(`Institutions: those whose first work is ${last - 1} or later are lit.`, `机构：亮出首项工作在 ${last - 1} 年或之后的机构。`), people: T('Institutions: all, by output and influence.', '机构：全部，按产出与影响。')};
+  const grow = D.order.slice(0, 25).map(cc => [cc, (D.countries[cc].works.at(-2) + 1) / (D.countries[cc].works.at(-3) + 1)]).sort((a, b) => b[1] - a[1]).slice(0, 4).map(x => x[0]);
+  const cfg = {shares: {}, rising: {hl: {countries: grow}}, directions: {cluster: idx('Supply-chain security')}, pioneers: {cluster: idx('Memory and retrieval safety')},
+    geoconc: {cluster: idx('Formal guarantees')}, punch: {year: last - 1}, apart: {arc: 'CN|US', hl: {countries: ['CN', 'US']}},
+    concentration: {view: 'inst', hl: {inst: I.slice(0, 10).map(r => r.id)}}, influence: {view: 'inst', hl: {inst: [...I].sort((a, b) => b.supply - a.supply).slice(0, 8).map(r => r.id)}},
+    industry: {view: 'inst', hl: {inst: I.filter(r => r.sector === 'industry').map(r => r.id)}}, bigteams: {view: 'inst'}, newcomers: {view: 'inst', hl: {inst: I.filter(r => r.first >= last - 1).map(r => r.id)}}, people: {view: 'inst'}}[qid] || {};
+  return {...c, ...cfg, note: notes[qid] || ''};
+}
+function plRedraw() { const s = document.querySelector('[data-pl-inner]'); if (s) s.innerHTML = plStageInner(); }
+function plStop() { if (pl.timer) { clearInterval(pl.timer); pl.timer = 0; } }
+function plPlay() {
+  if (pl.timer) { plStop(); plRedraw(); return; }
+  const ys = P.players.years; let k = 0; pl.year = ys[0]; pl.cluster = -1; plRedraw();
+  pl.timer = setInterval(() => { if (!document.querySelector('[data-pl-stage]')) return plStop(); k++; if (k >= ys.length) { plStop(); pl.year = ys.at(-1); } else pl.year = ys[k]; plRedraw(); }, 1100);
+}
+function plActivate(qid) {
+  if (pl.q === qid) return;
+  const c = plConfig(qid); plStop();
+  Object.assign(pl, {q: qid, view: c.view, year: c.year, cluster: c.cluster, hl: c.hl, arc: c.arc});
+  for (const el of document.querySelectorAll('.cr-card[data-pl-card]')) el.classList.toggle('is-active', el.dataset.plCard === qid);
+  plRedraw();
+}
+function plCountryDrawer(cc) {
+  const D = P.players, c = D.countries[cc]; if (!c) return;
+  const partners = D.years.flatMap(y => Object.entries(D.pairs[y] || {}).filter(([k]) => k.split('|').includes(cc)).map(([k, n]) => [y, k.split('|').find(x => x !== cc), n]));
+  const lastY = D.years.at(-1), top = partners.filter(p => p[0] === lastY).sort((a, b) => b[2] - a[2]).slice(0, 6);
+  openDrawer(`${flag(cc)}${country(cc)}`, `<table class="fd-table"><thead><tr><th>${T('Year', '年份')}</th><th>${T('Works', '工作')}</th><th>${T('Share', '份额')}</th><th>${T('Most-cited tenth', '被引前 10%')}</th></tr></thead><tbody>${D.years.map((y, i) => `<tr><th>${y}</th><td>${num(Math.round(c.works[i]))}</td><td>${pctf(c.share[i])}</td><td>${pctf(c.topShare[i])}</td></tr>`).join('')}</tbody></table>
+    ${top.length ? `<h5>${T(`Most frequent partners in ${lastY}`, `${lastY} 年最常合作的国家`)}</h5><ol class="fd-drawer-list">${top.map(([, o, n]) => `<li>${flag(o)}${esc(country(o))}<small>${n} ${T('works', '项')}</small></li>`).join('')}</ol>` : ''}`);
+}
+function plCards(qs) {
+  const byq = Object.fromEntries(qs.map(q => [q[0], q])), used = new Set(), gs = LN_GROUPS().lead;
+  let n = 0;
+  const card = id => { const [qid, q, a, body] = byq[id]; used.add(qid); n++;
+    return `<article class="cr-card" id="q-${qid}" data-pl-card="${qid}"><button class="cr-card-head" data-pl-open="${qid}" aria-expanded="false"><span class="ln-qn">${String(n).padStart(2, '0')}</span><span class="cr-card-text"><b>${q}</b><em>${esc(a)}</em></span><i class="cx-chev" aria-hidden="true"></i></button>
+      <p class="fd-note cr-config"><span>${plConfig(qid).note}</span><button class="cr-show" data-pl-show="${qid}">${T('Show on the map ↑', '在力量地图上看 ↑')}</button></p><div class="cr-body" hidden>${body}</div></article>`; };
+  const groups = gs.map(([key, name, sub, ids]) => { const got = ids.filter(id => byq[id]); return got.length ? `<section class="cr-group"><h3>${name}<small>${sub}</small></h3>${got.map(card).join('')}</section>` : ''; }).join('');
+  const rest = qs.filter(q => !used.has(q[0]));
+  return groups + (rest.length ? `<section class="cr-group"><h3>${T('More', '其他')}</h3>${rest.map(q => card(q[0])).join('')}</section>` : '');
+}
+const plLens = qs => `<div class="cr-wrap">${plStage()}<div class="cr-cards">${plCards(qs)}</div></div>`;
+let plObserver = null;
+function plBind(root) {
+  plObserver?.disconnect(); plObserver = null;
+  if (!root.querySelector('[data-pl-stage]')) return;
+  plLoadGeo();
+  root.querySelector('[data-pl-inner]').addEventListener('change', e => { if (e.target.matches('[data-pl-cluster]')) { plStop(); pl.cluster = +e.target.value; pl.hl = null; pl.arc = null; plRedraw(); } });
+  if ('IntersectionObserver' in window && matchMedia('(min-width: 1100px)').matches) {
+    plObserver = new IntersectionObserver(ens => { for (const en of ens) if (en.isIntersecting) plActivate(en.target.dataset.plCard); }, {rootMargin: '-40% 0px -55% 0px'});
+    root.querySelectorAll('.cr-card[data-pl-card]').forEach(el => plObserver.observe(el));
+  }
+}
 // ------------------------------------------------------------------------------------------------ Connection lens: the stage (findings.connect)
 // One stage shows how research areas connect, month by month: a ring of areas (the 8 galaxies, or the 19 clusters inside
 // their galaxy bands) with ribbons between them, or a topology of who builds on whom. The findings scroll beside it; each
@@ -1500,7 +1770,7 @@ function questionPool() {
       const body = `<div class="fd-hbars">${['digital_agent', 'physical_agent', 'rl_agent', 'no_concrete_agent'].map(k => `<div class="fd-hbar"><span>${N.agent[k]} <small>(${num(S.agentN[k])})</small></span>${barCell(a[k], 50, PS_COLORS[['digital_agent', 'physical_agent', 'rl_agent', 'no_concrete_agent'].indexOf(k)])}<b>${pctf(a[k])}</b></div>`).join('')}</div>
         <h4>${T('Works with no concrete agent: which foundational rule admits them', '没有具体智能体的工作：凭哪条基础层规则收录')}</h4><div class="fd-hbars">${['F1', 'F2', 'F3', 'F4', 'F5', 'out'].map(k => `<div class="fd-hbar"><span>${k === 'out' ? '' : k + ' · '}${fl(k)}</span>${barCell(f[k] || 0, Math.max(...Object.values(f)), k === 'out' ? COLORS.connection : COLORS.attention)}<b>${num(f[k] || 0)}</b></div>`).join('')}</div>
         <p class="fd-note">${T(`Decision makers of physical agents: learned policy ${num(mk.learned_policy)}, foundation model ${num(mk.foundation_model)}, not stated ${num(mk.not_stated)}, classical controller ${num(mk.classical)}. The ${num(f.out || 0)} works outside F1–F5 and the ${num(mk.classical || 0)} physical-agent works with a classical controller are listed for the owner's review; nothing is removed automatically.`, `物理智能体的决策器：学习到的策略 ${num(mk.learned_policy)}，基础模型 ${num(mk.foundation_model)}，未说明 ${num(mk.not_stated)}，经典控制器 ${num(mk.classical)}。不符合 F1–F5 的 ${num(f.out || 0)} 项与使用经典控制器的 ${num(mk.classical || 0)} 项物理智能体工作已列出供站主复核，不会自动移除。`)}${old ? T(` With the earlier setting labels (A3), ${pctf(old.D.share, 0)} had no concrete agent; reading each abstract finds agents in many of them.`, ` 按早先的场景标签（A3），${pctf(old.D.share, 0)} 的工作没有具体智能体；逐篇读摘要后，其中不少其实研究的是智能体。`) : ''}</p>
-        ${old ? `<details class="ln-details"><summary>${T('The earlier version of this question (A3, setting labels)', '这个问题的早先版本（A3，按场景标签）')}</summary>${B5.scope()}</details>` : ''}`;
+`;  // the A3 matrix (setting labels, with a 'none labelled' risk column) is superseded by these labels and no longer shown
       return [['scope', T('What does agent safety study? Two questions: the agent, and the safety', 'Agent 安全研究的是什么？两个问题：和智能体的关系，和安全的关系'),
         T(`${pctf(a.digital_agent, 0)} of the works study digital agents, ${pctf(a.physical_agent, 0)} physical agents (robots, vehicles, drones), ${pctf(a.rl_agent, 0)} reinforcement-learning agents in simulators; ${pctf(a.no_concrete_agent, 0)} study no concrete agent and are in as foundational work (alignment, oversight, the instruction-data boundary, dangerous capabilities, surveys).`,
           `${pctf(a.digital_agent, 0)} 研究数字智能体，${pctf(a.physical_agent, 0)} 研究机器人、车、无人机等物理智能体，${pctf(a.rl_agent, 0)} 研究仿真中的强化学习智能体；${pctf(a.no_concrete_agent, 0)} 没有具体的智能体，作为基础工作收录（对齐、监督、指令与数据边界、危险能力、综述）。`), body]]; })() :
@@ -1570,6 +1840,12 @@ function questionPool() {
         ['pstage', T('Where in the agent\'s life do defences act?', '防御在哪个环节起作用？'), T(`Before acting most (${pctf(S.stage.prevention, 0)} of ${num(S.defences)} defences prevent), then at run time (${pctf(S.stage.runtime_detection, 0)}); ${pctf(S.stage.formal_guarantee, 0)} come with a formal guarantee and ${pctf(S.stage.after_the_fact, 0)} act after the fact.`, `事前最多（${num(S.defences)} 项防御中 ${pctf(S.stage.prevention, 0)} 是预防），其次是运行时（${pctf(S.stage.runtime_detection, 0)}）；${pctf(S.stage.formal_guarantee, 0)} 给出形式保证，${pctf(S.stage.after_the_fact, 0)} 在事后起作用。`),
           `${BP.hbars('stage', S.stage, COLORS.supply)}${BP.table('safety', 'stage', S.stageBySafety)}<p class="fd-note">${T('Defences (main contribution type) by the stage at which they act, overall and per safety requirement; a defence can act at several stages.', '防御（主要贡献类型）按起作用的环节，整体与按安全要求；一项防御可以在多个环节起作用。')}</p>`],
       ]; })(),
+    trajectory: !P.trajectory ? [] : (() => { const T0 = P.trajectory, tv = T0.turnover.filter(r => !r.partial), lastY = tv[tv.length - 1] || T0.turnover[0], pc = T0.pace[T0.pace.length - 1];
+      const ent = T0.entered.slice(0, 3).map(k => T0.lines[k].label.split(' · ').slice(0, 2).join(' · '));
+      return [
+        ['hturnover', T('How fast does the head turn over?', '头部换血有多快？'), T(`Fast: of the ${lastY.head} lines in the head at the end of ${lastY.year}, ${lastY.entered} (${pctf(lastY.enteredShare, 0)}) were in the long tail a year before; in the last 12 months ${T0.entered.length} lines entered, among them ${ent.join('; ')}.`, `很快：${lastY.year} 年底头部的 ${lastY.head} 条研究线中，有 ${lastY.entered} 条（${pctf(lastY.enteredShare, 0)}）一年前还在长尾；近 12 个月有 ${T0.entered.length} 条线进入头部，包括 ${ent.join('；')}。`), BT.turnover()],
+        ['hpace', T('Is the head growing as fast as the rest?', '头部和其余研究线，谁长得快？'), T(`The rest: the lines that were in the head a year ago grew ×${pc.head.toFixed(1)} in works over the last 12 months, all other lines ×${pc.tail.toFixed(1)} (${pc.month}).`, `其余研究线：一年前在头部的线，近 12 个月工作数是前一年的 ${pc.head.toFixed(1)} 倍，其余全部研究线是 ${pc.tail.toFixed(1)} 倍（${pc.month}）。`), BT.pace()],
+      ]; })(),
     models2026: !P.models2026 ? [] : (() => { const M = P.models2026, g = M.generations.filter(x => x.kind === 'llm' || x.kind === 'vlm'), F = M.frontier, fam = M.families, oc = M.openClosed.slice(-4, -1),
         avg = k => oc.reduce((s, r) => s + r[k], 0) / Math.max(1, oc.length), C2 = M.byCountry, fb = F.byMonth, early = fb.slice(0, 2), late = fb.slice(-5, -1), mid = v => v.map(r => r.median).sort((a, b) => a - b)[v.length >> 1];
       const gl = x => `${x.label} ${pctf(x.share)}`, vla = M.generations.filter(x => x.kind === 'vla').reduce((s, x) => s + x.papers, 0), guard = M.generations.filter(x => x.kind === 'guard').sort((a, b) => b.papers - a.papers);
@@ -1633,7 +1909,7 @@ const PLACE = {'connect:traditions': 'structure', 'connect:venues': 'structure',
   'evolve:reading': 'connect', 'tail:bridges': 'connect', 'attack:comparable': 'connect', 'navigate:newcomers': 'lead', 'targets:country': 'models',
   'attack:timeline': 'evolve', 'tail:shape': 'evolve', 'navigate:next': 'evolve'};
 // navigate: the resource check (pilot, bands, nova) is shown on the universe page through renderEvidence, not in a chapter
-const HOME_LENS = {people: 'connect', scope: 'structure', evolve: 'evolve', connect: 'connect', lead: 'lead', attack: 'structure', targets: 'structure', tail: 'evolve', navigate: 'universe', models2026: 'models', oss: 'oss', position: 'structure'};
+const HOME_LENS = {people: 'connect', scope: 'structure', evolve: 'evolve', connect: 'connect', lead: 'lead', attack: 'structure', targets: 'structure', tail: 'evolve', navigate: 'universe', models2026: 'models', oss: 'oss', position: 'structure', trajectory: 'evolve'};
 const RENAME = {'evolve:timeline': 'onset'};  // two questions named "timeline" share the Trajectory chapter
 const ORDER = () => ({...Object.fromEntries(Object.entries(LN_GROUPS()).map(([k, gs]) => [k, gs.flatMap(g => g[3])])),
   connect: ['layers', 'reading', 'notreading', 'bridges', 'buildson', 'hubs', 'supply', 'comparable', 'lifecycle', 'inflation', 'collab'],
@@ -1664,7 +1940,7 @@ function shell(inner, extraClass = '') {
 // the headline findings, in reading order: [lens, question id]; each card opens its question under the lens
 const KEY_FINDINGS = [['structure', 'scope'], ['structure', 'traditions'], ['structure', 'venues'], ['structure', 'settings'], ['structure', 'balance'],
   ['structure', 'adaptive'], ['models', 'mtop'], ['models', 'mfrontier'], ['oss', 'ogap'], ['oss', 'ofate'], ['connect', 'hubs'], ['connect', 'inflation'], ['connect', 'buildson'], ['lead', 'apart'], ['lead', 'punch'],
-  ['lead', 'pioneers'], ['lead', 'bigteams'], ['lead', 'newcomers'], ['evolve', 'growth'], ['evolve', 'shift'], ['evolve', 'diffusion'], ['evolve', 'backtest']];
+  ['lead', 'pioneers'], ['lead', 'bigteams'], ['lead', 'newcomers'], ['evolve', 'growth'], ['evolve', 'hturnover'], ['evolve', 'hpace'], ['evolve', 'shift'], ['evolve', 'diffusion'], ['evolve', 'backtest']];
 function keyFindings(meta) {
   const cache = {}, cards = KEY_FINDINGS.map(([lens, qid]) => { const q = (cache[lens] ??= lensQuestions(lens)).find(x => x[0] === qid); return q && q[2] ? [lens, q] : null; }).filter(Boolean);
   return `<section class="ln-lead"><span class="fd-kicker">${T('KEY FINDINGS', '重要发现')} · ${versionKicker()}</span><h2>${T('What the data says, in one page', '一页看懂数据在说什么')}</h2>${versionNote()}
@@ -1690,6 +1966,8 @@ export function renderLens(ctx) {
   const lead = `<section class="ln-lead"><span class="fd-kicker">${part ? part[1] : ''}${part && part[3].length > 1 ? ' · ' + meta[id][0] : ''} · ${versionKicker()}</span><h2>${meta[id]?.[1] || ''}</h2>${versionNote()}`;
   if (id === 'key') return shell(`${tabs}${keyFindings(meta)}`);
   if (id === 'connect' && P.connect) { crStop(); cr.q = ''; cr.focus = -1; return shell(`${tabs}${lead}</section>${crLens(qs)}`, 'cr-lens'); }
+  if (id === 'lead' && P.players) { plStop(); pl.q = ''; return shell(`${tabs}${lead}</section>${plLens(qs)}`, 'cr-lens pl-lens'); }
+  if (id === 'evolve' && P.trajectory) { tjStop(); tj.q = ''; tj.hl = null; return shell(`${tabs}${lead}</section>${tjLens(qs)}`, 'cr-lens tj-lens'); }
   if (id === 'structure' && P.position) { psStop(); ps.q = ''; return shell(`${tabs}${lead}</section>${psLens(qs)}`, 'cr-lens ps-lens'); }
   const groups = grouped(id, qs);
   const extra = id === 'models' && P.models2026 ? `<p class="fd-note">${mNote()} ${T(`Release months: ${P.models2026.releaseSource}.`, '发布月份：2026-10-07 AI Model Observatory 快照中的 OpenRouter 首次上架月份；更早的模型用厂商发布月份。')}</p>`

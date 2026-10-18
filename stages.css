@@ -1,0 +1,78 @@
+/* The global views of the findings parts (placement map, head and tail, power map). Dark first, like the site's default
+   theme, with light overrides; kept out of build_theme.py's sources so its generated dark rules do not repaint them. */
+/* Positioning chapter: the placement map (mosaic) */
+.ps-map{display:block;width:100%;height:auto}
+.ps-cell{cursor:pointer;transition:opacity .12s}
+.ps-cell:hover{opacity:.85}
+.ps-map.has-hl .ps-cell.is-dim{opacity:.22}
+.ps-map.has-hl .ps-cell.is-hl{stroke:#f2f7e0;stroke-width:1.5}
+.ps-col{font-size:13px;font-weight:650;fill:#f1f7f4}
+.ps-in{font-size:11px;fill:#fff;pointer-events:none;font-variant-numeric:tabular-nums}
+.ps-in.is-dim{opacity:.3}
+.ps-legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;margin:6px 0 2px;color:#cfe0dc}
+.ps-legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.ps-role{font-size:12.5px;display:inline-flex;align-items:center;gap:6px}
+.ps-role select{font:inherit;font-size:12.5px;padding:4px 6px;border-radius:6px;border:1px solid rgba(160,205,195,.3);background:transparent;color:inherit}
+.ps-table td{text-align:center;font-variant-numeric:tabular-nums;font-size:12.5px}
+.ps-table th{font-size:12px}
+.ln-details{margin-top:12px}.ln-details summary{cursor:pointer;color:#d4e966;font-size:13px}
+@media(max-width:640px){.ps-col{font-size:19px}.ps-sub{font-size:16px}.ps-in{font-size:17px}.ps-table{font-size:11px}}
+html[data-theme="light"] .ps-col{fill:#123c36}
+html[data-theme="light"] .ps-legend{color:#203536}
+html[data-theme="light"] .ps-map.has-hl .ps-cell.is-hl{stroke:#163b3a}
+html[data-theme="light"] .ln-details summary{color:#1c6a57}
+html[data-theme="light"] .ps-role select{border-color:#c9d8d3}
+.ps-table tbody th{min-width:92px}
+/* Trajectory: head and tail */
+.tj-map{display:block;width:100%;height:auto}
+.tj-dot{fill-opacity:.72;stroke:#0d221f;stroke-width:.8;cursor:pointer;transition:fill-opacity .12s}
+.tj-dot.is-head{fill-opacity:.9}
+.tj-dot:hover{fill-opacity:1;stroke:#f2f7e0;stroke-width:1.4}
+.tj-map.has-hl .tj-dot.is-dim{fill-opacity:.12}
+.tj-map.has-hl .tj-dot.is-hl{fill-opacity:1;stroke:#f2f7e0;stroke-width:1.5}
+.tj-headzone{fill:rgba(212,233,102,.045)}
+.tj-cut{stroke:#d4e966;stroke-dasharray:5 4;stroke-width:1.2}
+.tj-zone{font-size:11.5px;fill:#d4e966;letter-spacing:.5px}
+.tj-zero{stroke:rgba(160,205,195,.45)}
+.tj-trail{fill:none;stroke-width:1.6;stroke-opacity:.8;stroke-dasharray:2 2}
+.tj-label{font-size:11px;fill:#e6efec;pointer-events:none;paint-order:stroke;stroke:#0d221f;stroke-width:3px}
+.tj-track{height:30px}
+.tj-range{width:100%;margin:0;accent-color:#d4e966}
+.tj-track .cr-ticks{top:18px}
+.fd-link{border:0;background:none;padding:0;color:inherit;font:inherit;text-align:left;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:640px){.tj-label{font-size:16px}.tj-zone{font-size:15px}}
+html[data-theme="light"] .tj-dot{stroke:#fff}
+html[data-theme="light"] .tj-headzone{fill:rgba(28,106,87,.05)}
+html[data-theme="light"] .tj-cut{stroke:#1c6a57}
+html[data-theme="light"] .tj-zone{fill:#1c6a57}
+html[data-theme="light"] .tj-label{fill:#123c36;stroke:#fff}
+html[data-theme="light"] .tj-map.has-hl .tj-dot.is-hl{stroke:#163b3a}
+html[data-theme="light"] .tj-range{accent-color:#1c6a57}
+@media(max-width:640px){.tj-map .fd-axis{font-size:15px}}
+/* Players: the power map */
+.pl-map,.pl-plane{display:block;width:100%;height:auto}
+.pl-land{fill:#1d3a35;stroke:#0f2622;stroke-width:.4}
+.pl-land.is-hl{fill:#2c5149}
+.pl-bub{fill-opacity:.82;stroke:#0d221f;stroke-width:.8;cursor:pointer}
+.pl-bub:hover{stroke:#f2f7e0;stroke-width:1.4}
+.pl-map.has-hl .pl-bub.is-dim{fill-opacity:.2}
+.pl-map.has-hl .pl-bub.is-hl{stroke:#f2f7e0;stroke-width:1.6;fill-opacity:1}
+.pl-arc{fill:none;stroke:#e9f4b0;stroke-opacity:.55;stroke-linecap:round}
+.pl-map.has-hl .pl-arc.is-dim{stroke-opacity:.1}
+.pl-map.has-hl .pl-arc.is-hl{stroke-opacity:.95}
+.pl-cc{font-size:10px;font-weight:650;fill:#fff;pointer-events:none}
+.pl-avg{stroke:#d4e966;stroke-dasharray:5 4}
+.pl-inst{fill-opacity:.75;stroke:#0d221f;stroke-width:.8;cursor:pointer}
+.pl-inst:hover{stroke:#f2f7e0;stroke-width:1.4;fill-opacity:1}
+.pl-plane.has-hl .pl-inst.is-dim{fill-opacity:.15}
+.pl-plane.has-hl .pl-inst.is-hl{fill-opacity:1;stroke:#f2f7e0;stroke-width:1.5}
+@media(max-width:640px){.pl-plane .fd-axis{font-size:15px}.pl-cc{font-size:14px}}
+html[data-theme="light"] .pl-land{fill:#dde8e4;stroke:#fff}
+html[data-theme="light"] .pl-land.is-hl{fill:#c8dbd4}
+html[data-theme="light"] .pl-bub,html[data-theme="light"] .pl-inst{stroke:#fff}
+html[data-theme="light"] .pl-arc{stroke:#1c6a57}
+html[data-theme="light"] .pl-avg{stroke:#1c6a57}
+html[data-theme="light"] .pl-map.has-hl .pl-bub.is-hl,html[data-theme="light"] .pl-plane.has-hl .pl-inst.is-hl{stroke:#163b3a}
+html:not([data-theme="light"]) .cr-rib:not(:hover){fill-opacity:.5}
+html:not([data-theme="light"]) .cr-ring.has-hl .cr-rib.is-hl{stroke:#f2f7e0;fill-opacity:.9}
+html:not([data-theme="light"]) .cr-ring.has-focus .cr-rib:not(.is-focus){fill-opacity:.04}
