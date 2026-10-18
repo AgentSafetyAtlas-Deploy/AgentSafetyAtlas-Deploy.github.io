@@ -276,11 +276,12 @@ export function bindLenses(ctx, root = document.querySelector('.fd')) {
   const tip = root.querySelector('.fd-tip');
   root.addEventListener('input', e => { if (e.target.matches('[data-tj-month]')) { tjStop(); tj.m = +e.target.value; tjRedraw('month'); return; } if (e.target.matches('[data-cr-month]')) { const was = cr.timer; crStop(); cr.m = +e.target.value; crRedraw('month'); if (was) { const b = root.querySelector('[data-cr-play]'); if (b) b.textContent = '▶'; } } });
   crBind(root); psBind(root); tjBind(root); plBind(root);
-  root.querySelector('[data-ps-inner]')?.addEventListener('change', e => { if (e.target.matches('[data-ps-role]')) { psStop(); ps.role = +e.target.value; ps.hl = null; psRedraw(); } });
+  root.addEventListener('change', e => { if (e.target.matches('[data-ps-role]')) { psStop(); ps.role = +e.target.value; ps.hl = null; psRedraw(); } });
   root.addEventListener('click', e => {
-    const el = e.target.closest('[data-pl-view],[data-pl-year],[data-pl-play],[data-pl-open],[data-pl-show],[data-pl-cc],[data-tj-play],[data-tj-open],[data-tj-show],[data-tj-line],[data-ps-y],[data-ps-year],[data-ps-play],[data-ps-open],[data-ps-show],[data-ps-cell],[data-cr-view],[data-cr-level],[data-cr-layer],[data-cr-win],[data-cr-play],[data-cr-open],[data-cr-show],[data-cr-pair],[data-cr-unit],[data-fd-ids],[data-fd-paper],[data-fd-list],[data-fd-jump],[data-fd-layer],[data-fd-pair],[data-fd-bench],[data-ln-lens],[data-ln-goto],[data-ln-q],[data-ln-ms-kind],[data-ln-insight],.fd-close');
+    const el = e.target.closest('[data-ps-sec],[data-pl-view],[data-pl-year],[data-pl-play],[data-pl-open],[data-pl-show],[data-pl-cc],[data-tj-play],[data-tj-open],[data-tj-show],[data-tj-line],[data-ps-y],[data-ps-year],[data-ps-play],[data-ps-open],[data-ps-show],[data-ps-cell],[data-cr-view],[data-cr-level],[data-cr-layer],[data-cr-win],[data-cr-play],[data-cr-open],[data-cr-show],[data-cr-pair],[data-cr-unit],[data-fd-ids],[data-fd-paper],[data-fd-list],[data-fd-jump],[data-fd-layer],[data-fd-pair],[data-fd-bench],[data-ln-lens],[data-ln-goto],[data-ln-q],[data-ln-ms-kind],[data-ln-insight],.fd-close');
     if (!el) return;
     if (el.matches('.fd-close')) { root.querySelector('.fd-drawer').hidden = true; return; }
+    if (el.dataset.psSec) { psGoSection(+el.dataset.psSec, root); return; }
     if (el.dataset.plView) { plStop(); pl.view = el.dataset.plView; pl.hl = null; pl.arc = null; plRedraw(); return; }
     if (el.dataset.plYear) { plStop(); pl.year = +el.dataset.plYear; plRedraw(); return; }
     if ('plPlay' in el.dataset) { plPlay(); return; }
@@ -318,6 +319,7 @@ export function bindLenses(ctx, root = document.querySelector('.fd')) {
     if (el.dataset.lnLens) { ctx.state.lens = el.dataset.lnLens === 'key' ? '' : el.dataset.lnLens; ctx.writeHash(); ctx.render(); window.scrollTo({top: 0, behavior: 'instant'}); return; }
     if (el.dataset.lnGoto) {
       const [lens, qid] = el.dataset.lnGoto.split(':');
+      if (lens === 'structure') { ps.sec = Math.max(1, psSectionOf(qid)); }
       ctx.state.lens = lens; ctx.writeHash(); ctx.render();
       requestAnimationFrame(() => { const h = document.querySelector(`#q-${qid} [data-cr-open], #q-${qid} [data-ps-open], #q-${qid} [data-tj-open], #q-${qid} [data-pl-open]`); if (h && h.getAttribute('aria-expanded') !== 'true') h.click(); document.getElementById('q-' + qid)?.scrollIntoView({block: 'start'}); });
       return;
@@ -658,7 +660,7 @@ const BM = {
     <p class="fd-note">${T(`For each paper, the newest language model it names twice: its release month (first OpenRouter listing in the snapshot of 2026-10-07; vendor announcement for older models) against the paper's month. ${num(F.papers)} papers.`, `每篇论文取它点名两次以上的最新语言模型：发布月份（2026-10-07 OpenRouter 快照中的首次上架月份；更早的模型用厂商发布月份）与论文月份之差。共 ${num(F.papers)} 篇。`)}</p>`;
   },
   mkind() {
-    const K = P.models2026.byKind, names = {digital: T('Digital agents', '数字智能体'), physical: T('Physical agents', '物理智能体'), rl: T('RL agents in simulators', '仿真中的强化学习智能体'), none: T('No concrete agent', '没有具体的智能体')};
+    const K = P.models2026.byKind, names = {digital: T('Digital agents', '数字智能体'), physical: T('Physical agents', '物理智能体'), rl: T('RL agents in simulators', '仿真中的强化学习智能体'), none: T('Foundational layer', '基础层')};
     return `<table class="fd-table"><thead><tr><th>${T('Agent kind', '智能体类型')}</th><th>${T('Papers', '论文')}</th><th>${T('Name a model', '点名模型')}</th><th>${T('Most named families', '点名最多的家族')}</th></tr></thead><tbody>${Object.entries(K).map(([k, r]) => `<tr><th>${names[k]}</th><td>${num(r.papers)}</td><td>${pctf(100 * r.named / Math.max(1, r.papers), 0)}</td><td>${Object.entries(r.families).slice(0, 5).map(([f, v]) => `${esc(f)} ${pctf(v, 0)}`).join(' · ')}</td></tr>`).join('')}</tbody></table>
     <p class="fd-note">${T('Agent kind from the current facet labels (agent settings); shares are of all papers of that kind with a full text.', '智能体类型来自当前的标注（agent 场景）；比例以该类型有全文的全部论文为分母。')}</p>`;
   },
@@ -887,7 +889,7 @@ const tierName = t => ({head: T('head', '头部'), torso: T('middle', '中部'),
 // all years, optionally for one contribution type. The findings scroll beside it and set it to what they describe.
 const PS_COLORS = ['#336aab', '#c26541', '#905082', '#5e8c2e', '#6458aa', '#ab4440', '#b48b12', '#00897a'];
 const PS_NAMES = () => ({
-  agent: {digital_agent: T('Digital agents', '数字智能体'), physical_agent: T('Physical agents', '物理智能体'), rl_agent: T('RL agents in simulators', '仿真中的 RL 智能体'), no_concrete_agent: T('No concrete agent', '没有具体的智能体')},
+  agent: {digital_agent: T('Digital agents', '数字智能体'), physical_agent: T('Physical agents', '物理智能体'), rl_agent: T('RL agents in simulators', '仿真中的 RL 智能体'), no_concrete_agent: T('Foundational layer', '基础层')},
   safety: {goal_intent_alignment: T('Goal and intent', '目标与意图一致性'), information_state_integrity: T('Information and state integrity', '信息与状态完整性'), authorization_information_boundary: T('Authorisation and information boundary', '授权与信息边界'),
     action_consequence_safety: T('Action and consequence', '行动与后果安全性'), oversight_correctability: T('Oversight and correctability', '可监督与可纠正性'), collaboration_composition: T('Collaboration and composition', '协作与组合安全性'),
     safety_under_update: T('Safety under update', '更新后的安全保持'), comprehensive: T('Comprehensive', '综合')},
@@ -897,7 +899,7 @@ const PS_NAMES = () => ({
   role: {attack: T('Attack', '攻击'), defense: T('Defence', '防御'), benchmark: T('Benchmark', '基准'), measurement: T('Measurement', '测量'), analysis_theory: T('Analysis and theory', '分析与理论'), system_tool: T('System or tool', '系统与工具'), survey_position: T('Survey or position', '综述与立场')},
   stage: {prevention: T('Prevention', '事前预防'), runtime_detection: T('Runtime detection', '运行时检测与拦截'), formal_guarantee: T('Formal guarantee', '形式保证'), after_the_fact: T('After the fact', '事后诊断与恢复')}});
 const PS_DIMS = () => [['safety', T('Safety requirement', '安全要求')], ['origin', T('Risk origin', '风险来源')], ['components', T('Component', '系统组件')], ['harm', T('Harm domain', '伤害领域')], ['role', T('Contribution', '贡献类型')], ['stage', T('Defence stage', '防御环节')]];
-const ps = {y: 'safety', year: 'all', role: -1, hl: null, q: '', timer: 0};
+const ps = {y: 'safety', year: 'all', role: -1, hl: null, q: '', timer: 0, sec: 0};
 // which column of the per-work codes holds a dimension, and whether it is a bit set (a work in several parts counts in each, fractionally)
 const PS_COL = {safety: [1, false], origin: [2, false], components: [3, true], harm: [4, true], role: [5, false], stage: [6, true]};
 function psRows() {
@@ -931,7 +933,7 @@ function psSvg() {
   const out = [];
   for (let a = 0; a < A; a++) {
     const w = colsW[a] * scale; if (!w) continue;
-    const label = names.agent[dims.agent[a]], short = narrow ? [T('Digital', '数字'), T('Physical', '物理'), T('RL', 'RL'), T('None', '无')][a] : [T('Digital', '数字智能体'), T('Physical', '物理智能体'), T('RL (sim.)', '仿真 RL'), T('No agent', '无具体智能体')][a];
+    const label = names.agent[dims.agent[a]], short = narrow ? [T('Digital', '数字'), T('Physical', '物理'), T('RL', 'RL'), T('Found.', '基础层')][a] : [T('Digital', '数字智能体'), T('Physical', '物理智能体'), T('RL (sim.)', '仿真 RL'), T('Foundational', '基础层')][a];
     out.push(`<text x="${(x + w / 2).toFixed(1)}" y="14" text-anchor="middle" class="ps-col">${esc(w < 150 || narrow ? short : label)}</text><text x="${(x + w / 2).toFixed(1)}" y="32" text-anchor="middle" class="fd-axis ps-sub">${narrow ? pctf(100 * tot[a] / all, 0) : `${num(Math.round(tot[a]))} · ${pctf(100 * tot[a] / all, 0)}`}</text>`);
     let y = top;
     for (let v = 0; v < V; v++) {
@@ -1029,7 +1031,7 @@ let psObserver = null;
 function psBind(root) {
   psObserver?.disconnect(); psObserver = null;
   if (!root.querySelector('[data-ps-stage]')) return;
-  if ('IntersectionObserver' in window && matchMedia('(min-width: 1100px)').matches) {
+  if ('IntersectionObserver' in window && matchMedia('(min-width: 1100px)').matches) {  // within a section, the card crossing mid-screen sets the map
     psObserver = new IntersectionObserver(ens => { for (const en of ens) if (en.isIntersecting) psActivate(en.target.dataset.psCard); }, {rootMargin: '-40% 0px -55% 0px'});
     root.querySelectorAll('.cr-card[data-ps-card]').forEach(el => psObserver.observe(el));
   }
@@ -1049,6 +1051,67 @@ const BP = {
     return lineChart(P.position.years.map((y, i) => i ? String(y) : `≤${y}`), ks.map((k, i) => ({label: names[key][k], color: PS_COLORS[P.position.dims[key].indexOf(k) % 8], values: data[k]})), {partialLast: true});
   },
 };
+// ------------------------------------------------------------------------------------------------ Positioning chapter as a book: a guide, then one section per group
+// Section 1 explains the two axes before any number (owner review 2026-10-18: introduction and analysis were mixed); each
+// later section is one group of findings under the placement map, full width, with a link to the next section.
+const PS_INTRO = () => ({
+  agent: [['digital_agent', T('Agents that act in software: they browse, operate computers and phones, write and run code, call tools and APIs, use MCP servers and skills, keep memory, run enterprise workflows, or work with other software agents.', '在软件世界里行动：浏览网页、操作电脑和手机、写代码并执行、调用工具与 API、使用 MCP 与 skills、带记忆的助手、企业工作流，或与其他软件智能体协作。'), T('A web agent hijacked by instructions hidden in a page; a coding agent that runs a destructive command.', '网页智能体被页面里藏的指令劫持；编码智能体执行了破坏性命令。')],
+    ['physical_agent', T('Agents that act in the physical world: robots and embodied agents, autonomous vehicles, drones, including their simulators. The decisions must come from a learned policy or a foundation model.', '在物理世界里行动：机器人与具身智能体、自动驾驶、无人机（包括它们的仿真器）。决策须来自学习到的策略或基础模型。'), T('A manipulator that must not hit people; a driving model fooled by a patch on a sign.', '机械臂不能伤到人；驾驶模型被路牌上的贴纸骗过。')],
+    ['rl_agent', T('Reinforcement-learning agents trained and tested in simulated environments: games, grid worlds, MuJoCo, Safety-Gym.', '在仿真环境里训练和测试的强化学习智能体：游戏、网格世界、MuJoCo、Safety-Gym。'), T('Reward hacking; exploring without breaking constraints.', '奖励投机；在不违反约束的前提下探索。')],
+    ['no_concrete_agent', T('The foundational layer: work that studies no single agent but what every agent rests on. Five kinds: F1 aligning goals and behaviour (reward modelling, preference learning, specification gaming); F2 oversight and control (scalable oversight, corrigibility, detecting deception); F3 the trust boundary between instructions and data (instruction hierarchy, prompt injection at the model level); F4 evaluations of dangerous capabilities for autonomous action; F5 surveys and agendas on agent safety.', '基础层：不研究某一个具体的智能体，而是研究所有智能体都依赖的基础，分五类：F1 目标与行为的对齐机制（奖励建模、偏好学习、规格博弈）；F2 监督与控制（可扩展监督、可纠正性、识别欺骗）；F3 指令与数据的信任边界（指令层级、模型层面的提示注入）；F4 与自主行动相关的危险能力评测；F5 关于智能体安全的综述与议程。'), T('Detecting a model that fakes alignment; a survey of agent risks.', '识别伪装对齐的模型；一篇智能体风险综述。')]],
+  safety: [['goal_intent_alignment', T('The agent pursues what its principals intend.', '智能体追求的是委托人真正想要的。'), T('reward hacking, specification gaming, deception, power-seeking', '奖励投机、规格博弈、欺骗、权力寻求')],
+    ['information_state_integrity', T('Untrusted or manipulated input cannot corrupt what the agent perceives, believes, remembers or is told to do.', '不可信或被篡改的输入，不能污染智能体的感知、信念、记忆和指令。'), T('prompt injection, memory poisoning, manipulated tool output, sensor spoofing', '提示注入、记忆投毒、被篡改的工具返回、传感器欺骗')],
+    ['authorization_information_boundary', T('The agent acts and shares information only within what it is allowed.', '智能体只在被允许的范围内行动和共享信息。'), T('permissions, least privilege, data exfiltration, privacy leakage, sandbox escape', '权限、最小权限、数据外泄、隐私泄露、沙箱逃逸')],
+    ['action_consequence_safety', T('With the right goal, the actions and their effects in the world stay safe.', '目标正确时，动作及其在世界上的后果仍然安全。'), T('collisions, safe exploration, constrained RL, irreversible tool actions', '碰撞、安全探索、约束强化学习、不可逆的工具操作')],
+    ['oversight_correctability', T('People can see, understand, intervene in and correct the agent.', '人能看见、理解、介入并纠正智能体。'), T('human approval, behaviour monitoring, interpretability for oversight, shutdown', '人工审批、行为监控、面向监督的可解释性、可关停')],
+    ['collaboration_composition', T('Safety holds when agents interact or are composed into systems.', '多个智能体交互或组合成系统时，安全依然成立。'), T('collusion, miscoordination, emergent risk, protocols and plugin ecosystems', '共谋、协调失败、涌现风险、协议与插件生态')],
+    ['safety_under_update', T('Safety is kept when the agent or its model changes.', '智能体或模型变化后，安全不退化。'), T('fine-tuning that erodes safety, continual learning, self-improvement', '微调侵蚀安全、持续学习、自我改进')],
+    ['comprehensive', T('Broad surveys and frameworks that span three or more requirements without a main one.', '横跨三条以上要求、没有主次的综述与总体框架。'), '']],
+  lenses: [['origin', T('where the risk comes from: people attacking, people without intent, the agent itself, the human-agent interaction, several agents interacting — tells being attacked apart from going wrong', '风险从哪来：人为对抗、人为非对抗、智能体内部失效、人机交互、多智能体交互——区分“被攻击”和“自己出错”')],
+    ['components', T('where in the system the problem occurs: model, retrieval, memory, tools and interfaces, execution environment, communication interfaces', '问题出在系统的哪个部分：模型、检索、记忆、工具与接口、执行环境、通信与交互接口')],
+    ['harm', T('who or what is harmed, in the seven domains of the MIT AI Risk Repository, so the field can be set against AI risk research at large', '伤害的是什么：采用 MIT AI 风险库的七个领域，便于和更大范围的 AI 风险研究对照')],
+    ['role', T('what the research does: attack, defence, benchmark, measurement, analysis and theory, systems and tools, surveys', '研究做了什么：攻击、防御、基准、测量、分析与理论、系统与工具、综述与立场')],
+    ['stage', T('for defences, where they act: prevention, runtime detection and blocking, formal guarantee, after-the-fact diagnosis and recovery', '对防御而言，在哪个环节起作用：事前预防、运行时检测与拦截、形式保证、事后诊断与恢复')]]});
+function psIntro() {
+  const I = PS_INTRO(), N = PS_NAMES(), P0 = P.position, dimName = Object.fromEntries(PS_DIMS());
+  return `<section class="pb-intro">
+    <div class="pb-block"><span class="fd-kicker">${T('WHY TWO AXES', '为什么拆成两条轴')}</span><h3>${T('Agent safety is two questions', 'Agent 安全是两个问题')}</h3>
+      <p>${T('"Agent safety" joins two words. The agent: who acts, and where. The safety: what must not go wrong. The same prompt injection means one thing for a web agent and another for a robot; for the same robot, crashing into a person and being fooled by a sticker are different problems. So every work is placed on two axes: which kind of agent it studies, and which safety requirement it protects. Where the two cross is the placement map of this chapter.', '“Agent 安全”由两个词组成。Agent：谁在行动、在哪里行动。Safety：什么不能出错。同样是提示注入，对网页智能体和对机器人意义完全不同；同一个机器人，撞到人和被一张贴纸骗过，又是两类问题。所以我们把每篇论文放在两条轴上：它研究的是哪一类智能体，它守护的是哪一条安全要求。两条轴的交叉，就是这一章的落点图。')}</p></div>
+    <div class="pb-block"><span class="fd-kicker">${T('AXIS 1 · THE AGENT', '第一条轴 · 智能体')}</span><h3>${T('Four kinds', '四类')}</h3>
+      <div class="pb-cards">${I.agent.map(([k, what, eg], i) => `<article class="pb-card" style="--c:${PS_COLORS[i]}"><h4>${esc(N.agent[k])}</h4><p>${what}</p><p class="pb-eg"><b>${T('For example', '例如')}</b> ${eg}</p></article>`).join('')}</div></div>
+    <div class="pb-block"><span class="fd-kicker">${T('AXIS 2 · THE SAFETY', '第二条轴 · 安全')}</span><h3>${T('Seven requirements of acting safely, and a column for broad work', '自主行动的七条安全要求，加一列“综合”')}</h3>
+      <p class="fd-note">${T('Each work gets the requirement it protects, tests or shows violated as its main one, and up to two more.', '每项工作标一条主要的安全要求（它守护、检验或揭示被违反的那一条），最多再加两条次要的。')}</p>
+      <div class="pb-req">${I.safety.map(([k, what, eg], i) => `<article style="--c:${PS_COLORS[i]}"><h4>${esc(N.safety[k])}</h4><p>${what}</p>${eg ? `<small>${eg}</small>` : ''}</article>`).join('')}</div>
+      <h4 class="pb-sub">${T('Other ways to look at the same works', '同一批工作的其他观察角度')}</h4>
+      <ul class="pb-lenses">${I.lenses.map(([k, what]) => `<li><b>${esc(dimName[k])}</b> ${what}</li>`).join('')}</ul></div>
+    <p class="fd-note">${T(`How the labels were made: Claude Opus 5.5 read the title and abstract of each work (rules ${P0.rules}); DeepSeek labelled the same works as a second reader${P0.agreement ? `, agreeing on the agent kind for ${pctf(P0.agreement.agent_kind)} and on the main safety requirement for ${pctf(P0.agreement.safety_primary)} (${pctf(P0.agreement.safetyWithinOther)} within each other's secondary)` : ''}. The contribution type comes from the earlier facet labels.`, `标签怎么来的：Claude Opus 5.5 逐篇读取标题与摘要（规则 ${P0.rules}）；DeepSeek 作为第二位标注者标了同一批工作${P0.agreement ? `，在智能体类型上一致 ${pctf(P0.agreement.agent_kind)}，主要安全要求一致 ${pctf(P0.agreement.safety_primary)}（含次要求 ${pctf(P0.agreement.safetyWithinOther)}）` : ''}。贡献类型来自早先的标签。`)}</p>
+  </section>`;
+}
+const PS_SEC_DEFAULT = {object: {y: 'role'}, risk: {y: 'safety'}, attackdef: {y: 'stage'}};
+function psSections() { return [['intro', T('Guide', '导读'), T('why two axes, and what each means', '为什么拆成两条轴，各是什么意思'), []], ...LN_GROUPS().structure]; }
+function psBook(qs) {
+  const secs = psSections(), k = Math.max(0, Math.min(secs.length - 1, ps.sec || 0)), [key, name, sub, ids] = secs[k], byq = Object.fromEntries(qs.map(q => [q[0], q]));
+  const nav = `<nav class="pb-nav" aria-label="${T('Sections', '节')}">${secs.map(([kk, nm, sb], i) => `<button data-ps-sec="${i}" aria-current="${i === k ? 'page' : 'false'}"><span>${i + 1}</span><b>${nm}</b><small>${sb}</small></button>`).join('')}</nav>`;
+  const next = k < secs.length - 1 ? `<button class="pb-next" data-ps-sec="${k + 1}">${T('Next section', '下一节')}：${secs[k + 1][1]} →</button>` : '';
+  const prev = k > 0 ? `<button class="pb-prev" data-ps-sec="${k - 1}">← ${secs[k - 1][1]}</button>` : '<span></span>';
+  if (key === 'intro') return `${nav}${psIntro()}<div class="pb-foot">${prev}${next}</div>`;
+  let n = qs.findIndex(q => q[0] === ids.find(id => byq[id])) ;
+  const cards = ids.filter(id => byq[id]).map(id => { const [qid, q, a, body] = byq[id]; n = qs.indexOf(byq[id]) + 1;
+    return `<article class="cr-card pb-card-q" id="q-${qid}" data-ps-card="${qid}"><button class="cr-card-head" data-ps-open="${qid}" aria-expanded="false"><span class="ln-qn">${String(n).padStart(2, '0')}</span><span class="cr-card-text"><b>${q}</b><em>${esc(a)}</em></span><i class="cx-chev" aria-hidden="true"></i></button>
+      <p class="fd-note cr-config"><span>${psConfig(qid).note}</span><button class="cr-show pb-show" data-ps-show="${qid}">${T('Show on the map ↑', '在落点图上看 ↑')}</button></p><div class="cr-body" hidden>${body}</div></article>`; }).join('');
+  // the global map on the left, this section's findings on the right (each opens its own small chart)
+  return `${nav}<div class="pb-head"><span class="fd-kicker">${T(`SECTION ${k + 1}`, `第 ${k + 1} 节`)}</span><h3>${name}</h3><p class="fd-note">${sub}</p></div><div class="cr-wrap">${psStage()}<div class="cr-cards pb-cards-col">${cards}<div class="pb-foot">${prev}${next}</div></div></div>`;
+}
+function psGoSection(k, root) {
+  const secs = psSections(); ps.sec = Math.max(0, Math.min(secs.length - 1, k));
+  const d = PS_SEC_DEFAULT[secs[ps.sec][0]] || {};
+  psStop(); Object.assign(ps, {q: '', y: d.y || 'safety', year: 'all', role: -1, hl: null});
+  const box = root.querySelector('[data-ps-book]'); if (!box) return;
+  box.innerHTML = psBook(lensQuestions('structure'));
+  psBind(root);
+  root.querySelector('.ln-chapters')?.scrollIntoView({block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'});
+}
+const psSectionOf = qid => psSections().findIndex(s => s[3].includes(qid));
 // ------------------------------------------------------------------------------------------------ Trajectory part: head and tail over time (findings.trajectory)
 // Each candidate cluster (a research line found from paper content) is a dot: size (works in the 12 months up to the month
 // shown, log scale) against growth (those 12 months against the 12 before). The dashed line is the head/tail cut: the
@@ -1768,12 +1831,12 @@ function questionPool() {
     scope: P.position ? (() => { const S = P.position.summary, N = PS_NAMES(), a = S.agent, f = S.foundational, mk = S.physicalMaker, old = P.scope ? Object.fromEntries(P.scope.agent.map(r => [r.key, r])) : null;
       const fl = k => ({F1: T('goal and behaviour alignment', '目标与行为对齐机制'), F2: T('oversight and control', '监督与控制'), F3: T('the instruction-data trust boundary', '指令与数据的信任边界'), F4: T('dangerous-capability evaluations', '危险能力评测'), F5: T('surveys and agendas', '综述与研究议程'), out: T('outside F1–F5', '不符合 F1–F5')}[k]);
       const body = `<div class="fd-hbars">${['digital_agent', 'physical_agent', 'rl_agent', 'no_concrete_agent'].map(k => `<div class="fd-hbar"><span>${N.agent[k]} <small>(${num(S.agentN[k])})</small></span>${barCell(a[k], 50, PS_COLORS[['digital_agent', 'physical_agent', 'rl_agent', 'no_concrete_agent'].indexOf(k)])}<b>${pctf(a[k])}</b></div>`).join('')}</div>
-        <h4>${T('Works with no concrete agent: which foundational rule admits them', '没有具体智能体的工作：凭哪条基础层规则收录')}</h4><div class="fd-hbars">${['F1', 'F2', 'F3', 'F4', 'F5', 'out'].map(k => `<div class="fd-hbar"><span>${k === 'out' ? '' : k + ' · '}${fl(k)}</span>${barCell(f[k] || 0, Math.max(...Object.values(f)), k === 'out' ? COLORS.connection : COLORS.attention)}<b>${num(f[k] || 0)}</b></div>`).join('')}</div>
-        <p class="fd-note">${T(`Decision makers of physical agents: learned policy ${num(mk.learned_policy)}, foundation model ${num(mk.foundation_model)}, not stated ${num(mk.not_stated)}, classical controller ${num(mk.classical)}. The ${num(f.out || 0)} works outside F1–F5 and the ${num(mk.classical || 0)} physical-agent works with a classical controller are listed for the owner's review; nothing is removed automatically.`, `物理智能体的决策器：学习到的策略 ${num(mk.learned_policy)}，基础模型 ${num(mk.foundation_model)}，未说明 ${num(mk.not_stated)}，经典控制器 ${num(mk.classical)}。不符合 F1–F5 的 ${num(f.out || 0)} 项与使用经典控制器的 ${num(mk.classical || 0)} 项物理智能体工作已列出供站主复核，不会自动移除。`)}${old ? T(` With the earlier setting labels (A3), ${pctf(old.D.share, 0)} had no concrete agent; reading each abstract finds agents in many of them.`, ` 按早先的场景标签（A3），${pctf(old.D.share, 0)} 的工作没有具体智能体；逐篇读摘要后，其中不少其实研究的是智能体。`) : ''}</p>
+        <h4>${T('The foundational layer: five kinds of work every agent rests on', '基础层：所有智能体都依赖的五类基础工作')}</h4><div class="fd-hbars">${['F1', 'F2', 'F3', 'F4', 'F5'].map(k => `<div class="fd-hbar"><span>${k} · ${fl(k)}</span>${barCell(f[k] || 0, Math.max(...['F1', 'F2', 'F3', 'F4', 'F5'].map(x => f[x] || 0)), COLORS.attention)}<b>${num(f[k] || 0)}</b></div>`).join('')}</div>
+        <p class="fd-note">${T(`Physical agents by what makes their decisions: learned policy ${num(mk.learned_policy)}, foundation model ${num(mk.foundation_model)}, not stated ${num(mk.not_stated)}.`, `物理智能体按决策器：学习到的策略 ${num(mk.learned_policy)}，基础模型 ${num(mk.foundation_model)}，未说明 ${num(mk.not_stated)}。`)}</p>
 `;  // the A3 matrix (setting labels, with a 'none labelled' risk column) is superseded by these labels and no longer shown
       return [['scope', T('What does agent safety study? Two questions: the agent, and the safety', 'Agent 安全研究的是什么？两个问题：和智能体的关系，和安全的关系'),
-        T(`${pctf(a.digital_agent, 0)} of the works study digital agents, ${pctf(a.physical_agent, 0)} physical agents (robots, vehicles, drones), ${pctf(a.rl_agent, 0)} reinforcement-learning agents in simulators; ${pctf(a.no_concrete_agent, 0)} study no concrete agent and are in as foundational work (alignment, oversight, the instruction-data boundary, dangerous capabilities, surveys).`,
-          `${pctf(a.digital_agent, 0)} 研究数字智能体，${pctf(a.physical_agent, 0)} 研究机器人、车、无人机等物理智能体，${pctf(a.rl_agent, 0)} 研究仿真中的强化学习智能体；${pctf(a.no_concrete_agent, 0)} 没有具体的智能体，作为基础工作收录（对齐、监督、指令与数据边界、危险能力、综述）。`), body]]; })() :
+        T(`${pctf(a.digital_agent, 0)} of the works study digital agents, ${pctf(a.physical_agent, 0)} physical agents (robots, vehicles, drones), ${pctf(a.rl_agent, 0)} reinforcement-learning agents in simulators; ${pctf(a.no_concrete_agent, 0)} are the foundational layer: no single agent, but what every agent rests on (alignment, oversight, the instruction-data boundary, dangerous capabilities, surveys).`,
+          `${pctf(a.digital_agent, 0)} 研究数字智能体，${pctf(a.physical_agent, 0)} 研究机器人、车、无人机等物理智能体，${pctf(a.rl_agent, 0)} 研究仿真中的强化学习智能体；${pctf(a.no_concrete_agent, 0)} 属于基础层：不研究某一个智能体，而是研究所有智能体都依赖的基础（对齐、监督、指令与数据边界、危险能力、综述）。`), body]]; })() :
 !P.scope ? [] : (() => { const a = Object.fromEntries(P.scope.agent.map(r => [r.key, r])); return [
       ['scope', T('What does agent safety study? Two questions: the agent, and the safety', 'Agent 安全研究的是什么？两个问题：和智能体的关系，和安全的关系'),
         T(`On the agent axis, ${pctf(a.A.share, 0)} of the works study digital agents, ${pctf(a.B.share, 0)} physical agents (robots, vehicles, drones) and ${pctf(a.C.share, 0)} reinforcement-learning agents in simulators; ${pctf(a.D.share, 0)} have no concrete agent: they study the model itself or alignment theory, or survey the field, and are in as foundational work.`,
@@ -1828,8 +1891,8 @@ function questionPool() {
       const sy = S.safetyYears, ch = k => `${N.safety[k]} ${pctf(sy[k][0])} → ${pctf(sy[k][sy[k].length - 1])}`, f = S.foundational, ag = P.position.agreement;
       const up = Object.keys(sy).sort((a, b) => (sy[b].at(-1) - sy[b][0]) - (sy[a].at(-1) - sy[a][0]));
       return [
-        ['psafety', T('Which safety requirement does the work protect?', '这些工作守护的是哪条安全要求？'), T(`It depends on the agent: digital agents ${top(S.byAgent.digital_agent, 2).map(([k, v]) => `${N.safety[k]} ${pctf(v, 0)}`).join(', ')}; physical agents ${N.safety.action_consequence_safety} ${pctf(S.byAgent.physical_agent.action_consequence_safety, 0)}; works without a concrete agent ${top(S.byAgent.no_concrete_agent, 2).map(([k, v]) => `${N.safety[k]} ${pctf(v, 0)}`).join(', ')}. Over time: ${ch(up[0])}, ${ch(up[1])}; ${ch(up[up.length - 1])} (≤${ys[0]} → ${ys[ys.length - 1]}).`,
-          `取决于智能体：数字智能体以${top(S.byAgent.digital_agent, 2).map(([k, v]) => `“${N.safety[k]}”${pctf(v, 0)}`).join('、')}为主；物理智能体“${N.safety.action_consequence_safety}”占 ${pctf(S.byAgent.physical_agent.action_consequence_safety, 0)}；没有具体智能体的工作以${top(S.byAgent.no_concrete_agent, 2).map(([k, v]) => `“${N.safety[k]}”${pctf(v, 0)}`).join('、')}为主。随时间：${ch(up[0])}，${ch(up[1])}；${ch(up[up.length - 1])}（≤${ys[0]} → ${ys[ys.length - 1]}）。`),
+        ['psafety', T('Which safety requirement does the work protect?', '这些工作守护的是哪条安全要求？'), T(`It depends on the agent: digital agents ${top(S.byAgent.digital_agent, 2).map(([k, v]) => `${N.safety[k]} ${pctf(v, 0)}`).join(', ')}; physical agents ${N.safety.action_consequence_safety} ${pctf(S.byAgent.physical_agent.action_consequence_safety, 0)}; the foundational layer ${top(S.byAgent.no_concrete_agent, 2).map(([k, v]) => `${N.safety[k]} ${pctf(v, 0)}`).join(', ')}. Over time: ${ch(up[0])}, ${ch(up[1])}; ${ch(up[up.length - 1])} (≤${ys[0]} → ${ys[ys.length - 1]}).`,
+          `取决于智能体：数字智能体以${top(S.byAgent.digital_agent, 2).map(([k, v]) => `“${N.safety[k]}”${pctf(v, 0)}`).join('、')}为主；物理智能体“${N.safety.action_consequence_safety}”占 ${pctf(S.byAgent.physical_agent.action_consequence_safety, 0)}；基础层以${top(S.byAgent.no_concrete_agent, 2).map(([k, v]) => `“${N.safety[k]}”${pctf(v, 0)}`).join('、')}为主。随时间：${ch(up[0])}，${ch(up[1])}；${ch(up[up.length - 1])}（≤${ys[0]} → ${ys[ys.length - 1]}）。`),
           `${BP.table('agent', 'safety', S.byAgent)}<p class="fd-note">${T('Share of each agent kind\'s works by their main safety requirement.', '各类智能体的工作按主要安全要求的分布。')}</p>${BP.years('safety', sy)}<p class="fd-note">${T(`Share of each year's works; works before ${ys[0]} are counted with ${ys[0]}; the last year is incomplete.`, `各年工作中的比例；${ys[0]} 年以前的工作并入 ${ys[0]}；最后一年不完整。`)}</p>`],
         ['pcomponent', T('Where in the system does the problem occur?', '问题出在系统的哪个部分？'), T(`Mostly the model (${pctf(S.components.model, 0)} of works) and the execution environment (${pctf(S.components.execution_environment, 0)}); for digital agents tools and interfaces (${pctf(S.componentsByAgent.digital_agent.tools_interfaces, 0)}) and communication (${pctf(S.componentsByAgent.digital_agent.communication_interface, 0)}) follow; memory ${pctf(S.components.memory, 0)} and retrieval ${pctf(S.components.retrieval, 0)} are thin.`,
           `多数在模型（${pctf(S.components.model, 0)} 的工作）和执行环境（${pctf(S.components.execution_environment, 0)}）；数字智能体其次是工具与接口（${pctf(S.componentsByAgent.digital_agent.tools_interfaces, 0)}）和通信与交互接口（${pctf(S.componentsByAgent.digital_agent.communication_interface, 0)}）；记忆 ${pctf(S.components.memory, 0)}、检索 ${pctf(S.components.retrieval, 0)} 都很薄。`),
@@ -1968,7 +2031,7 @@ export function renderLens(ctx) {
   if (id === 'connect' && P.connect) { crStop(); cr.q = ''; cr.focus = -1; return shell(`${tabs}${lead}</section>${crLens(qs)}`, 'cr-lens'); }
   if (id === 'lead' && P.players) { plStop(); pl.q = ''; return shell(`${tabs}${lead}</section>${plLens(qs)}`, 'cr-lens pl-lens'); }
   if (id === 'evolve' && P.trajectory) { tjStop(); tj.q = ''; tj.hl = null; return shell(`${tabs}${lead}</section>${tjLens(qs)}`, 'cr-lens tj-lens'); }
-  if (id === 'structure' && P.position) { psStop(); ps.q = ''; return shell(`${tabs}${lead}</section>${psLens(qs)}`, 'cr-lens ps-lens'); }
+  if (id === 'structure' && P.position) { psStop(); ps.q = ''; return shell(`${tabs}${lead}</section><div data-ps-book>${psBook(qs)}</div>`, 'ps-lens pb-lens'); }
   const groups = grouped(id, qs);
   const extra = id === 'models' && P.models2026 ? `<p class="fd-note">${mNote()} ${T(`Release months: ${P.models2026.releaseSource}.`, '发布月份：2026-10-07 AI Model Observatory 快照中的 OpenRouter 首次上架月份；更早的模型用厂商发布月份。')}</p>`
     : id === 'oss' && P.oss ? `<p class="fd-note">${T(`${num(P.oss.repos)} repositories in the agent-security group of the open-source set (forks and mirrors left out), metrics captured ${P.oss.capture}. ${P.oss.disclaimer}`, `开源集中 agent 安全组的 ${num(P.oss.repos)} 个仓库（不含 fork 与镜像），数据采集于 ${P.oss.capture}。星数和 fork 数是 GitHub 上的关注度，不代表采用、有效或认可。`)} <a href="#oss">${T('Open the repository table', '打开开源仓库表')} →</a></p>` : '';

@@ -76,3 +76,39 @@ html[data-theme="light"] .pl-map.has-hl .pl-bub.is-hl,html[data-theme="light"] .
 html:not([data-theme="light"]) .cr-rib:not(:hover){fill-opacity:.5}
 html:not([data-theme="light"]) .cr-ring.has-hl .cr-rib.is-hl{stroke:#f2f7e0;fill-opacity:.9}
 html:not([data-theme="light"]) .cr-ring.has-focus .cr-rib:not(.is-focus){fill-opacity:.04}
+/* Positioning as a book: section tabs, the guide, page turns */
+.pb-nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:4px 0 14px}
+.pb-nav button{display:grid;grid-template-columns:auto 1fr;column-gap:10px;align-items:center;text-align:left;border:1px solid rgba(160,205,195,.22);background:transparent;border-radius:10px;padding:9px 12px;color:#dfeae6;font:inherit;cursor:pointer}
+.pb-nav button span{grid-row:1/3;width:24px;height:24px;border-radius:50%;border:1px solid rgba(160,205,195,.4);display:grid;place-items:center;font-size:12.5px;color:#93aea7}
+.pb-nav button b{font-size:14px;color:#f1f7f4}.pb-nav button small{font-size:11.5px;color:#93aea7;line-height:1.35}
+.pb-nav button[aria-current="page"]{border-color:#d4e966;background:rgba(212,233,102,.07)}
+.pb-nav button[aria-current="page"] b,.pb-nav button[aria-current="page"] span{color:#d4e966;border-color:#d4e966}
+.pb-head{margin:6px 2px 12px}.pb-head h3{font-size:21px;margin:2px 0 2px;color:#f1f7f4}
+.pb-intro{display:grid;gap:18px}
+.pb-block{background:#102622;border:1px solid rgba(160,205,195,.18);border-radius:14px;padding:18px 20px}
+.pb-block h3{font-size:19px;margin:4px 0 8px;color:#f1f7f4}
+.pb-block>p{font-size:15px;line-height:1.75;max-width:980px;color:#d7e5e1}
+.pb-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.pb-card{border-top:3px solid var(--c);background:rgba(255,255,255,.03);border-radius:10px;padding:12px 14px}
+.pb-card h4{margin:0 0 6px;font-size:15.5px;color:#f1f7f4}.pb-card p{font-size:13.5px;line-height:1.65;margin:4px 0;color:#d0dfdb}
+.pb-eg{color:#a9c3bc!important}.pb-eg b{color:#d4e966;font-weight:600;margin-right:4px}
+.pb-req{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.pb-req article{border-left:3px solid var(--c);background:rgba(255,255,255,.03);border-radius:8px;padding:10px 12px}
+.pb-req h4{margin:0 0 4px;font-size:14.5px;color:#f1f7f4}.pb-req p{font-size:13px;line-height:1.6;margin:2px 0;color:#d0dfdb}.pb-req small{font-size:12px;color:#93aea7}
+.pb-sub{font-size:15px;margin:16px 0 6px;color:#f1f7f4}
+.pb-lenses{margin:0;padding-left:18px;font-size:13.5px;line-height:1.75;color:#d0dfdb}.pb-lenses b{color:#f1f7f4;margin-right:6px}
+.pb-foot{display:flex;justify-content:space-between;gap:10px;margin:16px 0 4px}
+.pb-next,.pb-prev{border:1px solid rgba(160,205,195,.3);background:transparent;color:#dfeae6;font:inherit;font-size:14px;border-radius:10px;padding:10px 16px;cursor:pointer}
+.pb-next{border-color:#d4e966;color:#d4e966;font-weight:600}
+@media(max-width:1100px){.pb-cards,.pb-req{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){.pb-nav{grid-template-columns:repeat(2,minmax(0,1fr))}.pb-cards,.pb-req{grid-template-columns:1fr}.pb-block{padding:14px 14px}}
+html[data-theme="light"] .pb-nav button{background:#fff;color:#203536;border-color:#d4e0dc}
+html[data-theme="light"] .pb-nav button b,html[data-theme="light"] .pb-head h3,html[data-theme="light"] .pb-block h3,html[data-theme="light"] .pb-card h4,html[data-theme="light"] .pb-req h4,html[data-theme="light"] .pb-sub,html[data-theme="light"] .pb-lenses b{color:#123c36}
+html[data-theme="light"] .pb-nav button small,html[data-theme="light"] .pb-nav button span,html[data-theme="light"] .pb-req small{color:#64786c}
+html[data-theme="light"] .pb-nav button[aria-current="page"]{background:#eef5f2;border-color:#1c6a57}
+html[data-theme="light"] .pb-nav button[aria-current="page"] b,html[data-theme="light"] .pb-nav button[aria-current="page"] span{color:#1c6a57;border-color:#1c6a57}
+html[data-theme="light"] .pb-block{background:#fff;border-color:#dce5e5}
+html[data-theme="light"] .pb-block>p,html[data-theme="light"] .pb-card p,html[data-theme="light"] .pb-req p,html[data-theme="light"] .pb-lenses{color:#2f4c48}
+html[data-theme="light"] .pb-card,html[data-theme="light"] .pb-req article{background:#f6f9f8}
+html[data-theme="light"] .pb-eg{color:#5c726c!important}html[data-theme="light"] .pb-eg b{color:#1c6a57}
+html[data-theme="light"] .pb-next{border-color:#1c6a57;color:#1c6a57}html[data-theme="light"] .pb-prev{color:#203536;border-color:#c9d8d3}

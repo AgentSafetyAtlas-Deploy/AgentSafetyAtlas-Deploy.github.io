@@ -26553,22 +26553,30 @@
       "renewalStatus": "unknown"
     },
     {
-      "id": "buyer-REC-C05-B001-0009",
-      "title": "Fusion CX unifies protection with CrowdStrike Falcon",
-      "date": null,
+      "id": "buyer-REC-C05-B006-0003",
+      "title": "Onyx Security Anonymized Agent Discovery and Runtime Deployment Field Notes",
+      "date": "2026-04-15",
       "evidenceLevel": "deployment_case",
-      "companyId": "biz-crowdstrike",
+      "companyId": "biz-onyx-security",
       "summary": {
-        "en": "Fusion CX unifies protection with CrowdStrike Falcon. See the original source for the attributed claims.",
-        "zh": "CrowdStrike 托管的案例称 Fusion CX 自 2020 年部署 Falcon Sensor、2025 年采用 Falcon Complete，之后扩展到 Falcon Identity Security 和 SIEM；案例把客户采用 AI Agent 列为强化身份安全的背景，而非 Continuous Identity 产品部署证明。"
+        "en": "Onyx Security Anonymized Agent Discovery and Runtime Deployment Field Notes. See the original source for the attributed claims.",
+        "zh": "三篇 Onyx 客户与解决方案团队材料描述其 onboarding、配置扫描、会话捕获和工具调用执行流程：首篇给出匿名 hospitality 部署，5 月材料归纳多行业客户顺序，运行时案例则明确由多个客户 POV 匿名合成。它们支持厂商实际部署流程声明，但不支持命名客户、市场普遍比例或独立效果验证。"
       },
       "sources": [
         {
-          "url": "https://www.crowdstrike.com/en-us/resources/customer-stories/fusion-cx/",
-          "title": "Fusion CX unifies protection with CrowdStrike Falcon"
+          "url": "https://www.onyx.security/blog/thousands-of-agents-what-onyx-discovers-in-24-hours",
+          "title": "Onyx Security Anonymized Agent Discovery and Runtime Deployment Field Notes"
+        },
+        {
+          "url": "https://www.onyx.security/blog/four-guardrails-the-customer-success-pattern-for-safe-ai-agent-adoption",
+          "title": "Four Guardrails Customer Success Pattern"
+        },
+        {
+          "url": "https://www.onyx.security/blog/tales-from-the-runtime-layer-why-authorized-agents-break-your-security-and-your-infrastructure",
+          "title": "Tales from the Runtime Layer"
         }
       ],
-      "detailId": "REC-C05-B001-0009",
+      "detailId": "REC-C05-B006-0003",
       "paymentStatus": "unknown",
       "contractAmount": null,
       "renewalStatus": "unknown"
@@ -26595,30 +26603,22 @@
       "renewalStatus": "unknown"
     },
     {
-      "id": "buyer-REC-C05-B006-0003",
-      "title": "Onyx Security Anonymized Agent Discovery and Runtime Deployment Field Notes",
-      "date": "2026-04-15",
+      "id": "buyer-REC-C05-B001-0009",
+      "title": "Fusion CX unifies protection with CrowdStrike Falcon",
+      "date": null,
       "evidenceLevel": "deployment_case",
-      "companyId": "biz-onyx-security",
+      "companyId": "biz-crowdstrike",
       "summary": {
-        "en": "Onyx Security Anonymized Agent Discovery and Runtime Deployment Field Notes. See the original source for the attributed claims.",
-        "zh": "三篇 Onyx 客户与解决方案团队材料描述其 onboarding、配置扫描、会话捕获和工具调用执行流程：首篇给出匿名 hospitality 部署，5 月材料归纳多行业客户顺序，运行时案例则明确由多个客户 POV 匿名合成。它们支持厂商实际部署流程声明，但不支持命名客户、市场普遍比例或独立效果验证。"
+        "en": "Fusion CX unifies protection with CrowdStrike Falcon. See the original source for the attributed claims.",
+        "zh": "CrowdStrike 托管的案例称 Fusion CX 自 2020 年部署 Falcon Sensor、2025 年采用 Falcon Complete，之后扩展到 Falcon Identity Security 和 SIEM；案例把客户采用 AI Agent 列为强化身份安全的背景，而非 Continuous Identity 产品部署证明。"
       },
       "sources": [
         {
-          "url": "https://www.onyx.security/blog/thousands-of-agents-what-onyx-discovers-in-24-hours",
-          "title": "Onyx Security Anonymized Agent Discovery and Runtime Deployment Field Notes"
-        },
-        {
-          "url": "https://www.onyx.security/blog/four-guardrails-the-customer-success-pattern-for-safe-ai-agent-adoption",
-          "title": "Four Guardrails Customer Success Pattern"
-        },
-        {
-          "url": "https://www.onyx.security/blog/tales-from-the-runtime-layer-why-authorized-agents-break-your-security-and-your-infrastructure",
-          "title": "Tales from the Runtime Layer"
+          "url": "https://www.crowdstrike.com/en-us/resources/customer-stories/fusion-cx/",
+          "title": "Fusion CX unifies protection with CrowdStrike Falcon"
         }
       ],
-      "detailId": "REC-C05-B006-0003",
+      "detailId": "REC-C05-B001-0009",
       "paymentStatus": "unknown",
       "contractAmount": null,
       "renewalStatus": "unknown"
