@@ -275,21 +275,25 @@ export function bindLenses(ctx) {
   const root = document.querySelector('.fd');
   if (!root) return;
   const tip = root.querySelector('.fd-tip');
-  root.addEventListener('input', e => { if (e.target.matches('[data-cx-year]')) { cxStop(); cx.t = +e.target.value; cxRedraw(); } });
-  // the global view shrinks to a compact strip once the page has scrolled past its full size (one listener for the page)
-  if (!cxScrollBound) { cxScrollBound = true; window.addEventListener('scroll', cxCompact, {passive: true}); }
-  cxCompact();
+  root.addEventListener('input', e => { if (e.target.matches('[data-cr-month]')) { const was = cr.timer; crStop(); cr.m = +e.target.value; crRedraw('month'); if (was) { const b = root.querySelector('[data-cr-play]'); if (b) b.textContent = '▶'; } } });
+  crBind(root);
   root.addEventListener('click', e => {
-    const el = e.target.closest('[data-cx-level],[data-cx-layer],[data-cx-measure],[data-cx-win],[data-cx-play],[data-cx-open],[data-cx-cell],[data-fd-ids],[data-fd-paper],[data-fd-list],[data-fd-jump],[data-fd-layer],[data-fd-pair],[data-fd-bench],[data-ln-lens],[data-ln-goto],[data-ln-q],[data-ln-ms-kind],[data-ln-insight],.fd-close');
+    const el = e.target.closest('[data-cr-view],[data-cr-level],[data-cr-layer],[data-cr-win],[data-cr-play],[data-cr-open],[data-cr-show],[data-cr-pair],[data-cr-unit],[data-fd-ids],[data-fd-paper],[data-fd-list],[data-fd-jump],[data-fd-layer],[data-fd-pair],[data-fd-bench],[data-ln-lens],[data-ln-goto],[data-ln-q],[data-ln-ms-kind],[data-ln-insight],.fd-close');
     if (!el) return;
     if (el.matches('.fd-close')) { root.querySelector('.fd-drawer').hidden = true; return; }
-    if (el.dataset.cxLevel) { cx.level = el.dataset.cxLevel; cx.hl = cx.level === cxConfig(cx.q).level ? cx.hl : null; cxRedraw(); return; }
-    if (el.dataset.cxLayer) { cx.layer = el.dataset.cxLayer; cxRedraw(); return; }
-    if (el.dataset.cxMeasure) { cx.measure = el.dataset.cxMeasure; cxRedraw(); return; }
-    if (el.dataset.cxWin) { cx.win = el.dataset.cxWin; cxRedraw(); return; }
-    if ('cxPlay' in el.dataset) { cxPlay(); return; }
-    if (el.dataset.cxOpen) { cxOpen(el.dataset.cxOpen, root); return; }
-    if (el.dataset.cxCell) { cxCellDrawer(el.dataset.cxCell); return; }
+    if (el.dataset.crView) { crStop(); cr.view = el.dataset.crView; if (cr.view === 'topo' && !crFlow()) cr.layer = 'cite'; crRedraw(); return; }
+    if (el.dataset.crLevel) { cr.level = el.dataset.crLevel; cr.focus = -1; crRedraw(); return; }
+    if (el.dataset.crLayer) { cr.layer = el.dataset.crLayer; crRedraw(); return; }
+    if (el.dataset.crWin) { cr.win = el.dataset.crWin === 'all' ? 'all' : +el.dataset.crWin; crRedraw(); return; }
+    if ('crPlay' in el.dataset) { crPlay(); return; }
+    if (el.dataset.crOpen) {
+      const art = el.closest('.cr-card'), open = el.getAttribute('aria-expanded') === 'true';
+      el.setAttribute('aria-expanded', String(!open)); art.querySelector('.cr-body').hidden = open;
+      crActivate(el.dataset.crOpen); return;
+    }
+    if (el.dataset.crShow) { crActivate(el.dataset.crShow); root.querySelector('[data-cr-stage]')?.scrollIntoView({block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'}); return; }
+    if (el.dataset.crPair) { crDrawer(el.dataset.crPair); return; }
+    if (el.dataset.crUnit) { const k = +el.dataset.crUnit; cr.focus = cr.focus === k ? -1 : k; crFocus(el.closest('svg'), cr.focus); return; }
     if (el.dataset.fdIds) { const l = lists.get(el.dataset.fdIds); if (l) openDrawer(l.heading, paperRows(l.ids)); return; }
     if (el.dataset.fdPaper) return ctx.openPaper(el.dataset.fdPaper);
     if (el.dataset.fdList) { const l = lists.get(el.dataset.fdList); if (l) openDrawer(l.heading, l.html || paperRows(l.ids)); return; }
@@ -299,7 +303,7 @@ export function bindLenses(ctx) {
     if (el.dataset.lnGoto) {
       const [lens, qid] = el.dataset.lnGoto.split(':');
       ctx.state.lens = lens; ctx.writeHash(); ctx.render();
-      requestAnimationFrame(() => { const h = document.querySelector(`#q-${qid} [data-cx-open]`); if (h) { if (h.getAttribute('aria-expanded') !== 'true') h.click(); } else document.getElementById('q-' + qid)?.scrollIntoView({block: 'start'}); });
+      requestAnimationFrame(() => { const h = document.querySelector(`#q-${qid} [data-cr-open]`); if (h && h.getAttribute('aria-expanded') !== 'true') h.click(); document.getElementById('q-' + qid)?.scrollIntoView({block: 'start'}); });
       return;
     }
     if (el.dataset.lnQ) { document.getElementById('q-' + el.dataset.lnQ)?.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start'}); return; }
@@ -328,9 +332,15 @@ export function bindLenses(ctx) {
     if (!el) { tip.hidden = true; return; }
     tip.textContent = el.getAttribute('data-tip');
     tip.hidden = false;
-    const r = el.getBoundingClientRect(), host = root.getBoundingClientRect();
+    const r = el.closest('.cr-ring,.tp-map') ? {left: e.clientX - 1, width: 2, bottom: e.clientY + 10} : el.getBoundingClientRect(), host = root.getBoundingClientRect();
     tip.style.left = Math.min(host.width - 300, Math.max(0, r.left - host.left + r.width / 2 - 140)) + 'px';
     tip.style.top = (r.bottom - host.top + 8) + 'px';
+  });
+  root.addEventListener('mousemove', e => {  // on the ring and the upstream map the tip follows the pointer
+    if (tip.hidden || !e.target.closest('.cr-ring [data-tip],.tp-map [data-tip]')) return;
+    const host = root.getBoundingClientRect();
+    tip.style.left = Math.min(host.width - 300, Math.max(0, e.clientX - host.left - 140)) + 'px';
+    tip.style.top = (e.clientY - host.top + 14) + 'px';
   });
   root.addEventListener('mouseleave', () => { tip.hidden = true; });
   if (!escBound) {
@@ -735,150 +745,309 @@ const B3 = {
 // ------------------------------------------------------------------------------------------------ tail & gaps (RQ5, findings.tail)
 const FACET_NAME = (kind, v) => ({surface: SURFACE_NAMES(), setting: SETTING_NAMES(), mechanism: MECH_NAMES()}[kind] || {})[v] || v.replace(/_/g, ' ');
 const tierName = t => ({head: T('head', '头部'), torso: T('middle', '中部'), tail: T('tail', '长尾'), absent: T('absent', '尚未出现')}[t] || t);
-// ------------------------------------------------------------------------------------------------ Connection lens: the global view (findings.connect)
-// One matrix of research areas (the 8 galaxies, then the 19 clusters) x four layers x years. Rows send (cite, use a
-// benchmark), columns receive; institutions and content are symmetric. Every finding below sets the matrix to the
-// configuration it talks about and adds its own chart (owner design, review step A3.1).
-const CX_GROUPS = () => [
+// ------------------------------------------------------------------------------------------------ Connection lens: the stage (findings.connect)
+// One stage shows how research areas connect, month by month: a ring of areas (the 8 galaxies, or the 19 clusters inside
+// their galaxy bands) with ribbons between them, or a topology of who builds on whom. The findings scroll beside it; each
+// sets the stage to what it talks about and keeps its own chart (owner redesign, review step A3.2).
+const CR_GROUPS = () => [
   ['read', T('Do research lines read each other?', '研究线之间读不读彼此'), T('knowledge flowing through citations', '知识通过引用流动'), ['layers', 'reading', 'notreading', 'bridges']],
   ['upstream', T('Who is upstream?', '谁在上游'), T('the direction of citations', '引用的方向'), ['buildson']],
   ['bench', T('Shared experimental resources: benchmarks', '共享的实验资源：基准'), T('who uses whose benchmarks, and for how long', '谁在用谁的基准，用多久'), ['hubs', 'supply', 'lifecycle', 'inflation']],
   ['people', T('Shared people and institutions', '共享的人与机构'), T('the same institutions on different lines', '同一批机构在做不同的研究线'), ['collab']]];
-const CX_LAYERS = () => [['cite', T('Citations', '引用')], ['bench', T('Benchmark use', '共用基准')], ['collab', T('Institutions', '合作机构')], ['content', T('Content', '内容相近')]];
-const cx = {level: 'galaxy', layer: 'cite', measure: 'share', t: null, win: 'cum', q: '', hl: null, timer: 0};
-const cxYears = () => P.connect.years;
-const cxYearLabel = t => t === 0 ? `≤${cxYears()[0]}` : `${cxYears()[t]}${t === cxYears().length - 1 ? '*' : ''}`;
-function cxPair(a, b) { return [[a, b], [b, a]]; }
-function cxConfig(qid) {
-  const idx = name => P.meta.clusters.indexOf(name), c = {level: 'cluster', layer: 'cite', measure: 'ratio', win: 'cum', hl: null, note: ''};
-  if (qid === 'layers') return {...c, note: T('Matrix: clusters, citations against what their sizes would give. Switch the layer above to compare citations, benchmarks, institutions and content.', '矩阵：星团之间的引用，相对按规模应有的期望。切换上方的层，比较引用、基准、机构和内容。')};
-  if (qid === 'reading') return {...c, level: 'galaxy', measure: 'share', win: 'year', hl: {offdiag: true}, note: T('Matrix: galaxies, share of each row\'s citations that year. Press play: more of each galaxy\'s citations go to other galaxies over the years.', '矩阵：星系之间，每行当年引用的去向占比。按播放：各星系的引用里流向其他星系的部分逐年增加。')};
-  if (qid === 'notreading') return {...c, hl: {cells: (P.rq2.h2a || []).flatMap(([a, b]) => cxPair(a, b))}, note: T('Matrix: the highlighted pairs are close in content but cite each other far less than expected.', '矩阵：亮出的几对星团内容相近，互相引用却远少于期望。')};
-  if (qid === 'bridges') { const cells = (P.tail?.bridges || []).slice(0, 4).flatMap(b => { const a = idx(b.a.cluster), d = idx(b.b.cluster); return a >= 0 && d >= 0 ? cxPair(a, d) : []; });
-    return {...c, layer: 'content', hl: {cells}, note: T('Matrix: content closeness of clusters; the highlighted pairs contain the candidate clusters that are close but never cite each other (open the finding for the pairs).', '矩阵：星团之间的内容相近度；亮出的格子里有内容相近却从不互相引用的候选星团（展开查看具体是哪几对）。')}; }
-  if (qid === 'buildson') return {...c, hl: {cells: (P.deeper?.buildsOn?.pairs || []).slice(0, 4).map(p => [p.from, p.to])}, note: T('Matrix: rows cite columns. The highlighted cells are the most one-sided pairs: the row builds on the column far more than the reverse.', '矩阵：行引用列。亮出的是最不对称的几对：行建立在列之上，远多于反过来。')};
-  if (qid === 'hubs') return {...c, layer: 'bench', measure: 'share', hl: {cells: (P.rq2.h2b || []).slice(0, 6).flatMap(([a, b]) => cxPair(a, b))}, note: T('Matrix: benchmark use (rows use benchmarks from columns). Highlighted: pairs that share benchmarks although they rarely cite each other.', '矩阵：共用基准（行使用列的基准）。亮出的是很少互相引用、却共用基准的几对星团。')};
-  if (qid === 'supply') return {...c, layer: 'bench', measure: 'share', hl: {cols: [...P.rq3.clusters].sort((a, b) => b.suppliedOutside - a.suppliedOutside).slice(0, 3).map(r => r.cluster)}, note: T('Matrix: benchmark use; the highlighted columns are the clusters whose benchmarks other clusters use most.', '矩阵：共用基准；亮出的列是基准被其他星团使用最多的星团。')};
-  if (qid === 'lifecycle') return {...c, level: 'galaxy', layer: 'bench', measure: 'share', win: 'year', note: T('Matrix: benchmark use by galaxy, year by year. Press play to watch benchmarks spread.', '矩阵：星系之间逐年的基准使用。按播放看基准怎样扩散。')};
-  if (qid === 'inflation') return {...c, layer: 'bench', measure: 'share', note: T('Matrix: where the benchmarks that are used come from; most named benchmarks never appear here.', '矩阵：被使用的基准来自哪里；多数具名基准从未出现在这里。')};
-  if (qid === 'collab') { const cx_ = P.connect.collab; return {...c, layer: 'collab', hl: {cells: [...cx_.top, ...cx_.apart].flatMap(p => cxPair(p.a, p.b))}, note: T('Matrix: how similarly clusters draw on institutions. Highlighted: the most similar pairs and pairs that share institutions but rarely cite each other.', '矩阵：星团之间机构分布的相似度。亮出的是最相似的几对，以及用同一批机构却很少互相引用的几对。')}; }
+const CR_LAYERS = () => [['cite', T('Citations', '引用')], ['bench', T('Benchmark use', '共用基准')], ['collab', T('Institutions', '合作机构')], ['content', T('Content', '内容相近')]];
+const cr = {view: 'ring', level: 'galaxy', layer: 'cite', m: null, win: 12, q: '', hl: null, focus: -1, timer: 0};
+const crFlow = () => cr.layer === 'cite' || cr.layer === 'bench';
+const crMonths = () => P.connect.months;
+const crName = k => cr.level === 'galaxy' ? galaxy(k) : cl(k);
+let crPre = {}, crSeriesCache = {};
+function crPrefix(layer) {  // running sums per month of the cluster x cluster flows, so any window is one subtraction
+  if (crPre[layer]) return crPre[layer];
+  const C = P.connect, K = C.works.length, M = C.months.length, KK = K * K, pre = new Float64Array((M + 1) * KK);
+  for (let m = 0; m < M; m++) {
+    pre.copyWithin((m + 1) * KK, m * KK, (m + 1) * KK);
+    const row = C[layer][m];
+    for (let i = 0; i < row.length; i += 3) pre[(m + 1) * KK + row[i] * K + row[i + 1]] += row[i + 2];
+  }
+  return (crPre[layer] = pre);
+}
+const crWindow = () => { const hi = cr.m + 1; return [cr.win === 'all' ? 0 : Math.max(0, hi - cr.win), hi]; };
+function crFlowMatrix(layer) {  // the window's flows at the current level (rows send: cite, or use a benchmark of the column)
+  const C = P.connect, K = C.works.length, KK = K * K, pre = crPrefix(layer), [lo, hi] = crWindow();
+  const Mc = Array.from({length: K}, (_, a) => Array.from({length: K}, (_, b) => pre[hi * KK + a * K + b] - pre[lo * KK + a * K + b]));
+  if (cr.level === 'cluster') return Mc;
+  const G = P.meta.galaxies.length, g = C.clusterGalaxy, Mg = Array.from({length: G}, () => Array(G).fill(0));
+  Mc.forEach((row, a) => row.forEach((v, b) => { Mg[g[a]][g[b]] += v; }));
+  return Mg;
+}
+function crMatrix() {
+  const C = P.connect;
+  if (crFlow()) return crFlowMatrix(cr.layer);
+  if (cr.layer === 'collab') return C[cr.level].collabCum[Math.min(C.years.length - 1, Math.max(0, +crMonths()[cr.m].slice(0, 4) - C.years[0]))];
+  return C[cr.level].content;
+}
+function crUnits() {
+  const C = P.connect;
+  if (cr.level === 'galaxy') return P.meta.galaxies.map((g, k) => ({k, label: galaxy(k), color: g.color, g: k,
+    works: C.works.reduce((s, w, c) => s + (C.clusterGalaxy[c] === k ? w : 0), 0)}));
+  return C.works.map((_, k) => k).sort((a, b) => C.clusterGalaxy[a] - C.clusterGalaxy[b] || C.works[b] - C.works[a])
+    .map(k => ({k, label: cl(k), color: clusterColor(k), g: C.clusterGalaxy[k], works: C.works[k]}));
+}
+function crSeries() {  // per month: connections between different areas at the current level (citations, or benchmark uses)
+  const layer = cr.layer === 'bench' ? 'bench' : 'cite', key = layer + cr.level;
+  if (crSeriesCache[key]) return crSeriesCache[key];
+  const g = P.connect.clusterGalaxy, gal = cr.level === 'galaxy';
+  return (crSeriesCache[key] = P.connect[layer].map(row => { let s = 0; for (let i = 0; i < row.length; i += 3) if (gal ? g[row[i]] !== g[row[i + 1]] : row[i] !== row[i + 1]) s += row[i + 2]; return s; }));
+}
+const crHlPairs = () => cr.level === 'cluster' && cr.hl?.pairs ? cr.hl.pairs : [];
+const crHlUnits = () => cr.level !== 'cluster' || !cr.hl ? [] : cr.hl.units || crHlPairs().flat();
+const crIsHl = (a, b) => crHlPairs().some(([x, y]) => (x === a && y === b) || (x === b && y === a)) || (cr.hl?.units && cr.level === 'cluster' && (cr.hl.units.includes(a) || cr.hl.units.includes(b)));
+const crFmt = v => v >= 100 ? num(Math.round(v)) : v >= 10 ? v.toFixed(0) : v.toFixed(1);
+const crShort = (s, n) => s.length > n ? s.slice(0, n - 1) + '…' : s;
+const crPt = (a, r) => [r * Math.sin(a), -r * Math.cos(a)];
+const crP = (a, r) => crPt(a, r).map(v => v.toFixed(1)).join(',');
+const crArc = (a0, a1, r0, r1) => { const lg = a1 - a0 > Math.PI ? 1 : 0;
+  return `M${crP(a0, r1)}A${r1},${r1} 0 ${lg} 1 ${crP(a1, r1)}L${crP(a1, r0)}A${r0},${r0} 0 ${lg} 0 ${crP(a0, r0)}Z`; };
+const crRibbon = (s0, s1, t0, t1, r) => `M${crP(s0, r)}A${r},${r} 0 0 1 ${crP(s1, r)}Q0,0 ${crP(t0, r)}A${r},${r} 0 0 1 ${crP(t1, r)}Q0,0 ${crP(s0, r)}Z`;
+function crLayout() {
+  // flow layers: an area's arc is what it sends to the other areas in the window; a ribbon's end at an area is as wide as
+  // what that area sends to the other (d3-chord style), so an uneven ribbon shows the direction. Similarity layers: arcs
+  // by number of works, ribbons for the closest pairs. Connections inside an area are left out.
+  const units = crUnits(), M = crMatrix(), K = units.length, flow = crFlow(), at = (a, b) => M[a]?.[b] || 0, pos = new Map(units.map((u, i) => [u.k, i]));
+  let pairs = [];
+  for (let i = 0; i < K; i++) for (let j = i + 1; j < K; j++) {
+    const a = units[i].k, b = units[j].k, ab = at(a, b), ba = flow ? at(b, a) : ab;
+    if (ab + ba > 0) pairs.push({a, b, ab, ba});
+  }
+  if (!flow) { const top = new Set([...pairs].sort((x, y) => y.ab - x.ab).slice(0, cr.level === 'galaxy' ? 10 : 24)); pairs = pairs.filter(p => top.has(p) || crIsHl(p.a, p.b)); }
+  const w = units.map(u => flow ? units.reduce((s, v) => s + (v.k === u.k ? 0 : at(u.k, v.k)), 0) : u.works), total = w.reduce((s, x) => s + x, 0);
+  const gaps = units.map((u, i) => cr.level === 'galaxy' ? 0.035 : i === 0 || units[i - 1].g !== u.g ? 0.05 : 0.012), minA = 0.02;
+  const span = 2 * Math.PI - gaps.reduce((s, x) => s + x, 0), scale = total ? (span - minA * K) / total : 0;
+  let a = 0;
+  const arcs = units.map((u, i) => { a += gaps[i]; const a0 = a; a += total ? minA + w[i] * scale : span / K; return {...u, a0, a1: a, w: w[i]}; });
+  const ends = {}, vmax = Math.max(...pairs.map(p => p.ab), 1e-9);
+  for (const x of arcs) {
+    const mine = pairs.filter(p => p.a === x.k || p.b === x.k).map(p => ({other: p.a === x.k ? p.b : p.a, out: p.a === x.k ? p.ab : p.ba}))
+      .sort((s, t) => ((pos.get(t.other) - pos.get(x.k) + K) % K) - ((pos.get(s.other) - pos.get(x.k) + K) % K));  // no crossings near the arc
+    const pad = Math.min(0.004, (x.a1 - x.a0) / 6), inner = x.a1 - x.a0 - 2 * pad, sum = mine.reduce((s, e) => s + e.out, 0);
+    let c = x.a0 + pad;
+    mine.forEach(e => {
+      if (flow) { const len = sum ? inner * e.out / sum : 0; ends[`${x.k}>${e.other}`] = [c, c + len]; c += len; return; }
+      const slot = inner / mine.length, wd = slot * (0.3 + 0.6 * e.out / vmax);
+      ends[`${x.k}>${e.other}`] = [c + (slot - wd) / 2, c + (slot + wd) / 2]; c += slot;
+    });
+  }
+  return {arcs, pairs, ends, flow, total};
+}
+function crRingSvg() {
+  const {arcs, pairs, ends, flow, total} = crLayout(), big = cr.level === 'galaxy', R0 = 186, RW = 14, narrow = matchMedia('(max-width: 640px)').matches;
+  const hasHl = !!(cr.hl && cr.level === 'cluster'), hlU = new Set(crHlUnits()), what = cr.layer === 'cite' ? T('citations', '次引用') : T('benchmark uses', '次基准使用');
+  const cut = flow ? 0.002 * pairs.reduce((s, p) => s + p.ab + p.ba, 0) : 0;
+  const ribbon = p => {
+    const s = ends[`${p.a}>${p.b}`], t = ends[`${p.b}>${p.a}`], hl = hasHl && crIsHl(p.a, p.b);
+    if (!s || !t || (flow && p.ab + p.ba < cut && !hl)) return '';
+    const lead = !flow || p.ab >= p.ba ? p.a : p.b, col = big ? P.meta.galaxies[lead].color : clusterColor(lead);
+    const tip = flow ? T(`${crName(p.a)} → ${crName(p.b)}: ${crFmt(p.ab)} ${what}; ${crName(p.b)} → ${crName(p.a)}: ${crFmt(p.ba)}`, `${crName(p.a)} → ${crName(p.b)}：${crFmt(p.ab)} ${what}；${crName(p.b)} → ${crName(p.a)}：${crFmt(p.ba)} ${what}`)
+      : T(`${crName(p.a)} · ${crName(p.b)}: ${cr.layer === 'collab' ? 'institution similarity' : 'content closeness'} ${p.ab.toFixed(2)}`, `${crName(p.a)} · ${crName(p.b)}：${cr.layer === 'collab' ? '机构相似度' : '内容相近度'} ${p.ab.toFixed(2)}`);
+    return `<path class="cr-rib${hl ? ' is-hl' : ''}" d="${crRibbon(s[0], s[1], t[0], t[1], R0 - 2)}" fill="${col}" data-cr-a="${p.a}" data-cr-b="${p.b}"${cr.layer === 'content' ? '' : ` data-cr-pair="${p.a}|${p.b}"`} data-tip="${esc(tip)}"/>`;
+  };
+  const bands = big ? '' : P.meta.galaxies.map((g, gi) => { const ins = arcs.filter(x => x.g === gi); return ins.length ? `<path class="cr-gal" d="${crArc(ins[0].a0, ins[ins.length - 1].a1, R0 + RW + 3, R0 + RW + 8)}" fill="${g.color}" data-tip="${esc(galaxy(gi))}"/>` : ''; }).join('');
+  const arcEls = arcs.map(x => `<path class="cr-arc${hlU.has(x.k) ? ' is-hl' : ''}" d="${crArc(x.a0, x.a1, R0, R0 + RW)}" fill="${x.color}" data-cr-unit="${x.k}" data-tip="${esc(flow ? T(`${x.label}: ${crFmt(x.w)} ${what} to the other areas in this window`, `${x.label}：本时间窗内对其他领域 ${crFmt(x.w)} ${what}`) : T(`${x.label}: ${num(x.works)} works`, `${x.label}：${num(x.works)} 项工作`))}"/>`).join('');
+  // labels: horizontal, the left and right halves each pushed apart vertically where small arcs crowd them, with a
+  // leader line from the arc; galaxies may take two lines
+  const maxChars = T(narrow ? 12 : 21, narrow ? 6 : 10), rl = R0 + RW + (big ? 14 : 18), fs = narrow ? 20 : big ? 13 : 12;
+  const lines = s => { if (s.length <= maxChars) return [s]; const sp = [...s.matchAll(/ /g)].map(m => m.index).sort((a, b) => Math.abs(a - s.length / 2) - Math.abs(b - s.length / 2));
+    return sp.length ? [crShort(s.slice(0, sp[0]), maxChars), crShort(s.slice(sp[0] + 1), maxChars)] : [crShort(s, maxChars)]; };
+  const lab = arcs.map(x => { const mid = (x.a0 + x.a1) / 2, [, yy] = crPt(mid, rl), ls = lines(x.label); return {x, mid, y: yy, side: Math.sin(mid) >= 0 ? 1 : -1, ls, h: fs * 1.2 * ls.length + 2}; });
+  for (const side of [1, -1]) {
+    const L = lab.filter(l => l.side === side).sort((p, q) => p.y - q.y);
+    for (let i = 1; i < L.length; i++) L[i].y = Math.max(L[i].y, L[i - 1].y + (L[i - 1].h + L[i].h) / 2);
+    const over = L.length ? L[L.length - 1].y + L[L.length - 1].h / 2 - 254 : 0;
+    if (over > 0) { L[L.length - 1].y -= over; for (let i = L.length - 2; i >= 0; i--) L[i].y = Math.min(L[i].y, L[i + 1].y - (L[i].h + L[i + 1].h) / 2); }
+  }
+  const labels = lab.map(l => { const [ax, ay] = crPt(l.mid, R0 + RW + 2), lx = l.side * Math.max(Math.sqrt(Math.max(0, rl * rl - l.y * l.y)), 26) ;
+    const lead = `<path class="cr-lead" d="M${ax.toFixed(1)},${ay.toFixed(1)}L${(lx - l.side * 3).toFixed(1)},${l.y.toFixed(1)}"/>`;
+    const body = l.ls.length === 1 ? esc(l.ls[0]) : `<tspan x="${(lx + l.side * 2).toFixed(1)}" dy="-0.25em">${esc(l.ls[0])}</tspan><tspan x="${(lx + l.side * 2).toFixed(1)}" dy="1.2em">${esc(l.ls[1])}</tspan>`;
+    return `${lead}<text class="cr-label${big ? ' is-big' : ''}${hlU.has(l.x.k) ? ' is-hl' : ''}" x="${(lx + l.side * 2).toFixed(1)}" y="${l.y.toFixed(1)}" text-anchor="${l.side > 0 ? 'start' : 'end'}"${l.ls.length === 1 ? ' dy="0.35em"' : ''} data-cr-unit="${l.x.k}" data-tip="${esc(l.x.label)}">${body}</text>`; }).join('');
+  const empty = flow && !total ? `<text class="cr-empty" text-anchor="middle" dy="0.35em">${T('No connections between areas in this window yet', '这个时间窗内，领域之间还没有连接')}</text>` : '';
+  const shown = [...pairs].sort((x, y) => (x.ab + x.ba) - (y.ab + y.ba));
+  return `<svg class="cr-ring${hasHl ? ' has-hl' : ''}${cr.focus >= 0 ? ' has-focus' : ''}" viewBox="-365 -258 730 516" role="img" aria-label="${T('Connections between research areas', '研究领域之间的连接')}">${shown.map(ribbon).join('')}${arcEls}${bands}${labels}${empty}</svg>`;
+}
+function crTopoSvg() {
+  // areas in rows from foundations (the others cite them more than they cite the others) at the top to builders at the
+  // bottom, with the upstream score as a bar; arcs on the right join a builder to what it builds on, as thick as the
+  // difference between the two directions in the window (an arc diagram, so no label ever sits on another)
+  const units = crUnits(), M = crFlowMatrix(cr.layer === 'bench' ? 'bench' : 'cite'), at = (a, b) => M[a]?.[b] || 0, ks = units.map(u => u.k);
+  const inn = {}, out = {};
+  for (const a of ks) { inn[a] = 0; out[a] = 0; }
+  for (const a of ks) for (const b of ks) if (a !== b) { out[a] += at(a, b); inn[b] += at(a, b); }
+  const score = Object.fromEntries(ks.map(k => [k, inn[k] + out[k] ? (inn[k] - out[k]) / (inn[k] + out[k]) : 0]));
+  const net = [];
+  for (const a of ks) for (const b of ks) if (a < b) { const d = at(a, b) - at(b, a); if (Math.abs(d) > 1e-9) net.push(d > 0 ? {from: a, to: b, v: d} : {from: b, to: a, v: -d}); }
+  const big = cr.level === 'galaxy', bench = cr.layer === 'bench', narrow = matchMedia('(max-width: 640px)').matches, isHl = e => cr.level === 'cluster' && !!cr.hl && crIsHl(e.from, e.to);
+  const edges = net.sort((x, y) => y.v - x.v).filter((e, i) => i < (big ? 12 : 22) || (cr.hl?.pairs && isHl(e))), vmax = edges[0]?.v || 1;
+  // phones get a narrower drawing at the same text size: shorter bars, no value column, arcs squeezed sideways
+  const order = [...ks].sort((a, b) => score[b] - score[a]), rowH = big ? 48 : 27, top = 44, W = narrow ? 360 : 640, H = top + rowH * order.length + 30;
+  const yy = Object.fromEntries(order.map((k, i) => [k, top + rowH * (i + 0.5)])), xl = narrow ? 150 : 214, xb = narrow ? 178 : 262, bw = narrow ? 20 : 40, xv = xb + bw + 6, xn = narrow ? 214 : 352, rxF = narrow ? 0.5 : 1;
+  const smax = Math.max(0.1, ...ks.map(k => Math.abs(score[k]))), wmax = Math.max(...units.map(u => u.works));
+  const U = Object.fromEntries(units.map(u => [u.k, u])), maxChars = T(narrow ? 17 : 30, narrow ? 9 : 12);
+  const nodeTip = k => bench ? T(`${U[k].label}: its benchmarks used ${crFmt(inn[k])} times by the other areas; uses theirs ${crFmt(out[k])} times`, `${U[k].label}：基准被其他领域使用 ${crFmt(inn[k])} 次，使用其他领域的基准 ${crFmt(out[k])} 次`)
+    : T(`${U[k].label}: cited ${crFmt(inn[k])} times by the other areas, cites them ${crFmt(out[k])} times`, `${U[k].label}：被其他领域引用 ${crFmt(inn[k])} 次，引用其他领域 ${crFmt(out[k])} 次`);
+  const hlU = crHlUnits();
+  const row = k => { const y = yy[k], s = score[k], w = bw * Math.abs(s) / smax, r = (big ? 5 : 3.5) + 4 * Math.sqrt(U[k].works / wmax);
+    return `<g class="tp-node${hlU.includes(k) ? ' is-hl' : ''}" data-cr-unit="${k}" data-tip="${esc(nodeTip(k))}"><rect class="tp-hit" x="0" y="${(y - rowH / 2).toFixed(1)}" width="${xn + 10}" height="${rowH}"/>
+      <text x="${xl}" y="${y.toFixed(1)}" dy="0.35em" text-anchor="end">${esc(crShort(U[k].label, maxChars))}</text>
+      <rect x="${(s >= 0 ? xb : xb - w).toFixed(1)}" y="${(y - 4).toFixed(1)}" width="${Math.max(1, w).toFixed(1)}" height="8" rx="2" fill="${U[k].color}"/>
+      ${narrow ? '' : `<text class="tp-val" x="${xv}" y="${y.toFixed(1)}" dy="0.35em">${Math.abs(s) < 0.005 ? '0.00' : (s > 0 ? '+' : '−') + Math.abs(s).toFixed(2)}</text>`}
+      <circle cx="${xn}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}" fill="${U[k].color}"/></g>`; };
+  const x0 = xn + 9;
+  const edge = e => { const y1 = yy[e.from], y2 = yy[e.to], r = Math.abs(y2 - y1) / 2, f = crFmt(at(e.from, e.to)), b = crFmt(at(e.to, e.from));
+    const tip = bench ? T(`${U[e.from].label} uses benchmarks of ${U[e.to].label} ${f} times; the reverse ${b}`, `${U[e.from].label} 使用 ${U[e.to].label} 的基准 ${f} 次，反向 ${b} 次`)
+      : T(`${U[e.from].label} builds on ${U[e.to].label}: ${f} citations, ${b} back`, `${U[e.from].label} 建立在 ${U[e.to].label} 之上：引用 ${f} 次，反向 ${b} 次`);
+    return `<path class="tp-edge${isHl(e) ? ' is-hl' : ''}" data-cr-a="${e.from}" data-cr-b="${e.to}" data-cr-pair="${e.from}|${e.to}" d="M${x0},${y1.toFixed(1)}A${(r * rxF).toFixed(1)},${r.toFixed(1)} 0 0 ${y2 > y1 ? 1 : 0} ${x0},${y2.toFixed(1)}" stroke="${U[e.from].color}" stroke-width="${(1.2 + 5 * e.v / vmax).toFixed(1)}" marker-end="url(#tp-arrow)" data-tip="${esc(tip)}"/>`; };
+  const W2 = Math.max(W, x0 + rxF * Math.max(0, ...edges.map(e => Math.abs(yy[e.to] - yy[e.from]) / 2)) + 12);
+  return `<svg class="tp-map${cr.hl && cr.level === 'cluster' ? ' has-hl' : ''}" viewBox="0 0 ${W2.toFixed(0)} ${H}" role="img" aria-label="${T('Who builds on whom', '谁建立在谁之上')}">
+    <defs><marker id="tp-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="9" markerHeight="9" orient="auto"><path d="M0,0L10,5L0,10z" class="tp-arrowhead"/></marker></defs>
+    <text x="${xl}" y="16" text-anchor="end" class="fd-axis tp-axis">↑ ${bench ? T('suppliers', '供给方') : T('foundations', '基础')}</text><text x="${xl}" y="${H - 8}" text-anchor="end" class="fd-axis tp-axis">↓ ${bench ? T('users', '使用方') : T('builders', '上层')}</text>
+    ${narrow ? '' : `<text x="${xb}" y="16" text-anchor="middle" class="fd-axis tp-axis">${T('upstream score', '上游分')}</text><text x="${xb}" y="30" text-anchor="middle" class="fd-axis">${bench ? T('(used − using) ÷ both', '（被用 − 用别人）÷ 两者') : T('(cited − citing) ÷ both', '（被引 − 引出）÷ 两者')}</text>`}
+    <text x="${x0 + 4}" y="16" class="fd-axis tp-axis">${narrow ? T(`${edges.length} pairs →`, `${edges.length} 对 →`) : T(`the ${edges.length} most one-sided pairs →`, `最不对称的 ${edges.length} 对 →`)}</text>
+    <line x1="${xb}" x2="${xb}" y1="${top - 4}" y2="${H - 26}" class="tp-zero"/>
+    ${order.map(row).join('')}${edges.map(edge).join('')}</svg>`;
+}
+function crTopoTable() {
+  const units = crUnits(), M = crFlowMatrix(cr.layer === 'bench' ? 'bench' : 'cite'), at = (a, b) => M[a]?.[b] || 0, ks = units.map(u => u.k);
+  const rows = units.map(u => { let i = 0, o = 0; for (const b of ks) if (b !== u.k) { i += at(b, u.k); o += at(u.k, b); }
+    const on = ks.filter(b => b !== u.k && at(u.k, b) > at(b, u.k)).sort((a, b) => (at(u.k, b) - at(b, u.k)) - (at(u.k, a) - at(a, u.k))).slice(0, 2);
+    return {u, i, o, s: i + o ? (i - o) / (i + o) : 0, on}; }).sort((a, b) => b.s - a.s);
+  return `<details class="cr-table"><summary>${T('As a table', '以表格查看')}</summary><table class="fd-table"><thead><tr><th>${T('Area', '领域')}</th><th>${T('Received', '被引 / 被用')}</th><th>${T('Sent', '引出 / 使用')}</th><th>${T('Score', '上游分')}</th><th>${T('Builds most on', '最依赖')}</th></tr></thead><tbody>
+    ${rows.map(r => `<tr><th>${esc(r.u.label)}</th><td>${crFmt(r.i)}</td><td>${crFmt(r.o)}</td><td>${r.s >= 0 ? '+' : ''}${r.s.toFixed(2)}</td><td>${r.on.map(crName).map(esc).join('、') || '—'}</td></tr>`).join('')}</tbody></table></details>`;
+}
+function crSpark() {
+  const s = crSeries(), M = s.length, mx = Math.max(...s.slice(1), 1), [lo, hi] = crWindow(), off = cr.layer === 'content';
+  return `<svg class="cr-spark" viewBox="0 0 ${M} 40" preserveAspectRatio="none" aria-hidden="true">${s.map((v, m) => { const h = 38 * Math.min(1, v / mx); return h ? `<rect x="${m + 0.1}" y="${(40 - h).toFixed(2)}" width="0.8" height="${h.toFixed(2)}" class="${!off && m >= lo && m < hi ? 'is-in' : ''}"/>` : ''; }).join('')}</svg>`;
+}
+function crWhen() {
+  if (cr.layer === 'content') return T('content does not change over time', '内容相近度不随时间变化');
+  if (cr.layer === 'collab') return T(`institutions up to ${crMonths()[cr.m].slice(0, 4)}`, `截至 ${crMonths()[cr.m].slice(0, 4)} 年的机构`);
+  const [lo, hi] = crWindow(), lab = m => m === 0 ? `≤${crMonths()[0]}` : crMonths()[m];
+  return cr.win === 'all' ? T(`up to ${lab(hi - 1)}`, `截至 ${lab(hi - 1)}`) : `${lab(lo)} – ${lab(hi - 1)}`;
+}
+function crTimeline() {
+  const C = P.connect, M = C.months.length, off = cr.layer === 'content';
+  const ticks = C.years.filter((y, i) => i % 2 === 0 || i === C.years.length - 1).map(y => { const m = (y - C.years[0]) * 12; return `<span style="left:${(100 * m / M).toFixed(2)}%">${y}</span>`; }).join('');
+  const seg = cr.layer === 'cite' || cr.layer === 'bench' ? `<span class="cx-seg">${[[12, T('12 months', '近 12 个月')], ['all', T('All up to then', '累计')]].map(([k, l]) => `<button data-cr-win="${k}" aria-pressed="${String(cr.win) === String(k)}">${l}</button>`).join('')}</span>` : '';
+  return `<div class="cr-time${off ? ' is-off' : ''}"><button class="cr-play" data-cr-play aria-label="${cr.timer ? T('Pause', '暂停') : T('Play month by month', '逐月播放')}"${off ? ' disabled' : ''}>${cr.timer ? '❚❚' : '▶'}</button>
+    <div class="cr-track"><div data-cr-spark>${crSpark()}</div><input type="range" class="cr-range" min="0" max="${M - 1}" value="${cr.m}" data-cr-month aria-label="${T('Month', '月份')}"${off ? ' disabled' : ''}><div class="cr-ticks">${ticks}</div></div>
+    <div class="cr-time-side"><b data-cr-when>${crWhen()}</b>${seg}</div></div>
+    <p class="fd-note cr-spark-note">${T(`Bars: ${cr.layer === 'bench' ? 'benchmark uses' : 'citations'} between different ${cr.level === 'galaxy' ? 'galaxies' : 'clusters'} each month (by the month of the citing work). The ring is always a full circle: it shows how the connections are shared, the bars show how many there are.`, `柱：每月不同${cr.level === 'galaxy' ? '星系' : '星团'}之间的${cr.layer === 'bench' ? '基准使用' : '引用'}（按施引工作的月份）。环总是画满一圈，看的是连接怎样分布；连接有多少，看柱。`)}</p>`;
+}
+function crNote() {
+  if (cr.view === 'topo') return T('Rows: areas from foundations (top) to builders (bottom) by the upstream score in the window. Arcs: the most one-sided pairs, with the arrow at the area that is built on; thickness is the difference between the two directions. Hover an area to see only its arcs.', '每行一个领域，按时间窗内的上游分从“基础”（上）排到“上层”（下）。弧线：最不对称的几对，箭头指向被依赖的一方，粗细是两个方向的差额。把鼠标放在一个领域上，只看它的弧线。');
+  return cr.layer === 'cite' ? T('Ribbons: citations between two areas in the window. Each end is as wide as what that area cites in the other, so an uneven ribbon shows who builds on whom; colour: the area that cites more. Citations inside an area are left out.', '彩带：时间窗内两个领域之间的引用。彩带一端的宽度是这一端引用另一端的次数，两端不一样宽，就看得出谁建立在谁之上；颜色取引用更多的一方。领域内部的引用不画。')
+    : cr.layer === 'bench' ? T('Ribbons: works of one area using benchmarks of the other. Each end is as wide as that area\'s uses of the other\'s benchmarks.', '彩带：一个领域的工作使用另一个领域的基准。每一端的宽度是这一端使用对方基准的次数。')
+    : cr.layer === 'collab' ? T('Ribbons: the pairs of areas whose institution profiles are most alike up to the year shown (wider is more alike). Arcs: number of works. Click a ribbon for the institutions on both.', '彩带：截至所示年份，机构分布最相似的几对领域（越宽越相似）。弧长：工作数。点击彩带看两边都在做的机构。')
+    : T('Ribbons: the pairs of areas closest in content (wider is closer). Arcs: number of works.', '彩带：内容最相近的几对领域（越宽越近）。弧长：工作数。');
+}
+function crStageInner() {
+  const seg = (attr, items, cur, off = []) => `<span class="cx-seg">${items.map(([k, l]) => `<button data-${attr}="${k}" aria-pressed="${k === cur}"${off.includes(k) ? ' disabled' : ''}>${l}</button>`).join('')}</span>`;
+  const topo = cr.view === 'topo';
+  return `<div class="cr-controls">${seg('cr-view', [['ring', T('Connection ring', '连接环')], ['topo', T('Upstream map', '上下游')]], cr.view)}${seg('cr-level', [['galaxy', T('Galaxies', '星系')], ['cluster', T('Clusters', '星团')]], cr.level)}${seg('cr-layer', CR_LAYERS(), cr.layer, topo ? ['collab', 'content'] : [])}</div>
+    <div class="cr-figure" data-cr-fig>${topo ? crTopoSvg() : crRingSvg()}</div><p class="fd-note cr-note">${crNote()}</p>${crTimeline()}${topo ? crTopoTable() : ''}`;
+}
+function crStage() {
+  if (cr.m == null) cr.m = crMonths().length - 1;
+  return `<section class="cr-stage" data-cr-stage><span class="fd-kicker">${T('THE STAGE', '全局视图')}</span><h3>${T('How research areas connect, month by month', '研究领域之间怎样连接，逐月变化')}</h3>
+    <p class="fd-note cr-intro">${T('Ring: the 8 galaxies, or the 19 clusters inside their galaxy bands. Hover an area to see only its connections; click a ribbon for the works behind it. Upstream map: who builds on whom. Each finding sets the stage to what it describes.', '连接环：8 个星系，或者分在各星系色带里的 19 个星团。把鼠标放在一个领域上，只看它的连接；点击彩带，看背后的论文。上下游：谁建立在谁之上。每条发现都会把这里切换到它说的那种情况。')}</p>
+    <div data-cr-inner>${crStageInner()}</div></section>`;
+}
+function crConfig(qid) {
+  const idx = name => P.meta.clusters.indexOf(name), c = {view: 'ring', level: 'cluster', layer: 'cite', win: 12, hl: null, note: ''};
+  if (qid === 'layers') return {...c, level: 'galaxy', note: T('Stage: citations between galaxies in the last 12 months. Switch the layer to compare benchmarks, institutions and content.', '全局视图：近 12 个月星系之间的引用。切换上方的层，比较基准、机构和内容。')};
+  if (qid === 'reading') return {...c, level: 'galaxy', note: T('Stage: citations between galaxies, 12 months at a time. Press play: the ribbons between galaxies grow as lines read each other more.', '全局视图：星系之间的引用，每次看 12 个月。按播放：随时间推移，星系之间的彩带越来越粗，研究线越读越多。')};
+  if (qid === 'notreading') return {...c, win: 'all', hl: {pairs: (P.rq2.h2a || []).map(([a, b]) => [a, b])}, note: T('Stage: all citations up to now; the highlighted pairs are close in content but cite each other far less than expected.', '全局视图：截至目前的全部引用；亮出的几对星团内容相近，互相引用却远少于期望。')};
+  if (qid === 'bridges') return {...c, layer: 'content', hl: {pairs: (P.tail?.bridges || []).slice(0, 4).map(b => [idx(b.a.cluster), idx(b.b.cluster)]).filter(([a, b]) => a >= 0 && b >= 0 && a !== b)}, note: T('Stage: the pairs closest in content; the highlighted clusters hold candidate clusters that are close but never cite each other.', '全局视图：内容最相近的几对；亮出的星团里，有内容相近、却从不互相引用的候选星团。')};
+  if (qid === 'buildson') return {...c, view: 'topo', win: 'all', hl: {pairs: (P.deeper?.buildsOn?.pairs || []).slice(0, 4).map(p => [p.from, p.to])}, note: T('Stage: the upstream map of all citations up to now: foundations at the top, builders at the bottom; the highlighted arrows are the most one-sided pairs.', '全局视图：截至目前全部引用的上下游图，基础在上，上层在下；亮出的箭头是最不对称的几对。')};
+  if (qid === 'hubs') return {...c, layer: 'bench', win: 'all', hl: {pairs: (P.rq2.h2b || []).slice(0, 6).map(([a, b]) => [a, b])}, note: T('Stage: benchmark use up to now; highlighted: pairs that share benchmarks although they rarely cite each other.', '全局视图：截至目前的基准使用；亮出的是很少互相引用、却共用基准的几对。')};
+  if (qid === 'supply') return {...c, view: 'topo', layer: 'bench', win: 'all', hl: {units: [...P.rq3.clusters].sort((a, b) => b.suppliedOutside - a.suppliedOutside).slice(0, 3).map(r => r.cluster)}, note: T('Stage: the upstream map of benchmark use: suppliers at the top; highlighted: the clusters whose benchmarks others use most.', '全局视图：基准使用的上下游图，供给方在上；亮出的是基准被别人用得最多的星团。')};
+  if (qid === 'lifecycle') return {...c, level: 'galaxy', layer: 'bench', note: T('Stage: benchmark use between galaxies, 12 months at a time. Press play to watch benchmarks spread.', '全局视图：星系之间的基准使用，每次看 12 个月。按播放，看基准怎样扩散。')};
+  if (qid === 'inflation') return {...c, layer: 'bench', win: 'all', note: T('Stage: where the benchmarks that are used come from; most named benchmarks never appear here.', '全局视图：被使用的基准来自哪里；多数具名基准从未出现在这里。')};
+  if (qid === 'collab') { const k = P.connect.collab; return {...c, layer: 'collab', hl: {pairs: [...k.top, ...k.apart].map(p => [p.a, p.b])}, note: T('Stage: the most similar institution profiles; highlighted: the closest pairs, and pairs that share institutions but rarely cite each other.', '全局视图：机构分布最相似的几对；亮出的是最相似的几对，以及用同一批机构、却很少互相引用的几对。')}; }
   return c;
 }
-function cxUnits(level) {
-  if (level === 'galaxy') return P.meta.galaxies.map((g, k) => ({k, label: galaxy(k), color: g.color}));
-  const w = P.connect.cluster.works;
-  return P.meta.clusters.map((_, k) => k).sort((a, b) => P.meta.clusterGalaxy[a] - P.meta.clusterGalaxy[b] || w[b] - w[a])
-    .map(k => ({k, label: cl(k), color: clusterColor(k), g: P.meta.clusterGalaxy[k]}));
-}
-function cxMatrix() {
-  const D = P.connect[cx.level];
-  if (cx.layer === 'content') return D.content;
-  if (cx.layer === 'collab') return (cx.win === 'cum' ? D.collabCum : D.collabYear)[cx.t];
-  const M = D[cx.layer], K = M[0].length;
-  if (cx.win === 'year') return M[cx.t];
-  const out = Array.from({length: K}, () => Array(K).fill(0));
-  for (let s = 0; s <= cx.t; s++) for (let a = 0; a < K; a++) for (let b = 0; b < K; b++) out[a][b] += M[s][a][b];
-  return out;
-}
-function cxCellColor(v, max) {
-  if (v == null || Number.isNaN(v)) return 'transparent';
-  const dark = isDark(), div = (x, lim) => { const f = Math.min(1, Math.abs(x) / lim); return rgba(x >= 0 ? SERIES[1] : SERIES[0], (dark ? 0.85 : 0.7) * f); };
-  if (cx.layer === 'content') return div(v, 0.8);
-  if ((cx.layer === 'cite' || cx.layer === 'bench') && cx.measure === 'ratio') return v > 0 ? div(Math.log2(v), 3) : rgba(SERIES[0], dark ? 0.85 : 0.7);
-  return rgba(INK, (dark ? 0.9 : 0.75) * Math.sqrt(Math.max(0, v) / (max || 1)));
-}
-function cxDraw() {
-  const units = cxUnits(cx.level), M = cxMatrix(), K = M.length, flow = cx.layer === 'cite' || cx.layer === 'bench';
-  const rs = M.map(r => r.reduce((x, y) => x + y, 0)), cs = M[0].map((_, b) => M.reduce((x, r) => x + r[b], 0)), tot = rs.reduce((x, y) => x + y, 0);
-  const val = (a, b) => !flow ? M[a][b] : cx.measure === 'ratio' ? (rs[a] && cs[b] ? M[a][b] / (rs[a] * cs[b] / tot) : null) : (rs[a] ? M[a][b] / rs[a] : null);
-  let max = 0; for (const u of units) for (const v of units) { const x = val(u.k, v.k); if (x != null && (cx.layer !== 'collab' || u.k !== v.k)) max = Math.max(max, x); }
-  const hl = cx.hl, on = (a, b) => !hl ? null : (hl.offdiag && a !== b) || (hl.cells || []).some(([x, y]) => x === a && y === b) || (hl.rows || []).includes(a) || (hl.cols || []).includes(b);
-  const big = cx.level === 'galaxy', layerName = Object.fromEntries(CX_LAYERS())[cx.layer];
-  const fmt = (a, b, x) => {
-    if (x == null) return '—';
-    if (flow && cx.measure === 'ratio') return '×' + (x >= 10 ? x.toFixed(0) : x.toFixed(1));
-    if (flow) return (100 * x).toFixed(x >= 0.1 ? 0 : 1) + '%';
-    return x.toFixed(2);
-  };
-  const tip = (u, v, x) => {
-    const pair = `${u.label} → ${v.label}`, n = flow ? M[u.k][v.k] : null, when = cx.layer === 'content' ? '' : ` · ${cx.win === 'cum' ? T('up to ', '截至 ') : ''}${cxYearLabel(cx.t)}`;
-    if (cx.layer === 'cite') return T(`${pair}${when}: ${num(Math.round(n))} citations, ${rs[u.k] ? (100 * n / rs[u.k]).toFixed(1) : 0}% of the row's, ${x != null && cx.measure === 'ratio' ? '×' + x.toFixed(2) + ' the expected' : ''}`, `${pair}${when}：引用 ${num(Math.round(n))} 次，占该行引用的 ${rs[u.k] ? (100 * n / rs[u.k]).toFixed(1) : 0}%${x != null && cx.measure === 'ratio' ? `，为期望的 ${x.toFixed(2)} 倍` : ''}`);
-    if (cx.layer === 'bench') return T(`${pair}${when}: ${n.toFixed(1)} uses of the column's benchmarks by the row's works`, `${pair}${when}：行的工作使用列的基准 ${n.toFixed(1)} 次`);
-    if (cx.layer === 'collab') return T(`${u.label} · ${v.label}${when}: institution profiles similarity ${x.toFixed(2)}`, `${u.label} · ${v.label}${when}：机构分布相似度 ${x.toFixed(2)}`);
-    return T(`${u.label} · ${v.label}: content closeness ${x.toFixed(2)}`, `${u.label} · ${v.label}：内容相近度 ${x.toFixed(2)}`);
-  };
-  const head = `<tr><th class="cx-corner">${T('row → column', '行 → 列')}</th>${units.map(u => `<th class="cx-col" style="--c:${u.color}" title="${esc(u.label)}"><span>${esc(u.label)}</span></th>`).join('')}</tr>`;
-  const rows = units.map((u, r) => `<tr class="${!big && r && units[r - 1].g !== u.g ? 'cx-sep' : ''}"><th class="cx-row" style="--c:${u.color}"><span>${esc(u.label)}</span></th>${units.map(v => {
-    const x = val(u.k, v.k), o = on(u.k, v.k);
-    return `<td><button class="cx-cell${o === true ? ' is-hl' : o === false ? ' is-dim' : ''}${u.k === v.k ? ' is-diag' : ''}" data-cx-cell="${u.k}|${v.k}" style="background:${cxCellColor(x, max)}" data-tip="${esc(tip(u, v, x))}">${big ? fmt(u.k, v.k, x) : ''}</button></td>`; }).join('')}</tr>`).join('');
-  const legend = cx.layer === 'content' ? T('Blue: further apart than average; orange: closer. Content does not change with the year.', '蓝：比平均更远；橙：更近。内容相近度不随年份变化。')
-    : cx.layer === 'collab' ? T('Darker: the two areas draw on more of the same institutions (cosine of works per institution).', '颜色越深，两个领域用到的机构越相同（按机构的工作数分布的余弦）。')
-    : cx.measure === 'ratio' ? T('Against what the two areas\' sizes would give: orange more than expected, blue less, grey about as expected.', '相对按两边规模应有的期望：橙色多于期望，蓝色少于期望，接近灰色就是差不多。')
-    : T('Share of each row: where the row\'s citations or benchmark uses go. Darker is a larger share.', '每行的去向占比：这一行的引用或基准使用流向哪里，颜色越深占比越大。');
-  return `<table class="cx-matrix ${big ? 'is-big' : 'is-small'}"><thead>${head}</thead><tbody>${rows}</tbody></table><p class="fd-note cx-legend">${layerName} · ${legend}</p>`;
-}
-function cxControls() {
-  const seg = (attr, items, cur) => `<span class="cx-seg">${items.map(([k, l]) => `<button data-${attr}="${k}" aria-pressed="${k === cur}">${l}</button>`).join('')}</span>`;
-  const Y = cxYears().length, timeOff = cx.layer === 'content';
-  return `${seg('cx-level', [['galaxy', T('Galaxies', '星系')], ['cluster', T('Clusters', '星团')]], cx.level)}
-    ${seg('cx-layer', CX_LAYERS(), cx.layer)}
-    ${cx.layer === 'cite' || cx.layer === 'bench' ? seg('cx-measure', [['share', T('Share of row', '行内占比')], ['ratio', T('Against expected', '相对期望')]], cx.measure) : ''}
-    <span class="cx-time${timeOff ? ' is-off' : ''}"><button class="cx-play" data-cx-play aria-label="${T('Play the years', '播放各年')}"${timeOff ? ' disabled' : ''}>${cx.timer ? '❚❚' : '▶'}</button><input type="range" min="0" max="${Y - 1}" value="${cx.t}" data-cx-year aria-label="${T('Year', '年份')}"${timeOff ? ' disabled' : ''}><b>${timeOff ? T('no time', '不随时间') : cxYearLabel(cx.t)}</b>${seg('cx-win', [['year', T('That year', '当年')], ['cum', T('Up to then', '截至当年')]], cx.win)}</span>`;
-}
-function cxGlobal() {
-  if (cx.t == null) cx.t = cxYears().length - 1;
-  return `<section class="cx-global" data-cx-global><div class="cx-head"><span class="fd-kicker">${T('GLOBAL VIEW', '全局视图')}</span><h3>${T('How research areas connect', '研究领域之间怎样连接')}</h3>
-    <p class="fd-note cx-intro">${T('Rows send a connection (they cite, or use a benchmark), columns receive it. Start with the 8 galaxies, then open the 19 clusters. The four layers answer four questions: do they read each other, use each other\'s benchmarks, work in the same institutions, write about similar things? Open a finding below to set the matrix to it.', '行是发出连接的一方（引用别人，或使用别人的基准），列是被连接的一方。先看 8 个星系，再展开到 19 个星团。四个层分别回答：读不读彼此、用不用彼此的基准、是不是同一批机构、写的东西像不像。展开下面任一条发现，矩阵会切换到它说的那种情况。')}</p></div>
-    <div class="cx-controls" data-cx-controls>${cxControls()}</div><div class="cx-body" data-cx-body>${cxDraw()}</div></section><div class="cx-sentinel" aria-hidden="true"></div>`;
-}
-function cxFindings(qs) {
+function crCards(qs) {
   const byq = Object.fromEntries(qs.map(q => [q[0], q])), used = new Set();
   let n = 0;
-  const item = id => { const [qid, q, a, body] = byq[id]; used.add(qid); n++;
-    return `<article class="cx-q" id="q-${qid}"><button class="cx-q-head" data-cx-open="${qid}" aria-expanded="false"><span class="ln-qn">${String(n).padStart(2, '0')}</span><span class="cx-q-text"><b>${q}</b><em>${esc(a)}</em></span><i class="cx-chev" aria-hidden="true"></i></button><div class="cx-q-body" hidden><p class="fd-note cx-config">${cxConfig(qid).note}</p>${body}</div></article>`; };
-  const groups = CX_GROUPS().map(([key, name, sub, ids]) => { const got = ids.filter(id => byq[id]); return got.length ? `<section class="cx-group" data-cx-group="${key}"><h3>${name} <small>${sub}</small></h3>${got.map(item).join('')}</section>` : ''; }).join('');
+  const card = id => { const [qid, q, a, body] = byq[id]; used.add(qid); n++;
+    return `<article class="cr-card" id="q-${qid}" data-cr-card="${qid}"><button class="cr-card-head" data-cr-open="${qid}" aria-expanded="false"><span class="ln-qn">${String(n).padStart(2, '0')}</span><span class="cr-card-text"><b>${q}</b><em>${esc(a)}</em></span><i class="cx-chev" aria-hidden="true"></i></button>
+      <p class="fd-note cr-config"><span>${crConfig(qid).note}</span><button class="cr-show" data-cr-show="${qid}">${T('Show on the stage ↑', '在全局视图上看 ↑')}</button></p><div class="cr-body" hidden>${body}</div></article>`; };
+  const groups = CR_GROUPS().map(([key, name, sub, ids]) => { const got = ids.filter(id => byq[id]); return got.length ? `<section class="cr-group" data-cr-group="${key}"><h3>${name}<small>${sub}</small></h3>${got.map(card).join('')}</section>` : ''; }).join('');
   const rest = qs.filter(q => !used.has(q[0]));  // nothing is dropped: findings not placed in a group follow at the end
-  return groups + (rest.length ? `<section class="cx-group"><h3>${T('More', '其他')}</h3>${rest.map(q => item(q[0])).join('')}</section>` : '');
+  return groups + (rest.length ? `<section class="cr-group"><h3>${T('More', '其他')}</h3>${rest.map(q => card(q[0])).join('')}</section>` : '');
 }
-function cxRedraw() {
-  const g = document.querySelector('[data-cx-global]'); if (!g) return;
-  g.querySelector('[data-cx-controls]').innerHTML = cxControls();
-  g.querySelector('[data-cx-body]').innerHTML = cxDraw();
+function crLens(qs) {
+  return `<div class="cr-wrap">${crStage()}<div class="cr-cards">${crCards(qs)}</div></div>`;
 }
-function cxOpen(qid, root) {
-  const art = document.getElementById('q-' + qid); if (!art) return;
-  const open = art.querySelector('.cx-q-head').getAttribute('aria-expanded') === 'true';
-  for (const a of root.querySelectorAll('.cx-q')) { a.querySelector('.cx-q-head').setAttribute('aria-expanded', 'false'); a.querySelector('.cx-q-body').hidden = true; }
-  cxStop();
-  if (open) { cx.q = ''; cx.hl = null; cxRedraw(); cxCompact(); return; }
-  const c = cxConfig(qid);
-  Object.assign(cx, {q: qid, level: c.level, layer: c.layer, measure: c.measure, win: c.win, hl: c.hl, t: cxYears().length - 1});
-  art.querySelector('.cx-q-head').setAttribute('aria-expanded', 'true'); art.querySelector('.cx-q-body').hidden = false;
-  cxRedraw();
-  cxCompact();
-  const g = document.querySelector('[data-cx-global]');
-  art.style.scrollMarginTop = ((g?.offsetHeight || 0) + 12) + 'px';
-  art.scrollIntoView({block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'});
+function crRedraw(part) {
+  const s = document.querySelector('[data-cr-inner]'); if (!s) return;
+  if (part !== 'month') { s.innerHTML = crStageInner(); return; }
+  // while the month slider moves, keep the slider itself and redraw the rest
+  s.querySelector('[data-cr-fig]').innerHTML = cr.view === 'topo' ? crTopoSvg() : crRingSvg();
+  s.querySelector('[data-cr-spark]').innerHTML = crSpark();
+  s.querySelector('[data-cr-when]').textContent = crWhen();
+  const t = s.querySelector('.cr-table'); if (t) t.outerHTML = crTopoTable();
 }
-let cxScrollBound = false;
-function cxCompact() {
-  const sen = document.querySelector('.cx-sentinel'), gv = document.querySelector('[data-cx-global]');
-  if (sen && gv) gv.classList.toggle('is-compact', !!cx.q || sen.getBoundingClientRect().top < 0);  // a finding is open, or the page is past the full view
+function crStop() { if (cr.timer) { clearInterval(cr.timer); cr.timer = 0; } }
+function crPlay() {
+  if (cr.timer) { crStop(); crRedraw(); return; }
+  const last = crMonths().length - 1, s = crSeries();
+  if (cr.m >= last) { let m = 0, run = 0; while (m < last && run < 20) run += s[m++]; cr.m = Math.max(0, m - 1); }  // start where there is something to see
+  const step = matchMedia('(prefers-reduced-motion: reduce)').matches ? 6 : 1;
+  cr.timer = setInterval(() => {
+    if (!document.querySelector('[data-cr-stage]')) return crStop();
+    cr.m = Math.min(last, cr.m + step);
+    const r = document.querySelector('[data-cr-month]'); if (r) r.value = cr.m;
+    crRedraw('month');
+    if (cr.m >= last) { crStop(); crRedraw(); }
+  }, 120);
+  crRedraw();
 }
-function cxStop() { if (cx.timer) { clearInterval(cx.timer); cx.timer = 0; } }
-function cxPlay() {
-  if (cx.timer) { cxStop(); cxRedraw(); return; }
-  const last = cxYears().length - 1;
-  if (cx.t >= last) cx.t = 0;
-  cx.timer = setInterval(() => { if (!document.querySelector('[data-cx-global]')) return cxStop(); cx.t = Math.min(last, cx.t + 1); if (cx.t >= last) cxStop(); cxRedraw(); }, 800);
-  cxRedraw();
+function crActivate(qid) {
+  if (cr.q === qid) return;
+  const c = crConfig(qid);
+  crStop();
+  Object.assign(cr, {q: qid, view: c.view, level: c.level, layer: c.layer, win: c.win, hl: c.hl, focus: -1, m: crMonths().length - 1});
+  for (const el of document.querySelectorAll('.cr-card')) el.classList.toggle('is-active', el.dataset.crCard === qid);
+  crRedraw();
 }
-function cxCellDrawer(key) {
-  const [a, b] = key.split('|').map(Number), D = P.connect[cx.level], name = k => cx.level === 'galaxy' ? galaxy(k) : cl(k);
-  if (cx.layer === 'cite') { const ids = D.citeWorks[key] || []; if (ids.length) openDrawer(`${name(a)} → ${name(b)} · ${T('works citing most', '引用最多的工作')}`, paperRows(ids)); return; }
-  if (cx.layer === 'bench') { const ids = D.benchItems[key] || []; if (ids.length) openDrawer(`${name(a)} → ${name(b)} · ${T('benchmarks used', '被使用的基准')}`, paperRows(ids)); return; }
-  if (cx.layer === 'collab' && a !== b) { const names = D.sharedInst[`${Math.min(a, b)}|${Math.max(a, b)}`] || [];
-    openDrawer(`${name(a)} · ${name(b)} · ${T('institutions working on both', '两边都在做的机构')}`, names.length ? `<ol class="fd-drawer-list">${names.map(x => `<li>${esc(x)}</li>`).join('')}</ol>` : `<p class="fd-note">${T('No shared institution.', '没有共同的机构。')}</p>`); }
+function crFocus(svg, k) {  // hover: only the connections of one area
+  if (!svg) return;
+  svg.classList.toggle('has-focus', k >= 0);
+  for (const el of svg.querySelectorAll('[data-cr-a]')) el.classList.toggle('is-focus', k >= 0 && (+el.dataset.crA === k || +el.dataset.crB === k));
+  const near = new Set([k]);
+  for (const el of svg.querySelectorAll('.tp-edge.is-focus')) { near.add(+el.dataset.crA); near.add(+el.dataset.crB); }
+  for (const el of svg.querySelectorAll('[data-cr-unit]')) el.classList.toggle('is-focus', k >= 0 && near.has(+el.dataset.crUnit));
+}
+function crDrawer(key) {
+  const [a, b] = key.split('|').map(Number), C = P.connect, members = k => cr.level === 'galaxy' ? C.works.map((_, c) => c).filter(c => C.clusterGalaxy[c] === k) : [k];
+  if (cr.layer === 'collab' && cr.view === 'ring') { const names = C[cr.level].sharedInst[`${Math.min(a, b)}|${Math.max(a, b)}`] || [];
+    openDrawer(`${crName(a)} · ${crName(b)} · ${T('institutions working on both', '两边都在做的机构')}`, names.length ? `<ol class="fd-drawer-list">${names.map(x => `<li>${esc(x)}</li>`).join('')}</ol>` : `<p class="fd-note">${T('No shared institution.', '没有共同的机构。')}</p>`);
+    return; }
+  const bench = cr.layer === 'bench', src = bench ? C.benchItems : C.citeWorks;
+  const ids = (x, y) => [...new Set(members(x).flatMap(p => members(y).flatMap(q => src[`${p}|${q}`] || [])))].slice(0, 30);
+  const part = (x, y) => { const l = ids(x, y); return `<h5>${bench ? T(`${crName(x)} uses benchmarks of ${crName(y)}`, `${crName(x)} 使用的 ${crName(y)} 的基准`) : T(`${crName(x)} citing ${crName(y)}: the works that cite most`, `${crName(x)} 引用 ${crName(y)}：引用最多的工作`)}</h5>${l.length ? paperRows(l) : `<p class="fd-note">${T('None in the data.', '数据里没有。')}</p>`}`; };
+  openDrawer(`${crName(a)} ↔ ${crName(b)}`, `<p class="fd-note">${T('All months; lists are capped at 30 and ranked by weight.', '按全部月份；每个列表最多 30 项，按权重排序。')}</p>${part(a, b)}${part(b, a)}`);
+}
+let crObserver = null;
+function crBind(root) {
+  crObserver?.disconnect(); crObserver = null;
+  const fig = root.querySelector('[data-cr-stage]');
+  if (!fig) return;
+  root.addEventListener('mouseover', e => { const u = e.target.closest('[data-cr-unit]'); const svg = e.target.closest('.cr-ring,.tp-map'); if (svg) crFocus(svg, u ? +u.dataset.crUnit : cr.focus); });
+  fig.addEventListener('mouseleave', () => crFocus(fig.querySelector('.cr-ring,.tp-map'), cr.focus));
+  // on wide screens the card crossing the middle of the window sets the stage, as the reader scrolls the findings
+  if ('IntersectionObserver' in window && matchMedia('(min-width: 1100px)').matches) {
+    crObserver = new IntersectionObserver(ens => { for (const en of ens) if (en.isIntersecting) crActivate(en.target.dataset.crCard); }, {rootMargin: '-40% 0px -55% 0px'});
+    root.querySelectorAll('.cr-card').forEach(el => crObserver.observe(el));
+  }
 }
 
 // ------------------------------------------------------------------------------------------------ scope: the two axes (findings.scope)
@@ -1165,7 +1334,7 @@ export function renderLens(ctx) {
   const list = `<ol class="ln-qlist">${qs.map(([qid, q, a], i) => `<li><button data-ln-q="${qid}"><span class="ln-qn">${String(i + 1).padStart(2, '0')}</span><span><b>${q}</b><em>${esc(a)}</em></span></button></li>`).join('')}</ol>`;
   const blocks = qs.map(([qid, q, a, body], i) => `<section class="fd-section ln-q" id="q-${qid}"><div class="ln-qhead"><span class="ln-qn">${String(i + 1).padStart(2, '0')}</span><div><h2>${q}</h2><p class="ln-answer">${esc(a)}</p></div></div>${body}</section>`).join('');
   if (id === 'key') return shell(`${tabs}${keyFindings(meta)}`);
-  if (id === 'connect' && P.connect) { cxStop(); cx.q = ''; cx.hl = null; return shell(`${tabs}<section class="ln-lead"><span class="fd-kicker">${T('LENS', '视角')} · ${meta[id][0]} · ${versionKicker()}</span><h2>${meta[id][1]}</h2>${versionNote()}</section>${cxGlobal()}${cxFindings(qs)}`, 'cx-lens'); }
+  if (id === 'connect' && P.connect) { crStop(); cr.q = ''; cr.focus = -1; return shell(`${tabs}<section class="ln-lead"><span class="fd-kicker">${T('LENS', '视角')} · ${meta[id][0]} · ${versionKicker()}</span><h2>${meta[id][1]}</h2>${versionNote()}</section>${crLens(qs)}`, 'cr-lens'); }
   return shell(`${tabs}<section class="ln-lead"><span class="fd-kicker">${T('LENS', '视角')} · ${meta[id][0]} · ${versionKicker()}</span><h2>${meta[id][1]}</h2>${versionNote()}${list}</section>${blocks}`);
 }
 export const findingsData = () => dataset;

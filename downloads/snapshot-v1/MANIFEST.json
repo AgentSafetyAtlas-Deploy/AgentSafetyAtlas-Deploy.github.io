@@ -2,7 +2,7 @@
  "version": "v1",
  "status": "draft",
  "release": "R070",
- "analysisVersion": "A3.1",
+ "analysisVersion": "A3.2",
  "builtOn": "2026-10-18",
  "counts": {
   "works": 9009,
@@ -27,8 +27,8 @@
   },
   {
    "path": "findings.json",
-   "bytes": 1582142,
-   "sha256": "ded959150ecae21c7cb850d2c7e52f57553cb970f0cb02cbc94a4ea8f9efd09d"
+   "bytes": 1638894,
+   "sha256": "9d0571486e03721e43c11f53f021870d757547f97719511d9c5c9485624baccf"
   },
   {
    "path": "institutions.jsonl",
