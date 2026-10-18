@@ -1,6 +1,7 @@
 // Landscape analysis (loaded on demand by app.js). Every chart counts included works from atlas.json / topic-taxonomy.json.
 // A work in several themes or topics counts once in each (memberships); captions say so where it matters.
 // Clickable marks carry data-go (the filters to apply) and open the matching papers; other marks explain themselves on hover.
+import {flag, teamFlag} from './flags.js';
 
 const PALETTE = ['#336aab', '#c26541', '#905082', '#5e8c2e', '#6458aa', '#ab4440', '#b48b12', '#00897a'];  // palette B (deepened), validated order
 const ACCENT = '#1c6a57', ACCENT_LIGHT = '#a9cbc1';  // single measures (code, institutions, neutral cross-tabs): the site's own green
@@ -296,10 +297,10 @@ function peopleChart(ctx) {
   const cc = new Map();
   for (const p of scope) for (const c of ctx.countriesOf(p)) cc.set(c, (cc.get(c) || 0) + 1);
   const ctry = [...cc].sort((a, b) => b[1] - a[1]).slice(0, 12);
-  const list = (rows, label, go, color) => { const m = Math.max(1, ...rows.map(r => r[1])); return `<div class="an-rank"><h3>${label}</h3>${rows.map(([k, n, name], i) => `<button class="hbar" style="--i:${i}"${goAttr(ctx, merge(base, go(k)))} data-tip="${escape(`${name}${clickHint(ctx)}|${ctx.num(n)} ${t('works', '项研究')}`)}"><span class="lbl">${escape(name)}</span><span class="track"><span class="fill" style="width:${pct(n, m).toFixed(1)}%;background:${color}"></span></span><span class="val">${ctx.num(n)}</span></button>`).join('')}</div>`; };
+  const list = (rows, label, go, color) => { const m = Math.max(1, ...rows.map(r => r[1])); return `<div class="an-rank"><h3>${label}</h3>${rows.map(([k, n, name, fl], i) => `<button class="hbar" style="--i:${i}"${goAttr(ctx, merge(base, go(k)))} data-tip="${escape(`${name}${clickHint(ctx)}|${ctx.num(n)} ${t('works', '项研究')}`)}"><span class="lbl">${fl || ''}${escape(name)}</span><span class="track"><span class="fill" style="width:${pct(n, m).toFixed(1)}%;background:${color}"></span></span><span class="val">${ctx.num(n)}</span></button>`).join('')}</div>`; };
   return `<figure class="an-chart"><figcaption><b>${t('Leading institutions and countries', '主要研究机构与国家/地区')}</b><span>${t('Works with affiliation evidence, by institution and by the registry country of the institutions (a work counts once per country). Registry locations are current institution addresses, not author nationality.', '按机构及机构登记所在国家/地区统计有署名证据的研究（一项研究在每个国家/地区各计一次）。登记地点是机构当前地址，不代表作者国籍。')}</span></figcaption>
   <div class="an-controls">${pick(ctx, 'anTheme2', [['', t('All themes', '全部大类')], ...themes(ctx).map(c => [c.id, ctx.categoryName(c)])], theme, t('Theme', '大类'))}</div>
-  <div class="an-ranks">${list(inst.map(([x, n]) => [x.id, n, x.name]), t('Institutions', '机构'), id => ({team: id}), tc?.color || ACCENT)}${list(ctry.map(([c, n]) => [c, n, ctx.countryName(c)]), t('Countries and regions', '国家和地区'), c => ({country: c}), tc?.color || ACCENT)}</div></figure>`;
+  <div class="an-ranks">${list(inst.map(([x, n]) => [x.id, n, x.name, teamFlag(x)]), t('Institutions', '机构'), id => ({team: id}), tc?.color || ACCENT)}${list(ctry.map(([c, n]) => [c, n, ctx.countryName(c), flag(c)]), t('Countries and regions', '国家和地区'), c => ({country: c}), tc?.color || ACCENT)}</div></figure>`;
 }
 
 // ---------- papers and released code ----------

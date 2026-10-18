@@ -1,5 +1,6 @@
 import {opportunityData, opportunityPreview, renderOpportunities, opportunityEvidence, selectedResearchNotes} from './opportunities.js';
 import {computeInsights, rankEntities, rankRepositories, weightsFor, DIMENSIONS, PRESETS} from './insights-model.js';
+import {idsFlag} from './flags.js';
 
 let dataset, loading, cached, cacheKey;
 export async function loadInsights() {
@@ -42,6 +43,9 @@ function heading(kicker, title, sub='') {
   return '<div class="in-section-head"><div><span class="in-kicker">' + kicker + '</span><h2>' + title + '</h2>' +
     (sub ? '<p>' + sub + '</p>' : '') + '</div></div>';
 }
+// an institution's flag: the country of the first merged institution record that has a registry address
+let instById = null;
+const instFlag = (ctx, id) => {instById ??= new Map(dataset.institutions.map(x => [x.id, x.sourceIds])); return idsFlag(ctx.data?.teams, instById.get(id));};
 function evidenceButton(kind, id, label, cls='in-text-button') {
   return '<button class="' + cls + '" data-insight-evidence="' + kind + '" data-insight-id="' + attr(id) + '">' + label + '</button>';
 }
@@ -71,7 +75,7 @@ function ranking(ctx, m, kind, compact=false) {
     (rows.length ? '<div class="in-table-scroll"><table class="in-ranking"><thead><tr><th>#</th><th>' + t('Contributor','贡献者') + '</th><th>' +
     t('Index','综合指数') + '</th><th>' + t('Previous → recent','前期 → 近期') + '</th>' + (compact ? '' : '<th>' + t('Evidence','证据') + '</th>') + '</tr></thead><tbody>' +
     (compact ? rows : rows.slice((page-1)*15,page*15)).map((r,i) => '<tr><td class="in-rank-no">' + (ranked.indexOf(r)+1) + '</td><td>' +
-      evidenceButton(kind,r.id,attr(r.name),'in-name') + '<small>' + fmt(r.count) + ' ' + t('works','篇论文') + ' · ' + fmt(r.credit) + ' ' + t('fractional credit','份平分贡献') + '</small></td><td><b>' + r.score.toFixed(1) +
+      evidenceButton(kind,r.id,(kind==='institutions'?instFlag(ctx,r.id):'')+attr(r.name),'in-name') + '<small>' + fmt(r.count) + ' ' + t('works','篇论文') + ' · ' + fmt(r.credit) + ' ' + t('fractional credit','份平分贡献') + '</small></td><td><b>' + r.score.toFixed(1) +
       '</b><div class="in-scorebar" aria-label="' + t('Weighted component contributions','各分项的加权贡献') + '">' +
       DIMENSIONS.map((k,j)=>'<i style="width:'+(r.components[k]*weights[j]/weights.reduce((a,b)=>a+b,0)).toFixed(2)+'%;background:'+palette[j]+'"></i>').join('') +
       '</div></td><td><span class="in-transition">' + r.previous + ' <span>→</span> <b>' + r.recent + '</b></span>' +

@@ -26553,6 +26553,27 @@
       "renewalStatus": "unknown"
     },
     {
+      "id": "buyer-REC-C05-B003-0016",
+      "title": "TrueFoundry Qualitative Test of DeepKeep AI Firewall Custom Guardrail",
+      "date": "2026-08-31",
+      "evidenceLevel": "evaluation_case",
+      "companyId": "biz-deepkeep",
+      "summary": {
+        "en": "TrueFoundry Qualitative Test of DeepKeep AI Firewall Custom Guardrail. See the original source for the attributed claims.",
+        "zh": "TrueFoundry 以 FastAPI wrapper 把 DeepKeep AI Firewall 接入 AI Gateway Custom Guardrail，在 2026-08-20 将六个脚本用例各经网关和 DeepKeep API 运行一次；四类 guardrail 对目标用例触发，clean control 通过，输出 PII 被改写。作者明确称这是定性 POC、非负载测试，也不是原生 provider 集成。"
+      },
+      "sources": [
+        {
+          "url": "https://www.truefoundry.com/blog/wiring-deepkeeps-ai-firewall-into-truefoundry-ai-gateway-as-a-custom-guardrail",
+          "title": "TrueFoundry Qualitative Test of DeepKeep AI Firewall Custom Guardrail"
+        }
+      ],
+      "detailId": "REC-C05-B003-0016",
+      "paymentStatus": "unknown",
+      "contractAmount": null,
+      "renewalStatus": "unknown"
+    },
+    {
       "id": "buyer-REC-C05-B006-0003",
       "title": "Onyx Security Anonymized Agent Discovery and Runtime Deployment Field Notes",
       "date": "2026-04-15",
@@ -26598,27 +26619,6 @@
         }
       ],
       "detailId": "REC-C05-B001-0009",
-      "paymentStatus": "unknown",
-      "contractAmount": null,
-      "renewalStatus": "unknown"
-    },
-    {
-      "id": "buyer-REC-C05-B003-0016",
-      "title": "TrueFoundry Qualitative Test of DeepKeep AI Firewall Custom Guardrail",
-      "date": "2026-08-31",
-      "evidenceLevel": "evaluation_case",
-      "companyId": "biz-deepkeep",
-      "summary": {
-        "en": "TrueFoundry Qualitative Test of DeepKeep AI Firewall Custom Guardrail. See the original source for the attributed claims.",
-        "zh": "TrueFoundry 以 FastAPI wrapper 把 DeepKeep AI Firewall 接入 AI Gateway Custom Guardrail，在 2026-08-20 将六个脚本用例各经网关和 DeepKeep API 运行一次；四类 guardrail 对目标用例触发，clean control 通过，输出 PII 被改写。作者明确称这是定性 POC、非负载测试，也不是原生 provider 集成。"
-      },
-      "sources": [
-        {
-          "url": "https://www.truefoundry.com/blog/wiring-deepkeeps-ai-firewall-into-truefoundry-ai-gateway-as-a-custom-guardrail",
-          "title": "TrueFoundry Qualitative Test of DeepKeep AI Firewall Custom Guardrail"
-        }
-      ],
-      "detailId": "REC-C05-B003-0016",
       "paymentStatus": "unknown",
       "contractAmount": null,
       "renewalStatus": "unknown"
@@ -34142,11 +34142,11 @@
           "distinctURLs": 16
         },
         {
-          "host": "assets.publishing.service.gov.uk",
+          "host": "lasso.security",
           "distinctURLs": 14
         },
         {
-          "host": "lasso.security",
+          "host": "assets.publishing.service.gov.uk",
           "distinctURLs": 14
         },
         {

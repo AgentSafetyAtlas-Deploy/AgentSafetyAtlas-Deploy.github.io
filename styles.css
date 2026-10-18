@@ -555,3 +555,5 @@ body .site-header .site-nav-panel [aria-current=page]{background:#e7efdf;color:#
  .site-header .xword,.site-header .brand-divider{display:none}.site-header .brand{gap:8px}.site-header .brand-title{font-size:14px}.site-header .brand-title small{font-size:10px;letter-spacing:.04em}.site-header .xmark{width:30px;height:30px;flex-shrink:0}.site-header .language-switch{font-size:12px;padding:7px 9px}
 }
 @media(prefers-reduced-motion:reduce){.site-nav-chevron{transition:none}}
+/* country flags beside institution and country names (flags.js) */
+.flag{display:inline-block;width:16px;height:12px;margin-right:6px;vertical-align:-1px;border-radius:2px;object-fit:cover;box-shadow:0 0 0 1px rgba(127,127,127,.35);flex:none}

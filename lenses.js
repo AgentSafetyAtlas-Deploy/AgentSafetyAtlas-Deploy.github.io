@@ -2,6 +2,7 @@
 // page, all from data/findings.json (build_findings.py). A lens is a list of questions; each question has a one-line answer
 // filled from the data and its evidence below. Every aggregate opens into the works or sentences behind it; nothing here is
 // typed in by hand except the wording of the sentences.
+import {flag, flagSrc, nameFlag} from './flags.js';
 let dataset, loading;
 export async function loadFindings() {
   if (!loading) loading = fetch('./data/findings.json').then(r => {
@@ -82,7 +83,7 @@ function lineChart(years, series, {w = 640, h = 250, partialLast = true} = {}) {
     if (partialLast) svg += `<polyline points="${pts.slice(n - 2).join(' ')}" fill="none" stroke="${s.color}" stroke-width="2" stroke-dasharray="3 3"/>`;
     s.values.forEach((v, i) => svg += `<circle cx="${x(i)}" cy="${y(v)}" r="4" fill="${s.color}" stroke="${RING}" stroke-width="1.5" data-tip="${esc(`${s.label} · ${years[i]}: ${pctf(v)}`)}"/>`);
   });
-  ends.forEach(({s, y: yy}) => svg += `<text x="${w - right + 26}" y="${yy + 4}" class="fd-axis fd-endlabel" fill="${s.color}">${esc(s.label)} ${pctf(s.values[s.values.length - 1], 0)}</text>`);
+  ends.forEach(({s, y: yy}) => { const src = s.cc ? flagSrc(s.cc) : '', lx = w - right + 26 + (src ? 19 : 0); svg += `${src ? `<image href="${src}" x="${w - right + 26}" y="${yy - 5}" width="14" height="10.5"/>` : ''}<text x="${lx}" y="${yy + 4}" class="fd-axis fd-endlabel" fill="${s.color}">${esc(s.label)} ${pctf(s.values[s.values.length - 1], 0)}</text>`; });
   return svg + '</svg>';
 }
 function miniBars(vals) {
@@ -432,14 +433,14 @@ const B = {
   },
   geo() {
     const geo = P.trends.geography, con = P.trends.concentration, pc = v => v == null ? '—' : Number(v).toFixed(1) + '%';
-    const series = geo.countries.slice(0, 6).map((c, i) => ({label: country(c), color: SERIES[i], values: geo.share[c]}));
+    const series = geo.countries.slice(0, 6).map((c, i) => ({cc: c, label: country(c), color: SERIES[i], values: geo.share[c]}));
     return `<p class="fd-note">${T(`Share of located works by year; a work with institutions in several countries splits its credit. Located works per year: ${geo.located.map((n, i) => `${geo.years[i]} ${num(n)}`).join(' · ')}. Institution addresses, not nationalities.${con.corrections?.teamsSplit ? ` ${con.corrections.teamsSplit} wrong registry matches were corrected (${con.corrections.papersMoved} papers).` : ''}`, `按年份计的已定位工作份额；一项工作的机构分布在多个国家时按比例分摊。各年已定位工作数：${geo.located.map((n, i) => `${geo.years[i]} ${num(n)}`).join(' · ')}。统计的是机构地址，不是国籍。${con.corrections?.teamsSplit ? `已修正 ${con.corrections.teamsSplit} 个错误的机构登记匹配（${con.corrections.papersMoved} 篇）。` : ''}`)}</p>
     <div class="fd-geo">${lineChart(geo.years, series)}<div class="fd-geo-side"><h4>${T('International collaboration', '国际合作')}</h4>${bars(geo.international, geo.years.map(String), INK, {fmt: pc, partialLast: true})}<small>${T(`Share of located works with institutions in two or more countries. With both ${country('US')} and ${country('CN')} institutions: ${geo.usCn.map((v, i) => `${geo.years[i]} ${pc(v)}`).slice(-3).join(' · ')}.`, `机构分布在两个以上国家的已定位工作比例。同时有${country('US')}与${country('CN')}机构：${geo.usCn.map((v, i) => `${geo.years[i]} ${pc(v)}`).slice(-3).join(' · ')}。`)}</small></div></div>`;
   },
   lean() {
     const geo = P.trends.geography, lean = [...geo.byCluster].sort((a, b) => ((b.CN || 0) - (b.US || 0)) - ((a.CN || 0) - (a.US || 0)));
     const LW = 560, LL = 220, lx = v => LL + (LW - LL - 30) * v / 50;
-    return `<div class="fd-legend"><span><svg width="12" height="12"><circle cx="6" cy="6" r="5" fill="${SERIES[0]}"/></svg>${country('US')} · ${T('overall', '整体')} ${pctf(geo.overallSince2023.US)}</span><span><svg width="12" height="12"><rect x="1.5" y="1.5" width="9" height="9" rx="2" fill="${SERIES[1]}"/></svg>${country('CN')} · ${T('overall', '整体')} ${pctf(geo.overallSince2023.CN)}</span></div>
+    return `<div class="fd-legend"><span><svg width="12" height="12"><circle cx="6" cy="6" r="5" fill="${SERIES[0]}"/></svg>${flag('US')}${country('US')} · ${T('overall', '整体')} ${pctf(geo.overallSince2023.US)}</span><span><svg width="12" height="12"><rect x="1.5" y="1.5" width="9" height="9" rx="2" fill="${SERIES[1]}"/></svg>${flag('CN')}${country('CN')} · ${T('overall', '整体')} ${pctf(geo.overallSince2023.CN)}</span></div>
     <svg viewBox="0 0 ${LW} ${lean.length * 22 + 30}" class="fd-dumbbell" role="img">${[0, 10, 20, 30, 40, 50].map(t => `<line x1="${lx(t)}" x2="${lx(t)}" y1="8" y2="${lean.length * 22 + 6}" class="fd-grid"/><text x="${lx(t)}" y="${lean.length * 22 + 22}" text-anchor="middle" class="fd-axis">${t}%</text>`).join('')}${lean.map((r, i) => {
       const y = 18 + i * 22;
       return `<text x="${LL - 10}" y="${y + 4}" text-anchor="end" class="fd-axis">${esc(cl(r.cluster))}</text><line x1="${lx(r.US || 0)}" x2="${lx(r.CN || 0)}" y1="${y}" y2="${y}" class="fd-span"/><circle cx="${lx(r.US || 0)}" cy="${y}" r="5" fill="${SERIES[0]}" data-tip="${esc(`${cl(r.cluster)} · ${country('US')}: ${pctf(r.US)}`)}"/><rect x="${lx(r.CN || 0) - 4.5}" y="${y - 4.5}" width="9" height="9" rx="2" fill="${SERIES[1]}" data-tip="${esc(`${cl(r.cluster)} · ${country('CN')}: ${pctf(r.CN)}`)}"/>`;
@@ -447,7 +448,7 @@ const B = {
   },
   institutions() {
     const ins = P.rq3.institutions, row = Object.fromEntries(ins.rows.map(x => [x.id, x])), both = new Set(ins.top.works.filter(i => ins.top.supply.includes(i)));
-    const instList = (key, label, val) => `<div class="fd-inst"><h4>${label}</h4><ol>${ins.top[key].map(id => `<li class="${both.has(id) ? 'is-both' : ''}"><span>${esc(row[id].name)}</span><b>${val(row[id])}</b></li>`).join('')}</ol></div>`;
+    const instList = (key, label, val) => `<div class="fd-inst"><h4>${label}</h4><ol>${ins.top[key].map(id => `<li class="${both.has(id) ? 'is-both' : ''}"><span>${nameFlag(C.data?.teams, row[id].name)}${esc(row[id].name)}</span><b>${val(row[id])}</b></li>`).join('')}</ol></div>`;
     return `<p class="fd-note">${T(`${ins.eligible} ROR-identified institutions with at least 5 works. Only ${ins.overlapWorksSupply} of the top 15 by output are also in the top 15 by supply (uses of their benchmarks by other institutions); highlighted rows are in both.`, `至少有 5 项工作、具有 ROR 身份的机构共 ${ins.eligible} 个。产出前 15 的机构中只有 ${ins.overlapWorksSupply} 个同时位于供给前 15（其基准被其他机构采用的次数）；高亮行两者皆是。`)} ${status(hyp('H3').status)}</p>
     <div class="fd-insts">${instList('works', T('Top 15 by works', '工作数前 15'), x => num(x.works))}${instList('supply', T('Top 15 by benchmark supply', '基准供给前 15'), x => `${num(x.supply)} <small>${T('output', '产出')} #${x.outputRank}</small>`)}</div>`;
   },
@@ -483,7 +484,7 @@ const B = {
   },
   modelsByCountry() {
     const bc = P.lenses.models.byCountry, fams = P.lenses.models.families.filter(f => (bc.US.share[f] || 0) + (bc.CN.share[f] || 0) >= 8).sort((a, b) => ((bc.CN.share[b] || 0) - (bc.US.share[b] || 0)) - ((bc.CN.share[a] || 0) - (bc.US.share[a] || 0)));
-    return `<div class="fd-legend"><span><svg width="12" height="12"><rect width="12" height="12" rx="2" fill="${SERIES[0]}"/></svg>${country('US')} (${num(bc.US.papers)})</span><span><svg width="12" height="12"><rect width="12" height="12" rx="2" fill="${SERIES[1]}"/></svg>${country('CN')} (${num(bc.CN.papers)})</span></div>
+    return `<div class="fd-legend"><span><svg width="12" height="12"><rect width="12" height="12" rx="2" fill="${SERIES[0]}"/></svg>${flag('US')}${country('US')} (${num(bc.US.papers)})</span><span><svg width="12" height="12"><rect width="12" height="12" rx="2" fill="${SERIES[1]}"/></svg>${flag('CN')}${country('CN')} (${num(bc.CN.papers)})</span></div>
     <div class="ln-pairs">${fams.map(f => `<div class="ln-pair"><span>${f}</span><div>${barCell(bc.US.share[f], 100, SERIES[0])}<b>${pctf(bc.US.share[f], 0)}</b></div><div>${barCell(bc.CN.share[f], 100, SERIES[1])}<b>${pctf(bc.CN.share[f], 0)}</b></div></div>`).join('')}</div>
     <p class="fd-note">${T('Works whose located institutions are all in one country, 2023 onwards, among works naming at least one model.', '2023 年以来、已定位机构全部在同一国家、且至少点名一个模型的工作。')}</p>`;
   },
@@ -613,17 +614,17 @@ const B3 = {
       return `<td data-tip="${esc(T(`Works ${pctf(r.workShare)} · most-cited tenth ${pctf(r.top10Share)} · all citations ${pctf(r.citeShare)} · citations from Atlas works ${pctf(r.atlasCiteShare)} (${num(r.works)} works that year)`, `工作 ${pctf(r.workShare)} · 被引最多的前 10% ${pctf(r.top10Share)} · 全部引用 ${pctf(r.citeShare)} · 来自 Atlas 工作的引用 ${pctf(r.atlasCiteShare)}（当年 ${num(r.works)} 项）`))}">${pctf(r.workShare, 0)} → <b>${pctf(r.top10Share, 0)}</b> <small class="${ratio >= 1 ? 'ln-up' : 'ln-down'}">×${ratio == null ? '—' : ratio.toFixed(2)}</small></td>`;
     };
     return `<p class="fd-note">${T('Per publication year: the country’s share of that year’s works → its share of the most-cited tenth of that year’s works (Semantic Scholar citations), and the ratio of the two. Comparing within a year keeps young papers from being judged against old ones. Fractional credit; hover a cell for all-citation and Atlas-citation shares.', '按发表年份：该国在当年工作中的份额 → 在当年被引最多的前 10% 工作中的份额（Semantic Scholar 引用），以及两者之比。只在同一年内比较，避免拿新论文和老论文比被引。按比例计；悬停可看全部引用与 Atlas 内引用的份额。')}</p>
-    <table class="fd-table ln-punch"><thead><tr><th>${T('Country / region', '国家/地区')}</th>${ys.map(y => `<th>${y}</th>`).join('')}</tr></thead><tbody>${inf.countries.map(c => `<tr><th>${esc(country(c))}</th>${ys.map(y => { const r = inf.rows[c].find(x => x.year === y); return r ? cell(r) : '<td>—</td>'; }).join('')}</tr>`).join('')}</tbody></table>`;
+    <table class="fd-table ln-punch"><thead><tr><th>${T('Country / region', '国家/地区')}</th>${ys.map(y => `<th>${y}</th>`).join('')}</tr></thead><tbody>${inf.countries.map(c => `<tr><th>${flag(c)}${esc(country(c))}</th>${ys.map(y => { const r = inf.rows[c].find(x => x.year === y); return r ? cell(r) : '<td>—</td>'; }).join('')}</tr>`).join('')}</tbody></table>`;
   },
   pioneers() {
     const rows = [...P.deeper.pioneers].sort((a, b) => (a.first === a.now) - (b.first === b.now) || a.from.localeCompare(b.from));
     return `<p class="fd-note">${T('Leader among each cluster’s first 30 works with a located institution (the months they span), and leader in the last 12 months; fractional credit. Rows where the leader changed come first; the bracket gives the first leader’s share now.', '每个星团最早 30 项有已定位机构的工作（及其时间跨度）中的领先者，以及近 12 个月的领先者；按比例计。领先者发生变化的行排在前面；括号内是最初领先者现在的份额。')}</p>
-    <table class="fd-table"><thead><tr><th>${T('Cluster', '星团')}</th><th>${T('First 30 works', '最早 30 项工作')}</th><th>${T('Led by', '领先者')}</th><th>${T('Last 12 months', '近 12 个月')}</th><th>${T('Led by', '领先者')}</th></tr></thead><tbody>${rows.map(r => `<tr class="${r.first !== r.now ? 'ln-changed' : ''}"><th>${esc(cl(r.cluster))}</th><td>${r.from} – ${r.to} ${listButton(r.firstIds, T('read', '阅读'), `${cl(r.cluster)} · ${T('first 30 works', '最早 30 项工作')}`)}</td><td>${esc(country(r.first))} ${pctf(r.firstShare, 0)}</td><td>${num(r.nowWorks)} ${T('works', '项')}</td><td><b>${esc(country(r.now))}</b> ${pctf(r.nowShare, 0)}${r.first !== r.now ? ` <small>(${esc(country(r.first))} ${pctf(r.firstNowShare, 0)})</small>` : ''}</td></tr>`).join('')}</tbody></table>`;
+    <table class="fd-table"><thead><tr><th>${T('Cluster', '星团')}</th><th>${T('First 30 works', '最早 30 项工作')}</th><th>${T('Led by', '领先者')}</th><th>${T('Last 12 months', '近 12 个月')}</th><th>${T('Led by', '领先者')}</th></tr></thead><tbody>${rows.map(r => `<tr class="${r.first !== r.now ? 'ln-changed' : ''}"><th>${esc(cl(r.cluster))}</th><td>${r.from} – ${r.to} ${listButton(r.firstIds, T('read', '阅读'), `${cl(r.cluster)} · ${T('first 30 works', '最早 30 项工作')}`)}</td><td>${flag(r.first)}${esc(country(r.first))} ${pctf(r.firstShare, 0)}</td><td>${num(r.nowWorks)} ${T('works', '项')}</td><td><b>${flag(r.now)}${esc(country(r.now))}</b> ${pctf(r.nowShare, 0)}${r.first !== r.now ? ` <small>(${flag(r.first)}${esc(country(r.first))} ${pctf(r.firstNowShare, 0)})</small>` : ''}</td></tr>`).join('')}</tbody></table>`;
   },
   geoconc() {
     const rows = [...P.deeper.geoConcentration].sort((a, b) => b.topShare - a.topShare);
     return `<p class="fd-note">${T('Works since 2023 with a located institution, fractional credit. Leading country’s share, number of countries, and the share of works with institutions in two or more countries.', '2023 年以来有已定位机构的工作，按比例计。领先国家的份额、涉及的国家数，以及机构分布在两个及以上国家的工作比例。')}</p>
-    <table class="fd-table"><thead><tr><th>${T('Cluster', '星团')}</th><th>${T('Works', '工作')}</th><th>${T('Leading country', '领先国家')}</th><th></th><th>${T('Countries', '国家数')}</th><th>${T('International', '国际合作')}</th></tr></thead><tbody>${rows.map(r => `<tr><th>${esc(cl(r.cluster))}</th><td>${num(r.works)}</td><td>${esc(country(r.top))} ${pctf(r.topShare, 0)}</td><td>${barCell(r.topShare, 60, COLORS.connection)}</td><td>${r.countries}</td><td>${pctf(r.international, 0)}</td></tr>`).join('')}</tbody></table>`;
+    <table class="fd-table"><thead><tr><th>${T('Cluster', '星团')}</th><th>${T('Works', '工作')}</th><th>${T('Leading country', '领先国家')}</th><th></th><th>${T('Countries', '国家数')}</th><th>${T('International', '国际合作')}</th></tr></thead><tbody>${rows.map(r => `<tr><th>${esc(cl(r.cluster))}</th><td>${num(r.works)}</td><td>${flag(r.top)}${esc(country(r.top))} ${pctf(r.topShare, 0)}</td><td>${barCell(r.topShare, 60, COLORS.connection)}</td><td>${r.countries}</td><td>${pctf(r.international, 0)}</td></tr>`).join('')}</tbody></table>`;
   },
   buildsOn() {
     const b = P.deeper.buildsOn, sup = b.supply, W = 560, L = 220, mid = L + (W - L - 40) / 2, span = (W - L - 40) / 2, lim = 0.4, x = v => mid + span * Math.max(-1, Math.min(1, v / lim));
@@ -663,7 +664,7 @@ const B3 = {
     const g = P.deeper.global, rows = g.usCn.filter(r => r.cn >= 20), last = rows[rows.length - 1];
     const series = [{label: T(`${country('CN')}: US partner`, `中国：有美方合作`), color: SERIES[1], values: rows.map(r => r.cnWithUs)},
       {label: T('US: China partner', '美国：有中方合作'), color: SERIES[0], values: rows.map(r => r.usWithCn)}];
-    const part = (key, title) => { const p = g.partners[key]; return `<div><h4>${title}</h4><small class="fd-note">${num(p.works)} ${T('international works', '项国际合作工作')}</small><div class="fd-hbars">${p.top.map(([c, v]) => `<div class="fd-hbar"><span>${esc(country(c))}</span>${barCell(v, 60, c === 'US' || c === 'CN' ? COLORS.connection : COLORS.attention)}<b>${pctf(v, 0)}</b></div>`).join('')}</div></div>`; };
+    const part = (key, title) => { const p = g.partners[key]; return `<div><h4>${title}</h4><small class="fd-note">${num(p.works)} ${T('international works', '项国际合作工作')}</small><div class="fd-hbars">${p.top.map(([c, v]) => `<div class="fd-hbar"><span>${flag(c)}${esc(country(c))}</span>${barCell(v, 60, c === 'US' || c === 'CN' ? COLORS.connection : COLORS.attention)}<b>${pctf(v, 0)}</b></div>`).join('')}</div></div>`; };
     return `<p class="fd-note">${T('Works with a located institution in China (or the US) that also have one in the other country, by year (current year partial). Below: which countries appear on the international works of each, 2020–23 against 2025 onward; a work counts once for every partner country.', '有已定位中国（或美国）机构、同时也有另一国机构的工作占比，按年（当年未完）。下方：各自的国际合作工作中出现的伙伴国家，2020–23 年与 2025 年以来对比；一项工作对每个伙伴国家各计一次。')}</p>
     ${lineChart(rows.map(r => r.year), series)}
     <div class="ln-partners">${part('CN_before', T(`Partners of ${country('CN')}, 2020–23`, `${country('CN')}的合作伙伴，2020–23`))}${part('CN_recent', T(`Partners of ${country('CN')}, 2025–`, `${country('CN')}的合作伙伴，2025 年以来`))}${part('US_before', T(`Partners of ${country('US')}, 2020–23`, `${country('US')}的合作伙伴，2020–23`))}${part('US_recent', T(`Partners of ${country('US')}, 2025–`, `${country('US')}的合作伙伴，2025 年以来`))}</div>
@@ -671,7 +672,7 @@ const B3 = {
   },
   rising() {
     const g = P.deeper.global, [a, b] = g.growthYears, max = Math.max(...g.rising.map(r => r[3]));
-    return `<div class="fd-two"><div><table class="fd-table"><thead><tr><th>${T('Country / region', '国家/地区')}</th><th>${a}</th><th>${b}</th><th>${T('Growth', '增长')}</th><th></th></tr></thead><tbody>${g.rising.map(r => `<tr><th>${esc(country(r[0]))}</th><td>${num(Math.round(r[1]))}</td><td>${num(Math.round(r[2]))}</td><td><b>×${r[3]}</b></td><td>${barCell(r[3], max, r[3] > g.fieldGrowth ? COLORS.connection : COLORS.attention)}</td></tr>`).join('')}</tbody></table>
+    return `<div class="fd-two"><div><table class="fd-table"><thead><tr><th>${T('Country / region', '国家/地区')}</th><th>${a}</th><th>${b}</th><th>${T('Growth', '增长')}</th><th></th></tr></thead><tbody>${g.rising.map(r => `<tr><th>${flag(r[0])}${esc(country(r[0]))}</th><td>${num(Math.round(r[1]))}</td><td>${num(Math.round(r[2]))}</td><td><b>×${r[3]}</b></td><td>${barCell(r[3], max, r[3] > g.fieldGrowth ? COLORS.connection : COLORS.attention)}</td></tr>`).join('')}</tbody></table>
     <p class="fd-note">${T(`Located works (fractional credit) in the last two full years, countries with at least 15 in ${a}; the field as a whole grew ×${g.fieldGrowth}. Orange: faster than the field.`, `最近两个完整年份的已定位工作（按比例计），${a} 年至少 15 项的国家；整个领域增长 ×${g.fieldGrowth}。橙色：快于整个领域。`)}</p></div>
     <div class="fd-tiles">${tile(T('Countries and regions taking part', '参与的国家和地区'), T('with at least one located work that year', '当年至少有一项已定位工作'), g.countries.map(r => r.countries), g.countries.map(r => String(r.year)), INK, v => num(v))}
     ${tile(T('Effective number of countries', '有效国家数'), T('1 ÷ sum of squared shares; rises when output spreads beyond the leaders', '1 ÷ 份额平方和；产出越分散越高'), g.countries.map(r => r.effective), g.countries.map(r => String(r.year)), COLORS.attention, v => v == null ? '—' : Number(v).toFixed(1))}</div></div>`;

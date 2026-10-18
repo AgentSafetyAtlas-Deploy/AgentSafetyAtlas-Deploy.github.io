@@ -6,6 +6,7 @@
 // The side tables list countries (fractional credit, change against the window 12 months earlier) and institutions.
 // Insights are computed from the same data on load and each one sets the map to the configuration that shows it.
 // Country shapes: Natural Earth 1:110m Admin 0 v5.1.2 (public domain), data/countries.json.
+import {flag} from './flags.js';
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
 const W = 960, H = 440;
 const ALL = {cluster: '', role: ''};
@@ -161,12 +162,12 @@ function side(ctx, st, agg, prev) {
   const {t} = ctx;
   const rows = agg.countries.slice(0, 10).map(c => {
     const sh = c.credit / agg.n, d = sh - shareOf(prev, c.cc);
-    return `<tr class="${st.focus === c.cc ? 'is-focus' : ''}"><th><button class="tm-cc" data-tm-focus="${c.cc}">${esc(country(ctx, c.cc))}</button></th><td>${(100 * sh).toFixed(1)}%</td><td>${Math.round(c.credit).toLocaleString()}</td><td class="${d >= 0 ? 'tm-up' : 'tm-down'}">${prev.n ? (d >= 0 ? '+' : '') + (100 * d).toFixed(1) : ''}</td></tr>`;
+    return `<tr class="${st.focus === c.cc ? 'is-focus' : ''}"><th><button class="tm-cc" data-tm-focus="${c.cc}">${flag(c.cc)}${esc(country(ctx, c.cc))}</button></th><td>${(100 * sh).toFixed(1)}%</td><td>${Math.round(c.credit).toLocaleString()}</td><td class="${d >= 0 ? 'tm-up' : 'tm-down'}">${prev.n ? (d >= 0 ? '+' : '') + (100 * d).toFixed(1) : ''}</td></tr>`;
   }).join('');
   const focusInsts = st.focus ? agg.insts.filter(i => i.cc === st.focus) : agg.insts;
   return `<div><h4>${t('Countries and regions', '国家和地区')}</h4>${agg.n ? `<table class="fd-table tm-table"><thead><tr><th></th><th>${t('Share', '份额')}</th><th>${t('Works', '工作')}</th><th>${t('Change', '变化')}</th></tr></thead><tbody>${rows}</tbody></table>
   <p class="fd-note">${t('Fractional credit when a paper has institutions in several countries. Change: share points against the window ending 12 months earlier. Click a country (here or on the map) to highlight it.', '论文的机构分布在多个国家时按比例计。变化：与早 12 个月结束的时间窗相比的份额百分点。点击国家（此处或地图上）可高亮。')}</p>` : `<p class="muted">${t('No work in this window.', '本时间窗内没有工作。')}</p>`}</div>
-  <div><h4>${st.focus ? t(`Institutions in ${country(ctx, st.focus)}`, `${country(ctx, st.focus)}的机构`) : t('Institutions', '机构')}</h4><ol class="tm-insts">${focusInsts.slice(0, 12).map(i => `<li><button data-tm-inst="${esc(i.key)}">${esc(i.name)}</button><span>${i.ids.length}</span></li>`).join('') || '<li class="muted">—</li>'}</ol>
+  <div><h4>${st.focus ? flag(st.focus) : ''}${st.focus ? t(`Institutions in ${country(ctx, st.focus)}`, `${country(ctx, st.focus)}的机构`) : t('Institutions', '机构')}</h4><ol class="tm-insts">${focusInsts.slice(0, 12).map(i => `<li><button data-tm-inst="${esc(i.key)}">${flag(i.cc)}${esc(i.name)}</button><span>${i.ids.length}</span></li>`).join('') || '<li class="muted">—</li>'}</ol>
   <p class="fd-note">${t('Works in the window; click for the papers.', '本时间窗内的工作数；点击查看论文。')}</p></div>`;
 }
 function redraw(ctx) {
