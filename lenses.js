@@ -270,9 +270,8 @@ function pairDrawer(a, b) {
     : `<div class="fd-pair-pcts">${pctCells(p)}</div><p class="fd-note">${T(`${p.citeObs} citations observed where ${p.citeExp} were expected (${p.citeRatio}×); ${p.sharedInst} institutions and ${p.sharedBench} benchmarks appear on both sides.`, `观测到 ${p.citeObs} 次引用，期望 ${p.citeExp} 次（${p.citeRatio}×）；两侧共有 ${p.sharedInst} 个机构、${p.sharedBench} 个基准。`)}</p>${p.sharedBenchTop?.length ? `<h5>${T('Shared benchmarks', '共用基准')}</h5><ul class="fd-drawer-list">${p.sharedBenchTop.map(id => `<li>${paperLink(id)}</li>`).join('')}</ul>` : ''}`);
 }
 
-export function bindLenses(ctx) {
+export function bindLenses(ctx, root = document.querySelector('.fd')) {
   setup(ctx);
-  const root = document.querySelector('.fd');
   if (!root) return;
   const tip = root.querySelector('.fd-tip');
   root.addEventListener('input', e => { if (e.target.matches('[data-cr-month]')) { const was = cr.timer; crStop(); cr.m = +e.target.value; crRedraw('month'); if (was) { const b = root.querySelector('[data-cr-play]'); if (b) b.textContent = '▶'; } } });
@@ -612,20 +611,33 @@ function milestoneModel() {
 }
 
 // ================================================================================================ lenses and questions
-// the lenses follow the paper's five research questions (owner decision 2026-10-17): structure, connection, leadership,
-// attack/defence and evaluation, evolution and frontier; navigation is a check of the resource itself, not a question about
-// the field. Old links to the former Targets and Tail lenses open the lens that now holds most of their questions.
-const LENS_ALL = ['structure', 'connect', 'lead', 'attack', 'evolve', 'navigate'];
-const LENS_LEGACY = {targets: 'structure', tail: 'evolve'};
+// three parts (owner decision 2026-10-18): Landscape (what papers are about: where they sit, and how the lines connect;
+// attack, defence and evaluation are content and live here), Players (countries, then institutions), Trajectory (time,
+// seen from the head and the long tail). The resource check moved to the universe page, beside the mechanisms it tests.
+// Old links to former lenses open the chapter that now holds most of their questions.
+const LENS_ALL = ['structure', 'connect', 'lead', 'evolve'];
+const LENS_LEGACY = {targets: 'structure', tail: 'evolve', attack: 'structure', navigate: 'key'};
 const lensIds = () => LENS_ALL;
+const PARTS = t => [['landscape', t('Landscape', '版图'), t('What is studied, and how the lines connect', '研究什么，彼此怎样衔接'), ['structure', 'connect']],
+  ['players', t('Players', '力量'), t('Which countries and institutions drive it', '哪些国家与机构在推动'), ['lead']],
+  ['trajectory', t('Trajectory', '走向'), t('How the head and the long tail change over time', '头部与长尾在时间中怎样变化'), ['evolve']]];
 export function lensMeta(t) {
-  return {structure: [t('Structure', '结构'), t('What the field is made of, and where its edges lie', '这个领域由哪些部分组成，边界在哪里')],
+  return {structure: [t('Positioning', '定位'), t('Where works sit: agents, risks, attacks, defences and evaluation', '论文落在哪里：研究对象、风险、攻防与评测')],
     connect: [t('Connection', '衔接'), t('What connects research lines, and how knowledge flows between them', '研究线之间靠什么连接，知识怎样流动')],
-    lead: [t('Leadership', '引领'), t('Who opens directions, who leads them, and whether output means influence', '谁开创、谁引领，产出与影响是否一致')],
-    attack: [t('Attack, defence & evaluation', '攻防与评测'), t('Whether defences and evaluation keep pace with attacks', '攻击、防御、评测是否同步，防御经得起检验吗')],
-    evolve: [t('Evolution & frontier', '演化与前沿'), t('How the field grows, and where the next directions come from', '领域怎样生长，下一批方向从哪里来')],
-    navigate: [t('Resource check', '资源检验'), t('Whether the Atlas finds grounded starting points', 'Atlas 能否找到有依据的起点')]};
+    lead: [t('Players', '力量'), t('Which countries and institutions open, lead and shape the field', '哪些国家与机构开创、引领、塑造这个领域')],
+    evolve: [t('Trajectory', '走向'), t('How the field moves over time, seen from the head and the long tail', '领域在时间中怎样变化：从头部看，也从长尾看')]};
 }
+// groups inside a chapter (the Connection chapter has its own, CR_GROUPS); a question not listed follows at the end
+const LN_GROUPS = () => ({
+  structure: [['object', T('What is studied', '研究对象与边界'), T('agents, venues and the edges of the field', '智能体、发表场所与领域边界'), ['scope', 'traditions', 'venues', 'settings']],
+    ['risk', T('Risks and entry points', '风险与入口'), T('where harm comes from and how attacks get in', '风险从哪来，攻击从哪进'), ['risk', 'surfaces', 'gaps']],
+    ['attackdef', T('Attack, defence and evaluation', '攻防与评测'), T('what is attacked, how it is defended, how well it is tested', '攻什么、怎么守、检验得怎样'), ['balance', 'imbalance', 'mechanisms', 'adaptive', 'realism', 'models']]],
+  lead: [['countries', T('Countries', '国家'), T('where the work comes from, and how the map shifts', '研究来自哪里，格局怎样变化'), ['shares', 'rising', 'directions', 'pioneers', 'geoconc', 'punch', 'apart', 'country']],
+    ['institutions', T('Institutions', '机构'), T('who produces, who supplies, who sets the pace', '谁产出、谁供给、谁定节奏'), ['concentration', 'influence', 'industry', 'bigteams', 'newcomers', 'people']]],
+  evolve: [['pace', T('Pace', '节奏'), T('how fast the field grows, and where its weight moves', '长得多快，重心往哪移'), ['growth', 'shift', 'diversify', 'path']],
+    ['head', T('The head', '头部'), T('the big lines: when attacks, defences and benchmarks took shape', '大方向：攻击、防御、基准各在什么时候成形'), ['onset', 'timeline']],
+    ['tail', T('The long tail', '长尾'), T("where next year's directions are now", '下一年的方向，现在在哪里'), ['shape', 'backtest', 'rising', 'terms', 'diffusion']],
+    ['frontier', T('Open questions', '前沿与机会'), T('what is asked and not yet taken up', '提出了、还没人接手的问题'), ['radar', 'open', 'next']]]});
 // ------------------------------------------------------------------------------------------------ second-round analyses (findings.deeper)
 const B3 = {
   punch() {
@@ -752,7 +764,7 @@ const tierName = t => ({head: T('head', '头部'), torso: T('middle', '中部'),
 const CR_GROUPS = () => [
   ['read', T('Do research lines read each other?', '研究线之间读不读彼此'), T('knowledge flowing through citations', '知识通过引用流动'), ['layers', 'reading', 'notreading', 'bridges']],
   ['upstream', T('Who is upstream?', '谁在上游'), T('the direction of citations', '引用的方向'), ['buildson']],
-  ['bench', T('Shared experimental resources: benchmarks', '共享的实验资源：基准'), T('who uses whose benchmarks, and for how long', '谁在用谁的基准，用多久'), ['hubs', 'supply', 'lifecycle', 'inflation']],
+  ['bench', T('Shared experimental resources: benchmarks', '共享的实验资源：基准'), T('who uses whose benchmarks, and for how long', '谁在用谁的基准，用多久'), ['hubs', 'supply', 'comparable', 'lifecycle', 'inflation']],
   ['people', T('Shared people and institutions', '共享的人与机构'), T('the same institutions on different lines', '同一批机构在做不同的研究线'), ['collab']]];
 const CR_LAYERS = () => [['cite', T('Citations', '引用')], ['bench', T('Benchmark use', '共用基准')], ['collab', T('Institutions', '合作机构')], ['content', T('Content', '内容相近')]];
 const cr = {view: 'ring', level: 'galaxy', layer: 'cite', m: null, win: 12, q: '', hl: null, focus: -1, timer: 0};
@@ -1283,16 +1295,15 @@ function questionPool() {
   return Q;
 }
 // where each question sits: by default the lens of its group; the questions below move to the research question they answer
-const PLACE = {'connect:traditions': 'structure', 'connect:venues': 'structure', 'attack:surfaces': 'structure', 'attack:mechanisms': 'structure',
-  'tail:shape': 'structure', 'tail:gaps': 'structure', 'evolve:reading': 'connect', 'tail:bridges': 'connect', 'navigate:newcomers': 'lead',
-  'targets:country': 'lead', 'evolve:timeline': 'attack', 'targets:models': 'attack', 'tail:imbalance': 'attack', 'navigate:next': 'evolve'};
-const HOME_LENS = {people: 'connect', scope: 'structure', evolve: 'evolve', connect: 'connect', lead: 'lead', attack: 'attack', targets: 'structure', tail: 'evolve', navigate: 'navigate'};
-const RENAME = {'evolve:timeline': 'onset'};  // two questions named "timeline" now share the attack lens
-const ORDER = {structure: ['scope', 'traditions', 'venues', 'settings', 'risk', 'surfaces', 'mechanisms', 'shape', 'gaps'],
-  connect: ['layers', 'reading', 'notreading', 'bridges', 'buildson', 'hubs', 'supply', 'lifecycle', 'inflation', 'collab'],
-  attack: ['balance', 'timeline', 'onset', 'comparable', 'adaptive', 'realism', 'models', 'imbalance'],
-  evolve: ['growth', 'shift', 'diversify', 'terms', 'diffusion', 'path', 'radar', 'backtest', 'rising', 'open', 'next'],
-  navigate: ['pilot', 'bands', 'nova']};
+const PLACE = {'connect:traditions': 'structure', 'connect:venues': 'structure', 'tail:gaps': 'structure', 'tail:imbalance': 'structure', 'targets:models': 'structure',
+  'evolve:reading': 'connect', 'tail:bridges': 'connect', 'attack:comparable': 'connect', 'navigate:newcomers': 'lead', 'targets:country': 'lead',
+  'attack:timeline': 'evolve', 'tail:shape': 'evolve', 'navigate:next': 'evolve'};
+// navigate: the resource check (pilot, bands, nova) is shown on the universe page through renderEvidence, not in a chapter
+const HOME_LENS = {people: 'connect', scope: 'structure', evolve: 'evolve', connect: 'connect', lead: 'lead', attack: 'structure', targets: 'structure', tail: 'evolve', navigate: 'universe'};
+const RENAME = {'evolve:timeline': 'onset'};  // two questions named "timeline" share the Trajectory chapter
+const ORDER = () => ({...Object.fromEntries(Object.entries(LN_GROUPS()).map(([k, gs]) => [k, gs.flatMap(g => g[3])])),
+  connect: ['layers', 'reading', 'notreading', 'bridges', 'buildson', 'hubs', 'supply', 'comparable', 'lifecycle', 'inflation', 'collab'],
+  universe: ['pilot', 'bands', 'nova']});
 function lensQuestions(id) {
   const out = [];
   for (const [group, qs] of Object.entries(questionPool())) for (const q of qs || []) {
@@ -1300,7 +1311,7 @@ function lensQuestions(id) {
     const key = `${group}:${q[0]}`;
     if ((PLACE[key] || HOME_LENS[group]) === id) out.push(RENAME[key] ? [RENAME[key], ...q.slice(1)] : q);
   }
-  const rank = qid => { const i = (ORDER[id] || []).indexOf(qid); return i < 0 ? ORDER[id]?.length ?? 0 : i; };
+  const ord = ORDER()[id] || [], rank = qid => { const i = ord.indexOf(qid); return i < 0 ? ord.length : i; };
   return out.map((q, i) => [q, i]).sort((a, b) => rank(a[0][0]) - rank(b[0][0]) || a[1] - b[1]).map(x => x[0]);
 }
 
@@ -1317,44 +1328,65 @@ function shell(inner, extraClass = '') {
   return `<div class="fd ln ${extraClass}">${inner}<aside class="fd-drawer" hidden aria-label="${T('Works behind this number', '数字背后的工作')}"><div class="fd-drawer-head"><h3></h3><button class="fd-close" aria-label="${T('Close', '关闭')}">×</button></div><div class="fd-drawer-body"></div></aside><div class="fd-tip" hidden></div></div>`;
 }
 // the headline findings, in reading order: [lens, question id]; each card opens its question under the lens
-const KEY_FINDINGS = [['structure', 'scope'], ['structure', 'traditions'], ['structure', 'venues'], ['structure', 'settings'], ['connect', 'hubs'], ['connect', 'inflation'],
-  ['connect', 'buildson'], ['lead', 'apart'], ['lead', 'punch'], ['lead', 'pioneers'], ['lead', 'bigteams'], ['lead', 'newcomers'], ['attack', 'balance'],
-  ['attack', 'adaptive'], ['attack', 'models'], ['evolve', 'growth'], ['evolve', 'shift'], ['evolve', 'diffusion'], ['evolve', 'backtest'], ['navigate', 'nova']];
+const KEY_FINDINGS = [['structure', 'scope'], ['structure', 'traditions'], ['structure', 'venues'], ['structure', 'settings'], ['structure', 'balance'],
+  ['structure', 'adaptive'], ['structure', 'models'], ['connect', 'hubs'], ['connect', 'inflation'], ['connect', 'buildson'], ['lead', 'apart'], ['lead', 'punch'],
+  ['lead', 'pioneers'], ['lead', 'bigteams'], ['lead', 'newcomers'], ['evolve', 'growth'], ['evolve', 'shift'], ['evolve', 'diffusion'], ['evolve', 'backtest']];
 function keyFindings(meta) {
   const cache = {}, cards = KEY_FINDINGS.map(([lens, qid]) => { const q = (cache[lens] ??= lensQuestions(lens)).find(x => x[0] === qid); return q && q[2] ? [lens, q] : null; }).filter(Boolean);
   return `<section class="ln-lead"><span class="fd-kicker">${T('KEY FINDINGS', '重要发现')} · ${versionKicker()}</span><h2>${T('What the data says, in one page', '一页看懂数据在说什么')}</h2>${versionNote()}
-  <p class="fd-note">${T('The strongest results across the six lenses. Every number belongs to the analysis version named above; open a card for the evidence, method notes and the papers behind it. Smaller observations are under Notes.', '六个视角中最重要的结论。所有数字都属于上方注明的分析版本；点开卡片可看到证据、方法说明和背后的论文。较小的观察放在“小发现”。')}</p></section>
-  <div class="ln-keys">${cards.map(([lens, [qid, q, a]]) => `<button class="ln-key" data-ln-goto="${lens}:${qid}"><span class="ln-key-lens">${meta[lens][0]}</span><b>${q}</b><em>${esc(a)}</em><span class="ln-key-go">${T('Evidence', '看证据')} →</span></button>`).join('')}</div>`;
+  <p class="fd-note">${T('The strongest results across the three parts. Every number belongs to the analysis version named above; open a card for the evidence, method notes and the papers behind it. Smaller observations are under Notes.', '版图、力量、走向三部分中最重要的结论。所有数字都属于上方注明的分析版本；点开卡片可看到证据、方法说明和背后的论文。较小的观察放在“小发现”。')}</p></section>
+  <div class="ln-keys">${cards.map(([lens, [qid, q, a]]) => `<button class="ln-key" data-ln-goto="${lens}:${qid}"><span class="ln-key-lens">${chapterName(meta, lens)}</span><b>${q}</b><em>${esc(a)}</em><span class="ln-key-go">${T('Evidence', '看证据')} →</span></button>`).join('')}</div>`;
+}
+const partOf = id => PARTS(T).find(p => p[3].includes(id));
+const chapterName = (meta, id) => { const p = partOf(id); return p && p[3].length > 1 ? `${p[1]} · ${meta[id][0]}` : meta[id][0]; };
+function grouped(id, qs) {  // [[group head or null, questions]] in reading order; nothing is dropped
+  const gs = LN_GROUPS()[id], byq = new Map(qs.map(q => [q[0], q])), used = new Set();
+  if (!gs) return [[null, qs]];
+  const out = gs.map(g => [g, g[3].filter(k => byq.has(k)).map(k => (used.add(k), byq.get(k)))]).filter(x => x[1].length);
+  const rest = qs.filter(q => !used.has(q[0]));
+  return rest.length ? [...out, [['more', T('More', '其他'), '', []], rest]] : out;
 }
 export function renderLens(ctx) {
   setup(ctx); lists.clear();
-  const meta = {key: [T('Key findings', '重要发现'), T('The strongest results across all lenses', '各视角中最重要的结论')], ...lensMeta(T)};
-  const want = LENS_LEGACY[C.state.lens] || C.state.lens, id = lensIds().includes(want) ? want : 'key', qs = id === 'key' ? [] : lensQuestions(id);
-  const tabs = `<nav class="ln-tabs" aria-label="${T('Lenses', '视角')}">${['key', ...lensIds()].map(k => `<button data-ln-lens="${k}" class="${k === id ? 'active' : ''}" aria-current="${k === id ? 'page' : 'false'}"><b>${meta[k][0]}</b><small>${meta[k][1]}</small></button>`).join('')}</nav>`;
-  const list = `<ol class="ln-qlist">${qs.map(([qid, q, a], i) => `<li><button data-ln-q="${qid}"><span class="ln-qn">${String(i + 1).padStart(2, '0')}</span><span><b>${q}</b><em>${esc(a)}</em></span></button></li>`).join('')}</ol>`;
-  const blocks = qs.map(([qid, q, a, body], i) => `<section class="fd-section ln-q" id="q-${qid}"><div class="ln-qhead"><span class="ln-qn">${String(i + 1).padStart(2, '0')}</span><div><h2>${q}</h2><p class="ln-answer">${esc(a)}</p></div></div>${body}</section>`).join('');
+  const meta = {key: [T('Key findings', '重要发现'), T('The strongest results of the three parts', '三部分中最重要的结论')], ...lensMeta(T)};
+  const want = LENS_LEGACY[C.state.lens] || C.state.lens, id = lensIds().includes(want) ? want : 'key', qs = id === 'key' ? [] : lensQuestions(id), part = partOf(id);
+  const tabs = `<nav class="ln-tabs" aria-label="${T('Parts', '部分')}">${[['key', meta.key[0], meta.key[1], ['key']], ...PARTS(T)].map(([k, name, sub, chapters]) => { const on = k === 'key' ? id === 'key' : part?.[0] === k;
+    return `<button data-ln-lens="${chapters[0]}" class="${on ? 'active' : ''}" aria-current="${on ? 'page' : 'false'}"><b>${name}</b><small>${sub}</small></button>`; }).join('')}</nav>`
+    + (part && part[3].length > 1 ? `<nav class="ln-chapters" aria-label="${T('Chapters', '章节')}">${part[3].map((k, i) => `<button data-ln-lens="${k}" aria-current="${k === id ? 'page' : 'false'}"><span>${i + 1}</span><b>${meta[k][0]}</b><small>${meta[k][1]}</small></button>`).join('')}</nav>` : '');
+  const lead = `<section class="ln-lead"><span class="fd-kicker">${part ? part[1] : ''}${part && part[3].length > 1 ? ' · ' + meta[id][0] : ''} · ${versionKicker()}</span><h2>${meta[id]?.[1] || ''}</h2>${versionNote()}`;
   if (id === 'key') return shell(`${tabs}${keyFindings(meta)}`);
-  if (id === 'connect' && P.connect) { crStop(); cr.q = ''; cr.focus = -1; return shell(`${tabs}<section class="ln-lead"><span class="fd-kicker">${T('LENS', '视角')} · ${meta[id][0]} · ${versionKicker()}</span><h2>${meta[id][1]}</h2>${versionNote()}</section>${crLens(qs)}`, 'cr-lens'); }
-  return shell(`${tabs}<section class="ln-lead"><span class="fd-kicker">${T('LENS', '视角')} · ${meta[id][0]} · ${versionKicker()}</span><h2>${meta[id][1]}</h2>${versionNote()}${list}</section>${blocks}`);
+  if (id === 'connect' && P.connect) { crStop(); cr.q = ''; cr.focus = -1; return shell(`${tabs}${lead}</section>${crLens(qs)}`, 'cr-lens'); }
+  const groups = grouped(id, qs);
+  let n = 0;
+  const list = `<ol class="ln-qlist">${groups.map(([g, gq]) => `${g ? `<li class="ln-qgroup">${g[1]}</li>` : ''}${gq.map(([qid, q, a]) => `<li><button data-ln-q="${qid}"><span class="ln-qn">${String(++n).padStart(2, '0')}</span><span><b>${q}</b><em>${esc(a)}</em></span></button></li>`).join('')}`).join('')}</ol>`;
+  n = 0;
+  const blocks = groups.map(([g, gq]) => `${g ? `<div class="ln-group-head" id="g-${g[0]}"><h2>${g[1]}</h2>${g[2] ? `<p>${g[2]}</p>` : ''}</div>` : ''}${gq.map(([qid, q, a, body]) => `<section class="fd-section ln-q" id="q-${qid}"><div class="ln-qhead"><span class="ln-qn">${String(++n).padStart(2, '0')}</span><div><h2>${q}</h2><p class="ln-answer">${esc(a)}</p></div></div>${body}</section>`).join('')}`).join('');
+  return shell(`${tabs}${lead}${list}</section>${blocks}`);
+}
+// the resource check, shown on the universe page beside the mechanisms it tests: one question's answer and evidence
+export function evidenceAnswer(ctx, qid) { setup(ctx); return lensQuestions('universe').find(q => q[0] === qid) || null; }
+export function renderEvidence(ctx, qid) {
+  setup(ctx);
+  const q = lensQuestions('universe').find(x => x[0] === qid);
+  return q ? shell(`<section class="fd-section ln-q home-ev" id="q-${qid}"><div class="ln-qhead"><div><h2>${q[1]}</h2><p class="ln-answer">${esc(q[2])}</p></div></div>${q[3]}</section>`, 'home-ev-shell') : '';
 }
 export const findingsData = () => dataset;
 export const routeCount = () => dataset.universe.citationRoutes + dataset.universe.benchmarkUseRoutes;
 export function lensCards(ctx) {
   // one card per lens with its first answer: used on the home page
   setup(ctx);
-  const meta = lensMeta(T);
-  const lead = {connect: 'hubs'};  // the question each home card shows; otherwise the lens's first
-  return lensIds().map(id => { const qs = lensQuestions(id), q = qs.find(x => x[0] === lead[id]) || qs[0]; return {id, name: meta[id][0], lead: meta[id][1], question: q[1], answer: q[2]}; });
+  const lead = {structure: 'traditions', lead: 'shares', evolve: 'growth'};  // the question each home card shows
+  return PARTS(T).map(([, name, sub, chapters]) => { const id = chapters[0], qs = lensQuestions(id), q = qs.find(x => x[0] === lead[id]) || qs[0]; return {id, name, lead: sub, question: q[1], answer: q[2]}; });
 }
 const NOTES = () => {
   const con = P.trends.concentration, yl = con.years.map(String), w = P.web, hosts = w.resourceHosts, tot = Object.values(hosts).reduce((a, b) => a + b, 0), s = P.fractures.scale, cs = P.trends.clusterShares, pc = v => v == null ? '—' : Number(v).toFixed(1) + '%', it = P.fractures.timeliness.intake, imp = P.fractures.importance;
   return [
-    [T('Evolution', '演化'), `${cs.labelsBefore} → ${cs.labelsRecent}`, T('Recent works carry more cluster labels per work than a year earlier, so raw cluster shares overstate growth everywhere (the shares on this site are fractional).', '近期论文平均带的星团标签比一年前多，直接按标签计的份额会让所有方向都显得在涨（本站的份额按比例计）。'), ''],
-    [T('Evolution', '演化'), pctf(con.code[con.code.length - 3].share), T('Works linking code or data; recent works are linked later, so the last years read low.', '链接代码或数据的工作；近期工作的链接补得较晚，最近一两年偏低。'), tile(T('Works linking code or data', '链接代码或数据的工作'), T('share by year', '各年比例'), con.code.map(x => x.share), yl, INK, pc)],
-    [T('Leadership', '引领'), pctf(con.citations.zeroShare), T('of works have no citation yet.', '的工作尚无引用。'), ''],
-    [T('Connection', '衔接'), pctf(s.multiClusterPct), T('of works carry two or more cluster labels, so a "cross-cluster star" is defined by observed routes, not by labels.', '的工作带两个以上星团标签，因此“跨团星”按观测到的航线定义，而不是按标签。'), ''],
-    [T('Connection', '衔接'), pctf(s.crossGalaxyPct), T(`of citation routes join works that share no galaxy (${pctf(s.crossClusterPct)} share no cluster).`, `的引用航线连接两个没有共同星系的工作（${pctf(s.crossClusterPct)} 没有共同星团）。`), ''],
-    [T('Resource check', '资源检验'), String(imp.medianTauGlobalLocal), T('Kendall τ between global citation counts and citations inside the Atlas: the Atlas sees the same order, mostly.', '全局引用数与 Atlas 内引用数之间的 Kendall τ：两者的排序大体一致。'), ''],
+    [T('Trajectory', '走向'), `${cs.labelsBefore} → ${cs.labelsRecent}`, T('Recent works carry more cluster labels per work than a year earlier, so raw cluster shares overstate growth everywhere (the shares on this site are fractional).', '近期论文平均带的星团标签比一年前多，直接按标签计的份额会让所有方向都显得在涨（本站的份额按比例计）。'), ''],
+    [T('Trajectory', '走向'), pctf(con.code[con.code.length - 3].share), T('Works linking code or data; recent works are linked later, so the last years read low.', '链接代码或数据的工作；近期工作的链接补得较晚，最近一两年偏低。'), tile(T('Works linking code or data', '链接代码或数据的工作'), T('share by year', '各年比例'), con.code.map(x => x.share), yl, INK, pc)],
+    [T('Players', '力量'), pctf(con.citations.zeroShare), T('of works have no citation yet.', '的工作尚无引用。'), ''],
+    [T('Landscape', '版图'), pctf(s.multiClusterPct), T('of works carry two or more cluster labels, so a "cross-cluster star" is defined by observed routes, not by labels.', '的工作带两个以上星团标签，因此“跨团星”按观测到的航线定义，而不是按标签。'), ''],
+    [T('Landscape', '版图'), pctf(s.crossGalaxyPct), T(`of citation routes join works that share no galaxy (${pctf(s.crossClusterPct)} share no cluster).`, `的引用航线连接两个没有共同星系的工作（${pctf(s.crossClusterPct)} 没有共同星团）。`), ''],
+    [T('Platform check', '平台检验'), String(imp.medianTauGlobalLocal), T('Kendall τ between global citation counts and citations inside the Atlas: the Atlas sees the same order, mostly.', '全局引用数与 Atlas 内引用数之间的 Kendall τ：两者的排序大体一致。'), ''],
     [T('Web', 'Web'), pctf(w.arxivPct), T(`of works have an arXiv record; ${pctf(w.unverifiedPct)} have no verified venue yet.`, `的工作有 arXiv 记录；${pctf(w.unverifiedPct)} 尚无核实的正式发表。`), ''],
     [T('Web', 'Web'), pctf(100 * hosts['github.com'] / tot), T(`of paper resources sit on GitHub, ${pctf(100 * (hosts['huggingface.co'] || 0) / tot)} on Hugging Face; ${num(w.paperReposArchived)} of ${num(w.paperRepos)} paper repositories are archived.`, `的论文配套资源位于 GitHub，${pctf(100 * (hosts['huggingface.co'] || 0) / tot)} 位于 Hugging Face；${num(w.paperRepos)} 个论文仓库中 ${num(w.paperReposArchived)} 个已归档。`), ''],
     ...(P.lenses.release ? [[T('Resources', '资源'), pctf(P.lenses.release.share[P.lenses.release.share.length - 1]), T('of recent abstracts promise released code or data.', '的近期论文摘要声明公开代码或数据。'), B.release()]] : []),

@@ -701,6 +701,10 @@ html[data-theme="dark"] .home-nova-bar small{color:#9eb4af}
 html[data-theme="dark"] .home-mech-stat{border-left:3px solid rgba(160,205,195,0.33);background:rgba(160,205,195,0.08)}
 html[data-theme="dark"] .home-mech-version{color:#9eb4af}
 html[data-theme="dark"] .ln-tail-caveat{border-left:3px solid rgba(160,205,195,0.33)}
+html[data-theme="dark"] .ln-chapters button{border:1px solid rgba(160,205,195,0.30)}
+html[data-theme="dark"] .ln-chapters button span{border:1px solid rgba(160,205,195,0.30)}
+html[data-theme="dark"] .ln-chapters button[aria-current="page"]{border-color:rgba(160,205,195,0.33);background:rgba(160,205,195,0.08)}
+html[data-theme="dark"] .ln-chapters button[aria-current="page"] span{border-color:rgba(160,205,195,0.33)}
 
 /* shared parts of the dark theme */
 html[data-theme="dark"]{color-scheme:dark}
