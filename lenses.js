@@ -724,6 +724,72 @@ const B3 = {
 // ------------------------------------------------------------------------------------------------ tail & gaps (RQ5, findings.tail)
 const FACET_NAME = (kind, v) => ({surface: SURFACE_NAMES(), setting: SETTING_NAMES(), mechanism: MECH_NAMES()}[kind] || {})[v] || v.replace(/_/g, ' ');
 const tierName = t => ({head: T('head', '头部'), torso: T('middle', '中部'), tail: T('tail', '长尾'), absent: T('absent', '尚未出现')}[t] || t);
+// ------------------------------------------------------------------------------------------------ scope: the two axes (findings.scope)
+const SCOPE_AGENT = () => ({
+  A: [T('Digital agents', '数字智能体'), T('AI agents that act in browsers, computers, code, tools, assistants and workflows; almost all are driven by language models.', '在网页、电脑、代码、工具、助手和工作流里行动的 AI 智能体，几乎都由大语言模型驱动。')],
+  B: [T('Physical agents', '物理智能体'), T('Robots, embodied agents, driving and drones. In scope only when the decisions come from a learned policy or a foundation model.', '机器人、具身智能体、自动驾驶与无人机。只有决策由学习到的策略或基础模型做出时才收。')],
+  C: [T('RL agents in simulators', '仿真中的强化学习智能体'), T('Reinforcement-learning agents trained and tested in simulated environments: reward hacking, safe exploration, constraints.', '在仿真环境里训练和测试的强化学习智能体：奖励投机、安全探索、约束。')],
+  D: [T('No concrete agent', '没有具体的智能体'), T('The model itself, alignment and interpretability theory and methods, or surveys and positions. In scope as foundational work for agent safety.', '研究模型本身、对齐与可解释的理论和方法，或综述与立场。作为智能体安全的基础工作收录。')]});
+const SCOPE_SAFETY = () => ({attacked: T('Attacked or misused', '被攻击或滥用'), itself: T('The agent itself (goals, deception)', '智能体自身（目标、欺骗）'),
+  failure: T('Non-adversarial failure (accidents, violated constraints)', '非对抗失误（事故、违反约束）'), several: T('Several sources', '多种来源'), none: T('None labelled', '未标出')});
+const SCOPE_SUB = () => ({model: [T('Model-level safety', '模型层安全'), T('a foundation model itself attacked, defended or measured (jailbreak benchmarks, moderation models)', '对模型本身的攻击、防护与评测（如越狱基准、内容审核模型）')],
+  theory: [T('Theory and methods', '理论与方法'), T('reward modelling and RLHF, interpretability, alignment theory', '奖励建模与 RLHF、可解释性、对齐理论')],
+  survey: [T('Surveys and positions', '综述与立场'), T('surveys, agendas and position papers', '综述、研究议程与立场文章')]});
+const rgba = (hex, a) => { const v = parseInt(hex.slice(1), 16); return `rgba(${v >> 16},${(v >> 8) & 255},${v & 255},${a.toFixed(3)})`; };
+function listCell(ids, label, heading, style = '') {
+  if (!ids || !ids.length) return `<span class="ln-scope-cell is-empty"${style}>0</span>`;
+  const key = 'L' + Math.random().toString(36).slice(2, 9);
+  lists.set(key, {ids, heading});
+  return `<button class="ln-scope-cell" data-fd-list="${key}"${style}>${label}</button>`;
+}
+const B5 = {
+  scope() {
+    const S = P.scope, AG = SCOPE_AGENT(), SF = SCOPE_SAFETY(), SB = SCOPE_SUB(), keys = Object.keys(SF);
+    const max = Math.max(...Object.values(S.matrix).map(v => v.length)), dark = isDark();
+    const axes = `<div class="fd-two ln-scope-axes"><div><h4>${T('Question 1 · the agent', '问题一 · 和智能体的关系')}</h4><p class="fd-note">${T('Is the object an AI system that decides and acts on its own, and which kind?', '研究对象是不是会自己做决定并采取行动的 AI 系统？是哪一种？')}</p>
+      <ul class="ln-scope-defs">${S.agent.map(r => `<li><b>${r.key} · ${AG[r.key][0]}</b> ${AG[r.key][1]}</li>`).join('')}</ul>
+      <p class="fd-note">${T('Out: classical control without a learned decision maker (control barrier functions, MPC, reachability), perception-only robustness, capability-only robotics and driving, ordinary software bots.', '不收：没有学习型决策者的经典控制（控制屏障函数、MPC、可达性分析）、只研究感知的工作、只讲能力的机器人与驾驶、普通软件机器人。')}</p></div>
+      <div><h4>${T('Question 2 · the safety', '问题二 · 和安全的关系')}</h4><p class="fd-note">${T('Is the contribution about harm from what the agent decides or does? Three sources:', '贡献是不是这个系统的决定或行动带来的危害？危害有三种来源：')}</p>
+      <ul class="ln-scope-defs"><li><b>${SF.attacked}</b> ${T('an attacker or a malicious user turns the agent against its user (prompt injection, poisoning, jailbreaks, backdoors)', '攻击者或恶意用户让智能体做坏事（提示注入、投毒、越狱、后门）')}</li>
+      <li><b>${SF.itself}</b> ${T('the agent pursues the wrong goal or hides what it does (reward hacking, deception, power seeking)', '智能体自己的目标或行为跑偏（奖励投机、欺骗、权力寻求）')}</li>
+      <li><b>${SF.failure}</b> ${T('nobody attacks, yet the agent causes harm (collisions, unsafe actions, violated constraints)', '没人作恶也出事（碰撞、不安全动作、违反约束）')}</li></ul>
+      <p class="fd-note">${T('Out: task performance and accuracy, ordinary noise robustness, general software security, flaws of a base model with no safety consequence.', '不收：一般任务性能与精度、普通噪声鲁棒性、一般软件安全、没有安全后果的基座模型缺陷。')}</p></div></div>`;
+    const head = `<tr><th>${T('Agent axis', '智能体轴')} \\ ${T('safety axis', '安全轴')}</th>${keys.map(k => `<th>${SF[k]}</th>`).join('')}<th>${T('All', '合计')}</th></tr>`;
+    const body = S.agent.map(r => `<tr><th><b>${r.key} · ${AG[r.key][0]}</b><small>${num(r.n)} · ${pctf(r.share)}</small></th>${keys.map(k => {
+      const ids = S.matrix[`${r.key}|${k}`], a = (dark ? 0.62 : 0.42) * Math.sqrt(ids.length / max);
+      return `<td>${listCell(ids, num(ids.length), `${AG[r.key][0]} × ${SF[k]}`, ` style="background:${rgba(INK, a)}"`)}</td>`; }).join('')}<td><b>${num(r.n)}</b></td></tr>`).join('');
+    const foot = `<tr><th>${T('All', '合计')}</th>${keys.map(k => `<td><b>${num(S.safety[k])}</b></td>`).join('')}<td><b>${num(S.n)}</b></td></tr>`;
+    const matrix = `<h4>${T('Every work on both axes', '每项工作在两条轴上的位置')}</h4><div class="ln-scope-scroll"><table class="fd-table ln-scope-matrix"><thead>${head}</thead><tbody>${body}</tbody><tfoot>${foot}</tfoot></table></div>
+      <p class="fd-note">${T('Click a number for the works behind it. Shading follows the count.', '点击数字查看背后的论文；底色深浅表示数量。')}</p>`;
+    // composition by year: share of each agent kind among the works of that year
+    const ys = S.years, W = 640, H = 170, L = 34, bw = (W - L - 8) / ys.length;
+    let bars = '';
+    ys.forEach((y, k) => {
+      let acc = 0; const tot = S.yearTotals[k] || 1;
+      S.agent.forEach((r, j) => { const v = r.byYear[k] / tot, h = (H - 22) * v, x = L + k * bw + 3;
+        bars += `<rect x="${x.toFixed(1)}" y="${(H - 22 - acc - h).toFixed(1)}" width="${(bw - 6).toFixed(1)}" height="${Math.max(0, h).toFixed(1)}" fill="${SERIES[j]}" data-tip="${esc(`${y} · ${AG[r.key][0]}: ${num(r.byYear[k])} (${pctf(100 * v)})`)}"/>`; acc += h; });
+      bars += `<text x="${(L + k * bw + bw / 2).toFixed(1)}" y="${H - 6}" text-anchor="middle" class="fd-axis">${y}${k === ys.length - 1 ? '*' : ''}</text>`;
+    });
+    [0, 50, 100].forEach(p => { const y = (H - 22) * (1 - p / 100); bars += `<text x="${L - 6}" y="${(y + 4).toFixed(1)}" text-anchor="end" class="fd-axis">${p}%</text>`; });
+    const legend = `<div class="fd-legend">${S.agent.map((r, j) => `<span><svg width="12" height="12"><rect width="12" height="12" rx="2" fill="${SERIES[j]}"/></svg>${r.key} · ${AG[r.key][0]}</span>`).join('')}</div>`;
+    const c22 = S.controlByYear[ys.indexOf(2022)], c24 = S.controlByYear[ys.indexOf(2024)], cl_ = S.controlByYear[ys.length - 1];
+    const years = `<h4>${T('Which kind of agent, year by year', '各年研究的是哪种智能体')}</h4>${legend}<svg viewBox="0 0 ${W} ${H}" class="ln-scope-years" role="img" aria-label="${T('Share of each agent kind by year', '各年各类智能体的占比')}">${bars}</svg>
+      <p class="fd-note">${T(`Works per year: ${ys.map((y, k) => `${y} ${num(S.yearTotals[k])}`).join(' · ')} (* partial year). Before LLM agents existed, the collection was mostly physical and simulated agents: the control-and-robotics tradition held ${pctf(c22, 0)} of the 2022 works, ${pctf(c24, 0)} in 2024 and ${pctf(cl_, 0)} in ${ys[ys.length - 1]}.`, `各年工作数：${ys.map((y, k) => `${y} ${num(S.yearTotals[k])}`).join(' · ')}（* 年份未完）。LLM 智能体出现之前，语料主要是物理和仿真智能体：控制与机器人传统在 2022 年占 ${pctf(c22, 0)}，2024 年 ${pctf(c24, 0)}，${ys[ys.length - 1]} 年 ${pctf(cl_, 0)}。`)}</p>`;
+    const maker = r => { const m = r.maker; return `${T('Decision maker named in title or abstract', '题目或摘要写明的决策者')}: ${T('foundation model', '基础模型')} ${num(m.fm || 0)} · ${T('RL policy', '强化学习策略')} ${num(m.rl || 0)} · ${T('not stated', '未写明')} ${num(m.unstated || 0)}`; };
+    const card = r => {
+      const extra = r.key === 'B' ? `<p class="fd-note">${T(`Works naming a foundation model: ${num(r.fmByPeriod.to2022)} up to 2022, ${num(r.fmByPeriod['2023-24'])} in 2023–24, ${num(r.fmByPeriod.since2025)} since 2025. ${num(r.unstated.n)} works do not say in title or abstract whether the decision maker is learned; they are the first place to audit the scope rule.`, `写明基础模型的工作：2022 年以前 ${num(r.fmByPeriod.to2022)} 项，2023–24 年 ${num(r.fmByPeriod['2023-24'])} 项，2025 年以来 ${num(r.fmByPeriod.since2025)} 项。另有 ${num(r.unstated.n)} 项在题目和摘要里看不出决策者是不是学习型的，是核查收录规则时最该先看的一批。`)} ${listButton(r.unstated.ids, T('Works with an unstated decision maker', '决策者未写明的工作'), T('Physical agents, decision maker not stated', '物理智能体 · 决策者未写明'))}</p>`
+        : r.key === 'D' ? `<p class="fd-note">${T('Some works here do study an agent but carry no agent-setting label (several of the latest above are examples): for them the label is missing, not the agent. The share of such works has not been checked by hand yet.', '这里也混有一部分其实研究智能体、只是没有被标出智能体设定的工作（上面“最新”里就有几篇）：缺的是标签，不是智能体。这类工作占多少，还没有人工核查。')}</p><div class="ln-scope-sub">${r.sub.map(x => `<div><b>${SB[x.key][0]}</b> <span class="fd-note">${num(x.n)} · ${SB[x.key][1]}</span><ul>${x.examples.slice(0, 3).map(id => `<li>${paperLink(id)} <small>${year(id)}</small></li>`).join('')}</ul>${listButton(x.ids, T('All', '全部'), `${AG.D[0]} · ${SB[x.key][0]}`)}</div>`).join('')}</div>` : '';
+      return `<article class="ln-scope-card"><h4><span>${r.key}</span>${AG[r.key][0]} <small>${num(r.n)} · ${pctf(r.share)}</small></h4><p>${AG[r.key][1]}</p>
+        <p class="fd-note">${T(`${pctf(r.since2025, 0)} since 2025 · median year ${r.medianYear} · ${pctf(r.controlTradition, 0)} in the control-and-robotics tradition · core ${num(r.core)}, foundational ${num(r.foundational)}`, `${pctf(r.since2025, 0)} 发表于 2025 年以来 · 中位年份 ${r.medianYear} · ${pctf(r.controlTradition, 0)} 属于控制与机器人传统 · 核心 ${num(r.core)}，基础 ${num(r.foundational)}`)}</p>
+        <p class="fd-note">${maker(r)}</p>
+        <h5>${T('Most cited', '被引最多')}</h5><ul>${r.examples.map(id => `<li>${paperLink(id)} <small>${year(id)}</small></li>`).join('')}</ul>
+        <h5>${T('Latest', '最新')}</h5><ul>${r.recent.map(id => `<li>${paperLink(id)} <small>${year(id)}</small></li>`).join('')}</ul>${extra}</article>`;
+    };
+    const cards = `<h4>${T('The four kinds, with examples', '四类智能体与例子')}</h4><div class="ln-scope-cards">${S.agent.map(card).join('')}</div>`;
+    const note = `<p class="fd-note">${T('How the axes are read: the agent axis from the facet label "agent setting" (precedence physical > simulator > digital > none), the safety axis from the label "risk source", both given by a language model from title and abstract (agreement with a human check is reported under Method); the decision maker from title and abstract keywords. They describe the collection, they do not decide what is in it: inclusion follows the scope rules (agent-safety-v4).', '两条轴怎么来：智能体轴取分面标签“智能体设定”（同时有几种时按 物理 > 仿真 > 数字 > 无 取一种），安全轴取分面标签“风险来源”，都由语言模型根据题目和摘要标注（与人工核对的一致率见“方法”）；决策者按题目和摘要里的关键词判断。它们描述语料，不决定收录：收录按范围政策（agent-safety-v4）。')}</p>`;
+    return axes + matrix + years + cards + note;
+  },
+};
 const B4 = {
   caveat() {
     return `<p class="fd-note ln-tail-caveat">${T('Candidates for a reader to judge, not findings that work is missing or worth doing: the Atlas covers agent safety only, facet labels come from a language model, and some combinations are not meaningful. Empty space on the star map is never used as evidence; every gap here is a count against what similar combinations predict.', '这些是供读者判断的候选，不是“这里缺研究”或“值得做”的结论：Atlas 只收录 Agent 安全研究，分面标签由语言模型给出，有些组合本身没有意义。星图上的空白从不作为证据；这里的每个空白都是“实际数量”对比“相似组合推算的数量”。')}</p>`;
@@ -801,6 +867,10 @@ function questionPool() {
   const ms = milestoneModel(), pilot = Object.fromEntries(P.rq1.pilot.table.map(r => [r.ranker, r])), words = tr.terms.rising.slice(0, 5).map(x => x.term.toLowerCase());
   const pp = r => `${cl(r.cluster)} ${pctf(r.shareBefore)}→${pctf(r.shareRecent)}`;
   const Q = {
+    scope: !P.scope ? [] : (() => { const a = Object.fromEntries(P.scope.agent.map(r => [r.key, r])); return [
+      ['scope', T('What does agent safety study? Two questions: the agent, and the safety', 'Agent 安全研究的是什么？两个问题：和智能体的关系，和安全的关系'),
+        T(`On the agent axis, ${pctf(a.A.share, 0)} of the works study digital agents, ${pctf(a.B.share, 0)} physical agents (robots, vehicles, drones) and ${pctf(a.C.share, 0)} reinforcement-learning agents in simulators; ${pctf(a.D.share, 0)} have no concrete agent: they study the model itself or alignment theory, or survey the field, and are in as foundational work.`,
+          `按智能体轴：${pctf(a.A.share, 0)} 研究数字智能体，${pctf(a.B.share, 0)} 研究机器人、车、无人机等物理智能体，${pctf(a.C.share, 0)} 研究仿真中的强化学习智能体；另有 ${pctf(a.D.share, 0)} 没有具体的智能体，研究的是模型本身、对齐理论或综述，作为基础工作收录。`), B5.scope()]]; })(),
     evolve: [
       ['growth', T('How fast is the field growing?', '这个领域长得多快？'), T(`It doubles about every ${g.doublingMonths} months; ${pctf(b.novaShareCorpus)} of all works are less than ${P.meta.novaMonths} months old.`, `约每 ${g.doublingMonths} 个月翻一番；${pctf(b.novaShareCorpus)} 的工作不足 ${P.meta.novaMonths} 个月。`), B.growth()],
       ['shift', T('Where is the focus moving?', '重心在往哪里移？'), T(`Toward execution: ${up.map(pp).join(', ')}; ${down.map(pp).join(' and ')} lost share.`, `移向执行环节：${up.map(pp).join('，')}；${down.map(pp).join('、')}份额下降。`), B.shift()],
@@ -882,9 +952,9 @@ function questionPool() {
 const PLACE = {'connect:traditions': 'structure', 'connect:venues': 'structure', 'attack:surfaces': 'structure', 'attack:mechanisms': 'structure',
   'tail:shape': 'structure', 'tail:gaps': 'structure', 'evolve:reading': 'connect', 'tail:bridges': 'connect', 'navigate:newcomers': 'lead',
   'targets:country': 'lead', 'evolve:timeline': 'attack', 'targets:models': 'attack', 'tail:imbalance': 'attack', 'navigate:next': 'evolve'};
-const HOME_LENS = {evolve: 'evolve', connect: 'connect', lead: 'lead', attack: 'attack', targets: 'structure', tail: 'evolve', navigate: 'navigate'};
+const HOME_LENS = {scope: 'structure', evolve: 'evolve', connect: 'connect', lead: 'lead', attack: 'attack', targets: 'structure', tail: 'evolve', navigate: 'navigate'};
 const RENAME = {'evolve:timeline': 'onset'};  // two questions named "timeline" now share the attack lens
-const ORDER = {structure: ['traditions', 'venues', 'settings', 'risk', 'surfaces', 'mechanisms', 'shape', 'gaps'],
+const ORDER = {structure: ['scope', 'traditions', 'venues', 'settings', 'risk', 'surfaces', 'mechanisms', 'shape', 'gaps'],
   connect: ['layers', 'buildson', 'hubs', 'supply', 'lifecycle', 'inflation', 'reading', 'notreading', 'bridges'],
   attack: ['balance', 'timeline', 'onset', 'comparable', 'adaptive', 'realism', 'models', 'imbalance'],
   evolve: ['growth', 'shift', 'diversify', 'terms', 'diffusion', 'path', 'radar', 'backtest', 'rising', 'open', 'next'],
@@ -913,7 +983,7 @@ function shell(inner, extraClass = '') {
   return `<div class="fd ln ${extraClass}">${inner}<aside class="fd-drawer" hidden aria-label="${T('Works behind this number', '数字背后的工作')}"><div class="fd-drawer-head"><h3></h3><button class="fd-close" aria-label="${T('Close', '关闭')}">×</button></div><div class="fd-drawer-body"></div></aside><div class="fd-tip" hidden></div></div>`;
 }
 // the headline findings, in reading order: [lens, question id]; each card opens its question under the lens
-const KEY_FINDINGS = [['structure', 'traditions'], ['structure', 'venues'], ['structure', 'settings'], ['connect', 'hubs'], ['connect', 'inflation'],
+const KEY_FINDINGS = [['structure', 'scope'], ['structure', 'traditions'], ['structure', 'venues'], ['structure', 'settings'], ['connect', 'hubs'], ['connect', 'inflation'],
   ['connect', 'buildson'], ['lead', 'apart'], ['lead', 'punch'], ['lead', 'pioneers'], ['lead', 'bigteams'], ['lead', 'newcomers'], ['attack', 'balance'],
   ['attack', 'adaptive'], ['attack', 'models'], ['evolve', 'growth'], ['evolve', 'shift'], ['evolve', 'diffusion'], ['evolve', 'backtest'], ['navigate', 'nova']];
 function keyFindings(meta) {
