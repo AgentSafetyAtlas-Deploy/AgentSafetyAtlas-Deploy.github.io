@@ -221,7 +221,7 @@
 .cx-seg button:disabled{opacity:.38;cursor:default}
 /* Connection lens (A3.2): the stage beside the findings; on wide screens it stays in view while the findings scroll */
 .cr-wrap{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;align-items:start}
-@media(min-width:1100px){.cr-wrap{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr)}.cr-stage{position:sticky;top:10px;max-height:calc(100vh - 20px);overflow:auto}.cr-cards{padding-bottom:45vh}}
+@media(min-width:1100px){.cr-wrap{grid-template-columns:minmax(0,1fr) minmax(0,1.12fr)}.cr-stage{position:sticky;top:10px;max-height:calc(100vh - 20px);overflow:auto}.cr-cards{padding-bottom:45vh}}
 .cr-stage{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px 10px}
 .cr-stage h3{margin:2px 0 2px;font-size:17px}
 .cr-intro{margin:0 0 8px}
@@ -274,7 +274,16 @@
 .cr-config{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;margin:2px 16px 12px 60px;border-left:3px solid #1c6a57;padding-left:10px}
 .cr-show{display:none;border:0;background:none;color:#1c6a57;font-size:12.5px;padding:0;text-decoration:underline;text-underline-offset:3px}
 @media(max-width:1099px){.cr-show{display:inline}}
-.cr-body{padding:0 18px 18px 60px}
+.cr-body{padding:0 18px 18px 22px}
 @media(max-width:640px){.cr-stage{padding:12px 10px 10px}.cr-intro{display:none}.cr-label{font-size:19px}.cr-label.is-big{font-size:20px}
   .cr-time{grid-template-columns:34px minmax(0,1fr)}.cr-time-side{grid-column:1/-1;flex-direction:row;justify-content:space-between;align-items:center}
   .cr-config{margin-left:16px}.cr-body{padding:0 12px 14px}.cr-figure svg{min-height:0}}
+
+/* card bodies are narrower than the full-width sections their charts were made for: stack side-by-side blocks, let wide
+   tables scroll inside the card */
+.cr-body .fd-two,.cr-body .fd-pair-grid,.cr-body .fd-heat-wrap{grid-template-columns:minmax(0,1fr)!important}
+.cr-body .fd-two>*,.cr-body .fd-pair-grid>*{min-width:0}
+.cr-body .ln-scope-matrix,.cr-body .ln-punch{display:block;overflow-x:auto;max-width:100%}
+.cr-body .fd-table{max-width:100%}
+.cr-body .fd-hbar{min-width:0}
+.cr-body .ln-scope-matrix{min-width:0;width:100%}

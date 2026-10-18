@@ -112,7 +112,7 @@ html[data-theme="light"] .rp-route-top b{color:color-mix(in srgb,var(--route) 45
 html[data-theme="light"] .tg-card-link,html[data-theme="light"] .tg-reading-role{color:color-mix(in srgb,var(--topic-color) 80%,#000)}
 .ln-partners{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin-top:10px}
 .ln-partners>*{min-width:0}
-.ln-venue{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) auto auto auto}
+.ln-venue{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) 44px 64px 118px}
 .ln-ml{font-size:12px;opacity:.8;white-space:nowrap}
 @media(max-width:900px){.ln-partners{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:520px){.ln-partners{grid-template-columns:minmax(0,1fr)}}
