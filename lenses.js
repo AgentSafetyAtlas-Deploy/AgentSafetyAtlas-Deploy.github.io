@@ -275,20 +275,31 @@ export function bindLenses(ctx) {
   const root = document.querySelector('.fd');
   if (!root) return;
   const tip = root.querySelector('.fd-tip');
+  root.addEventListener('input', e => { if (e.target.matches('[data-cx-year]')) { cxStop(); cx.t = +e.target.value; cxRedraw(); } });
+  // the global view shrinks to a compact strip once the page has scrolled past its full size (one listener for the page)
+  if (!cxScrollBound) { cxScrollBound = true; window.addEventListener('scroll', cxCompact, {passive: true}); }
+  cxCompact();
   root.addEventListener('click', e => {
-    const el = e.target.closest('[data-fd-ids],[data-fd-paper],[data-fd-list],[data-fd-jump],[data-fd-layer],[data-fd-pair],[data-fd-bench],[data-ln-lens],[data-ln-goto],[data-ln-q],[data-ln-ms-kind],[data-ln-insight],.fd-close');
+    const el = e.target.closest('[data-cx-level],[data-cx-layer],[data-cx-measure],[data-cx-win],[data-cx-play],[data-cx-open],[data-cx-cell],[data-fd-ids],[data-fd-paper],[data-fd-list],[data-fd-jump],[data-fd-layer],[data-fd-pair],[data-fd-bench],[data-ln-lens],[data-ln-goto],[data-ln-q],[data-ln-ms-kind],[data-ln-insight],.fd-close');
     if (!el) return;
     if (el.matches('.fd-close')) { root.querySelector('.fd-drawer').hidden = true; return; }
+    if (el.dataset.cxLevel) { cx.level = el.dataset.cxLevel; cx.hl = cx.level === cxConfig(cx.q).level ? cx.hl : null; cxRedraw(); return; }
+    if (el.dataset.cxLayer) { cx.layer = el.dataset.cxLayer; cxRedraw(); return; }
+    if (el.dataset.cxMeasure) { cx.measure = el.dataset.cxMeasure; cxRedraw(); return; }
+    if (el.dataset.cxWin) { cx.win = el.dataset.cxWin; cxRedraw(); return; }
+    if ('cxPlay' in el.dataset) { cxPlay(); return; }
+    if (el.dataset.cxOpen) { cxOpen(el.dataset.cxOpen, root); return; }
+    if (el.dataset.cxCell) { cxCellDrawer(el.dataset.cxCell); return; }
     if (el.dataset.fdIds) { const l = lists.get(el.dataset.fdIds); if (l) openDrawer(l.heading, paperRows(l.ids)); return; }
     if (el.dataset.fdPaper) return ctx.openPaper(el.dataset.fdPaper);
-    if (el.dataset.fdList) { const l = lists.get(el.dataset.fdList); if (l) openDrawer(l.heading, paperRows(l.ids)); return; }
+    if (el.dataset.fdList) { const l = lists.get(el.dataset.fdList); if (l) openDrawer(l.heading, l.html || paperRows(l.ids)); return; }
     if (el.dataset.fdJump) { document.getElementById('fd-' + el.dataset.fdJump)?.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start'}); return; }
     if (el.dataset.fdLayer) { ctx.state.findingsLayer = el.dataset.fdLayer; ctx.writeHash(); rerender(ctx, '[data-ln-layers]'); return; }
     if (el.dataset.lnLens) { ctx.state.lens = el.dataset.lnLens === 'key' ? '' : el.dataset.lnLens; ctx.writeHash(); ctx.render(); window.scrollTo({top: 0, behavior: 'instant'}); return; }
     if (el.dataset.lnGoto) {
       const [lens, qid] = el.dataset.lnGoto.split(':');
       ctx.state.lens = lens; ctx.writeHash(); ctx.render();
-      requestAnimationFrame(() => document.getElementById('q-' + qid)?.scrollIntoView({block: 'start'}));
+      requestAnimationFrame(() => { const h = document.querySelector(`#q-${qid} [data-cx-open]`); if (h) { if (h.getAttribute('aria-expanded') !== 'true') h.click(); } else document.getElementById('q-' + qid)?.scrollIntoView({block: 'start'}); });
       return;
     }
     if (el.dataset.lnQ) { document.getElementById('q-' + el.dataset.lnQ)?.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start'}); return; }
@@ -724,6 +735,152 @@ const B3 = {
 // ------------------------------------------------------------------------------------------------ tail & gaps (RQ5, findings.tail)
 const FACET_NAME = (kind, v) => ({surface: SURFACE_NAMES(), setting: SETTING_NAMES(), mechanism: MECH_NAMES()}[kind] || {})[v] || v.replace(/_/g, ' ');
 const tierName = t => ({head: T('head', '头部'), torso: T('middle', '中部'), tail: T('tail', '长尾'), absent: T('absent', '尚未出现')}[t] || t);
+// ------------------------------------------------------------------------------------------------ Connection lens: the global view (findings.connect)
+// One matrix of research areas (the 8 galaxies, then the 19 clusters) x four layers x years. Rows send (cite, use a
+// benchmark), columns receive; institutions and content are symmetric. Every finding below sets the matrix to the
+// configuration it talks about and adds its own chart (owner design, review step A3.1).
+const CX_GROUPS = () => [
+  ['read', T('Do research lines read each other?', '研究线之间读不读彼此'), T('knowledge flowing through citations', '知识通过引用流动'), ['layers', 'reading', 'notreading', 'bridges']],
+  ['upstream', T('Who is upstream?', '谁在上游'), T('the direction of citations', '引用的方向'), ['buildson']],
+  ['bench', T('Shared experimental resources: benchmarks', '共享的实验资源：基准'), T('who uses whose benchmarks, and for how long', '谁在用谁的基准，用多久'), ['hubs', 'supply', 'lifecycle', 'inflation']],
+  ['people', T('Shared people and institutions', '共享的人与机构'), T('the same institutions on different lines', '同一批机构在做不同的研究线'), ['collab']]];
+const CX_LAYERS = () => [['cite', T('Citations', '引用')], ['bench', T('Benchmark use', '共用基准')], ['collab', T('Institutions', '合作机构')], ['content', T('Content', '内容相近')]];
+const cx = {level: 'galaxy', layer: 'cite', measure: 'share', t: null, win: 'cum', q: '', hl: null, timer: 0};
+const cxYears = () => P.connect.years;
+const cxYearLabel = t => t === 0 ? `≤${cxYears()[0]}` : `${cxYears()[t]}${t === cxYears().length - 1 ? '*' : ''}`;
+function cxPair(a, b) { return [[a, b], [b, a]]; }
+function cxConfig(qid) {
+  const idx = name => P.meta.clusters.indexOf(name), c = {level: 'cluster', layer: 'cite', measure: 'ratio', win: 'cum', hl: null, note: ''};
+  if (qid === 'layers') return {...c, note: T('Matrix: clusters, citations against what their sizes would give. Switch the layer above to compare citations, benchmarks, institutions and content.', '矩阵：星团之间的引用，相对按规模应有的期望。切换上方的层，比较引用、基准、机构和内容。')};
+  if (qid === 'reading') return {...c, level: 'galaxy', measure: 'share', win: 'year', hl: {offdiag: true}, note: T('Matrix: galaxies, share of each row\'s citations that year. Press play: more of each galaxy\'s citations go to other galaxies over the years.', '矩阵：星系之间，每行当年引用的去向占比。按播放：各星系的引用里流向其他星系的部分逐年增加。')};
+  if (qid === 'notreading') return {...c, hl: {cells: (P.rq2.h2a || []).flatMap(([a, b]) => cxPair(a, b))}, note: T('Matrix: the highlighted pairs are close in content but cite each other far less than expected.', '矩阵：亮出的几对星团内容相近，互相引用却远少于期望。')};
+  if (qid === 'bridges') { const cells = (P.tail?.bridges || []).slice(0, 4).flatMap(b => { const a = idx(b.a.cluster), d = idx(b.b.cluster); return a >= 0 && d >= 0 ? cxPair(a, d) : []; });
+    return {...c, layer: 'content', hl: {cells}, note: T('Matrix: content closeness of clusters; the highlighted pairs contain the candidate clusters that are close but never cite each other (open the finding for the pairs).', '矩阵：星团之间的内容相近度；亮出的格子里有内容相近却从不互相引用的候选星团（展开查看具体是哪几对）。')}; }
+  if (qid === 'buildson') return {...c, hl: {cells: (P.deeper?.buildsOn?.pairs || []).slice(0, 4).map(p => [p.from, p.to])}, note: T('Matrix: rows cite columns. The highlighted cells are the most one-sided pairs: the row builds on the column far more than the reverse.', '矩阵：行引用列。亮出的是最不对称的几对：行建立在列之上，远多于反过来。')};
+  if (qid === 'hubs') return {...c, layer: 'bench', measure: 'share', hl: {cells: (P.rq2.h2b || []).slice(0, 6).flatMap(([a, b]) => cxPair(a, b))}, note: T('Matrix: benchmark use (rows use benchmarks from columns). Highlighted: pairs that share benchmarks although they rarely cite each other.', '矩阵：共用基准（行使用列的基准）。亮出的是很少互相引用、却共用基准的几对星团。')};
+  if (qid === 'supply') return {...c, layer: 'bench', measure: 'share', hl: {cols: [...P.rq3.clusters].sort((a, b) => b.suppliedOutside - a.suppliedOutside).slice(0, 3).map(r => r.cluster)}, note: T('Matrix: benchmark use; the highlighted columns are the clusters whose benchmarks other clusters use most.', '矩阵：共用基准；亮出的列是基准被其他星团使用最多的星团。')};
+  if (qid === 'lifecycle') return {...c, level: 'galaxy', layer: 'bench', measure: 'share', win: 'year', note: T('Matrix: benchmark use by galaxy, year by year. Press play to watch benchmarks spread.', '矩阵：星系之间逐年的基准使用。按播放看基准怎样扩散。')};
+  if (qid === 'inflation') return {...c, layer: 'bench', measure: 'share', note: T('Matrix: where the benchmarks that are used come from; most named benchmarks never appear here.', '矩阵：被使用的基准来自哪里；多数具名基准从未出现在这里。')};
+  if (qid === 'collab') { const cx_ = P.connect.collab; return {...c, layer: 'collab', hl: {cells: [...cx_.top, ...cx_.apart].flatMap(p => cxPair(p.a, p.b))}, note: T('Matrix: how similarly clusters draw on institutions. Highlighted: the most similar pairs and pairs that share institutions but rarely cite each other.', '矩阵：星团之间机构分布的相似度。亮出的是最相似的几对，以及用同一批机构却很少互相引用的几对。')}; }
+  return c;
+}
+function cxUnits(level) {
+  if (level === 'galaxy') return P.meta.galaxies.map((g, k) => ({k, label: galaxy(k), color: g.color}));
+  const w = P.connect.cluster.works;
+  return P.meta.clusters.map((_, k) => k).sort((a, b) => P.meta.clusterGalaxy[a] - P.meta.clusterGalaxy[b] || w[b] - w[a])
+    .map(k => ({k, label: cl(k), color: clusterColor(k), g: P.meta.clusterGalaxy[k]}));
+}
+function cxMatrix() {
+  const D = P.connect[cx.level];
+  if (cx.layer === 'content') return D.content;
+  if (cx.layer === 'collab') return (cx.win === 'cum' ? D.collabCum : D.collabYear)[cx.t];
+  const M = D[cx.layer], K = M[0].length;
+  if (cx.win === 'year') return M[cx.t];
+  const out = Array.from({length: K}, () => Array(K).fill(0));
+  for (let s = 0; s <= cx.t; s++) for (let a = 0; a < K; a++) for (let b = 0; b < K; b++) out[a][b] += M[s][a][b];
+  return out;
+}
+function cxCellColor(v, max) {
+  if (v == null || Number.isNaN(v)) return 'transparent';
+  const dark = isDark(), div = (x, lim) => { const f = Math.min(1, Math.abs(x) / lim); return rgba(x >= 0 ? SERIES[1] : SERIES[0], (dark ? 0.85 : 0.7) * f); };
+  if (cx.layer === 'content') return div(v, 0.8);
+  if ((cx.layer === 'cite' || cx.layer === 'bench') && cx.measure === 'ratio') return v > 0 ? div(Math.log2(v), 3) : rgba(SERIES[0], dark ? 0.85 : 0.7);
+  return rgba(INK, (dark ? 0.9 : 0.75) * Math.sqrt(Math.max(0, v) / (max || 1)));
+}
+function cxDraw() {
+  const units = cxUnits(cx.level), M = cxMatrix(), K = M.length, flow = cx.layer === 'cite' || cx.layer === 'bench';
+  const rs = M.map(r => r.reduce((x, y) => x + y, 0)), cs = M[0].map((_, b) => M.reduce((x, r) => x + r[b], 0)), tot = rs.reduce((x, y) => x + y, 0);
+  const val = (a, b) => !flow ? M[a][b] : cx.measure === 'ratio' ? (rs[a] && cs[b] ? M[a][b] / (rs[a] * cs[b] / tot) : null) : (rs[a] ? M[a][b] / rs[a] : null);
+  let max = 0; for (const u of units) for (const v of units) { const x = val(u.k, v.k); if (x != null && (cx.layer !== 'collab' || u.k !== v.k)) max = Math.max(max, x); }
+  const hl = cx.hl, on = (a, b) => !hl ? null : (hl.offdiag && a !== b) || (hl.cells || []).some(([x, y]) => x === a && y === b) || (hl.rows || []).includes(a) || (hl.cols || []).includes(b);
+  const big = cx.level === 'galaxy', layerName = Object.fromEntries(CX_LAYERS())[cx.layer];
+  const fmt = (a, b, x) => {
+    if (x == null) return '—';
+    if (flow && cx.measure === 'ratio') return '×' + (x >= 10 ? x.toFixed(0) : x.toFixed(1));
+    if (flow) return (100 * x).toFixed(x >= 0.1 ? 0 : 1) + '%';
+    return x.toFixed(2);
+  };
+  const tip = (u, v, x) => {
+    const pair = `${u.label} → ${v.label}`, n = flow ? M[u.k][v.k] : null, when = cx.layer === 'content' ? '' : ` · ${cx.win === 'cum' ? T('up to ', '截至 ') : ''}${cxYearLabel(cx.t)}`;
+    if (cx.layer === 'cite') return T(`${pair}${when}: ${num(Math.round(n))} citations, ${rs[u.k] ? (100 * n / rs[u.k]).toFixed(1) : 0}% of the row's, ${x != null && cx.measure === 'ratio' ? '×' + x.toFixed(2) + ' the expected' : ''}`, `${pair}${when}：引用 ${num(Math.round(n))} 次，占该行引用的 ${rs[u.k] ? (100 * n / rs[u.k]).toFixed(1) : 0}%${x != null && cx.measure === 'ratio' ? `，为期望的 ${x.toFixed(2)} 倍` : ''}`);
+    if (cx.layer === 'bench') return T(`${pair}${when}: ${n.toFixed(1)} uses of the column's benchmarks by the row's works`, `${pair}${when}：行的工作使用列的基准 ${n.toFixed(1)} 次`);
+    if (cx.layer === 'collab') return T(`${u.label} · ${v.label}${when}: institution profiles similarity ${x.toFixed(2)}`, `${u.label} · ${v.label}${when}：机构分布相似度 ${x.toFixed(2)}`);
+    return T(`${u.label} · ${v.label}: content closeness ${x.toFixed(2)}`, `${u.label} · ${v.label}：内容相近度 ${x.toFixed(2)}`);
+  };
+  const head = `<tr><th class="cx-corner">${T('row → column', '行 → 列')}</th>${units.map(u => `<th class="cx-col" style="--c:${u.color}" title="${esc(u.label)}"><span>${esc(u.label)}</span></th>`).join('')}</tr>`;
+  const rows = units.map((u, r) => `<tr class="${!big && r && units[r - 1].g !== u.g ? 'cx-sep' : ''}"><th class="cx-row" style="--c:${u.color}"><span>${esc(u.label)}</span></th>${units.map(v => {
+    const x = val(u.k, v.k), o = on(u.k, v.k);
+    return `<td><button class="cx-cell${o === true ? ' is-hl' : o === false ? ' is-dim' : ''}${u.k === v.k ? ' is-diag' : ''}" data-cx-cell="${u.k}|${v.k}" style="background:${cxCellColor(x, max)}" data-tip="${esc(tip(u, v, x))}">${big ? fmt(u.k, v.k, x) : ''}</button></td>`; }).join('')}</tr>`).join('');
+  const legend = cx.layer === 'content' ? T('Blue: further apart than average; orange: closer. Content does not change with the year.', '蓝：比平均更远；橙：更近。内容相近度不随年份变化。')
+    : cx.layer === 'collab' ? T('Darker: the two areas draw on more of the same institutions (cosine of works per institution).', '颜色越深，两个领域用到的机构越相同（按机构的工作数分布的余弦）。')
+    : cx.measure === 'ratio' ? T('Against what the two areas\' sizes would give: orange more than expected, blue less, grey about as expected.', '相对按两边规模应有的期望：橙色多于期望，蓝色少于期望，接近灰色就是差不多。')
+    : T('Share of each row: where the row\'s citations or benchmark uses go. Darker is a larger share.', '每行的去向占比：这一行的引用或基准使用流向哪里，颜色越深占比越大。');
+  return `<table class="cx-matrix ${big ? 'is-big' : 'is-small'}"><thead>${head}</thead><tbody>${rows}</tbody></table><p class="fd-note cx-legend">${layerName} · ${legend}</p>`;
+}
+function cxControls() {
+  const seg = (attr, items, cur) => `<span class="cx-seg">${items.map(([k, l]) => `<button data-${attr}="${k}" aria-pressed="${k === cur}">${l}</button>`).join('')}</span>`;
+  const Y = cxYears().length, timeOff = cx.layer === 'content';
+  return `${seg('cx-level', [['galaxy', T('Galaxies', '星系')], ['cluster', T('Clusters', '星团')]], cx.level)}
+    ${seg('cx-layer', CX_LAYERS(), cx.layer)}
+    ${cx.layer === 'cite' || cx.layer === 'bench' ? seg('cx-measure', [['share', T('Share of row', '行内占比')], ['ratio', T('Against expected', '相对期望')]], cx.measure) : ''}
+    <span class="cx-time${timeOff ? ' is-off' : ''}"><button class="cx-play" data-cx-play aria-label="${T('Play the years', '播放各年')}"${timeOff ? ' disabled' : ''}>${cx.timer ? '❚❚' : '▶'}</button><input type="range" min="0" max="${Y - 1}" value="${cx.t}" data-cx-year aria-label="${T('Year', '年份')}"${timeOff ? ' disabled' : ''}><b>${timeOff ? T('no time', '不随时间') : cxYearLabel(cx.t)}</b>${seg('cx-win', [['year', T('That year', '当年')], ['cum', T('Up to then', '截至当年')]], cx.win)}</span>`;
+}
+function cxGlobal() {
+  if (cx.t == null) cx.t = cxYears().length - 1;
+  return `<section class="cx-global" data-cx-global><div class="cx-head"><span class="fd-kicker">${T('GLOBAL VIEW', '全局视图')}</span><h3>${T('How research areas connect', '研究领域之间怎样连接')}</h3>
+    <p class="fd-note cx-intro">${T('Rows send a connection (they cite, or use a benchmark), columns receive it. Start with the 8 galaxies, then open the 19 clusters. The four layers answer four questions: do they read each other, use each other\'s benchmarks, work in the same institutions, write about similar things? Open a finding below to set the matrix to it.', '行是发出连接的一方（引用别人，或使用别人的基准），列是被连接的一方。先看 8 个星系，再展开到 19 个星团。四个层分别回答：读不读彼此、用不用彼此的基准、是不是同一批机构、写的东西像不像。展开下面任一条发现，矩阵会切换到它说的那种情况。')}</p></div>
+    <div class="cx-controls" data-cx-controls>${cxControls()}</div><div class="cx-body" data-cx-body>${cxDraw()}</div></section><div class="cx-sentinel" aria-hidden="true"></div>`;
+}
+function cxFindings(qs) {
+  const byq = Object.fromEntries(qs.map(q => [q[0], q])), used = new Set();
+  let n = 0;
+  const item = id => { const [qid, q, a, body] = byq[id]; used.add(qid); n++;
+    return `<article class="cx-q" id="q-${qid}"><button class="cx-q-head" data-cx-open="${qid}" aria-expanded="false"><span class="ln-qn">${String(n).padStart(2, '0')}</span><span class="cx-q-text"><b>${q}</b><em>${esc(a)}</em></span><i class="cx-chev" aria-hidden="true"></i></button><div class="cx-q-body" hidden><p class="fd-note cx-config">${cxConfig(qid).note}</p>${body}</div></article>`; };
+  const groups = CX_GROUPS().map(([key, name, sub, ids]) => { const got = ids.filter(id => byq[id]); return got.length ? `<section class="cx-group" data-cx-group="${key}"><h3>${name} <small>${sub}</small></h3>${got.map(item).join('')}</section>` : ''; }).join('');
+  const rest = qs.filter(q => !used.has(q[0]));  // nothing is dropped: findings not placed in a group follow at the end
+  return groups + (rest.length ? `<section class="cx-group"><h3>${T('More', '其他')}</h3>${rest.map(q => item(q[0])).join('')}</section>` : '');
+}
+function cxRedraw() {
+  const g = document.querySelector('[data-cx-global]'); if (!g) return;
+  g.querySelector('[data-cx-controls]').innerHTML = cxControls();
+  g.querySelector('[data-cx-body]').innerHTML = cxDraw();
+}
+function cxOpen(qid, root) {
+  const art = document.getElementById('q-' + qid); if (!art) return;
+  const open = art.querySelector('.cx-q-head').getAttribute('aria-expanded') === 'true';
+  for (const a of root.querySelectorAll('.cx-q')) { a.querySelector('.cx-q-head').setAttribute('aria-expanded', 'false'); a.querySelector('.cx-q-body').hidden = true; }
+  cxStop();
+  if (open) { cx.q = ''; cx.hl = null; cxRedraw(); cxCompact(); return; }
+  const c = cxConfig(qid);
+  Object.assign(cx, {q: qid, level: c.level, layer: c.layer, measure: c.measure, win: c.win, hl: c.hl, t: cxYears().length - 1});
+  art.querySelector('.cx-q-head').setAttribute('aria-expanded', 'true'); art.querySelector('.cx-q-body').hidden = false;
+  cxRedraw();
+  cxCompact();
+  const g = document.querySelector('[data-cx-global]');
+  art.style.scrollMarginTop = ((g?.offsetHeight || 0) + 12) + 'px';
+  art.scrollIntoView({block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'});
+}
+let cxScrollBound = false;
+function cxCompact() {
+  const sen = document.querySelector('.cx-sentinel'), gv = document.querySelector('[data-cx-global]');
+  if (sen && gv) gv.classList.toggle('is-compact', !!cx.q || sen.getBoundingClientRect().top < 0);  // a finding is open, or the page is past the full view
+}
+function cxStop() { if (cx.timer) { clearInterval(cx.timer); cx.timer = 0; } }
+function cxPlay() {
+  if (cx.timer) { cxStop(); cxRedraw(); return; }
+  const last = cxYears().length - 1;
+  if (cx.t >= last) cx.t = 0;
+  cx.timer = setInterval(() => { if (!document.querySelector('[data-cx-global]')) return cxStop(); cx.t = Math.min(last, cx.t + 1); if (cx.t >= last) cxStop(); cxRedraw(); }, 800);
+  cxRedraw();
+}
+function cxCellDrawer(key) {
+  const [a, b] = key.split('|').map(Number), D = P.connect[cx.level], name = k => cx.level === 'galaxy' ? galaxy(k) : cl(k);
+  if (cx.layer === 'cite') { const ids = D.citeWorks[key] || []; if (ids.length) openDrawer(`${name(a)} → ${name(b)} · ${T('works citing most', '引用最多的工作')}`, paperRows(ids)); return; }
+  if (cx.layer === 'bench') { const ids = D.benchItems[key] || []; if (ids.length) openDrawer(`${name(a)} → ${name(b)} · ${T('benchmarks used', '被使用的基准')}`, paperRows(ids)); return; }
+  if (cx.layer === 'collab' && a !== b) { const names = D.sharedInst[`${Math.min(a, b)}|${Math.max(a, b)}`] || [];
+    openDrawer(`${name(a)} · ${name(b)} · ${T('institutions working on both', '两边都在做的机构')}`, names.length ? `<ol class="fd-drawer-list">${names.map(x => `<li>${esc(x)}</li>`).join('')}</ol>` : `<p class="fd-note">${T('No shared institution.', '没有共同的机构。')}</p>`); }
+}
+
 // ------------------------------------------------------------------------------------------------ scope: the two axes (findings.scope)
 const SCOPE_AGENT = () => ({
   A: [T('Digital agents', '数字智能体'), T('AI agents that act in browsers, computers, code, tools, assistants and workflows; almost all are driven by language models.', '在网页、电脑、代码、工具、助手和工作流里行动的 AI 智能体，几乎都由大语言模型驱动。')],
@@ -867,6 +1024,14 @@ function questionPool() {
   const ms = milestoneModel(), pilot = Object.fromEntries(P.rq1.pilot.table.map(r => [r.ranker, r])), words = tr.terms.rising.slice(0, 5).map(x => x.term.toLowerCase());
   const pp = r => `${cl(r.cluster)} ${pctf(r.shareBefore)}→${pctf(r.shareRecent)}`;
   const Q = {
+    people: !P.connect?.collab ? [] : (() => { const k = P.connect.collab, t0 = k.top[0], pairName = p => `${cl(p.a)} × ${cl(p.b)}`;
+      const row = p => `<tr><th>${esc(pairName(p))}</th><td>${p.collab.toFixed(2)}</td><td>${num(p.sharedInst)}</td><td>${p.citeRatio == null ? '—' : '×' + p.citeRatio.toFixed(2)}</td><td>${p.semantic.toFixed(2)}</td></tr>`;
+      const tbl = (rows, title) => `<h4>${title}</h4><table class="fd-table"><thead><tr><th>${T('Pair', '星团对')}</th><th>${T('Institution similarity', '机构相似度')}</th><th>${T('Shared institutions', '共同机构')}</th><th>${T('Citations vs expected', '引用 / 期望')}</th><th>${T('Content', '内容')}</th></tr></thead><tbody>${rows.map(row).join('')}</tbody></table>`;
+      return [['collab', T('Which research lines share institutions?', '哪些研究线共享机构？'),
+        T(`Shared institutions follow content only weakly (ρ = ${k.rhoSemantic}, against 0.78 for citations): the most similar institution profiles are ${pairName(t0)}; ${k.apart.length} pairs share institutions but rarely cite each other.`,
+          `机构重合和内容的关系很弱（ρ = ${k.rhoSemantic}，引用和内容是 0.78）：机构分布最相似的是 ${pairName(t0)}；另有 ${k.apart.length} 对星团用的是同一批机构，却很少互相引用。`),
+        `<p class="fd-note">${T(`Each pair is compared on works that belong to one of the two clusters only, ${num(k.pairs)} pairs with at least 20 such works each; institution similarity is the cosine of their works-per-ROR-institution profiles.`, `每对星团只用分别独有的工作比较（两边各至少 20 项，共 ${num(k.pairs)} 对）；机构相似度是两边“各机构的工作数”分布的余弦。`)}</p>
+        <div class="fd-two"><div>${tbl(k.top, T('Most similar institution profiles', '机构分布最相似'))}</div><div>${tbl(k.apart, T('Same institutions, little citing', '同一批机构，却很少互相引用'))}</div></div>`]]; })(),
     scope: !P.scope ? [] : (() => { const a = Object.fromEntries(P.scope.agent.map(r => [r.key, r])); return [
       ['scope', T('What does agent safety study? Two questions: the agent, and the safety', 'Agent 安全研究的是什么？两个问题：和智能体的关系，和安全的关系'),
         T(`On the agent axis, ${pctf(a.A.share, 0)} of the works study digital agents, ${pctf(a.B.share, 0)} physical agents (robots, vehicles, drones) and ${pctf(a.C.share, 0)} reinforcement-learning agents in simulators; ${pctf(a.D.share, 0)} have no concrete agent: they study the model itself or alignment theory, or survey the field, and are in as foundational work.`,
@@ -952,10 +1117,10 @@ function questionPool() {
 const PLACE = {'connect:traditions': 'structure', 'connect:venues': 'structure', 'attack:surfaces': 'structure', 'attack:mechanisms': 'structure',
   'tail:shape': 'structure', 'tail:gaps': 'structure', 'evolve:reading': 'connect', 'tail:bridges': 'connect', 'navigate:newcomers': 'lead',
   'targets:country': 'lead', 'evolve:timeline': 'attack', 'targets:models': 'attack', 'tail:imbalance': 'attack', 'navigate:next': 'evolve'};
-const HOME_LENS = {scope: 'structure', evolve: 'evolve', connect: 'connect', lead: 'lead', attack: 'attack', targets: 'structure', tail: 'evolve', navigate: 'navigate'};
+const HOME_LENS = {people: 'connect', scope: 'structure', evolve: 'evolve', connect: 'connect', lead: 'lead', attack: 'attack', targets: 'structure', tail: 'evolve', navigate: 'navigate'};
 const RENAME = {'evolve:timeline': 'onset'};  // two questions named "timeline" now share the attack lens
 const ORDER = {structure: ['scope', 'traditions', 'venues', 'settings', 'risk', 'surfaces', 'mechanisms', 'shape', 'gaps'],
-  connect: ['layers', 'buildson', 'hubs', 'supply', 'lifecycle', 'inflation', 'reading', 'notreading', 'bridges'],
+  connect: ['layers', 'reading', 'notreading', 'bridges', 'buildson', 'hubs', 'supply', 'lifecycle', 'inflation', 'collab'],
   attack: ['balance', 'timeline', 'onset', 'comparable', 'adaptive', 'realism', 'models', 'imbalance'],
   evolve: ['growth', 'shift', 'diversify', 'terms', 'diffusion', 'path', 'radar', 'backtest', 'rising', 'open', 'next'],
   navigate: ['pilot', 'bands', 'nova']};
@@ -1000,6 +1165,7 @@ export function renderLens(ctx) {
   const list = `<ol class="ln-qlist">${qs.map(([qid, q, a], i) => `<li><button data-ln-q="${qid}"><span class="ln-qn">${String(i + 1).padStart(2, '0')}</span><span><b>${q}</b><em>${esc(a)}</em></span></button></li>`).join('')}</ol>`;
   const blocks = qs.map(([qid, q, a, body], i) => `<section class="fd-section ln-q" id="q-${qid}"><div class="ln-qhead"><span class="ln-qn">${String(i + 1).padStart(2, '0')}</span><div><h2>${q}</h2><p class="ln-answer">${esc(a)}</p></div></div>${body}</section>`).join('');
   if (id === 'key') return shell(`${tabs}${keyFindings(meta)}`);
+  if (id === 'connect' && P.connect) { cxStop(); cx.q = ''; cx.hl = null; return shell(`${tabs}<section class="ln-lead"><span class="fd-kicker">${T('LENS', '视角')} · ${meta[id][0]} · ${versionKicker()}</span><h2>${meta[id][1]}</h2>${versionNote()}</section>${cxGlobal()}${cxFindings(qs)}`, 'cx-lens'); }
   return shell(`${tabs}<section class="ln-lead"><span class="fd-kicker">${T('LENS', '视角')} · ${meta[id][0]} · ${versionKicker()}</span><h2>${meta[id][1]}</h2>${versionNote()}${list}</section>${blocks}`);
 }
 export const findingsData = () => dataset;
