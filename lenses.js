@@ -275,11 +275,18 @@ export function bindLenses(ctx, root = document.querySelector('.fd')) {
   if (!root) return;
   const tip = root.querySelector('.fd-tip');
   root.addEventListener('input', e => { if (e.target.matches('[data-cr-month]')) { const was = cr.timer; crStop(); cr.m = +e.target.value; crRedraw('month'); if (was) { const b = root.querySelector('[data-cr-play]'); if (b) b.textContent = '▶'; } } });
-  crBind(root);
+  crBind(root); psBind(root);
+  root.querySelector('[data-ps-inner]')?.addEventListener('change', e => { if (e.target.matches('[data-ps-role]')) { psStop(); ps.role = +e.target.value; ps.hl = null; psRedraw(); } });
   root.addEventListener('click', e => {
-    const el = e.target.closest('[data-cr-view],[data-cr-level],[data-cr-layer],[data-cr-win],[data-cr-play],[data-cr-open],[data-cr-show],[data-cr-pair],[data-cr-unit],[data-fd-ids],[data-fd-paper],[data-fd-list],[data-fd-jump],[data-fd-layer],[data-fd-pair],[data-fd-bench],[data-ln-lens],[data-ln-goto],[data-ln-q],[data-ln-ms-kind],[data-ln-insight],.fd-close');
+    const el = e.target.closest('[data-ps-y],[data-ps-year],[data-ps-play],[data-ps-open],[data-ps-show],[data-ps-cell],[data-cr-view],[data-cr-level],[data-cr-layer],[data-cr-win],[data-cr-play],[data-cr-open],[data-cr-show],[data-cr-pair],[data-cr-unit],[data-fd-ids],[data-fd-paper],[data-fd-list],[data-fd-jump],[data-fd-layer],[data-fd-pair],[data-fd-bench],[data-ln-lens],[data-ln-goto],[data-ln-q],[data-ln-ms-kind],[data-ln-insight],.fd-close');
     if (!el) return;
     if (el.matches('.fd-close')) { root.querySelector('.fd-drawer').hidden = true; return; }
+    if (el.dataset.psY) { psStop(); ps.y = el.dataset.psY; ps.hl = null; psRedraw(); return; }
+    if (el.dataset.psYear) { psStop(); ps.year = el.dataset.psYear; psRedraw(); return; }
+    if ('psPlay' in el.dataset) { psPlay(); return; }
+    if (el.dataset.psOpen) { const art = el.closest('.cr-card'), open = el.getAttribute('aria-expanded') === 'true'; el.setAttribute('aria-expanded', String(!open)); art.querySelector('.cr-body').hidden = open; psActivate(el.dataset.psOpen); return; }
+    if (el.dataset.psShow) { psActivate(el.dataset.psShow); root.querySelector('[data-ps-stage]')?.scrollIntoView({block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'}); return; }
+    if (el.dataset.psCell) { psDrawer(el.dataset.psCell); return; }
     if (el.dataset.crView) { crStop(); cr.view = el.dataset.crView; if (cr.view === 'topo' && !crFlow()) cr.layer = 'cite'; crRedraw(); return; }
     if (el.dataset.crLevel) { cr.level = el.dataset.crLevel; cr.focus = -1; crRedraw(); return; }
     if (el.dataset.crLayer) { cr.layer = el.dataset.crLayer; crRedraw(); return; }
@@ -302,7 +309,7 @@ export function bindLenses(ctx, root = document.querySelector('.fd')) {
     if (el.dataset.lnGoto) {
       const [lens, qid] = el.dataset.lnGoto.split(':');
       ctx.state.lens = lens; ctx.writeHash(); ctx.render();
-      requestAnimationFrame(() => { const h = document.querySelector(`#q-${qid} [data-cr-open]`); if (h && h.getAttribute('aria-expanded') !== 'true') h.click(); document.getElementById('q-' + qid)?.scrollIntoView({block: 'start'}); });
+      requestAnimationFrame(() => { const h = document.querySelector(`#q-${qid} [data-cr-open], #q-${qid} [data-ps-open]`); if (h && h.getAttribute('aria-expanded') !== 'true') h.click(); document.getElementById('q-' + qid)?.scrollIntoView({block: 'start'}); });
       return;
     }
     if (el.dataset.lnQ) { document.getElementById('q-' + el.dataset.lnQ)?.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start'}); return; }
@@ -730,8 +737,8 @@ export function lensMeta(t) {
 // groups inside a chapter (the Connection chapter has its own, CR_GROUPS); a question not listed follows at the end
 const LN_GROUPS = () => ({
   structure: [['object', T('What is studied', '研究对象与边界'), T('agents, venues and the edges of the field', '智能体、发表场所与领域边界'), ['scope', 'traditions', 'venues', 'settings']],
-    ['risk', T('Risks and entry points', '风险与入口'), T('where harm comes from and how attacks get in', '风险从哪来，攻击从哪进'), ['risk', 'surfaces', 'gaps']],
-    ['attackdef', T('Attack, defence and evaluation', '攻防与评测'), T('what is attacked, how it is defended, how well it is tested', '攻什么、怎么守、检验得怎样'), ['balance', 'imbalance', 'mechanisms', 'adaptive', 'realism']]],
+    ['risk', T('What is at stake', '安全问题'), T('the requirement protected, where the risk comes from, where it occurs, who is harmed', '守护哪条要求、风险从哪来、出在哪里、伤害什么'), ['psafety', 'risk', 'pcomponent', 'pharm', 'surfaces', 'gaps']],
+    ['attackdef', T('Attack, defence and evaluation', '攻防与评测'), T('what is attacked, how it is defended, how well it is tested', '攻什么、怎么守、检验得怎样'), ['balance', 'imbalance', 'mechanisms', 'pstage', 'adaptive', 'realism']]],
   lead: [['countries', T('Countries', '国家'), T('where the work comes from, and how the map shifts', '研究来自哪里，格局怎样变化'), ['shares', 'rising', 'directions', 'pioneers', 'geoconc', 'punch', 'apart']],
     ['institutions', T('Institutions', '机构'), T('who produces, who supplies, who sets the pace', '谁产出、谁供给、谁定节奏'), ['concentration', 'influence', 'industry', 'bigteams', 'newcomers', 'people']]],
   evolve: [['pace', T('Pace', '节奏'), T('how fast the field grows, and where its weight moves', '长得多快，重心往哪移'), ['growth', 'shift', 'diversify', 'path']],
@@ -864,6 +871,174 @@ const B3 = {
 // ------------------------------------------------------------------------------------------------ tail & gaps (RQ5, findings.tail)
 const FACET_NAME = (kind, v) => ({surface: SURFACE_NAMES(), setting: SETTING_NAMES(), mechanism: MECH_NAMES()}[kind] || {})[v] || v.replace(/_/g, ' ');
 const tierName = t => ({head: T('head', '头部'), torso: T('middle', '中部'), tail: T('tail', '长尾'), absent: T('absent', '尚未出现')}[t] || t);
+// ------------------------------------------------------------------------------------------------ Positioning chapter: the placement map (findings.position)
+// A mosaic of where works sit: one column per agent kind (as wide as its works), split by a chosen dimension (the safety
+// requirement by default; risk origin, system component, harm domain, contribution type or defence stage), for a year or
+// all years, optionally for one contribution type. The findings scroll beside it and set it to what they describe.
+const PS_COLORS = ['#336aab', '#c26541', '#905082', '#5e8c2e', '#6458aa', '#ab4440', '#b48b12', '#00897a'];
+const PS_NAMES = () => ({
+  agent: {digital_agent: T('Digital agents', '数字智能体'), physical_agent: T('Physical agents', '物理智能体'), rl_agent: T('RL agents in simulators', '仿真中的 RL 智能体'), no_concrete_agent: T('No concrete agent', '没有具体的智能体')},
+  safety: {goal_intent_alignment: T('Goal and intent', '目标与意图一致性'), information_state_integrity: T('Information and state integrity', '信息与状态完整性'), authorization_information_boundary: T('Authorisation and information boundary', '授权与信息边界'),
+    action_consequence_safety: T('Action and consequence', '行动与后果安全性'), oversight_correctability: T('Oversight and correctability', '可监督与可纠正性'), collaboration_composition: T('Collaboration and composition', '协作与组合安全性'),
+    safety_under_update: T('Safety under update', '更新后的安全保持'), comprehensive: T('Comprehensive', '综合')},
+  origin: {human_adversarial: T('People attacking', '人为对抗'), human_non_adversarial: T('People, without intent', '人为非对抗'), agent_internal: T('The agent itself', 'Agent 内部失效'), human_agent_interaction: T('Human-agent interaction', '人机交互风险'), multi_agent_emergent: T('Several agents interacting', '多 Agent 交互与涌现')},
+  components: {model: T('Model', '模型'), retrieval: T('Retrieval', '检索模块'), memory: T('Memory', '记忆'), tools_interfaces: T('Tools and interfaces', '工具与接口'), execution_environment: T('Execution environment', '执行环境'), communication_interface: T('Communication interfaces', '通信与交互接口')},
+  harm: {discrimination_toxicity: T('Discrimination and toxicity', '歧视与毒性'), privacy_security: T('Privacy and security', '隐私与安全'), misinformation: T('Misinformation', '错误信息'), malicious_use: T('Malicious actors and misuse', '恶意行为者与滥用'), human_computer_interaction: T('Human-computer interaction', '人机交互'), socioeconomic_environmental: T('Socioeconomic and environmental', '社会经济与环境'), ai_system_safety: T('AI system safety and failures', 'AI 系统安全、失效与局限')},
+  role: {attack: T('Attack', '攻击'), defense: T('Defence', '防御'), benchmark: T('Benchmark', '基准'), measurement: T('Measurement', '测量'), analysis_theory: T('Analysis and theory', '分析与理论'), system_tool: T('System or tool', '系统与工具'), survey_position: T('Survey or position', '综述与立场')},
+  stage: {prevention: T('Prevention', '事前预防'), runtime_detection: T('Runtime detection', '运行时检测与拦截'), formal_guarantee: T('Formal guarantee', '形式保证'), after_the_fact: T('After the fact', '事后诊断与恢复')}});
+const PS_DIMS = () => [['safety', T('Safety requirement', '安全要求')], ['origin', T('Risk origin', '风险来源')], ['components', T('Component', '系统组件')], ['harm', T('Harm domain', '伤害领域')], ['role', T('Contribution', '贡献类型')], ['stage', T('Defence stage', '防御环节')]];
+const ps = {y: 'safety', year: 'all', role: -1, hl: null, q: '', timer: 0};
+// which column of the per-work codes holds a dimension, and whether it is a bit set (a work in several parts counts in each, fractionally)
+const PS_COL = {safety: [1, false], origin: [2, false], components: [3, true], harm: [4, true], role: [5, false], stage: [6, true]};
+function psRows() {
+  const P0 = P.position, yr = ps.year, rows = [];
+  for (let k = 0; k < P0.codes.length; k++) {
+    const c = P0.codes[k], y = c[7];
+    if (yr !== 'all' && (yr === 'early' ? !(y && y < P0.years[1]) : y !== +yr)) continue;
+    if (ps.role >= 0 && c[5] !== ps.role) continue;
+    if (ps.y === 'stage' && !c[6]) continue;  // defence stages exist only for defences
+    rows.push(k);
+  }
+  return rows;
+}
+function psParts(c) {  // [[value index, weight]] of one work on the current dimension
+  const [col, many] = PS_COL[ps.y], v = c[col];
+  if (!many) return v >= 0 ? [[v, 1]] : [];
+  const on = []; for (let b = 0; b < 8; b++) if (v >> b & 1) on.push(b);
+  return on.map(b => [b, 1 / on.length]);
+}
+function psCube() {
+  const P0 = P.position, A = P0.dims.agent.length, V = P0.dims[ps.y].length, cell = Array.from({length: A}, () => Array(V).fill(0)), ids = Array.from({length: A}, () => Array.from({length: V}, () => []));
+  for (const k of psRows()) { const c = P0.codes[k]; for (const [v, w] of psParts(c)) { cell[c[0]][v] += w; ids[c[0]][v].push(k); } }
+  return {cell, ids};
+}
+function psSvg() {
+  const P0 = P.position, names = PS_NAMES(), dims = P0.dims, {cell} = psCube(), A = dims.agent.length, V = dims[ps.y].length;
+  const tot = cell.map(r => r.reduce((s, x) => s + x, 0)), all = tot.reduce((s, x) => s + x, 0) || 1, W = 640, top = 44, H = 420, gap = 8;
+  const narrow = matchMedia('(max-width: 640px)').matches, hl = ps.hl;
+  let x = 0;
+  const colsW = tot.map(t => Math.max(t ? 34 : 0, (W - gap * (A - 1)) * t / all)), scale = (W - gap * (A - 1)) / colsW.reduce((s, x) => s + x, 0);
+  const out = [];
+  for (let a = 0; a < A; a++) {
+    const w = colsW[a] * scale; if (!w) continue;
+    const label = names.agent[dims.agent[a]], short = narrow ? [T('Digital', '数字'), T('Physical', '物理'), T('RL', 'RL'), T('None', '无')][a] : [T('Digital', '数字智能体'), T('Physical', '物理智能体'), T('RL (sim.)', '仿真 RL'), T('No agent', '无具体智能体')][a];
+    out.push(`<text x="${(x + w / 2).toFixed(1)}" y="14" text-anchor="middle" class="ps-col">${esc(w < 150 || narrow ? short : label)}</text><text x="${(x + w / 2).toFixed(1)}" y="32" text-anchor="middle" class="fd-axis ps-sub">${narrow ? pctf(100 * tot[a] / all, 0) : `${num(Math.round(tot[a]))} · ${pctf(100 * tot[a] / all, 0)}`}</text>`);
+    let y = top;
+    for (let v = 0; v < V; v++) {
+      const h = tot[a] ? (H - top - 1.5 * (V - 1)) * cell[a][v] / tot[a] : 0; if (h < 0.3) continue;
+      const on = hl ? (hl.cells || []).some(([p, q]) => p === a && q === v) || (hl.cols || []).includes(a) || (hl.rows || []).includes(v) : null;
+      const share = 100 * cell[a][v] / tot[a], vname = names[ps.y][dims[ps.y][v]];
+      out.push(`<rect class="ps-cell${on === true ? ' is-hl' : on === false ? ' is-dim' : ''}" x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" fill="${PS_COLORS[v % 8]}" data-ps-cell="${a}|${v}" data-tip="${esc(`${label} · ${vname}: ${num(Math.round(cell[a][v]))} (${pctf(share)})`)}"/>`);
+      if (h >= 15 && w >= 44) out.push(`<text class="ps-in${on === false ? ' is-dim' : ''}" x="${(x + 6).toFixed(1)}" y="${(y + Math.min(h / 2, 12) + 4).toFixed(1)}">${pctf(share, 0)}</text>`);
+      y += h + 1.5;
+    }
+    x += w + gap;
+  }
+  return `<svg class="ps-map${hl ? ' has-hl' : ''}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${T('Where works sit', '论文落在哪里')}">${out.join('')}</svg>`;
+}
+function psLegend() {
+  const names = PS_NAMES(), d = P.position.dims[ps.y];
+  return `<div class="ps-legend">${d.map((k, v) => `<span><i style="background:${PS_COLORS[v % 8]}"></i>${esc(names[ps.y][k])}</span>`).join('')}</div>`;
+}
+function psNote() {
+  const many = PS_COL[ps.y][1], P0 = P.position;
+  return `${T(`Column width: number of works; segments: share of the column. ${many ? 'A work with several values counts in part in each. ' : ''}${ps.y === 'stage' ? 'Defences only. ' : ''}Click a segment for its works.`, `列宽：工作数；色块：在该列中的比例。${many ? '一项工作有多个取值时，在每个取值中各计一部分。' : ''}${ps.y === 'stage' ? '只统计防御。' : ''}点击色块查看其中的工作。`)} ${T(`Labels: Claude Opus 5.5 on title and abstract (rules ${P0.rules}), ${num(P0.labelled)} of ${num(P0.works)} works.`, `标签：Claude Opus 5.5 读取标题与摘要（规则 ${P0.rules}），${num(P0.works)} 项中已标注 ${num(P0.labelled)} 项。`)}${P0.agreement ? T(` A second reader (DeepSeek) agrees on the agent kind for ${pctf(P0.agreement.agent_kind)}, the safety requirement ${pctf(P0.agreement.safety_primary)} (${pctf(P0.agreement.safetyWithinOther)} within each other's secondary), the risk origin ${pctf(P0.agreement.risk_origin_primary)}.`, ` 第二位标注者（DeepSeek）在智能体类型上一致 ${pctf(P0.agreement.agent_kind)}，安全要求 ${pctf(P0.agreement.safety_primary)}（含次要求 ${pctf(P0.agreement.safetyWithinOther)}），风险来源 ${pctf(P0.agreement.risk_origin_primary)}。`) : ''}`;
+}
+function psControls() {
+  const seg = (attr, items, cur) => `<span class="cx-seg">${items.map(([k, l]) => `<button data-${attr}="${k}" aria-pressed="${String(k) === String(cur)}">${l}</button>`).join('')}</span>`;
+  const P0 = P.position, years = [['all', T('All years', '全部')], ['early', `≤${P0.years[0]}`], ...P0.years.slice(1).map(y => [y, String(y)])], names = PS_NAMES();
+  return `<div class="cr-controls">${seg('ps-y', PS_DIMS(), ps.y)}</div>
+    <div class="cr-controls">${seg('ps-year', years, ps.year)}<button class="cr-play" data-ps-play aria-label="${T('Play the years', '逐年播放')}">${ps.timer ? '❚❚' : '▶'}</button>
+      <label class="ps-role">${T('Contribution', '贡献类型')} <select data-ps-role><option value="-1">${T('all', '全部')}</option>${P0.dims.role.map((r, i) => `<option value="${i}"${i === ps.role ? ' selected' : ''}>${esc(names.role[r])}</option>`).join('')}</select></label></div>`;
+}
+function psStageInner() { return `${psControls()}<div class="cr-figure" data-ps-fig>${psSvg()}</div>${psLegend()}<p class="fd-note">${psNote()}</p>`; }
+function psStage() {
+  return `<section class="cr-stage ps-stage" data-ps-stage><span class="fd-kicker">${T('THE PLACEMENT MAP', '全局视图 · 落点图')}</span><h3>${T('Where works sit: agent kind × what is at stake', '论文落在哪里：智能体类型 × 安全问题')}</h3>
+    <p class="fd-note cr-intro">${T('One column per kind of agent, as wide as its works; the segments split it by the dimension chosen above. Pick a year, or a contribution type. Each finding on the right sets the map to what it describes.', '每一列是一类智能体，列宽是它的工作数；色块按上方选的维度切分。可以选年份，也可以只看某一类贡献。右边每条发现都会把这里切到它说的那种情况。')}</p>
+    <div data-ps-inner>${psStageInner()}</div></section>`;
+}
+function psConfig(qid) {
+  const d = P.position?.dims, c = {y: 'safety', year: 'all', role: -1, hl: null, note: ''}, ri = r => d.role.indexOf(r);
+  const notes = {
+    scope: T('Map: all works by agent kind and safety requirement.', '落点图：全部工作，按智能体类型 × 安全要求。'),
+    traditions: T('Map: the control and robotics side (physical and RL agents) against digital agents.', '落点图：控制与机器人一侧（物理与 RL 智能体）对数字智能体。'),
+    venues: T('Map: by contribution type.', '落点图：按贡献类型。'),
+    settings: T('Map: the agent kinds in the latest year.', '落点图：最近一年的智能体类型。'),
+    psafety: T('Map: safety requirements within each agent kind.', '落点图：各类智能体内部的安全要求。'),
+    risk: T('Map: where the risk comes from.', '落点图：风险从哪来。'),
+    pcomponent: T('Map: where in the system the problem occurs.', '落点图：问题出在系统的哪个部分。'),
+    pharm: T('Map: who or what is harmed (MIT AI Risk Repository domains).', '落点图：伤害的是什么（MIT AI 风险库的领域）。'),
+    surfaces: T('Map: attack papers only, by risk origin.', '落点图：只看攻击论文，按风险来源。'),
+    gaps: T('Map: system components, to see the thin combinations.', '落点图：按系统组件，看哪些组合很薄。'),
+    balance: T('Map: by contribution type: attacks, defences, benchmarks.', '落点图：按贡献类型：攻击、防御、基准。'),
+    imbalance: T('Map: by contribution type in the latest year.', '落点图：最近一年，按贡献类型。'),
+    mechanisms: T('Map: defences only, by stage.', '落点图：只看防御，按环节。'),
+    pstage: T('Map: defences only, by the stage at which they act.', '落点图：只看防御，按起作用的环节。'),
+    adaptive: T('Map: defences by stage; formal guarantees are the thin band.', '落点图：防御按环节；形式保证是最薄的一层。'),
+    realism: T('Map: benchmarks and measurements by safety requirement.', '落点图：基准与测量论文，按安全要求。')};
+  if (!d) return c;
+  const last = P.position.years[P.position.years.length - 1];
+  const cfg = {scope: {}, traditions: {hl: {cols: [1, 2]}}, venues: {y: 'role'}, settings: {year: last}, psafety: {}, risk: {y: 'origin'}, pcomponent: {y: 'components'},
+    pharm: {y: 'harm'}, surfaces: {y: 'origin', role: ri('attack')}, gaps: {y: 'components'}, balance: {y: 'role', hl: {rows: [ri('attack'), ri('defense'), ri('benchmark')]}},
+    imbalance: {y: 'role', year: last}, mechanisms: {y: 'stage'}, pstage: {y: 'stage'}, adaptive: {y: 'stage', hl: {rows: [2]}}, realism: {role: ri('benchmark')}}[qid] || {};
+  return {...c, ...cfg, note: notes[qid] || ''};
+}
+function psRedraw() { const s = document.querySelector('[data-ps-inner]'); if (s) s.innerHTML = psStageInner(); }
+function psStop() { if (ps.timer) { clearInterval(ps.timer); ps.timer = 0; } }
+function psPlay() {
+  if (ps.timer) { psStop(); psRedraw(); return; }
+  const seq = ['early', ...P.position.years.slice(1)];
+  let k = 0; ps.year = seq[0]; psRedraw();
+  ps.timer = setInterval(() => { if (!document.querySelector('[data-ps-stage]')) return psStop(); k++; if (k >= seq.length) { psStop(); ps.year = 'all'; } else ps.year = seq[k]; psRedraw(); }, 1300);
+}
+function psActivate(qid) {
+  if (ps.q === qid) return;
+  const c = psConfig(qid);
+  psStop();
+  Object.assign(ps, {q: qid, y: c.y, year: c.year, role: c.role, hl: c.hl});
+  for (const el of document.querySelectorAll('.cr-card[data-ps-card]')) el.classList.toggle('is-active', el.dataset.psCard === qid);
+  psRedraw();
+}
+function psDrawer(key) {
+  const [a, v] = key.split('|').map(Number), P0 = P.position, names = PS_NAMES(), {ids} = psCube();
+  const list = ids[a][v].map(k => P0.ids[k]).sort((x, y) => (year(y) || '').localeCompare(year(x) || '')).slice(0, 80);
+  openDrawer(`${names.agent[P0.dims.agent[a]]} · ${names[ps.y][P0.dims[ps.y][v]]}`, `${list.length < ids[a][v].length ? `<p class="fd-note">${T(`The latest 80 of ${num(ids[a][v].length)}.`, `${num(ids[a][v].length)} 项中最新的 80 项。`)}</p>` : ''}${paperRows(list)}`);
+}
+function psCards(qs) {
+  const byq = Object.fromEntries(qs.map(q => [q[0], q])), used = new Set(), gs = LN_GROUPS().structure;
+  let n = 0;
+  const card = id => { const [qid, q, a, body] = byq[id]; used.add(qid); n++;
+    return `<article class="cr-card" id="q-${qid}" data-ps-card="${qid}"><button class="cr-card-head" data-ps-open="${qid}" aria-expanded="false"><span class="ln-qn">${String(n).padStart(2, '0')}</span><span class="cr-card-text"><b>${q}</b><em>${esc(a)}</em></span><i class="cx-chev" aria-hidden="true"></i></button>
+      <p class="fd-note cr-config"><span>${psConfig(qid).note}</span><button class="cr-show" data-ps-show="${qid}">${T('Show on the map ↑', '在落点图上看 ↑')}</button></p><div class="cr-body" hidden>${body}</div></article>`; };
+  const groups = gs.map(([key, name, sub, ids]) => { const got = ids.filter(id => byq[id]); return got.length ? `<section class="cr-group"><h3>${name}<small>${sub}</small></h3>${got.map(card).join('')}</section>` : ''; }).join('');
+  const rest = qs.filter(q => !used.has(q[0]));
+  return groups + (rest.length ? `<section class="cr-group"><h3>${T('More', '其他')}</h3>${rest.map(q => card(q[0])).join('')}</section>` : '');
+}
+const psLens = qs => `<div class="cr-wrap">${psStage()}<div class="cr-cards">${psCards(qs)}</div></div>`;
+let psObserver = null;
+function psBind(root) {
+  psObserver?.disconnect(); psObserver = null;
+  if (!root.querySelector('[data-ps-stage]')) return;
+  if ('IntersectionObserver' in window && matchMedia('(min-width: 1100px)').matches) {
+    psObserver = new IntersectionObserver(ens => { for (const en of ens) if (en.isIntersecting) psActivate(en.target.dataset.psCard); }, {rootMargin: '-40% 0px -55% 0px'});
+    root.querySelectorAll('.cr-card[data-ps-card]').forEach(el => psObserver.observe(el));
+  }
+}
+// charts for the new Positioning questions (bodies of the cards)
+const BP = {
+  table(rowsKey, colsKey, data, fmt = v => pctf(v, 0)) {  // agent kinds × values as a shaded table
+    const names = PS_NAMES(), d = P.position.dims, max = Math.max(...Object.values(data).flatMap(r => Object.values(r)), 1);
+    return `<table class="fd-table ps-table"><thead><tr><th></th>${d[colsKey].map(k => `<th>${esc(names[colsKey][k])}</th>`).join('')}</tr></thead><tbody>${d[rowsKey].map(r => `<tr><th>${esc(names[rowsKey][r])}</th>${d[colsKey].map(k => { const v = data[r]?.[k] || 0; return `<td style="background:${rgba(INK, (isDark() ? 0.75 : 0.55) * v / max)}">${fmt(v)}</td>`; }).join('')}</tr>`).join('')}</tbody></table>`;
+  },
+  hbars(key, data, color = COLORS.attention) {
+    const names = PS_NAMES(), rows = Object.entries(data).sort((a, b) => b[1] - a[1]), max = Math.max(...rows.map(r => r[1]), 1);
+    return `<div class="fd-hbars">${rows.map(([k, v]) => `<div class="fd-hbar"><span>${esc(names[key][k] || k)}</span>${barCell(v, max, color)}<b>${pctf(v)}</b></div>`).join('')}</div>`;
+  },
+  years(key, data) {
+    const names = PS_NAMES(), ks = Object.keys(data).sort((a, b) => data[b][data[b].length - 1] - data[a][data[a].length - 1]).slice(0, 6);
+    return lineChart(P.position.years.map((y, i) => i ? String(y) : `≤${y}`), ks.map((k, i) => ({label: names[key][k], color: PS_COLORS[P.position.dims[key].indexOf(k) % 8], values: data[k]})), {partialLast: true});
+  },
+};
 // ------------------------------------------------------------------------------------------------ Connection lens: the stage (findings.connect)
 // One stage shows how research areas connect, month by month: a ring of areas (the 8 galaxies, or the 19 clusters inside
 // their galaxy bands) with ribbons between them, or a topology of who builds on whom. The findings scroll beside it; each
@@ -1320,7 +1495,16 @@ function questionPool() {
           `机构重合和内容的关系很弱（ρ = ${k.rhoSemantic}，引用和内容是 0.78）：机构分布最相似的是 ${pairName(t0)}；另有 ${k.apart.length} 对星团用的是同一批机构，却很少互相引用。`),
         `<p class="fd-note">${T(`Each pair is compared on works that belong to one of the two clusters only, ${num(k.pairs)} pairs with at least 20 such works each; institution similarity is the cosine of their works-per-ROR-institution profiles.`, `每对星团只用分别独有的工作比较（两边各至少 20 项，共 ${num(k.pairs)} 对）；机构相似度是两边“各机构的工作数”分布的余弦。`)}</p>
         <div class="fd-two"><div>${tbl(k.top, T('Most similar institution profiles', '机构分布最相似'))}</div><div>${tbl(k.apart, T('Same institutions, little citing', '同一批机构，却很少互相引用'))}</div></div>`]]; })(),
-    scope: !P.scope ? [] : (() => { const a = Object.fromEntries(P.scope.agent.map(r => [r.key, r])); return [
+    scope: P.position ? (() => { const S = P.position.summary, N = PS_NAMES(), a = S.agent, f = S.foundational, mk = S.physicalMaker, old = P.scope ? Object.fromEntries(P.scope.agent.map(r => [r.key, r])) : null;
+      const fl = k => ({F1: T('goal and behaviour alignment', '目标与行为对齐机制'), F2: T('oversight and control', '监督与控制'), F3: T('the instruction-data trust boundary', '指令与数据的信任边界'), F4: T('dangerous-capability evaluations', '危险能力评测'), F5: T('surveys and agendas', '综述与研究议程'), out: T('outside F1–F5', '不符合 F1–F5')}[k]);
+      const body = `<div class="fd-hbars">${['digital_agent', 'physical_agent', 'rl_agent', 'no_concrete_agent'].map(k => `<div class="fd-hbar"><span>${N.agent[k]} <small>(${num(S.agentN[k])})</small></span>${barCell(a[k], 50, PS_COLORS[['digital_agent', 'physical_agent', 'rl_agent', 'no_concrete_agent'].indexOf(k)])}<b>${pctf(a[k])}</b></div>`).join('')}</div>
+        <h4>${T('Works with no concrete agent: which foundational rule admits them', '没有具体智能体的工作：凭哪条基础层规则收录')}</h4><div class="fd-hbars">${['F1', 'F2', 'F3', 'F4', 'F5', 'out'].map(k => `<div class="fd-hbar"><span>${k === 'out' ? '' : k + ' · '}${fl(k)}</span>${barCell(f[k] || 0, Math.max(...Object.values(f)), k === 'out' ? COLORS.connection : COLORS.attention)}<b>${num(f[k] || 0)}</b></div>`).join('')}</div>
+        <p class="fd-note">${T(`Decision makers of physical agents: learned policy ${num(mk.learned_policy)}, foundation model ${num(mk.foundation_model)}, not stated ${num(mk.not_stated)}, classical controller ${num(mk.classical)}. The ${num(f.out || 0)} works outside F1–F5 and the ${num(mk.classical || 0)} physical-agent works with a classical controller are listed for the owner's review; nothing is removed automatically.`, `物理智能体的决策器：学习到的策略 ${num(mk.learned_policy)}，基础模型 ${num(mk.foundation_model)}，未说明 ${num(mk.not_stated)}，经典控制器 ${num(mk.classical)}。不符合 F1–F5 的 ${num(f.out || 0)} 项与使用经典控制器的 ${num(mk.classical || 0)} 项物理智能体工作已列出供站主复核，不会自动移除。`)}${old ? T(` With the earlier setting labels (A3), ${pctf(old.D.share, 0)} had no concrete agent; reading each abstract finds agents in many of them.`, ` 按早先的场景标签（A3），${pctf(old.D.share, 0)} 的工作没有具体智能体；逐篇读摘要后，其中不少其实研究的是智能体。`) : ''}</p>
+        ${old ? `<details class="ln-details"><summary>${T('The earlier version of this question (A3, setting labels)', '这个问题的早先版本（A3，按场景标签）')}</summary>${B5.scope()}</details>` : ''}`;
+      return [['scope', T('What does agent safety study? Two questions: the agent, and the safety', 'Agent 安全研究的是什么？两个问题：和智能体的关系，和安全的关系'),
+        T(`${pctf(a.digital_agent, 0)} of the works study digital agents, ${pctf(a.physical_agent, 0)} physical agents (robots, vehicles, drones), ${pctf(a.rl_agent, 0)} reinforcement-learning agents in simulators; ${pctf(a.no_concrete_agent, 0)} study no concrete agent and are in as foundational work (alignment, oversight, the instruction-data boundary, dangerous capabilities, surveys).`,
+          `${pctf(a.digital_agent, 0)} 研究数字智能体，${pctf(a.physical_agent, 0)} 研究机器人、车、无人机等物理智能体，${pctf(a.rl_agent, 0)} 研究仿真中的强化学习智能体；${pctf(a.no_concrete_agent, 0)} 没有具体的智能体，作为基础工作收录（对齐、监督、指令与数据边界、危险能力、综述）。`), body]]; })() :
+!P.scope ? [] : (() => { const a = Object.fromEntries(P.scope.agent.map(r => [r.key, r])); return [
       ['scope', T('What does agent safety study? Two questions: the agent, and the safety', 'Agent 安全研究的是什么？两个问题：和智能体的关系，和安全的关系'),
         T(`On the agent axis, ${pctf(a.A.share, 0)} of the works study digital agents, ${pctf(a.B.share, 0)} physical agents (robots, vehicles, drones) and ${pctf(a.C.share, 0)} reinforcement-learning agents in simulators; ${pctf(a.D.share, 0)} have no concrete agent: they study the model itself or alignment theory, or survey the field, and are in as foundational work.`,
           `按智能体轴：${pctf(a.A.share, 0)} 研究数字智能体，${pctf(a.B.share, 0)} 研究机器人、车、无人机等物理智能体，${pctf(a.C.share, 0)} 研究仿真中的强化学习智能体；另有 ${pctf(a.D.share, 0)} 没有具体的智能体，研究的是模型本身、对齐理论或综述，作为基础工作收录。`), B5.scope()]]; })(),
@@ -1370,6 +1554,22 @@ function questionPool() {
         : ['adaptive', T('Are defences tested against adaptive attacks?', '防御是否经过自适应攻击检验？'), T('Waiting for the facet labels.', '等待 LLM 标签。'), B.pending(T('The facet labelling records, for each defence, whether its abstract reports tests against adaptive attacks.', 'LLM 标签会为每项防御记录其摘要是否报告了自适应攻击检验。'))],
       ...(fx.evaluation ? [['realism', T('How realistic are the evaluations?', '评测有多接近真实？'), T(`Among attack, defence and benchmark papers, simulated environments went to ${pctf(lastOf(fx.evaluation.share.simulated_environment))}; real systems stay at ${pctf(lastOf(fx.evaluation.share.real_system))}.`, `在攻击、防御与基准论文中，模拟环境升到 ${pctf(lastOf(fx.evaluation.share.simulated_environment))}；真实系统一直只有 ${pctf(lastOf(fx.evaluation.share.real_system))}。`), B.facetMultiples('evaluation', EVAL_NAMES(), T('Share per half-year of attack, defence and benchmark papers by how results are obtained.', '每半年攻击、防御与基准论文按结果获取方式的比例。'))]] : []),
     ],
+    position: !P.position ? [] : (() => { const S = P.position.summary, N = PS_NAMES(), d = P.position.dims, ys = P.position.years, top = (o, k = 3) => Object.entries(o).sort((a, b) => b[1] - a[1]).slice(0, k);
+      const sy = S.safetyYears, ch = k => `${N.safety[k]} ${pctf(sy[k][0])} → ${pctf(sy[k][sy[k].length - 1])}`, f = S.foundational, ag = P.position.agreement;
+      const up = Object.keys(sy).sort((a, b) => (sy[b].at(-1) - sy[b][0]) - (sy[a].at(-1) - sy[a][0]));
+      return [
+        ['psafety', T('Which safety requirement does the work protect?', '这些工作守护的是哪条安全要求？'), T(`It depends on the agent: digital agents ${top(S.byAgent.digital_agent, 2).map(([k, v]) => `${N.safety[k]} ${pctf(v, 0)}`).join(', ')}; physical agents ${N.safety.action_consequence_safety} ${pctf(S.byAgent.physical_agent.action_consequence_safety, 0)}; works without a concrete agent ${top(S.byAgent.no_concrete_agent, 2).map(([k, v]) => `${N.safety[k]} ${pctf(v, 0)}`).join(', ')}. Over time: ${ch(up[0])}, ${ch(up[1])}; ${ch(up[up.length - 1])} (≤${ys[0]} → ${ys[ys.length - 1]}).`,
+          `取决于智能体：数字智能体以${top(S.byAgent.digital_agent, 2).map(([k, v]) => `“${N.safety[k]}”${pctf(v, 0)}`).join('、')}为主；物理智能体“${N.safety.action_consequence_safety}”占 ${pctf(S.byAgent.physical_agent.action_consequence_safety, 0)}；没有具体智能体的工作以${top(S.byAgent.no_concrete_agent, 2).map(([k, v]) => `“${N.safety[k]}”${pctf(v, 0)}`).join('、')}为主。随时间：${ch(up[0])}，${ch(up[1])}；${ch(up[up.length - 1])}（≤${ys[0]} → ${ys[ys.length - 1]}）。`),
+          `${BP.table('agent', 'safety', S.byAgent)}<p class="fd-note">${T('Share of each agent kind\'s works by their main safety requirement.', '各类智能体的工作按主要安全要求的分布。')}</p>${BP.years('safety', sy)}<p class="fd-note">${T(`Share of each year's works; works before ${ys[0]} are counted with ${ys[0]}; the last year is incomplete.`, `各年工作中的比例；${ys[0]} 年以前的工作并入 ${ys[0]}；最后一年不完整。`)}</p>`],
+        ['pcomponent', T('Where in the system does the problem occur?', '问题出在系统的哪个部分？'), T(`Mostly the model (${pctf(S.components.model, 0)} of works) and the execution environment (${pctf(S.components.execution_environment, 0)}); for digital agents tools and interfaces (${pctf(S.componentsByAgent.digital_agent.tools_interfaces, 0)}) and communication (${pctf(S.componentsByAgent.digital_agent.communication_interface, 0)}) follow; memory ${pctf(S.components.memory, 0)} and retrieval ${pctf(S.components.retrieval, 0)} are thin.`,
+          `多数在模型（${pctf(S.components.model, 0)} 的工作）和执行环境（${pctf(S.components.execution_environment, 0)}）；数字智能体其次是工具与接口（${pctf(S.componentsByAgent.digital_agent.tools_interfaces, 0)}）和通信与交互接口（${pctf(S.componentsByAgent.digital_agent.communication_interface, 0)}）；记忆 ${pctf(S.components.memory, 0)}、检索 ${pctf(S.components.retrieval, 0)} 都很薄。`),
+          `${BP.table('agent', 'components', S.componentsByAgent)}<p class="fd-note">${T('Share of each agent kind\'s works naming each component; a work can name several.', '各类智能体的工作中涉及各组件的比例；一项工作可以涉及多个组件。')}</p>`],
+        ['pharm', T('Who or what is harmed?', '伤害的是什么？'), T(`Measured on the MIT AI Risk Repository's domains: ${top(S.harm, 2).map(([k, v]) => `${N.harm[k]} ${pctf(v, 0)}`).join(' and ')}; ${N.harm.malicious_use} ${pctf(S.harm.malicious_use, 0)}, ${N.harm.human_computer_interaction} ${pctf(S.harm.human_computer_interaction, 0)}, ${N.harm.discrimination_toxicity} ${pctf(S.harm.discrimination_toxicity, 0)}.`,
+          `按 MIT AI 风险库的领域：${top(S.harm, 2).map(([k, v]) => `${N.harm[k]} ${pctf(v, 0)}`).join('、')}；${N.harm.malicious_use} ${pctf(S.harm.malicious_use, 0)}、${N.harm.human_computer_interaction} ${pctf(S.harm.human_computer_interaction, 0)}、${N.harm.discrimination_toxicity} ${pctf(S.harm.discrimination_toxicity, 0)}。`),
+          `${BP.hbars('harm', S.harm)}<p class="fd-note">${T('Share of works; a work can touch several domains. Domains from Slattery et al., the MIT AI Risk Repository; agent safety sits mostly in two of its seven domains, so content harms (toxicity, misinformation) stay small here by design of the scope.', '工作中的比例；一项工作可以涉及多个领域。领域来自 MIT AI 风险库（Slattery 等）；agent 安全主要落在七个领域中的两个，毒性、错误信息等内容伤害按收录范围本来就少。')}</p>`],
+        ['pstage', T('Where in the agent\'s life do defences act?', '防御在哪个环节起作用？'), T(`Before acting most (${pctf(S.stage.prevention, 0)} of ${num(S.defences)} defences prevent), then at run time (${pctf(S.stage.runtime_detection, 0)}); ${pctf(S.stage.formal_guarantee, 0)} come with a formal guarantee and ${pctf(S.stage.after_the_fact, 0)} act after the fact.`, `事前最多（${num(S.defences)} 项防御中 ${pctf(S.stage.prevention, 0)} 是预防），其次是运行时（${pctf(S.stage.runtime_detection, 0)}）；${pctf(S.stage.formal_guarantee, 0)} 给出形式保证，${pctf(S.stage.after_the_fact, 0)} 在事后起作用。`),
+          `${BP.hbars('stage', S.stage, COLORS.supply)}${BP.table('safety', 'stage', S.stageBySafety)}<p class="fd-note">${T('Defences (main contribution type) by the stage at which they act, overall and per safety requirement; a defence can act at several stages.', '防御（主要贡献类型）按起作用的环节，整体与按安全要求；一项防御可以在多个环节起作用。')}</p>`],
+      ]; })(),
     models2026: !P.models2026 ? [] : (() => { const M = P.models2026, g = M.generations.filter(x => x.kind === 'llm' || x.kind === 'vlm'), F = M.frontier, fam = M.families, oc = M.openClosed.slice(-4, -1),
         avg = k => oc.reduce((s, r) => s + r[k], 0) / Math.max(1, oc.length), C2 = M.byCountry, fb = F.byMonth, early = fb.slice(0, 2), late = fb.slice(-5, -1), mid = v => v.map(r => r.median).sort((a, b) => a - b)[v.length >> 1];
       const gl = x => `${x.label} ${pctf(x.share)}`, vla = M.generations.filter(x => x.kind === 'vla').reduce((s, x) => s + x.papers, 0), guard = M.generations.filter(x => x.kind === 'guard').sort((a, b) => b.papers - a.papers);
@@ -1399,7 +1599,10 @@ function questionPool() {
       ['country', T('Do US and Chinese papers test different models?', '中美论文测的模型不同吗？'), T(`Yes: works from ${country('CN')} name Qwen ${pctf(bc.CN.share.Qwen, 0)} and DeepSeek ${pctf(bc.CN.share.DeepSeek, 0)} of the time, works from ${country('US')} ${pctf(bc.US.share.Qwen, 0)} and ${pctf(bc.US.share.DeepSeek, 0)}.`, `是的：${country('CN')}的工作点名 Qwen 的比例为 ${pctf(bc.CN.share.Qwen, 0)}、DeepSeek ${pctf(bc.CN.share.DeepSeek, 0)}；${country('US')}的工作分别为 ${pctf(bc.US.share.Qwen, 0)} 和 ${pctf(bc.US.share.DeepSeek, 0)}。`), B.modelsByCountry()],
       ['settings', T('Which kinds of agents are studied?', '研究的是哪些 agent？'), settingsAnswer(st), B.settings()],
     
-      ...(fx.risk ? [['risk', T('Where does the risk come from?', '风险来自哪里？'), T(`External attackers ${pctf(lastOf(fx.risk.share.external_attacker))}, the agent itself ${pctf(lastOf(fx.risk.share.agent_itself))}, non-adversarial failures ${pctf(lastOf(fx.risk.share.non_adversarial))} of recent labelled works.`, `近期已标注工作中，外部攻击者 ${pctf(lastOf(fx.risk.share.external_attacker))}，agent 自身 ${pctf(lastOf(fx.risk.share.agent_itself))}，非对抗性失误 ${pctf(lastOf(fx.risk.share.non_adversarial))}。`), B.facetMultiples('risk', RISK_NAMES(), T('Share of labelled works per half-year by where the risk comes from (a work can name several).', '每半年已标注工作按风险来源的比例（一项可涉及多类）。'))]] : []),
+      ...(P.position ? [['risk', T('Where does the risk come from?', '风险来自哪里？'), (() => { const S = P.position.summary, N = PS_NAMES(), oy = S.originYears, ys = P.position.years, o = Object.entries(S.origin).sort((a, b) => b[1] - a[1]);
+        return T(`${o.slice(0, 2).map(([k, v]) => `${N.origin[k]} ${pctf(v, 0)}`).join(', ')}; ${o.slice(2).map(([k, v]) => `${N.origin[k]} ${pctf(v, 0)}`).join(', ')}. People attacking went from ${pctf(oy.human_adversarial[0])} (≤${ys[0]}) to ${pctf(oy.human_adversarial.at(-1))} (${ys.at(-1)}).`, `${o.slice(0, 2).map(([k, v]) => `${N.origin[k]} ${pctf(v, 0)}`).join('，')}；${o.slice(2).map(([k, v]) => `${N.origin[k]} ${pctf(v, 0)}`).join('，')}。人为对抗从 ${pctf(oy.human_adversarial[0])}（≤${ys[0]}）升到 ${pctf(oy.human_adversarial.at(-1))}（${ys.at(-1)}）。`); })(),
+        `${BP.hbars('origin', P.position.summary.origin, COLORS.connection)}${BP.years('origin', P.position.summary.originYears)}<p class="fd-note">${T('Main risk origin of each work (the owner\'s scheme 2), share of all works and of each year\'s works. The earlier facet labels split the recent works into external attackers, the agent itself and non-adversarial failures at about a third each; the new labels separate people acting without intent, the human-agent interaction and several agents interacting.', '每项工作的主要风险来源（方案 2），占全部工作与各年工作的比例。早先的标签把近期工作分成外部攻击者、agent 自身、非对抗性失误，各约三分之一；新标签把无意的人为因素、人机交互、多智能体交互单独分出来。')}</p>`]]
+        : fx.risk ? [['risk', T('Where does the risk come from?', '风险来自哪里？'), T(`External attackers ${pctf(lastOf(fx.risk.share.external_attacker))}, the agent itself ${pctf(lastOf(fx.risk.share.agent_itself))}, non-adversarial failures ${pctf(lastOf(fx.risk.share.non_adversarial))} of recent labelled works.`, `近期已标注工作中，外部攻击者 ${pctf(lastOf(fx.risk.share.external_attacker))}，agent 自身 ${pctf(lastOf(fx.risk.share.agent_itself))}，非对抗性失误 ${pctf(lastOf(fx.risk.share.non_adversarial))}。`), B.facetMultiples('risk', RISK_NAMES(), T('Share of labelled works per half-year by where the risk comes from (a work can name several).', '每半年已标注工作按风险来源的比例（一项可涉及多类）。'))]] : []),
     ],
     tail: !P.tail ? [] : (() => {
       const tl = P.tail, th = tl.shape.threads, b = tl.backtest[0], o = b.roseOrigin, ex = b.examples.slice(0, 4);
@@ -1430,7 +1633,7 @@ const PLACE = {'connect:traditions': 'structure', 'connect:venues': 'structure',
   'evolve:reading': 'connect', 'tail:bridges': 'connect', 'attack:comparable': 'connect', 'navigate:newcomers': 'lead', 'targets:country': 'models',
   'attack:timeline': 'evolve', 'tail:shape': 'evolve', 'navigate:next': 'evolve'};
 // navigate: the resource check (pilot, bands, nova) is shown on the universe page through renderEvidence, not in a chapter
-const HOME_LENS = {people: 'connect', scope: 'structure', evolve: 'evolve', connect: 'connect', lead: 'lead', attack: 'structure', targets: 'structure', tail: 'evolve', navigate: 'universe', models2026: 'models', oss: 'oss'};
+const HOME_LENS = {people: 'connect', scope: 'structure', evolve: 'evolve', connect: 'connect', lead: 'lead', attack: 'structure', targets: 'structure', tail: 'evolve', navigate: 'universe', models2026: 'models', oss: 'oss', position: 'structure'};
 const RENAME = {'evolve:timeline': 'onset'};  // two questions named "timeline" share the Trajectory chapter
 const ORDER = () => ({...Object.fromEntries(Object.entries(LN_GROUPS()).map(([k, gs]) => [k, gs.flatMap(g => g[3])])),
   connect: ['layers', 'reading', 'notreading', 'bridges', 'buildson', 'hubs', 'supply', 'comparable', 'lifecycle', 'inflation', 'collab'],
@@ -1487,6 +1690,7 @@ export function renderLens(ctx) {
   const lead = `<section class="ln-lead"><span class="fd-kicker">${part ? part[1] : ''}${part && part[3].length > 1 ? ' · ' + meta[id][0] : ''} · ${versionKicker()}</span><h2>${meta[id]?.[1] || ''}</h2>${versionNote()}`;
   if (id === 'key') return shell(`${tabs}${keyFindings(meta)}`);
   if (id === 'connect' && P.connect) { crStop(); cr.q = ''; cr.focus = -1; return shell(`${tabs}${lead}</section>${crLens(qs)}`, 'cr-lens'); }
+  if (id === 'structure' && P.position) { psStop(); ps.q = ''; return shell(`${tabs}${lead}</section>${psLens(qs)}`, 'cr-lens ps-lens'); }
   const groups = grouped(id, qs);
   const extra = id === 'models' && P.models2026 ? `<p class="fd-note">${mNote()} ${T(`Release months: ${P.models2026.releaseSource}.`, '发布月份：2026-10-07 AI Model Observatory 快照中的 OpenRouter 首次上架月份；更早的模型用厂商发布月份。')}</p>`
     : id === 'oss' && P.oss ? `<p class="fd-note">${T(`${num(P.oss.repos)} repositories in the agent-security group of the open-source set (forks and mirrors left out), metrics captured ${P.oss.capture}. ${P.oss.disclaimer}`, `开源集中 agent 安全组的 ${num(P.oss.repos)} 个仓库（不含 fork 与镜像），数据采集于 ${P.oss.capture}。星数和 fork 数是 GitHub 上的关注度，不代表采用、有效或认可。`)} <a href="#oss">${T('Open the repository table', '打开开源仓库表')} →</a></p>` : '';

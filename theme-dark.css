@@ -707,6 +707,8 @@ html[data-theme="dark"] .ln-chapters button[aria-current="page"]{border-color:rg
 html[data-theme="dark"] .ln-chapters button[aria-current="page"] span{border-color:rgba(160,205,195,0.33)}
 html[data-theme="dark"] .ln-mrow:hover{background:rgba(160,205,195,0.08)}
 html[data-theme="dark"] .ln-orow:hover{background:rgba(160,205,195,0.08)}
+html[data-theme="dark"] .ps-map.has-hl .ps-cell.is-hl{stroke:rgba(160,205,195,0.20)}
+html[data-theme="dark"] .ps-role select{border:1px solid rgba(160,205,195,0.30)}
 
 /* shared parts of the dark theme */
 html[data-theme="dark"]{color-scheme:dark}
