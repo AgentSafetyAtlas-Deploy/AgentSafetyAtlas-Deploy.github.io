@@ -181,3 +181,14 @@ html[data-theme="light"] .qx-rec-pages button{color:#203536;border-color:#c9d8d3
 html[data-theme="light"] .qx-case caption{color:#203536}html[data-theme="light"] .qx-case th:first-child{color:#5c726c}
 html[data-theme="light"] .qx-case td.is-diff{--qx-diff:#c26541}html[data-theme="light"] .qx-joint{border-color:#c9d8c4}
 .qx-fig .qx-fig{margin-top:18px}
+/* story lines: the conclusion first, each step with its answer */
+.q-group h3{font-size:17px;line-height:1.55;max-width:1000px}
+.q-group-q{font-size:13px;color:#93aea7;margin:0 0 4px}
+.q-chain-st em{font-style:normal;font-size:12.5px;line-height:1.5;color:#dfeae6}
+.q-chain-tests{align-items:center;border-top:1px dashed rgba(160,205,195,.22);padding-top:10px}
+.q-tests-l{font-size:12px;color:#93aea7;flex:0 0 auto}
+.q-chain-j{border-color:rgba(212,233,102,.45)}
+html[data-theme="light"] .q-group-q,html[data-theme="light"] .q-tests-l{color:#5c726c}html[data-theme="light"] .q-chain-st em{color:#203536}
+html[data-theme="light"] .q-chain-tests{border-top-color:#d4e0dc}html[data-theme="light"] .q-chain-j{border-color:#1c6a57}
+.qx-rec-evf{display:block;margin-bottom:4px}.qx-rec-evf b{display:block;font-size:10.5px;font-weight:600;color:#93aea7}
+html[data-theme="light"] .qx-rec-evf b{color:#5c726c}
