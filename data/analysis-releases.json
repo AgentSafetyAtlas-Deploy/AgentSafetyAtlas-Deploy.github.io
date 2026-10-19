@@ -1,7 +1,34 @@
 {
- "current": "A5",
+ "current": "A6",
  "policy": "The observation report is versioned apart from the data: a candidate is computed once a month and published after review.",
  "versions": [
+  {
+   "analysisVersion": "A6",
+   "baseRelease": "R071",
+   "dataCutoff": "2026-10-15",
+   "computedOn": "2026-10-19",
+   "publishedOn": "2026-10-19",
+   "note": "A6 (owner, 2026-10-19: answer what the existing data can, narrow the rest, publish when done): Q10 adds the cost side (overhead measures reported, by what the defence needs); Q11 adds the range of models each defence is tested on (models, families, open against API). Q6, Q17, Q22 and Q24 are narrowed to what is measured; their wider questions stay in the internal record.",
+   "headline": {
+    "Works analysed": 8783,
+    "Citation routes": 51065,
+    "Routes with a sentence (%)": 83.6,
+    "Candidate clusters": 246,
+    "Benchmarks used by others": 135,
+    "Countries": 87,
+    "Doubling time (months)": 9.3,
+    "Cross-tradition citations (%)": 7.1,
+    "… expected from sizes (%)": 44.9,
+    "Boundary works (%)": 1.5,
+    "Held-out surveys": 56,
+    "Salience Recall@50": 0.209,
+    "Citations Recall@50": 0.19,
+    "Salience new work in top 20": 0.441,
+    "Citations new work in top 20": 0.005,
+    "New-star share (%)": 36.3,
+    "Band top-10 overlap": 0.038
+   }
+  },
   {
    "analysisVersion": "A5",
    "baseRelease": "R071",

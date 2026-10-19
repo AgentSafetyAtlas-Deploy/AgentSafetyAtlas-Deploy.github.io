@@ -26578,6 +26578,35 @@
       "renewalStatus": "unknown"
     },
     {
+      "id": "buyer-REC-C05-B006-0003",
+      "title": "Onyx Security Anonymized Agent Discovery and Runtime Deployment Field Notes",
+      "date": "2026-04-15",
+      "evidenceLevel": "deployment_case",
+      "companyId": "biz-onyx-security",
+      "summary": {
+        "en": "Onyx Security Anonymized Agent Discovery and Runtime Deployment Field Notes. See the original source for the attributed claims.",
+        "zh": "三篇 Onyx 客户与解决方案团队材料描述其 onboarding、配置扫描、会话捕获和工具调用执行流程：首篇给出匿名 hospitality 部署，5 月材料归纳多行业客户顺序，运行时案例则明确由多个客户 POV 匿名合成。它们支持厂商实际部署流程声明，但不支持命名客户、市场普遍比例或独立效果验证。"
+      },
+      "sources": [
+        {
+          "url": "https://www.onyx.security/blog/thousands-of-agents-what-onyx-discovers-in-24-hours",
+          "title": "Onyx Security Anonymized Agent Discovery and Runtime Deployment Field Notes"
+        },
+        {
+          "url": "https://www.onyx.security/blog/four-guardrails-the-customer-success-pattern-for-safe-ai-agent-adoption",
+          "title": "Four Guardrails Customer Success Pattern"
+        },
+        {
+          "url": "https://www.onyx.security/blog/tales-from-the-runtime-layer-why-authorized-agents-break-your-security-and-your-infrastructure",
+          "title": "Tales from the Runtime Layer"
+        }
+      ],
+      "detailId": "REC-C05-B006-0003",
+      "paymentStatus": "unknown",
+      "contractAmount": null,
+      "renewalStatus": "unknown"
+    },
+    {
       "id": "buyer-REC-C05-B001-0009",
       "title": "Fusion CX unifies protection with CrowdStrike Falcon",
       "date": null,
@@ -26615,35 +26644,6 @@
         }
       ],
       "detailId": "REC-C05-B003-0016",
-      "paymentStatus": "unknown",
-      "contractAmount": null,
-      "renewalStatus": "unknown"
-    },
-    {
-      "id": "buyer-REC-C05-B006-0003",
-      "title": "Onyx Security Anonymized Agent Discovery and Runtime Deployment Field Notes",
-      "date": "2026-04-15",
-      "evidenceLevel": "deployment_case",
-      "companyId": "biz-onyx-security",
-      "summary": {
-        "en": "Onyx Security Anonymized Agent Discovery and Runtime Deployment Field Notes. See the original source for the attributed claims.",
-        "zh": "三篇 Onyx 客户与解决方案团队材料描述其 onboarding、配置扫描、会话捕获和工具调用执行流程：首篇给出匿名 hospitality 部署，5 月材料归纳多行业客户顺序，运行时案例则明确由多个客户 POV 匿名合成。它们支持厂商实际部署流程声明，但不支持命名客户、市场普遍比例或独立效果验证。"
-      },
-      "sources": [
-        {
-          "url": "https://www.onyx.security/blog/thousands-of-agents-what-onyx-discovers-in-24-hours",
-          "title": "Onyx Security Anonymized Agent Discovery and Runtime Deployment Field Notes"
-        },
-        {
-          "url": "https://www.onyx.security/blog/four-guardrails-the-customer-success-pattern-for-safe-ai-agent-adoption",
-          "title": "Four Guardrails Customer Success Pattern"
-        },
-        {
-          "url": "https://www.onyx.security/blog/tales-from-the-runtime-layer-why-authorized-agents-break-your-security-and-your-infrastructure",
-          "title": "Tales from the Runtime Layer"
-        }
-      ],
-      "detailId": "REC-C05-B006-0003",
       "paymentStatus": "unknown",
       "contractAmount": null,
       "renewalStatus": "unknown"
@@ -34251,11 +34251,11 @@
           "distinctURLs": 16
         },
         {
-          "host": "assets.publishing.service.gov.uk",
+          "host": "lasso.security",
           "distinctURLs": 14
         },
         {
-          "host": "lasso.security",
+          "host": "assets.publishing.service.gov.uk",
           "distinctURLs": 14
         },
         {
@@ -34271,11 +34271,11 @@
           "distinctURLs": 10
         },
         {
-          "host": "gartner.com",
+          "host": "investors.paloaltonetworks.com",
           "distinctURLs": 8
         },
         {
-          "host": "investors.paloaltonetworks.com",
+          "host": "gartner.com",
           "distinctURLs": 8
         },
         {
