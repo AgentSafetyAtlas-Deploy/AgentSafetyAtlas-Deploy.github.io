@@ -1,5 +1,5 @@
 {
- "analysisVersion": "A4.4",
+ "analysisVersion": "A5",
  "release": "R071",
  "questions": {
   "F1": {
@@ -196,6 +196,20 @@
    "unit": [
     "2026 paper with a model judge",
     "使用模型裁判的 2026 年论文"
+   ]
+  },
+  "J5": {
+   "rows": 5546,
+   "unit": [
+    "work of a complete half-year since 2023",
+    "2023 年以来完整半年内的一项工作"
+   ]
+  },
+  "J6": {
+   "rows": 12800,
+   "unit": [
+    "citation to a defence by an outside work",
+    "外部工作对防御的一次引用"
    ]
   }
  }

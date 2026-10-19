@@ -1912,6 +1912,40 @@ const QXJ = {
       how: T(`Joined per paper: model roles matched to the model registry (openness), and the experiment protocol card (judge prompt released, human comparison). ${num(f.llmJudge)} papers use a model judge → ${num(f.judgeKnown)} with the judge in the registry → ${num(f.studiedKnown)} with the studied models too; not stated is kept apart from no.${S.reread ? ' The two checks are re-read on their own, each with the phrase it rests on; another Claude agent checked 40 of these readings against the papers and found 38 right.' : ''}`, `按论文连接模型角色（开放状态来自模型登记表）与实验方案卡（是否公开裁判提示词、是否与人工对照）。${num(f.llmJudge)} 篇用模型裁判 → 裁判在登记表中可识别的 ${num(f.judgeKnown)} 篇 → 被测模型也可识别的 ${num(f.studiedKnown)} 篇；“未说明”与“否”分开计。${S.reread ? '是否公开提示词、是否与人工对照两项单独重读，各自附依据的原文短语；另一个 Claude 智能体对照原文抽查 40 个判断，38 个正确。' : ''}`),
       links: ['F10', 'F9', 'F15']};
   },
+  J5() {
+    const c = EC('jsync'); if (!c?.stats?.compare?.realTool?.early) return null; const S = c.stats, C = S.compare, K = S.calibration;
+    const p = v => pctf(v, 0), w = x => x ? T(`${pctf(x.share, 0)} (${pctf(x.lo, 0)}–${pctf(x.hi, 0)})`, `${pctf(x.share, 0)}（${pctf(x.lo, 0)}–${pctf(x.hi, 0)}）`) : '—';
+    const span = a => a.length > 1 ? `${a[0]}–${a[a.length - 1]}` : a[0], up = C.realTool.late.lo > C.realTool.early.hi;
+    return {
+      q: T('When research turns to software settings where the agent acts, does its testing turn with it?', '研究转向执行类软件场景时，验证方式是否随之更新？'),
+      head: up ? T('In step: as these settings grew, more of their experiments ran on real systems.', '同步：这些场景增多时，在真实系统上实验的比例随之上升。')
+        : T('Not in step: these settings grew several times over, while the share of their experiments run on real systems did not rise.', '不同步：执行类场景的工作占比成倍上升，其中在真实系统上实验的比例没有随之上升。'),
+      line: T(`Works set in software where the agent acts (tool assistants, coding, web, computer use, MCP and skills) went from ${p(C.tool.early.share)} of all works in ${span(S.early)} to ${p(C.tool.late.share)} in ${span(S.late)}. Among the attack, defence and benchmark works in those settings, the share run on real systems was ${w(C.realTool.early)} then and ${w(C.realTool.late)} in the last year (other settings: ${p(C.realOther.early.share)} → ${p(C.realOther.late.share)}). Among the defences in those settings, the share whose abstract reports adaptive attacks went from ${w(C.adaptiveTool.early)} to ${w(C.adaptiveTool.late)}.`,
+        `执行类软件场景（工具助手、编程、网页、电脑操作、MCP 与 skills）的工作，从 ${span(S.early)} 占全部工作的 ${p(C.tool.early.share)}，升到 ${span(S.late)} 的 ${p(C.tool.late.share)}。这些场景中的攻击、防御与基准工作，在真实系统上做实验的比例当时为 ${w(C.realTool.early)}，近一年为 ${w(C.realTool.late)}（其他场景：${p(C.realOther.early.share)} → ${p(C.realOther.late.share)}）。这些场景中的防御，摘要报告自适应攻击的比例从 ${w(C.adaptiveTool.early)} 变为 ${w(C.adaptiveTool.late)}。`),
+      legend: qxLegend([[T('software settings where the agent acts', '执行类场景'), COLORS.attention], [T('other settings', '其他场景'), qxGrey()]]),
+      fig: () => qxPanels(
+        qxFig(T('Works in software settings where the agent acts, share of all works, by half-year', '执行类场景的工作占全部工作的比例，按半年'), qxBars(S.series.map(r => ({label: r.half, n: r.works, value: r.tool, color: COLORS.attention})), {max: 50, title: T('Share', '占比')})),
+        qxFig(T('Attack, defence and benchmark works run on real systems, by half-year', '攻击、防御与基准工作中在真实系统上实验的比例，按半年'), qxBars(S.series.filter(r => (r.realTool.n || 0) >= 10).map(r => ({label: r.half, n: r.realTool.n, bars: [{name: T('software settings where the agent acts', '执行类场景'), value: r.realTool.share, color: COLORS.attention}, {name: T('other settings', '其他场景'), value: r.realOther.share, color: qxGrey()}]})), {max: 40, title: T('Real systems', '真实系统')}))),
+      how: T(`Joined per work: the half-year of its first public date and the labels read from its title and abstract; complete half-years only, 95% intervals in brackets. On the ${num(K.defences)} defences of 2026 also read in full, the abstract labels and the full-text reading report adaptive attacks for ${pctf(K.abstractYes, 0)} and ${pctf(K.fullTextYes, 0)} (both say yes for ${num(K.both)}).`,
+        `按工作连接：首次公开日期所在的半年，以及从标题与摘要读取的标签；只用完整的半年，括号内为 95% 区间。在 2026 年同时有全文读取的 ${num(K.defences)} 项防御上，摘要标签与全文读取报告自适应攻击的比例分别为 ${pctf(K.abstractYes, 0)} 与 ${pctf(K.fullTextYes, 0)}（两者都为“是”的 ${num(K.both)} 项）。`),
+      links: ['F5', 'F20', 'F21']};
+  },
+  J6() {
+    const c = EC('jrespond'); if (!c?.stats?.counter) return null; const S = c.stats, k = S.counter, b = S.baseline, m = S.matched, R = S.revision, ch = R?.change || {};
+    return {
+      q: T("After outside counter-evidence, do the defence's authors keep working, and do they cite it?", '外部反例出现后，原团队是否还在做，是否引用了它？'),
+      head: R ? T('They keep publishing but seldom cite it or update the challenged paper; the citing is as rare as for other outside works on their defence.', '多数仍在发表，但很少引用反例，被挑战的论文也大多没有更新；引用少与他们对其他外部引用者的情况相近。')
+        : T('They keep publishing but seldom cite it, about as seldom as they cite other outside works on their defence.', '多数仍在发表，但很少引用反例；这与他们很少引用其他外部引用者相近，并非专门回避。'),
+      line: T(`${num(k.citations)} outside citations give counter-evidence against an Atlas defence. After ${pctf(k.active, 0)} of them the defence's team publishes again in the Atlas, and ${pctf(k.citedByActive, 1)} of those later works cite the counter-evidence. Of the ${num(b.citations)} other outside citations to the same defences (use, comparison, adoption, support, background), the team cites back ${pctf(b.citedByActive, 1)}. Defence by defence, on the ${m.defences} defences with both kinds: ${pctf(m.counterCited, 1)} against ${pctf(m.baselineCited, 1)}.${R ? ` Of the ${R.checked} challenged defences on arXiv, ${R.later} posted a new version after the challenge (${R.noLater} did not; ${R.undecidable} cannot be ordered); comparing the abstracts, ${ch.narrowed || 0} narrowed its claim, ${ch.conditions || 0} added evaluation conditions and ${(ch.none || 0) + (ch.wording || 0)} kept the same claims.` : ''}`,
+        `${num(k.citations)} 条外部引用给出了针对 Atlas 防御的反例。其中 ${pctf(k.active, 0)} 的情况下，原团队之后仍有新的 Atlas 工作，这些新工作引用该反例的占 ${pctf(k.citedByActive, 1)}。同一批防御收到的其他外部引用（使用、比较、采用、支持、背景，共 ${num(b.citations)} 条），原团队后来引用的占 ${pctf(b.citedByActive, 1)}。在同时有两类引用的 ${m.defences} 个防御上逐个比较：${pctf(m.counterCited, 1)} 对 ${pctf(m.baselineCited, 1)}。${R ? `修订核查：在 arXiv 上的 ${R.checked} 篇被挑战防御中，反例出现后发布新版本的只有 ${R.later} 篇（${R.noLater} 篇没有，${R.undecidable} 篇无法判断先后）；对比前后两版摘要，${ch.narrowed || 0} 篇收紧了主张，${ch.conditions || 0} 篇补充了评测条件，${(ch.none || 0) + (ch.wording || 0)} 篇主张未变。` : ''}`),
+      legend: qxLegend([[T('the team publishes again', '团队之后仍有新工作'), COLORS.supply], [T('a later work by the team cites it', '团队后来的工作引用了它'), COLORS.attention]]),
+      fig: () => qxPanels(qxFig(T('Outside citations to the same defences: counter-evidence against the rest', '同一批防御收到的外部引用：反例与其他引用'), qxBars([{label: T('counter-evidence', '反例'), n: k.citations, bars: [{name: T('team publishes again', '团队之后仍有新工作'), value: k.active, color: COLORS.supply}, {name: T('cited by the team (of those)', '其中被团队引用'), value: k.citedByActive, color: COLORS.attention}]},
+        {label: T('other outside citations', '其他外部引用'), n: b.citations, bars: [{name: T('team publishes again', '团队之后仍有新工作'), value: b.active, color: COLORS.supply}, {name: T('cited by the team (of those)', '其中被团队引用'), value: b.citedByActive, color: COLORS.attention}]}], {max: 100, title: T('Share', '比例')})),
+        R ? qxFig(T(`The ${R.checked} challenged defences on arXiv after the challenge`, `在 arXiv 上的 ${R.checked} 篇被挑战防御，反例出现之后`), qxStack([{label: T('defences', '防御'), n: R.checked, parts: {no: R.noLater, nar: ch.narrowed || 0, cond: ch.conditions || 0, same: (ch.none || 0) + (ch.wording || 0) + (ch.other || 0) + (ch.strengthened || 0), und: R.undecidable}}],
+          [['no', T('no new version', '没有新版本'), qxGrey()], ['nar', T('new version, claim narrowed', '新版本收紧主张'), COLORS.attention], ['cond', T('new version, conditions added', '新版本补充条件'), COLORS.supply], ['same', T('new version, same claims', '新版本主张未变'), COLORS.connection], ['und', T('cannot be ordered', '无法判断先后'), SERIES[3]]], {title: T('After the challenge', '反例之后')})) : ''),
+      how: T("Joined per citation: the citing sentence's intent (rules cites-v2), whether the defence's team (a shared author) has a later Atlas work, and whether that work cites the citing one. Citations by the team itself are left out. Revision: the arXiv submission history of each challenged defence; where a version follows the challenge, Claude Opus 5.5 compares the abstracts before and after, given the challenging sentence.", '按引用连接：引用句意图（规则 cites-v2）、之后防御团队（共享作者）是否有新的 Atlas 工作，以及这些新工作是否引用了它。团队自己的引用不计入。修订：读每篇被挑战防御的 arXiv 版本历史；反例之后有新版本的，由 Claude Opus 5.5 对照挑战句比较前后两版摘要。'),
+      links: ['F24', 'F8', 'F20']};
+  },
 };
 function qxJointCard(jid, k) {
   const spec = QXJ[jid] ? QXJ[jid]() : null;
@@ -1925,7 +1959,7 @@ function qxJointCard(jid, k) {
 // ---- the three layers (owner, 2026-10-19): 探索与观察 → 追问与检验 → 综合发现. Layer 3 (发现) synthesises the questions; each
 // finding cites the questions and joint analyses it rests on, typed as support, limit, counter or background, quotes their
 // answers live from their cards (one authoritative record per result), and embeds the joint analyses that test it
-const JIDS = ['J1', 'J2', 'J3', 'J4'];
+const JIDS = ['J1', 'J2', 'J3', 'J4', 'J5', 'J6'];
 const SYN_ID = /^(G\d+|J\d+|rejected|map)$/;
 const refOf = id => { if (/^J\d$/.test(id)) { const s = QXJ[id] ? QXJ[id]() : null; return s ? {label: T(`Joint ${id.slice(1)}`, `联合分析 ${id.slice(1)}`), short: edT(ED.jshort?.[id]), q: s.q, head: s.head} : null; }
   return qxShown(id) ? {label: qLabel(id), short: edT(ED.questions[id].short), q: edT(ED.questions[id].title), head: QX[id]().head} : null; };
