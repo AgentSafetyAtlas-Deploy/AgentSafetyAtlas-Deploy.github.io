@@ -3293,7 +3293,10 @@ export function renderLens(ctx) {
   const want = LENS_LEGACY[C.state.lens] || C.state.lens, id = want === 'guide' ? 'guide' : lensIds().includes(want) ? want : 'key', qs = ['key', 'guide'].includes(id) ? [] : lensQuestions(id), part = partOf(id);
   // the tab bar: featured, then the four parts about papers (labelled as such), then the models and open-source boards
   const tab = ([k, name, sub, chapters]) => { const on = k === 'key' || k === 'guide' ? id === k : part?.[0] === k; return `<button data-ln-lens="${chapters[0]}" class="${on ? 'active' : ''}" aria-current="${on ? 'page' : 'false'}" title="${esc(sub)}"><b>${name}</b><small>${sub}</small></button>`; };
-  const tabs = `<nav class="ln-tabs" aria-label="${T('Parts', '部分')}"><span class="ln-tabset">${tab(['key', meta.key[0], meta.key[1], ['key']])}${tab(['guide', T('Guide', '导读'), T('how each part counts and how to read it', '各部分怎么计数、怎么读'), ['guide']])}</span><span class="ln-tabset is-papers"><span class="ln-tabset-l">${T('Papers', '论文')}</span>${PARTS(T).map(tab).join('')}</span><span class="ln-tabset">${TOPICS(T).map(tab).join('')}</span></nav>`
+  const allParts = [['key', meta.key[0], ['key']], ['guide', T('Guide', '导读'), ['guide']], ...[...PARTS(T), ...TOPICS(T)].map(p => [p[0], p[1], p[3]])];
+  const hereName = id === 'key' ? meta.key[0] : id === 'guide' ? T('Guide', '导读') : part ? part[1] + (part[3].length > 1 ? ' · ' + meta[id][0] : '') : '';
+  const mini = qMini(T('Observations', '观察'), allParts.map(([k, nm, ch]) => `<button data-ln-lens="${ch[0]}" class="${(k === 'key' || k === 'guide' ? id === k : part?.[0] === k) ? 'is-here' : ''}">${nm}</button>`).join(''), hereName, '');
+  const tabs = `${mini}<nav class="ln-tabs" aria-label="${T('Parts', '部分')}" data-q-mini-anchor><span class="ln-tabset">${tab(['key', meta.key[0], meta.key[1], ['key']])}${tab(['guide', T('Guide', '导读'), T('how each part counts and how to read it', '各部分怎么计数、怎么读'), ['guide']])}</span><span class="ln-tabset is-papers"><span class="ln-tabset-l">${T('Papers', '论文')}</span>${PARTS(T).map(tab).join('')}</span><span class="ln-tabset">${TOPICS(T).map(tab).join('')}</span></nav>`
     + (part && part[3].length > 1 ? `<nav class="ln-chapters" aria-label="${T('Chapters', '章节')}">${part[3].map((k, i) => `<button data-ln-lens="${k}" aria-current="${k === id ? 'page' : 'false'}"><span>${i + 1}</span><b>${meta[k][0]}</b><small>${meta[k][1]}</small></button>`).join('')}</nav>` : '');
   const lead = `<section class="ln-lead"><span class="fd-kicker">${part ? part[1] : ''}${part && part[3].length > 1 ? ' · ' + meta[id][0] : ''} · ${versionKicker()}</span><h2>${meta[id]?.[1] || ''}</h2>${versionNote()}`;
   if (id === 'key') return shell(`${tabs}${ED ? keyPage() : keyFindings(meta)}`, 'kf-lens');
@@ -3317,7 +3320,7 @@ export function evidenceAnswer(ctx, qid) { setup(ctx); return lensQuestions('uni
 export function renderEvidence(ctx, qid) {
   setup(ctx);
   const q = lensQuestions('universe').find(x => x[0] === qid);
-  return q ? shell(`<section class="fd-section ln-q home-ev" id="q-${qid}"><div class="ln-qhead"><div><h2>${q[1]}</h2><p class="ln-answer">${esc(q[2])}</p></div></div>${q[3]}</section>`, 'home-ev-shell') : '';
+  return q ? shell(`<section class="fd-section ln-q home-ev" id="q-${qid}"><div class="ln-qhead is-solo"><div><h2>${q[1]}</h2><p class="ln-answer">${esc(q[2])}</p></div></div>${q[3]}</section>`, 'home-ev-shell') : '';
 }
 export const findingsData = () => dataset;
 export const routeCount = () => dataset.universe.citationRoutes + dataset.universe.benchmarkUseRoutes;

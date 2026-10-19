@@ -324,7 +324,7 @@ function tableView(ctx, head, rows) {
 function notes(ctx) {
   const {t} = ctx, works = ctx.included(), ver = works.filter(verified).length;
   const items = [
-    t(`Counts describe this collection (${ctx.num(works.length)} included works), not the whole field, and are recomputed with every update.`, `数字描述本图谱的收录（${ctx.num(works.length)} 项纳入研究），不代表整个领域，并随每次更新重新计算。`),
+    t(`Counts describe this collection (${ctx.num(works.length)} included works, those withdrawn on arXiv left out), not the whole field, and are recomputed with every update.`, `数字描述本图谱的收录（${ctx.num(works.length)} 项纳入研究，不含已在 arXiv 撤回的），不代表整个领域，并随每次更新重新计算。`),
     t('A work in several themes or topics counts once in each, so stacks and rows can exceed the number of works.', '属于多个大类或主题的研究在每个中各计一次，因此堆叠和行合计可能超过研究数。'),
     t('Years use the verified publication year, otherwise the date the work first appeared in the record; the current year is partial.', '年份优先采用已核实的发表年份，否则采用该研究首次出现在记录中的日期；当前年份未完。'),
     t(`Venue families count verified formal publications only (${ctx.num(ver)} works); ACL and EMNLP include their Findings track.`, `发表来源只计已核实的正式发表（${ctx.num(ver)} 项）；ACL 与 EMNLP 含 Findings。`),

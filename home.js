@@ -16,11 +16,11 @@ export function renderHero({t, counts, themes, galaxyName}) {
     <p class="hs-hint">${t('Drag to turn the sky · hover a star for its title · click a cluster name to open it', '拖动旋转星空 · 悬停看论文标题 · 点击星团名进入')}</p>
   </div>
   <div class="hs-legend" role="group" aria-label="${t('Galaxies', '星系')}">${themes.map((th, i) => `<button data-hs-theme="${i}" style="--c:${th.color}"><i></i>${esc(galaxyName(th))}</button>`).join('')}</div>
-  <a class="hs-down" href="#home-lenses" aria-label="${t('Scroll to the questions', '向下查看问题')}">↓</a>
+  <a class="hs-down" href="#home-lenses" aria-label="${t('Scroll to how to read the universe', '向下了解怎样读这片宇宙')}">↓</a>
   </section>`;
 }
 
-export function renderHome({t, cards, latest, counts, hero = '', findings = null, dataRelease = null, records = '', checks = []}) {
+export function renderHome({t, latest, counts, hero = '', findings = null, dataRelease = null, records = '', checks = []}) {
   const primer = [
     ['★', t('Star', '星'), t('One research work, its preprint and published versions joined.', '一项研究工作，预印本与正式发表版本合并为一颗星。'), t('Open it to see its routes and the sentences behind them.', '点开它，查看它的航线和背后的原句。')],
     ['◌', t('Cluster', '星团'), t(`A research line: one of the ${counts.clusters} topics. A work can belong to several.`, `一条研究线：${counts.clusters} 个主题之一。一项工作可以属于多个星团。`), t('Find where a question lives and who works on it.', '找到一个问题所在的区域，以及谁在做。')],
@@ -31,12 +31,7 @@ export function renderHome({t, cards, latest, counts, hero = '', findings = null
     ['✧', t('New star', '新星'), t('A work less than six months old. Its light is still on its way: few citations does not mean dim.', '不足 6 个月的工作。它的光还在路上：引用少不等于暗。'), t('Recent work is compared only with its own cohort, so it is not buried.', '新作只与同期比较，所以不会被埋没。')],
   ];
   return `${hero}<div class="home">
-  <section class="home-lenses" id="home-lenses" aria-labelledby="home-lenses-title">
-    <div class="home-head"><span class="home-kicker">${t(`${['', 'ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT'][cards.length] || cards.length} WAYS IN`, `${['', '一', '两', '三', '四', '五', '六', '七', '八'][cards.length] || cards.length}个切入视角`)}</span><h2 id="home-lenses-title">${t('Start from a question', '从一个问题出发')}</h2>
-    <p>${t('Each lens is a short list of questions. The answer under each question is computed from the data in the current analysis version (updated monthly after review); open it for the evidence.', '每个视角是一组问题。每个问题下的回答由当前分析版本根据数据计算（每月复核后更新）；点开即可查看证据。')}</p></div>
-    <div class="home-cards">${cards.map((c, i) => `<button class="home-card" data-home-lens="${c.id}" style="--i:${i}"><span class="home-card-name">${esc(c.name)}</span><span class="home-card-lead">${esc(c.lead)}</span><b>${esc(c.question)}</b><em>${esc(c.answer)}</em><span class="home-card-go">${t('Open the lens', '进入视角')} →</span></button>`).join('')}</div>
-  </section>
-  <section class="home-primer" aria-labelledby="home-primer-title">
+  <section class="home-primer" id="home-lenses" aria-labelledby="home-primer-title">
     <div class="home-head"><span class="home-kicker">${t('HOW TO READ THE UNIVERSE', '怎样读这片宇宙')}</span><h2 id="home-primer-title">${t('Seven words, and what each is for', '七个词，各有什么用')}</h2>
     <p>${t(`${counts.works.toLocaleString()} works on the safety and security of AI agents, linked by ${counts.routes.toLocaleString()} observed routes. The words below come from astronomy; each maps to something you can count and check.`, `${counts.works.toLocaleString()} 项关于 AI agent 安全的研究工作，由 ${counts.routes.toLocaleString()} 条观测到的航线相连。下面这些词借自天文学，每个都对应一个可以计数、可以核查的东西。`)}</p></div>
     <div class="home-terms">${primer.map(([g, name, what, use]) => `<article class="home-term"><span class="home-glyph" aria-hidden="true">${g}</span><h3>${name}</h3><p>${what}</p><p class="home-use"><b>${t('Use it to', '用来')}</b> ${use}</p></article>`).join('')}</div>
