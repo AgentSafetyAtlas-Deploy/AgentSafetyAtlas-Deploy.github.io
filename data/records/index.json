@@ -1,0 +1,174 @@
+{
+ "analysisVersion": "A4.1",
+ "release": "R071",
+ "questions": {
+  "F1": {
+   "rows": 733,
+   "unit": [
+    "Atlas benchmark",
+    "Atlas 基准"
+   ]
+  },
+  "F10": {
+   "rows": 656,
+   "unit": [
+    "2026 paper",
+    "2026 年论文"
+   ]
+  },
+  "F11": {
+   "rows": 227,
+   "unit": [
+    "research line (candidate cluster)",
+    "研究线（候选星团）"
+   ]
+  },
+  "F12": {
+   "rows": 669,
+   "unit": [
+    "cold research line at a quarter",
+    "某季度的冷门研究线"
+   ]
+  },
+  "F13": {
+   "rows": 732,
+   "unit": [
+    "2026 physical-agent work with a full text",
+    "有全文的 2026 年物理智能体工作"
+   ]
+  },
+  "F14": {
+   "rows": 2302,
+   "unit": [
+    "2026 paper",
+    "2026 年论文"
+   ]
+  },
+  "F15": {
+   "rows": 2564,
+   "unit": [
+    "work using an Atlas benchmark (last two years) or 2026 paper with model roles",
+    "使用 Atlas 基准的工作（近两年）或有模型角色的 2026 年论文"
+   ]
+  },
+  "F16": {
+   "rows": 956,
+   "unit": [
+    "use of a most-used benchmark",
+    "对高使用基准的一次使用"
+   ]
+  },
+  "F17": {
+   "rows": 37,
+   "unit": [
+    "Atlas benchmark used by three works or more",
+    "至少被 3 项工作使用的 Atlas 基准"
+   ]
+  },
+  "F18": {
+   "rows": 7786,
+   "unit": [
+    "citation to a benchmark",
+    "对基准的一次引用"
+   ]
+  },
+  "F19": {
+   "rows": 1336,
+   "unit": [
+    "defence paper",
+    "防御论文"
+   ]
+  },
+  "F2": {
+   "rows": 126,
+   "unit": [
+    "pair of clusters (main cluster of each work)",
+    "星团对（按每项工作的主星团）"
+   ]
+  },
+  "F20": {
+   "rows": 1336,
+   "unit": [
+    "defence paper",
+    "防御论文"
+   ]
+  },
+  "F21": {
+   "rows": 2702,
+   "unit": [
+    "paper",
+    "论文"
+   ]
+  },
+  "F22": {
+   "rows": 2702,
+   "unit": [
+    "paper",
+    "论文"
+   ]
+  },
+  "F23": {
+   "rows": 5443,
+   "unit": [
+    "citation between works that share no cluster",
+    "不共享星团的两项工作之间的一次引用"
+   ]
+  },
+  "F24": {
+   "rows": 321,
+   "unit": [
+    "citation to a defence that reports counter-evidence or criticises it",
+    "报告反证或批评防御的一次引用"
+   ]
+  },
+  "F3": {
+   "rows": 235,
+   "unit": [
+    "ROR institution",
+    "ROR 机构"
+   ]
+  },
+  "F4": {
+   "rows": 310,
+   "unit": [
+    "work using an Atlas benchmark",
+    "使用 Atlas 基准的工作"
+   ]
+  },
+  "F5": {
+   "rows": 8777,
+   "unit": [
+    "work",
+    "工作"
+   ]
+  },
+  "F6": {
+   "rows": 5580,
+   "unit": [
+    "GitHub repository",
+    "GitHub 仓库"
+   ]
+  },
+  "F7": {
+   "rows": 1078,
+   "unit": [
+    "work published before 2025-01-01 and cited before then",
+    "2025-01-01 之前发表且已被引用的工作"
+   ]
+  },
+  "F8": {
+   "rows": 86,
+   "unit": [
+    "later work that follows up a recurring open problem",
+    "跟进反复提出的开放问题的后来工作"
+   ]
+  },
+  "F9": {
+   "rows": 1175,
+   "unit": [
+    "judge in a paper",
+    "论文中的模型裁判"
+   ]
+  }
+ }
+}

@@ -2,14 +2,14 @@
  "version": "v1",
  "status": "draft",
  "release": "R071",
- "analysisVersion": "A4",
+ "analysisVersion": "A4.1",
  "builtOn": "2026-10-19",
  "counts": {
   "works": 8797,
   "withdrawnKept": 14,
   "citationRoutes": 51065,
   "citationWithSentence": 42593,
-  "benchmarkUseRoutes": 642,
+  "benchmarkUseRoutes": 696,
   "institutions": 1602,
   "candidateClusters": 246,
   "summariesLeftOut": 0
@@ -23,12 +23,12 @@
   {
    "path": "datacard.json",
    "bytes": 4472,
-   "sha256": "c96dbe75e7ed9e2ee482ec6bf46433e257dd55ef505f4ac2f72fbed2cf7ff637"
+   "sha256": "d5914ac161fd37239f559ff9d3bbfd0f9c3690517d6ddd63c78ac693807b7861"
   },
   {
    "path": "findings.json",
-   "bytes": 2684644,
-   "sha256": "0b809d6e66680df7c96bd8e5bc76be2697b0588b230901e5cd5d30d8fa1296ac"
+   "bytes": 8338478,
+   "sha256": "a08d937774e034ec97cd1cc498cf81f2db19c1c83fcf7053270b1037431184e5"
   },
   {
    "path": "institutions.jsonl",
@@ -42,8 +42,8 @@
   },
   {
    "path": "relations-02.jsonl",
-   "bytes": 4269448,
-   "sha256": "0f532c2177fe03c7ab7d02719a1cc27f32cddeeb687019829d0e05c2575f2f98"
+   "bytes": 4291364,
+   "sha256": "6378620801b1ff47fcad9f783719e695fc70dc127457a4816111f41e63db97b6"
   },
   {
    "path": "starmap-bands.json",
@@ -57,8 +57,8 @@
   },
   {
    "path": "scripts/build_findings.py",
-   "bytes": 127666,
-   "sha256": "0dc2dd0d8fe0f5caffd08e1fe6b5dd97fdff1a20f2b7ec2e6321288052682e21"
+   "bytes": 135973,
+   "sha256": "ff23b24197e6fb315911bd110b2300b76d5095b33c07aa0743056fd41049d651"
   },
   {
    "path": "scripts/build_snapshot.py",

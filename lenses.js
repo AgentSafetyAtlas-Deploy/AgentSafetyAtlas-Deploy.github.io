@@ -3,12 +3,14 @@
 // filled from the data and its evidence below. Every aggregate opens into the works or sentences behind it; nothing here is
 // typed in by hand except the wording of the sentences.
 import {flag, flagSrc, nameFlag} from './flags.js';
-let dataset, loading, ED = null;
+let dataset, loading, ED = null, RECIDX = null;
 export async function loadFindings() {
   if (!loading) loading = Promise.all([fetch('./data/findings.json').then(r => {
     if (!r.ok) throw Error('Findings data unavailable');
     return r.json();
-  }), fetch('./data/editorial.json').then(r => r.ok ? r.json() : null).catch(() => null)]).then(([d, e]) => { ED = e; return dataset = d; }).catch(e => {loading = null; throw e;});
+  }), fetch('./data/editorial.json').then(r => r.ok ? r.json() : null).catch(() => null),
+  fetch('./data/records/index.json').then(r => r.ok && /json/.test(r.headers.get('content-type') || '') ? r.json() : null).catch(() => null)]).then(([d, e, x]) => {
+    ED = e; RECIDX = x && x.analysisVersion === d.meta?.analysisVersion ? x : null; return dataset = d; }).catch(e => {loading = null; throw e;});
   return loading;
 }
 
@@ -23,7 +25,7 @@ const share = (v, d = 1) => v == null ? '—' : pctf(100 * v, d);
 let C, T, P, byId, drawer = {items: [], title: ''};
 
 function setup(ctx) {
-  C = ctx; T = ctx.t; P = dataset; stageSnap();
+  C = ctx; T = ctx.t; P = dataset; stageSnap(); QNUM = null;
   if (!byId || byId.size !== ctx.data.papers.length) byId = new Map(ctx.data.papers.map(p => [p.id, p]));
   // chart colours validated for each surface (dataviz validator: light #fcfcfb, dark #10302b)
   const d = isDark();
@@ -277,17 +279,20 @@ export function bindLenses(ctx, root = document.querySelector('.fd')) {
   root.addEventListener('input', e => { if (e.target.matches('[data-ps-yearpos]')) { psStop(); const ys = ['early', ...P.position.years.slice(1)]; ps.year = ys[+e.target.value]; const f = document.querySelector('[data-ps-fig]'); if (f) f.innerHTML = psTable(); const b = e.target.closest('.ps-time')?.querySelector('b'); if (b) b.textContent = ps.year === 'early' ? `≤${P.position.years[0]}` : ps.year; return; } if (e.target.matches('[data-tj-month]')) { tjStop(); tj.m = +e.target.value; tjRedraw('month'); return; } if (e.target.matches('[data-cr-month]')) { const was = cr.timer; crStop(); cr.m = +e.target.value; crRedraw('month'); if (was) { const b = root.querySelector('[data-cr-play]'); if (b) b.textContent = '▶'; } } });
   crBind(root); psBind(root); tjBind(root); plBind(root);
   root.addEventListener('change', e => { if (e.target.matches('[data-ps-role]')) { psStop(); ps.role = +e.target.value; ps.hl = null; psRedraw(); } if (e.target.matches('[data-ao-filter]')) aoFilter(root); });
-  root.addEventListener('input', e => { if (e.target.matches('[data-ao-filter="text"]')) aoFilter(root); });
+  root.addEventListener('input', e => { if (e.target.matches('[data-ao-filter="text"]')) aoFilter(root);
+    if (e.target.matches('[data-qx-rec-q]')) { const fid = e.target.dataset.qxRecQ, st = qxRecState[fid] ??= {q: '', page: 0}; st.q = e.target.value.trim().toLowerCase(); st.page = 0; qxRecRedraw(fid); } });
+  root.addEventListener('toggle', e => { if (e.target.matches?.('[data-qx-rec]') && e.target.open) qxRecOpen(e.target); }, true);
   root.addEventListener('keydown', e => { const st = e.target.closest?.('.qm-st'); if (st && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); qGo(ctx, st.dataset.qGo); } });
   if (ctx.state.findingsQ) { const fq = ctx.state.findingsQ; ctx.state.findingsQ = '';  // a shared link: open the card it names
     requestAnimationFrame(() => { const art = document.getElementById('q-' + fq); if (!art) return; if (art.matches('[data-q-card]')) qOpen(art, true); else { const h = art.querySelector('[aria-expanded="false"]'); if (h) h.click(); } art.scrollIntoView({block: 'start'}); }); }
   root.addEventListener('click', e => {
-    const el = e.target.closest('[data-q-open],[data-q-go],[data-ob-copy],[data-ln-q-standards],[data-stage-reset],[data-bk-sec],[data-ps-yearmode],[data-ps-mode],[data-ps-sec],[data-pl-view],[data-pl-year],[data-pl-play],[data-pl-open],[data-pl-show],[data-pl-cc],[data-tj-play],[data-tj-open],[data-tj-show],[data-tj-line],[data-ps-y],[data-ps-year],[data-ps-play],[data-ps-open],[data-ps-show],[data-ps-cell],[data-cr-view],[data-cr-level],[data-cr-layer],[data-cr-win],[data-cr-play],[data-cr-open],[data-cr-show],[data-cr-pair],[data-cr-unit],[data-fd-ids],[data-fd-paper],[data-fd-list],[data-fd-jump],[data-fd-layer],[data-fd-pair],[data-fd-bench],[data-ln-lens],[data-ln-goto],[data-ln-q],[data-ln-ms-kind],[data-ln-insight],.fd-close');
+    const el = e.target.closest('[data-q-open],[data-q-go],[data-qx-rec-page],[data-ob-copy],[data-ln-q-standards],[data-stage-reset],[data-bk-sec],[data-ps-yearmode],[data-ps-mode],[data-ps-sec],[data-pl-view],[data-pl-year],[data-pl-play],[data-pl-open],[data-pl-show],[data-pl-cc],[data-tj-play],[data-tj-open],[data-tj-show],[data-tj-line],[data-ps-y],[data-ps-year],[data-ps-play],[data-ps-open],[data-ps-show],[data-ps-cell],[data-cr-view],[data-cr-level],[data-cr-layer],[data-cr-win],[data-cr-play],[data-cr-open],[data-cr-show],[data-cr-pair],[data-cr-unit],[data-fd-ids],[data-fd-paper],[data-fd-list],[data-fd-jump],[data-fd-layer],[data-fd-pair],[data-fd-bench],[data-ln-lens],[data-ln-goto],[data-ln-q],[data-ln-ms-kind],[data-ln-insight],.fd-close');
     if (!el) return;
     if (el.matches('.fd-close')) { root.querySelector('.fd-drawer').hidden = true; return; }
     if (el.dataset.psSec) { psGoSection(+el.dataset.psSec, root); return; }
     if (el.dataset.qOpen) { qOpen(el.closest('[data-q-card]')); return; }
     if (el.dataset.qGo) { qGo(ctx, el.dataset.qGo); return; }
+    if (el.dataset.qxRecPage) { const [fid, p] = el.dataset.qxRecPage.split(':'); (qxRecState[fid] ??= {q: '', page: 0}).page = Math.max(0, +p); qxRecRedraw(fid); return; }
     if ('lnQStandards' in el.dataset) { bk.questions = qxSections().length - 1; ctx.setView('questions'); return; }
     if (el.dataset.obCopy) { const [lens, qid] = el.dataset.obCopy.split(':'), url = cardLink(lens, qid); (navigator.clipboard?.writeText(url) || Promise.reject()).then(() => { el.textContent = T('Copied', '已复制'); }, () => { window.prompt(T('Link to this card', '这张卡的链接'), url); }); return; }
     if (el.dataset.stageReset) { stageReset(el.dataset.stageReset); return; }
@@ -1367,7 +1372,7 @@ function obsBadges(lens, qid) {
   const o = obsOf(lens, qid), L = ED.labels;
   return o.rec ? `<span class="ob-chip ob-rec ob-${o.rec}">${edT(L.rec[o.rec])}</span>` : '';
 }
-const fChip = (g, rel) => `<button class="ob-f" data-q-go="${g}" title="${esc(edT(ED.questions[g]?.title))}"><b>${g}</b>${rel ? ` ${edT(ED.rel[rel])}` : ''}</button>`;
+const fChip = (g, rel) => `<button class="ob-f" data-q-go="${g}" title="${esc(edT(ED.questions[g]?.title))}"><b>${qLabel(g)}</b>${rel ? ` ${edT(ED.rel[rel])}` : ''}</button>`;
 function obsMeta(lens, qid) {  // shown with the folded card: evidence type, the questions it leads to, a link
   if (!ED) return '';
   const o = obsOf(lens, qid);
@@ -1430,8 +1435,8 @@ const QM_BANDS = {RQ1: [14, 126], RQ2: [134, 272], RQ3: [280, 424], RQ4: [432, 5
 const qm = {hl: null};
 function qmStation(fid, focus) {
   const [x, y] = QM_POS[fid], r = fid === qm.hl ? 18 : 15, on = !focus || ED.questions[fid].rq === focus;
-  return `<g class="qm-st${on ? '' : ' is-dim'}${fid === qm.hl ? ' is-hl' : ''}" data-q-go="${fid}" data-tip="${esc(`${fid} · ${edT(ED.questions[fid].title)}`)}" tabindex="0" role="button" aria-label="${esc(`${fid} ${edT(ED.questions[fid].title)}`)}">
-    <circle cx="${x}" cy="${y}" r="${r}" fill="var(--qm-bg)" stroke="var(--qm-ink)" stroke-width="2"/><text x="${x}" y="${y + 4}" text-anchor="middle">${fid}</text></g>`;
+  return `<g class="qm-st${on ? '' : ' is-dim'}${fid === qm.hl ? ' is-hl' : ''}" data-q-go="${fid}" data-tip="${esc(`${qLabel(fid)} · ${edT(ED.questions[fid].title)}`)}" tabindex="0" role="button" aria-label="${esc(`${qLabel(fid)} ${edT(ED.questions[fid].title)}`)}">
+    <circle cx="${x}" cy="${y}" r="${r}" fill="var(--qm-bg)" stroke="var(--qm-ink)" stroke-width="2"/><text x="${x}" y="${y + 4}" text-anchor="middle">${qLabel(fid)}</text></g>`;
 }
 function qmSvg(focus) {
   const col = i => SERIES[i % SERIES.length], seg = (a, b) => { const [x1, y1] = QM_POS[a], [x2, y2] = QM_POS[b], mx = (x1 + x2) / 2; return `M${x1},${y1}C${mx},${y1} ${mx},${y2} ${x2},${y2}`; };
@@ -1528,6 +1533,21 @@ const QX = {
       how: T(`Settings and entry points are read from each title and abstract by DeepSeek (a Claude check of ${lb.checked || '—'} works agreed at Jaccard ${lb.settingsJaccard ?? '—'} and ${lb.surfacesJaccard ?? '—'}); shares per complete half-year; entry points among attack papers only.`, `每篇论文的场景和攻击入口由 DeepSeek 按规则从标题与摘要读取（Claude 抽查 ${lb.checked || '—'} 篇，Jaccard 一致度分别为 ${lb.settingsJaccard ?? '—'} 和 ${lb.surfacesJaccard ?? '—'}）；按已结束的半年计份额；入口只在攻击论文中计。`),
       limit: T(`A falling share is not a falling count: the field grew ${grow.toFixed(1)}× over the period. A work can have several settings.`, `占比下降不等于数量减少：这段时间论文总量涨了 ${grow.toFixed(1)} 倍。一篇论文可以有多个场景。`)};
   },
+  F7() {
+    const c = EC('f7bridge'); if (!c) return null; const S = c.stats, g = S.growing.map(cl), yr = S.t0.slice(0, 4);
+    const who = [T('early works joining directions', '连接多个方向的早期工作'), T('other early works', '其他早期工作')];
+    const pair = (label, a, b, strong) => ({label, strong, bars: [{name: who[0], value: a, color: COLORS.attention}, {name: who[1], value: b, color: qxGrey()}]});
+    return {
+      head: T('Yes, about four times as often; but they are cited by every direction, not only the growing ones.', '是，约 4 倍；但它们被各个方向普遍引用，不只是增长的方向。'),
+      line: T(`With the data frozen at the start of ${yr}: of the ${num(S.bridges)} earlier works already cited by two or more other directions, ${pctf(S.growBridge, 0)} were cited in the following year by the fastest-growing directions (${g.join(', ')}); of the other ${num(S.others)} earlier works, ${pctf(S.growOther, 0)}. With the slowest directions or any directions the gap is similar (${pctf(S.slowBridge, 0)} against ${pctf(S.slowOther, 0)}; ${pctf(S.randBridge, 0)} against ${pctf(S.randOther, 0)}).`,
+        `以 ${yr} 年初为界冻结数据：此前已被两个以上其他方向引用过的 ${num(S.bridges)} 项工作，之后一年被增长最快的方向（${g.join('、')}）引用的占 ${pctf(S.growBridge, 0)}；其他 ${num(S.others)} 项早期工作只有 ${pctf(S.growOther, 0)}。换成增长最慢的方向或任意方向，差距相近（${pctf(S.slowBridge, 0)} 对 ${pctf(S.slowOther, 0)}；${pctf(S.randBridge, 0)} 对 ${pctf(S.randOther, 0)}）。`),
+      legend: qxLegend([[who[0], COLORS.attention], [who[1], qxGrey()]]),
+      fig: () => qxPanels(
+        qxFig(T(`Cited in ${+yr} by a direction other than their own`, `${yr} 年被自身以外的方向引用的比例`), qxBars([pair(T('the fastest-growing directions', '增长最快的方向'), S.growBridge, S.growOther, true), pair(T('any directions (average)', '任意方向（平均）'), S.randBridge, S.randOther), pair(T('the slowest directions', '增长最慢的方向'), S.slowBridge, S.slowOther)], {max: 100, title: T('Share', '比例')})),
+        qxFig(T('… by the growing directions, at the same number of earlier citations', '……被增长方向引用，按此前被引次数分层'), qxBars(S.strata.map(r => ({label: T(`cited ${r.pre} times`, `此前被引 ${r.pre} 次`), bars: [{name: who[0], value: r.bridgeRate, color: COLORS.attention}, {name: who[1], value: r.otherRate, color: qxGrey()}]})), {max: 100, title: T('Share', '比例')}))),
+      how: T(`Frozen at ${S.t0}: "joining directions" uses only citations made by then (cited by works of at least two other main clusters); growing directions = the third of directions with 20+ works in the year before that grew most in the year after.`, `以 ${S.t0} 冻结：“连接多个方向”只用当时已有的引用（被至少两个其他主星团的工作引用）；增长方向 = 此前一年至少 20 项工作、之后一年增长最快的三分之一方向。`),
+      limit: ''};
+  },
   F11() {
     const c = P.trajectory?.cold, d = c?.distinct, g = c?.groups; if (!d || !g) return null;
     const tot = d.cold.entered + d.rest.entered;
@@ -1553,7 +1573,21 @@ const QX = {
       limit: T('Few lines come back, so each rate rests on a few dozen cases; the reading list on the observation page is not a forecast.', '翻身的线很少，每个比例只靠几十个案例；观察页里的“正在升温”是阅读清单，不是预测。')};
   },
   F13() {
-    const c = EC('f13base'); if (!c) return null; const S = c.stats, k = ['model', 'execution_environment', 'communication_interface', 'memory', 'tools_interfaces', 'retrieval'];
+    const c = EC('f13base'); if (!c) return null; const S = c.stats, R = S.read;
+    if (R) {
+      const parts = [['tools_apis', T('tools or APIs', '工具或 API')], ['memory', T('memory', '记忆')], ['retrieval', T('retrieval', '检索')], ['communication', T('communication with agents or people', '与其他智能体或人的通信')]];
+      const nm = Object.fromEntries(parts), p = v => pctf(v, 0);
+      return {
+        head: T('Partly: about half of the systems with tools, memory or retrieval study safety there, but such systems are still few.', '部分覆盖：带工具、记忆或检索的系统中，约一半的安全研究落在这些连接上；但这样的系统还不多。'),
+        line: T(`Read one by one, ${num(R.lm)} of ${num(R.read)} physical-agent works of 2026 (${p(R.lmShare)}) run on a language or vision-language model. Of the ${num(R.has.tools_apis)} such systems with tools or APIs, the safety work covers the tools in ${p(R.covered.tools_apis)}; with memory (${num(R.has.memory)}), ${p(R.covered.memory)}; with retrieval (${num(R.has.retrieval)}), ${p(R.covered.retrieval)}. Across all ${num(R.lm)}, the safety work sits mostly at the model (${p(R.safetyAt.language_model)}) and control (${p(R.safetyAt.control_actuation)}), seldom at tools (${p(R.safetyAt.tools_apis)}), memory (${p(R.safetyAt.memory)}) or retrieval (${p(R.safetyAt.retrieval)}).`,
+          `逐篇读 2026 年的 ${num(R.read)} 项物理智能体工作：${num(R.lm)} 项（${p(R.lmShare)}）的系统接入了语言或视觉语言模型。其中带工具或 API 的 ${num(R.has.tools_apis)} 个系统，安全研究落在工具上的占 ${p(R.covered.tools_apis)}；带记忆的 ${num(R.has.memory)} 个占 ${p(R.covered.memory)}；带检索的 ${num(R.has.retrieval)} 个占 ${p(R.covered.retrieval)}。从全部 ${num(R.lm)} 个系统看，安全研究多落在模型（${p(R.safetyAt.language_model)}）和控制执行（${p(R.safetyAt.control_actuation)}），落在工具（${p(R.safetyAt.tools_apis)}）、记忆（${p(R.safetyAt.memory)}）、检索（${p(R.safetyAt.retrieval)}）的少。`),
+        fig: () => qxPanels(
+          qxFig(T(`What the ${num(R.lm)} systems on a language model connect to`, `接入语言模型的 ${num(R.lm)} 个系统还连着什么`), qxBars(parts.map(([k, l]) => ({label: l, n: R.has[k], value: R.hasShare[k], color: qxGrey()})), {max: 100, title: T('Share of systems', '系统占比')})),
+          qxFig(T('Systems with the component whose safety work covers it', '具备该组件的系统中，安全研究覆盖它的比例'), qxBars(parts.map(([k, l]) => ({label: l, n: R.has[k], value: R.covered[k], color: COLORS.connection})), {max: 100, title: T('Covered', '覆盖')}))),
+        how: T('Claude Opus 5.5 reads the abstract and introduction of every 2026 physical-agent work with a full text: whether the system runs on a language model, which components it has, and where the paper\'s safety work sits; each answer comes with a phrase from the paper.', 'Claude Opus 5.5 逐篇读 2026 年有全文的物理智能体工作的摘要与引言：系统是否接入语言模型、具备哪些组件、论文的安全研究落在哪里；每个回答附论文原文短语。'),
+        limit: ''};
+    }
+    const k = ['model', 'execution_environment', 'communication_interface', 'memory', 'tools_interfaces', 'retrieval'];
     const rows = k.map(x => ({label: COMP_NAMES()[x] || x, value: S.cover[x].applicable, color: ['memory', 'tools_interfaces', 'retrieval'].includes(x) ? COLORS.connection : COLORS.attention}));
     return {
       head: T('Rarely: few study the tools, memory or retrieval these agents now use.', '很少：接入的工具、记忆与检索几乎没人研究。'),
@@ -1668,9 +1702,10 @@ const QX = {
   },
   F4() {
     const c = EC('f4mix'); if (!c) return null; const S = c.stats, ps = S.periods, fx = ps.filter(p => p.fixed), a = fx[0], b = fx[fx.length - 1];
+    const [lo, hi] = b.fixed.pairShareCI, held = a.fixed.pairShare >= lo && a.fixed.pairShare <= hi, fell = !held && b.fixed.pairShare < a.fixed.pairShare;
     return {
-      head: T('No: benchmarks multiply while the share of shared ones holds.', '没有：基准变多，共用比例持平。'),
-      line: T(`From ${a.period} to ${b.period} the benchmarks in use went from ${a.benchmarks} to ${b.benchmarks}. At a fixed ${S.fixedN} works per half-year, the share of defence pairs sharing a benchmark stays at ${pctf(a.fixed.pairShare)} and ${pctf(b.fixed.pairShare)} (interval ${pctf(b.fixed.pairShareCI[0])}–${pctf(b.fixed.pairShareCI[1])}).`, `${a.period} 到 ${b.period}，用到的基准从 ${a.benchmarks} 个增到 ${b.benchmarks} 个。每半年固定 ${S.fixedN} 项工作重抽后，两两防御论文共用基准的比例为 ${pctf(a.fixed.pairShare)} 和 ${pctf(b.fixed.pairShare)}（区间 ${pctf(b.fixed.pairShareCI[0])}–${pctf(b.fixed.pairShareCI[1])}），没有下降。`),
+      head: held ? T('No: benchmarks multiply while the share of shared ones holds.', '没有：基准变多，共用比例没有明显变化。') : fell ? T('Yes, so far: as benchmarks multiply, fewer defences share one.', '目前是：基准变多，共用比例下降。') : T('No: benchmarks multiply and more defences share one.', '没有：基准变多，共用比例反而上升。'),
+      line: T(`From ${a.period} to ${b.period} the benchmarks in use went from ${a.benchmarks} to ${b.benchmarks}. At a fixed ${S.fixedN} works per half-year, the share of defence pairs sharing a benchmark is ${pctf(a.fixed.pairShare)} and then ${pctf(b.fixed.pairShare)} (interval ${pctf(lo)}–${pctf(hi)})${held ? ', within the interval' : ''}.`, `${a.period} 到 ${b.period}，用到的基准从 ${a.benchmarks} 个增到 ${b.benchmarks} 个。每半年固定 ${S.fixedN} 项工作重抽后，两两防御论文共用基准的比例为 ${pctf(a.fixed.pairShare)} 和 ${pctf(b.fixed.pairShare)}（后者区间 ${pctf(lo)}–${pctf(hi)}）${held ? '，变化在区间之内' : ''}。`),
       fig: () => qxPanels(
         qxFig(T('Atlas benchmarks in use, by half-year', '用到的 Atlas 基准数，按半年'), qxBars(ps.map(p => ({label: p.period, n: p.works, value: p.benchmarks, color: COLORS.supply})), {fmt: num, title: T('Benchmarks', '基准数')})),
         qxFig(T(`Defence pairs sharing a benchmark (filled: at a fixed ${S.fixedN} works, with interval)`, `共用基准的防御论文对比例（实心：固定 ${S.fixedN} 项工作，含区间）`), qxDots(ps.map(p => p.fixed ? {label: p.period, n: p.defences, value: p.fixed.pairShare, lo: p.fixed.pairShareCI[0], hi: p.fixed.pairShareCI[1]} : {label: p.period, n: p.defences, value: p.pairShare, hollow: true, color: qxGrey()}), {min: 0, max: 40, fmt: v => pctf(v, 0), ticks: [0, 10, 20, 30], title: T('Pair share', '共用比例')}))),
@@ -1678,14 +1713,19 @@ const QX = {
       limit: T('The earlier half-years have too few works for a fixed-size comparison (hollow dots), so only the last two compare like with like.', '更早的半年工作太少，做不了同样本量比较（空心点），只有最近两期是同等条件。')};
   },
   F6() {
-    const c = EC('f6age'); if (!c) return null; const S = c.stats, r = S.rows, k = r.find(x => x.age === '1–2') || r[1], o = r[r.length - 1];
+    const c = EC('f6age'); if (!c) return null; const S = c.stats, r = S.rows, k = r.find(x => x.age === '1–2') || r[1], o = r[r.length - 1], forks = k.paperForked5 != null;
+    const lg = qxLegend([[T('paper code', '论文代码'), COLORS.connection], [T('tool repositories', '工具仓库'), COLORS.attention]]);
+    const byAge = (pk, tk) => qxBars(r.map(x => ({label: T(`${x.age} years`, `${x.age} 年`), bars: [{name: T(`paper code (${num(x.paperCode)})`, `论文代码（${num(x.paperCode)}）`), value: x[pk], color: COLORS.connection}, {name: T(`tools (${num(x.tools)})`, `工具（${num(x.tools)}）`), value: x[tk], color: COLORS.attention}]})), {max: 100, title: T('Share', '比例')});
     return {
-      head: T('Paper code mostly stops being updated, sooner than tools of the same age.', '论文代码大多停止更新，比同龄工具早得多。'),
-      line: T(`Of paper code repositories one to two years old, ${pctf(k.paperPushed, 0)} were updated in the last six months, against ${pctf(k.toolPushed, 0)} of tool repositories of the same age; past three years it is ${pctf(o.paperPushed, 0)} (tools ${pctf(o.toolPushed, 0)}).`, `建立 1–2 年的论文代码仓库中，近半年仍有更新的只有 ${pctf(k.paperPushed, 0)}，同龄工具仓库是 ${pctf(k.toolPushed, 0)}；3 年以上的论文代码只有 ${pctf(o.paperPushed, 0)}（工具 ${pctf(o.toolPushed, 0)}）。`),
-      fig: () => qxFig(T(`Updated in the last six months, by repository age (years; GitHub, ${S.capture})`, `近半年有更新的比例，按仓库年龄（年；GitHub 数据 ${S.capture}）`), qxBars(r.map(x => ({label: T(`${x.age} years`, `${x.age} 年`), bars: [{name: T(`paper code (${num(x.paperCode)})`, `论文代码（${num(x.paperCode)}）`), value: x.paperPushed, color: COLORS.connection}, {name: T(`tools (${num(x.tools)})`, `工具（${num(x.tools)}）`), value: x.toolPushed, color: COLORS.attention}]})), {max: 100, title: T('Updated', '有更新')})),
-      legend: qxLegend([[T('paper code', '论文代码'), COLORS.connection], [T('tool repositories', '工具仓库'), COLORS.attention]]),
-      how: T('Paper code = repositories an included paper released; tools = agent-security tool repositories of the open-source set; age from the creation date.', '论文代码 = 纳入论文自己发布的仓库；工具 = 开源集中的 agent 安全工具仓库；年龄按建立日期。'),
-      limit: T('Updating is not use: finished code can be stable. Whether later work adopts it needs relation evidence, not yet measured.', '更新不等于使用：完成的代码可以很稳定。是否被后续研究采用需要关系证据，尚未直接测量。')};
+      head: forks ? T('Most paper code is copied by someone, but few repositories are reused widely or kept up.', '论文代码多被人复制过，但被广泛复用、持续维护的少。') : T('Paper code mostly stops being updated, sooner than tools of the same age.', '论文代码大多停止更新，比同龄工具早得多。'),
+      line: forks ? T(`Of paper code repositories one to two years old, ${pctf(k.paperForked, 0)} have been forked, but only ${pctf(k.paperForked5, 0)} five times or more (tool repositories of the same age: ${pctf(k.toolForked5, 0)}); ${pctf(k.paperPushed, 0)} were updated in the last six months (tools ${pctf(k.toolPushed, 0)}).`,
+        `建立 1–2 年的论文代码仓库中，${pctf(k.paperForked, 0)} 被 fork 过，但 fork 5 次以上的只有 ${pctf(k.paperForked5, 0)}（同龄工具仓库 ${pctf(k.toolForked5, 0)}）；近半年仍有更新的 ${pctf(k.paperPushed, 0)}（工具 ${pctf(k.toolPushed, 0)}）。`)
+        : T(`Of paper code repositories one to two years old, ${pctf(k.paperPushed, 0)} were updated in the last six months, against ${pctf(k.toolPushed, 0)} of tool repositories of the same age; past three years it is ${pctf(o.paperPushed, 0)} (tools ${pctf(o.toolPushed, 0)}).`, `建立 1–2 年的论文代码仓库中，近半年仍有更新的只有 ${pctf(k.paperPushed, 0)}，同龄工具仓库是 ${pctf(k.toolPushed, 0)}；3 年以上的论文代码只有 ${pctf(o.paperPushed, 0)}（工具 ${pctf(o.toolPushed, 0)}）。`),
+      legend: lg,
+      fig: () => forks ? qxPanels(qxFig(T('Forked five times or more, by repository age', '被 fork 5 次以上的比例，按仓库年龄'), byAge('paperForked5', 'toolForked5')), qxFig(T(`Updated in the last six months, by repository age (GitHub, ${S.capture})`, `近半年有更新的比例，按仓库年龄（GitHub 数据 ${S.capture}）`), byAge('paperPushed', 'toolPushed')))
+        : qxFig(T(`Updated in the last six months, by repository age (years; GitHub, ${S.capture})`, `近半年有更新的比例，按仓库年龄（年；GitHub 数据 ${S.capture}）`), byAge('paperPushed', 'toolPushed')),
+      how: T('Paper code = repositories an included paper released; tools = agent-security tool repositories of the open-source set; forks = copies of a repository made by other GitHub users; age from the creation date.', '论文代码 = 纳入论文自己发布的仓库；工具 = 开源集中的 agent 安全工具仓库；fork = 其他 GitHub 用户复制该仓库的次数；年龄按建立日期。'),
+      limit: ''};
   },
   F15() {
     const B = EC('bench')?.stats, M = EC('modeldep')?.stats, b = EC('bench'); if (!B || !M) return null;
@@ -1739,20 +1779,28 @@ const QX = {
       head: T('Mostly the name travels; the method and the implementation rarely do.', '跨方向传播的主要是名字，方法和实现很少跟着走。'),
       line: T(`Of ${num(c.base)} citations between works that share no cluster, ${pctf(it.background, 0)} are background mentions; ${pctf(it.uses_artifact)} use the cited work's code, data or benchmark and ${pctf(it.adopts_method)} adopt its method. Within a cluster, ${pctf(S.withinEngaged)} use, adopt or compare, about twice the ${pctf(S.engaged)} across clusters.`, `不共享星团的工作之间的 ${num(c.base)} 条引用中，${pctf(it.background, 0)} 只是背景提及；使用被引工作的代码、数据或基准的 ${pctf(it.uses_artifact)}，采用其方法的 ${pctf(it.adopts_method)}。同一星团内部，使用、采用或比较的比例是 ${pctf(S.withinEngaged)}，约为跨星团（${pctf(S.engaged)}）的两倍。`),
       fig: () => qxFig(T('Citations that use, adopt or compare with the cited work', '引用中使用、采用或与被引工作比较的比例'), qxBars([{label: T('across clusters', '跨星团'), n: c.base, value: S.engaged, color: COLORS.connection}, {label: T('across clusters, to benchmarks and defences', '跨星团、指向基准与防御'), value: S.crossBDEngaged, color: COLORS.connection}, {label: T('within a cluster, to benchmarks and defences', '星团内部、指向基准与防御'), value: S.withinEngaged, color: COLORS.attention}], {max: 20, title: T('Engaged share', '实际使用比例')})),
-      how: T('Citation intents read as for F18; clusters by each work\'s labels.', '引用意图的读取同 F18；星团按每项工作的标签。'),
+      how: T(`Citation intents read as for ${qLabel('F18')}; clusters by each work's labels.`, `引用意图的读取同 ${qLabel('F18')}；星团按每项工作的标签。`),
       limit: T('A background mention can also be how an absorbed idea is cited; this measures explicit use, not influence.', '“背景提及”也可能是概念被吸收后的引用方式；这里测的是明示的使用，不是影响。')};
   },
   F8() {
-    const o = P.tail?.open?.stats; if (!o) return null; const b = o.byStatus, kinds = Object.entries(o.kinds).sort((x, y) => y[1] - x[1]);
+    const o = P.tail?.open?.stats; if (!o) return null; const b = o.byStatus, kinds = Object.entries(o.kinds).sort((x, y) => y[1] - x[1]), ans = o.byAnswer, forms = o.responseForms || {};
     const kn = {evaluation: T('evaluation', '评测'), method: T('method', '方法'), threat: T('threat', '威胁'), deployment: T('deployment', '部署'), theory: T('theory', '理论'), data: T('data', '数据')};
-    return {
+    const fn = {method: T('a new method or defence', '新方法或防御'), evaluation: T('a new benchmark or evaluation', '新基准或评测'), system_or_tool: T('a system or tool', '系统或工具'), empirical_study: T('an empirical study', '实证研究'), theory: T('theory or proofs', '理论或证明'), other: T('other', '其他')};
+    const nf = Object.values(forms).reduce((a, v) => a + v, 0), fp = k => 100 * (forms[k] || 0) / (nf || 1);
+    if (!ans) return {
       head: T('Most problems that papers keep raising are taken up by later work.', '多数被反复提出的开放问题，后来都有工作接手。'),
       line: T(`${num(o.worksWithProblems)} works state ${num(o.problems)} open problems. Of the ${o.recurring} raised by three papers or more, ${b.addressed} have been taken up by later work, ${b['being taken up']} a little, and ${b.open} have no follow-up in the Atlas.`, `${num(o.worksWithProblems)} 项工作提出了 ${num(o.problems)} 个开放问题。被三篇以上论文反复提出的 ${o.recurring} 个中，${b.addressed} 个已被后续工作跟进，${b['being taken up']} 个有少量跟进，${b.open} 个在 Atlas 中没有看到后续。`),
+      fig: () => qxFig(T(`The ${o.recurring} problems raised by three papers or more`, `被三篇以上论文提出的 ${o.recurring} 个问题`), qxStack([{label: T('recurring problems', '反复提出的问题'), n: o.recurring, parts: b}], [['addressed', T('taken up', '已被跟进'), COLORS.attention], ['being taken up', T('a little follow-up', '少量跟进'), COLORS.supply], ['open', T('no follow-up seen', '未见后续'), COLORS.connection]], {title: T('Follow-up', '后续')})),
+      how: T('Problems are read from the limitation and future-work passages (DeepSeek, quoting verbatim) and grouped at SPECTER2 cosine ≥ 0.80; follow-up = a later work that cites a raising paper and is close in content.', '开放问题从“局限 / 未来工作”段落读取（DeepSeek，须逐字引用），按 SPECTER2 相似度 ≥ 0.80 归为同一问题；后续 = 引用了提出论文、且内容接近的后来工作。'), limit: ''};
+    return {
+      head: T('Most are taken up, mostly in part and mostly with new methods.', '多数有人接手，以部分回应和新方法为主。'),
+      line: T(`Of the ${o.recurring} open problems raised by three papers or more, ${ans.yes || 0} were later answered directly, ${ans.partly || 0} in part and ${ans.none || 0} not yet. Of the ${nf} follow-up works that take a problem up, ${pctf(fp('method'), 0)} propose a new method or defence and ${pctf(fp('evaluation'), 0)} a new benchmark or evaluation; theory is rare.`,
+        `被三篇以上论文反复提出的 ${o.recurring} 个开放问题中，${ans.yes || 0} 个后来有工作直接回应，${ans.partly || 0} 个有部分回应，${ans.none || 0} 个还没有。接手问题的 ${nf} 篇后续工作中，${pctf(fp('method'), 0)} 提出新方法或防御，${pctf(fp('evaluation'), 0)} 提出新基准或评测，理论分析很少。`),
       fig: () => qxPanels(
-        qxFig(T(`The ${o.recurring} problems raised by three papers or more`, `被三篇以上论文提出的 ${o.recurring} 个问题`), qxStack([{label: T('recurring problems', '反复提出的问题'), n: o.recurring, parts: b}], [['addressed', T('taken up', '已被跟进'), COLORS.attention], ['being taken up', T('a little follow-up', '少量跟进'), COLORS.supply], ['open', T('no follow-up seen', '未见后续'), COLORS.connection]], {title: T('Follow-up', '后续'), fmt: v => pctf(v, 0)})),
-        qxFig(T(`All ${num(o.problems)} open problems, by kind`, `全部 ${num(o.problems)} 个开放问题，按类型`), qxBars(kinds.map(([k, v]) => ({label: kn[k] || k, value: 100 * v / o.problems, color: qxGrey()})), {max: 50, title: T('Share', '占比')}))),
-      how: T('Problems are read from the limitation and future-work passages (DeepSeek, quoting verbatim) and grouped at SPECTER2 cosine ≥ 0.80; follow-up = a later work that cites a raising paper and is close in content.', '开放问题从“局限 / 未来工作”段落读取（DeepSeek，须逐字引用），按 SPECTER2 相似度 ≥ 0.80 归为同一问题；后续 = 引用了提出论文、且内容接近的后来工作。'),
-      limit: T('Only 29 recurring problems; whether a follow-up is a new method, a new evaluation or a proof is not yet judged case by case.', '只有 29 个反复问题；后续是新方法、新评测还是理论证明，尚未逐案判断。')};
+        qxFig(T(`The ${o.recurring} problems raised by three papers or more`, `被三篇以上论文提出的 ${o.recurring} 个问题`), qxStack([{label: T('recurring problems', '反复提出的问题'), n: o.recurring, parts: ans}], [['yes', T('answered directly', '直接回应'), COLORS.attention], ['partly', T('answered in part', '部分回应'), COLORS.supply], ['none', T('not yet', '尚无'), COLORS.connection]], {title: T('Answer', '回应')})),
+        qxFig(T(`What the ${nf} follow-up works offer`, `${nf} 篇后续工作给出了什么`), qxBars(Object.keys(fn).filter(k => forms[k]).map(k => ({label: fn[k], value: fp(k), color: k === 'method' ? COLORS.attention : qxGrey()})), {max: 60, title: T('Share', '占比')}))),
+      how: T('Problems are read from the limitation and future-work passages (DeepSeek, quoting verbatim) and grouped at SPECTER2 cosine ≥ 0.80; a follow-up cites a raising paper and is close in content; Claude Opus 5.5 reads its title and abstract for whether and how it takes the problem up.', '开放问题从“局限 / 未来工作”段落读取（DeepSeek，须逐字引用），按 SPECTER2 相似度 ≥ 0.80 归组；后续工作引用了提出论文且内容接近；Claude Opus 5.5 读它的标题与摘要，判断是否接手、以什么形式。'),
+      limit: ''};
   },
   F24() {
     const c = EC('ccounter'); if (!c) return null; const S = c.stats, short = qxShort;
@@ -1773,13 +1821,17 @@ function qxFrom(fid) {  // the observations a question starts from, as links bac
 function qxCard(fid) {
   const r = ED.questions[fid], spec = QX[fid](), fig = spec.fig(), from = qxFrom(fid);
   return `<article class="qx-card" id="q-${fid}" data-qx-card="${fid}">
-    <div class="qx-head"><span class="qx-id">${fid}</span><button class="ob-copy" data-ob-copy="questions:${fid}">${T('Copy link', '复制链接')}</button></div>
+    <div class="qx-head"><span class="qx-id">${qLabel(fid)}</span><button class="ob-copy" data-ob-copy="questions:${fid}">${T('Copy link', '复制链接')}</button></div>
     <h3 class="qx-q">${edT(r.title)}</h3>
     <p class="qx-a"><b>${spec.head}</b> ${spec.line}</p>${spec.legend || ''}${fig}
     <p class="qx-how"><span><b>${T('How it is measured', '怎么测')}</b>${spec.how}</span></p>
-    ${from ? `<p class="qx-from"><span>${T('Starts from the observations', '起点观察')}</span>${from}</p>` : ''}</article>`;
+    ${from ? `<p class="qx-from"><span>${T('Starts from the observations', '起点观察')}</span>${from}</p>` : ''}${qxRecPanel(fid)}</article>`;
 }
-const QX_HIDDEN = new Set(['F12']);  // F12 (do the platform's early signals predict growth?) is held back for now (owner 2026-10-19)
+const QX_HIDDEN = new Set();  // questions held back from the site (owner's call; F12 shown again 2026-10-19)
+// display numbers (owner 2026-10-19): the questions on the site, numbered Q1, Q2, … in research-question order; ids stay F1–F24
+// in the data and in links
+let QNUM = null;
+const qLabel = f => { if (!QNUM) { QNUM = {}; let n = 0; for (const k of ['RQ1', 'RQ2', 'RQ3', 'RQ4']) for (const g of qxIds(k)) QNUM[g] = `Q${++n}`; } return QNUM[f] || f; };
 const qxShown = f => !!ED?.questions?.[f] && !QX_HIDDEN.has(f) && !!QX[f] && QX[f]() != null;
 const qxIds = k => Object.keys(ED.questions).filter(f => ED.questions[f].rq === k && qxShown(f)).sort((a, b) => +a.slice(1) - +b.slice(1));
 function qxSections() {
@@ -1796,7 +1848,7 @@ function qxOverview() {
     <i class="qx-relarrow" aria-hidden="true"></i>
     <div class="is-here"><span class="fd-kicker">${T('QUESTIONS', '追问')}</span><b>${T('Does the evidence behind them hold?', '这些现象背后的证据站得住吗')}</b><p>${T(`${n} questions. Each starts from one or more observations and turns them into a defined question with a test, answered with data gathered for it.`, `${n} 个追问：每个从一条或几条观察出发，变成有定义、有检验的研究问题，用专门收集的数据回答。`)}</p></div></div>`;
   const rqs = ['RQ1', 'RQ2', 'RQ3', 'RQ4'].map((k, i) => `<section class="qx-rq" style="--c:${PS_COLORS[i]}"><button class="qx-rqhead" data-bk-sec="questions:${i + 1}"><span class="fd-kicker">${k} · ${edT(ED.rq[k].name)}</span><b>${edT(ED.rq[k].q)}</b></button>
-    <ol>${qxIds(k).map(f => `<li><button data-q-go="${f}"><span class="qx-id">${f}</span><span class="qx-ot"><b>${edT(ED.questions[f].title)}</b><em>${QX[f]().head}</em></span></button></li>`).join('')}</ol></section>`).join('');
+    <ol>${qxIds(k).map(f => `<li><button data-q-go="${f}"><span class="qx-id">${qLabel(f)}</span><span class="qx-ot"><b>${edT(ED.questions[f].title)}</b><em>${QX[f]().head}</em></span></button></li>`).join('')}</ol></section>`).join('');
   return `<section class="qx-overview">${rel}<div class="qx-rqs">${rqs}</div></section>`;
 }
 function qxBook() {
@@ -1808,6 +1860,43 @@ function qxBook() {
   if (key === 'standards') return `${nav}${qStandards()}${foot}`;
   return `${nav}<div class="pb-head qx-rqtop"><span class="fd-kicker">${T(`RESEARCH QUESTION ${k} OF 4`, `第 ${k} 组研究问题，共 4 组`)}</span><h3>${name}</h3><p class="fd-note">${sub}</p></div><div class="qx-list">${ids.map(qxCard).join('')}</div>${foot}`;
 }
+// ---- 更多 · 逐项记录: the item-level record behind a question (data/records/<F>.json, written with the analysis version), on demand
+const QXR = {}, qxRecState = {};
+const qxRecLoad = fid => QXR[fid] ??= fetch(`./data/records/${fid}.json`).then(r => r.ok ? r.json() : null).catch(() => null);
+function qxRecPanel(fid) {
+  const ix = RECIDX?.questions?.[fid];
+  if (!ix) return '';
+  return `<details class="qx-rec" data-qx-rec="${fid}"><summary>${T('More · item-level records', '更多 · 逐项记录')}<small>${T(`${num(ix.rows)} records (${ix.unit[0]}) with date, reading, basis and unknown fields; ids are shared across questions`, `${num(ix.rows)} 条（${ix.unit[1]}）：时间、读出的值、抽取依据与未知字段；论文 ID 在各追问之间通用`)}</small></summary><div class="qx-rec-body" data-qx-rec-body></div></details>`;
+}
+const QX_VAL = () => ({...PR_NAMES(), ...SETTING_NAMES(), ...SURFACE_NAMES(), open: T('open weights', '开放权重'), closed: T('API only', '仅 API'), mixed: T('both', '两者都有'),
+  'paper code': T('paper code', '论文代码'), tool: T('tool', '工具'), cold: T('cold', '冷门'), rest: T('rest of the tail', '长尾其余'), partly: T('partly', '部分'),
+  same: T('same layer', '同一层次'), beyond: T('claim beyond the measurement', '主张超出测量'), below: T('measured deeper than claimed', '测得比声称更深'),
+  method: T('new method', '新方法'), evaluation: T('new evaluation', '新评测'), empirical_study: T('empirical study', '实证研究'), theory: T('theory', '理论'), system_or_tool: T('system or tool', '系统或工具'),
+  prevents_or_protects: T('prevents or protects', '防止或保护'), detects_or_monitors: T('detects or monitors', '检测或监控'), measures_or_evaluates: T('measures or evaluates', '测量或评估'), reveals_a_risk: T('reveals a risk', '揭示风险'),
+  version: T('version', '版本'), criterion: T('criterion', '判据'), targets: T('target models', '被测模型'), defense: T('defence', '防御'), attack: T('attack', '攻击'), benchmark: T('benchmark', '基准'), measurement: T('measurement', '测量'), "paper's studied models": T("the paper's studied models", '论文整体的被测模型')});
+function qxRecTab(fid, R) {
+  const st = qxRecState[fid] ??= {q: '', page: 0}, V = QX_VAL(), tv = v => v == null || v === '' ? '' : String(v).split(', ').map(x => V[x] ?? x).join(T(', ', '、'));
+  const ckey = Object.fromEntries(R.cols.map(c => [c[0], T(c[1], c[2])])), hay = r => `${r[0]} ${byId.get(r[0])?.title || ''} ${r[2].join(' ')} ${r[3] || ''}`.toLowerCase();
+  const rows = st.q ? R.rows.filter(r => hay(r).includes(st.q)) : R.rows, per = 25, pages = Math.max(1, Math.ceil(rows.length / per)), p = Math.min(st.page, pages - 1);
+  const idCell = id => byId.has(id) ? `<button class="fd-paper qx-rec-paper" data-fd-paper="${esc(id)}">${esc(title(id))}</button><small>${esc(id)}</small>` : `<span>${esc(tv(id))}</span>`;
+  const cell = (c, v) => c[3] === 'paper' ? (v ? idCell(v) : '') : c[3] === 'num' ? (v == null ? '' : num(v)) : esc(tv(v));
+  return `<p class="qx-rec-count">${T(`${num(rows.length)} rows`, `${num(rows.length)} 条`)}</p><div class="qx-rec-wrap"><table class="fd-table qx-rec-table"><thead><tr><th>${T('Item', '对象')}</th><th>${T('Date', '时间')}</th>${R.cols.map(c => `<th>${esc(T(c[1], c[2]))}</th>`).join('')}<th>${T('Basis in the text', '原文依据')}</th><th>${T('Unknown', '未知字段')}</th></tr></thead>
+    <tbody>${rows.slice(p * per, p * per + per).map(r => `<tr><td class="qx-rec-id">${idCell(r[0])}</td><td class="qx-rec-date">${esc(r[1] || '')}</td>${R.cols.map((c, k) => `<td>${cell(c, r[2][k])}</td>`).join('')}<td class="qx-rec-ev">${r[3] ? `<q title="${esc(r[3])}">${esc(r[3].length > 160 ? r[3].slice(0, 157) + '…' : r[3])}</q>` : ''}</td><td>${(r[4] || []).map(k => esc(ckey[k] || k)).join(T(', ', '、'))}</td></tr>`).join('')}</tbody></table></div>
+    ${pages > 1 ? `<div class="qx-rec-pages"><button data-qx-rec-page="${fid}:${p - 1}" ${p ? '' : 'disabled'} aria-label="${T('Previous page', '上一页')}">←</button><span>${p + 1} / ${pages}</span><button data-qx-rec-page="${fid}:${p + 1}" ${p < pages - 1 ? '' : 'disabled'} aria-label="${T('Next page', '下一页')}">→</button></div>` : ''}`;
+}
+function qxRecOpen(d) {
+  const fid = d.dataset.qxRec, body = d.querySelector('[data-qx-rec-body]');
+  if (body.dataset.loaded) return;
+  body.dataset.loaded = '1'; body.innerHTML = `<p class="fd-note">${T('Loading…', '正在载入…')}</p>`;
+  qxRecLoad(fid).then(R => {
+    if (!R) { body.innerHTML = `<p class="fd-note">${T('The records could not be loaded.', '记录载入失败。')}</p>`; delete body.dataset.loaded; delete QXR[fid]; return; }
+    body.innerHTML = `<p class="qx-rec-basis"><b>${T('Basis', '抽取依据')}</b>${esc(T(...R.basis))}</p>
+      <div class="qx-rec-tools"><input type="search" data-qx-rec-q="${fid}" placeholder="${T('Search titles, ids and values', '搜索标题、ID 与取值')}" aria-label="${T('Search the records', '搜索记录')}"></div>
+      <div data-qx-rec-tab>${qxRecTab(fid, R)}</div>
+      <p class="fd-note">${T('Paper ids (REC-…) are the same in the records of every question: joining two questions\' records on the id shows whether two patterns occur in the same papers.', '论文 ID（REC-…）在所有追问的记录中通用：把两项追问的记录按 ID 合并，就能检验同一批论文里两种现象是否同时出现。')} ${T(`Analysis ${esc(R.analysisVersion || '')} on data ${esc(R.release || '')}.`, `分析版本 ${esc(R.analysisVersion || '')}，基于数据 ${esc(R.release || '')}。`)}</p>`;
+  });
+}
+function qxRecRedraw(fid) { const d = document.querySelector(`[data-qx-rec="${fid}"] [data-qx-rec-tab]`); if (d) qxRecLoad(fid).then(R => { if (R) d.innerHTML = qxRecTab(fid, R); }); }
 // go to one question: from another view, open the 追问 view on it; here, scroll to it or open its section
 function qGo(ctx, fid) {
   if (ctx.state.view !== 'questions') { ctx.state.findingsQ = fid; ctx.setView('questions'); return; }
@@ -1830,7 +1919,7 @@ export function renderQuestions(ctx) {
 }
 
 function qJoint() {
-  const chip = f => qxShown(f) ? `<button class="q-chain-st" data-q-go="${f}"><b>${f}</b><small>${esc(edT(ED.questions[f].title))}</small></button>` : '';
+  const chip = f => qxShown(f) ? `<button class="q-chain-st" data-q-go="${f}"><b>${qLabel(f)}</b><small>${esc(edT(ED.questions[f].title))}</small></button>` : '';
   return `<section class="pb-intro">${ED.groups.map((g, i) => `<div class="pb-block q-group" style="--c:${SERIES[i]}"><span class="fd-kicker">${g.id}</span><h3>${edT(g.name)}</h3><p>${edT(g.q)}</p>
     <div class="q-chain">${g.chain.map(stage => `<div class="q-chain-col">${stage.map(chip).join('')}</div>`).join('<span class="q-arrow" aria-hidden="true">→</span>')}</div>
     ${g.side ? `<p class="q-links"><span>${T('Also drawing on', '同时借助')}</span>${g.side.filter(qxShown).map(f => fChip(f)).join('')}</p>` : ''}</div>`).join('')}</section>`;
@@ -1854,7 +1943,7 @@ const PR_NAMES = () => ({rule_or_program: T('Rules or programs', '规则或程�
   attack: T('Attacks', '攻击'), defense: T('Defences', '防御'), benchmark: T('Benchmarks', '基准'), measurement: T('Measurements', '测量'),
   user_prompt: T('user prompt', '用户输入'), system_prompt: T('system prompt', '系统提示'), memory: T('memory', '记忆'), retrieval: T('retrieval', '检索'), tool_output: T('tool output', '工具返回'),
   environment: T('environment', '环境'), other_agent: T('other agent', '其他智能体'), web_content: T('web content', '网页内容'), model_weights_or_training: T('weights or training', '权重或训练'),
-  perception: T('perception', '感知'), action_or_actuator: T('action or actuator', '动作或执行器')});
+  perception: T('perception', '感知'), action_or_actuator: T('action or actuator', '动作或执行器'), model_output: T('model output', '模型输出')});
 const prName = k => PR_NAMES()[k] ?? k;
 const prBars = (obj, color = COLORS.attention, total = null) => { const rows = Object.entries(obj).filter(([, v]) => v != null), mx = Math.max(...rows.map(r => r[1]), 1);
   return `<div class="fd-hbars">${rows.map(([k, v]) => evBar(esc(prName(k)), total ? 100 * v / total : v, total ? 100 : mx, color)).join('')}</div>`; };
@@ -2799,7 +2888,7 @@ function questionPool() {
       ...(fx.surfaces ? [['surfaces', T('Through which channels do attacks come, and which are rising?', '攻击从哪些入口进来，哪些在上升？'), T(`${surf.slice(0, 2).map(([k, a0, a1]) => `${SURFACE_NAMES()[k]} ${pctf(a0)}→${pctf(a1)}`).join(', ')} of attack papers; ${surf.slice(-1).map(([k, a0, a1]) => `${SURFACE_NAMES()[k]} ${pctf(a0)}→${pctf(a1)}`).join('')}.`, `攻击论文中，${surf.slice(0, 2).map(([k, a0, a1]) => `${SURFACE_NAMES()[k]} ${pctf(a0)}→${pctf(a1)}`).join('，')}；${surf.slice(-1).map(([k, a0, a1]) => `${SURFACE_NAMES()[k]} ${pctf(a0)}→${pctf(a1)}`).join('')}。`), B.facetMultiples('surfaces', SURFACE_NAMES(), T('Share of attack papers per half-year that name each entry channel (a paper can name several).', '每半年攻击论文中提到各入口的比例（一篇可提到多个）。'))]] : []),
       ['timeline', T('How long did defences and benchmarks take to follow attacks?', '防御与基准跟上攻击用了多久？'), T(`With N = ${ms.n} from ${ms.from}: defences reached N six months or more after attacks in ${ms.lateDef} of ${ms.both} clusters, benchmarks in ${ms.late}.`, `N = ${ms.n}、从 ${ms.from} 年起：${ms.both} 个星团中有 ${ms.lateDef} 个的防御、${ms.late} 个的基准比攻击晚 6 个月以上达到 N。`), B.milestones()],
       ...(fx.mechanisms ? [['mechanisms', T('How are defences built, and how is that changing?', '防御是怎样做的，正在怎样变化？'), T(`${mech.slice(0, 2).map(([k, [x, y]]) => `${MECH_NAMES()[k]} ${pctf(x)}→${pctf(y)}`).join(', ')}; ${mech.slice(-1).map(([k, [x, y]]) => `${MECH_NAMES()[k]} ${pctf(x)}→${pctf(y)}`).join('')} of defences.`, `防御论文中，${mech.slice(0, 2).map(([k, [x, y]]) => `${MECH_NAMES()[k]} ${pctf(x)}→${pctf(y)}`).join('，')}；${mech.slice(-1).map(([k, [x, y]]) => `${MECH_NAMES()[k]} ${pctf(x)}→${pctf(y)}`).join('')}。`), B.mechanisms()]] : []),
-      ['comparable', T('How much do defences share benchmarks?', '防御研究在多大程度上共享基准？'), T(`Counting only defences with a recorded benchmark use: two defences published in the same half-year share at least one benchmark ${comp.map(c => `${pctf(c.pairShare, 0)} (${c.half})`).join(' → ')}; in ${cl(frag.cluster)}, ${pctf(frag.pairShare)} across ${frag.defenses} defences.${P.evidence?.cards?.pcompare?.stats?.fourShares ? ` Pairs on the same benchmark that also share the core conditions (version, criterion, a studied model family): ${pctf(P.evidence.cards.pcompare.stats.fourShares.sameCore)} (F16).` : ''}`, `只计有基准采用记录的防御：同一半年发表的两项防御共用至少一个基准的比例为 ${comp.map(c => `${pctf(c.pairShare, 0)}（${c.half}）`).join(' → ')}；“${cl(frag.cluster)}”的 ${frag.defenses} 项防御中为 ${pctf(frag.pairShare)}。${P.evidence?.cards?.pcompare?.stats?.fourShares ? `同一基准上的论文对中，核心条件（版本、判据、被测模型家族）也一致的只有 ${pctf(P.evidence.cards.pcompare.stats.fourShares.sameCore)}（见 F16）。` : ''}`), B.comparability()],
+      ['comparable', T('How much do defences share benchmarks?', '防御研究在多大程度上共享基准？'), T(`Counting only defences with a recorded benchmark use: two defences published in the same half-year share at least one benchmark ${comp.map(c => `${pctf(c.pairShare, 0)} (${c.half})`).join(' → ')}; in ${cl(frag.cluster)}, ${pctf(frag.pairShare)} across ${frag.defenses} defences.${P.evidence?.cards?.pcompare?.stats?.fourShares ? ` Pairs on the same benchmark that also share the core conditions (version, criterion, a studied model family): ${pctf(P.evidence.cards.pcompare.stats.fourShares.sameCore)} (${qLabel('F16')}).` : ''}`, `只计有基准采用记录的防御：同一半年发表的两项防御共用至少一个基准的比例为 ${comp.map(c => `${pctf(c.pairShare, 0)}（${c.half}）`).join(' → ')}；“${cl(frag.cluster)}”的 ${frag.defenses} 项防御中为 ${pctf(frag.pairShare)}。${P.evidence?.cards?.pcompare?.stats?.fourShares ? `同一基准上的论文对中，核心条件（版本、判据、被测模型家族）也一致的只有 ${pctf(P.evidence.cards.pcompare.stats.fourShares.sameCore)}（见 ${qLabel('F16')}）。` : ''}`), B.comparability()],
       fx.adaptive ? ['adaptive', T('Are defences tested against adaptive attacks?', '防御是否经过自适应攻击检验？'), T(`${fx.adaptive.overall < 15 ? 'Rarely' : 'Sometimes'}: ${pctf(fx.adaptive.overall)} of ${num(fx.adaptive.defenses)} defences report it in the abstract (${adaptRows.map(x => `${x.half} ${pctf(x.yes)}`).slice(-3).join(' → ')}).`, `${fx.adaptive.overall < 15 ? '很少' : '有时'}：${num(fx.adaptive.defenses)} 项防御中有 ${pctf(fx.adaptive.overall)} 在摘要中报告（${adaptRows.map(x => `${x.half} ${pctf(x.yes)}`).slice(-3).join(' → ')}）。`), B.adaptive()]
         : ['adaptive', T('Are defences tested against adaptive attacks?', '防御是否经过自适应攻击检验？'), T('Waiting for the facet labels.', '等待 LLM 标签。'), B.pending(T('The facet labelling records, for each defence, whether its abstract reports tests against adaptive attacks.', 'LLM 标签会为每项防御记录其摘要是否报告了自适应攻击检验。'))],
       ...(fx.evaluation ? [['realism', T('Which environments do evaluations use?', '评测采用哪些环境，覆盖哪些行动与后果？'), T(`Among attack, defence and benchmark papers, simulated environments went to ${pctf(lastOf(fx.evaluation.share.simulated_environment))}; real systems stay at ${pctf(lastOf(fx.evaluation.share.real_system))}.`, `在攻击、防御与基准论文中，模拟环境升到 ${pctf(lastOf(fx.evaluation.share.simulated_environment))}；真实系统一直只有 ${pctf(lastOf(fx.evaluation.share.real_system))}。`), B.facetMultiples('evaluation', EVAL_NAMES(), T('Share per half-year of attack, defence and benchmark papers by how results are obtained.', '每半年攻击、防御与基准论文按结果获取方式的比例。'))]] : []),
@@ -2853,13 +2942,13 @@ function questionPool() {
         ['mfamily', T('How do the families move month by month?', '各家族逐月怎样变化？'), (() => { const q = fam.find(f => f.family === 'Qwen'), gp = fam.find(f => f.family === 'GPT'), l = v => v.byMonth[v.byMonth.length - 2], f0 = v => v.byMonth[0];
           return T(`GPT ${pctf(f0(gp))} → ${pctf(l(gp))} and Qwen ${pctf(f0(q))} → ${pctf(l(q))} of papers (${mMonth(M.months[0])} → ${mMonth(M.months[M.months.length - 2])}).`, `GPT ${pctf(f0(gp))} → ${pctf(l(gp))}，Qwen ${pctf(f0(q))} → ${pctf(l(q))}（${mMonth(M.months[0])} → ${mMonth(M.months[M.months.length - 2])}）。`); })(), BM.mfamily()],
         ['mopen', T('Open weights or a closed API?', '开源权重还是闭源 API？'), T(`Mostly both: in the last full months ${pctf(avg('both'), 0)} of papers use both, ${pctf(avg('openOnly'), 0)} open weights only, ${pctf(avg('closedOnly'), 0)} an API only.`, `多数两类都用：最近几个完整月份，${pctf(avg('both'), 0)} 的论文两类都用，${pctf(avg('openOnly'), 0)} 只用开源权重，${pctf(avg('closedOnly'), 0)} 只用闭源 API。`), BM.mopen()],
-        ['mfrontier', T('How old is the newest language model a paper names?', '论文点名的最新语言模型距论文时间多久？'), T(`A median of ${F.median} months: ${pctf(F.within6)} of papers name a model released within the previous six months, ${pctf(F.over12)} none newer than a year; the median fell from ${mid(early)} months (${mMonth(fb[0].month)}–${mMonth(fb[1].month)}) to ${mid(late)} (${mMonth(late[0].month)}–${mMonth(late[late.length - 1].month)}). The age of the models actually tested, role by role, is in F14.`, `中位 ${F.median} 个月：${pctf(F.within6)} 的论文点名了发布不足半年的模型，${pctf(F.over12)} 点名的最新模型也已超过一年；中位距离从 ${mid(early)} 个月（${mMonth(fb[0].month)}–${mMonth(fb[1].month)}）降到 ${mid(late)} 个月（${mMonth(late[0].month)}–${mMonth(late[late.length - 1].month)}）。按角色看实际被测模型的年龄，见 F14。`), BM.mfrontier()],
+        ['mfrontier', T('How old is the newest language model a paper names?', '论文点名的最新语言模型距论文时间多久？'), T(`A median of ${F.median} months: ${pctf(F.within6)} of papers name a model released within the previous six months, ${pctf(F.over12)} none newer than a year; the median fell from ${mid(early)} months (${mMonth(fb[0].month)}–${mMonth(fb[1].month)}) to ${mid(late)} (${mMonth(late[0].month)}–${mMonth(late[late.length - 1].month)}). The age of the models actually tested, role by role, is in ${qLabel('F14')}.`, `中位 ${F.median} 个月：${pctf(F.within6)} 的论文点名了发布不足半年的模型，${pctf(F.over12)} 点名的最新模型也已超过一年；中位距离从 ${mid(early)} 个月（${mMonth(fb[0].month)}–${mMonth(fb[1].month)}）降到 ${mid(late)} 个月（${mMonth(late[0].month)}–${mMonth(late[late.length - 1].month)}）。按角色看实际被测模型的年龄，见 ${qLabel('F14')}。`), BM.mfrontier()],
         ['mkind', T('Do different agents run on different models?', '不同智能体用的模型一样吗？'), T(`Digital-agent papers name GPT ${pctf(M.byKind.digital.families.GPT, 0)} and Qwen ${pctf(M.byKind.digital.families.Qwen, 0)}; physical-agent papers name models far less often and ${pctf(M.byKind.physical.vla, 0)} use a robot policy model (VLA).`, `数字智能体论文点名 GPT ${pctf(M.byKind.digital.families.GPT, 0)}、Qwen ${pctf(M.byKind.digital.families.Qwen, 0)}；物理智能体论文点名模型少得多，${pctf(M.byKind.physical.vla, 0)} 用到机器人策略模型（VLA）。`), BM.mkind()],
         ['mcountry', T(`Do US and Chinese papers use different models in ${M.year}?`, `${M.year} 年中美论文用的模型不同吗？`), T(`GPT about equally (${pctf(C2.US.families.GPT, 0)} vs ${pctf(C2.CN.families.GPT, 0)}); Chinese papers name Qwen ${pctf(C2.CN.families.Qwen, 0)}, DeepSeek ${pctf(C2.CN.families.DeepSeek, 0)} and GLM ${pctf(C2.CN.families.GLM, 0)}, against ${pctf(C2.US.families.Qwen, 0)}, ${pctf(C2.US.families.DeepSeek, 0)} and ${pctf(C2.US.families.GLM, 0)} in US papers.`, `GPT 相近（${pctf(C2.US.families.GPT, 0)} 对 ${pctf(C2.CN.families.GPT, 0)}）；中国论文点名 Qwen ${pctf(C2.CN.families.Qwen, 0)}、DeepSeek ${pctf(C2.CN.families.DeepSeek, 0)}、GLM ${pctf(C2.CN.families.GLM, 0)}，美国论文分别为 ${pctf(C2.US.families.Qwen, 0)}、${pctf(C2.US.families.DeepSeek, 0)}、${pctf(C2.US.families.GLM, 0)}。`), BM.mcountry()],
         ...(M.uses ? (() => { const U0 = M.uses, f = Object.fromEntries(U0.byFamily.map(x => [x.family, x])), j = U0.judges, tr = U0.trained, at = U0.attackers;
           return [
           ['muses', T('What are the models used for?', '各家模型在论文里被当成什么？'), T(`Mostly as the model studied or driving the agent; GPT is also the judge in ${pctf(f.GPT?.judge, 0)} of the papers naming it and Claude in ${pctf(f.Claude?.judge, 0)}, while Qwen is trained or fine-tuned in ${pctf(f.Qwen?.trained, 0)}, Llama in ${pctf(f.Llama?.trained, 0)}.`, `大多是被测或驱动智能体的模型；GPT 在点名它的论文里有 ${pctf(f.GPT?.judge, 0)} 被当作裁判，Claude 为 ${pctf(f.Claude?.judge, 0)}；Qwen 有 ${pctf(f.Qwen?.trained, 0)} 被拿来训练或微调，Llama 为 ${pctf(f.Llama?.trained, 0)}。`), BM.muses()],
-          ['mjudge', T('How much do judge and studied models overlap by family?', '裁判与被测模型的家族有多大重合？'), T(`Judges are mostly closed models (${j.slice(0, 3).map(x => x.label).join(', ')}); in ${pctf(U0.selfJudge.share, 0)} of the ${num(U0.selfJudge.papers)} papers that name both a judge and a studied model, the judge shares a family with a studied model of the same paper. This is co-occurrence in a paper: whether the judge actually grades a same-family target is being verified (F9), and whether that affects conclusions needs its own test; family overlap by itself does not show self-preference.`, `裁判多是闭源模型（${j.slice(0, 3).map(x => x.label).join('、')}）；同一论文中同时点名裁判和被测模型的 ${num(U0.selfJudge.papers)} 篇里，${pctf(U0.selfJudge.share, 0)} 的裁判与某个被测模型同属一个家族。这是同一论文内的共现：裁判是否实际评判了同家族目标正在核验（F9），这种配置是否影响结论需另行检验；家族重合本身不证明自我偏好。`),
+          ['mjudge', T('How much do judge and studied models overlap by family?', '裁判与被测模型的家族有多大重合？'), T(`Judges are mostly closed models (${j.slice(0, 3).map(x => x.label).join(', ')}); in ${pctf(U0.selfJudge.share, 0)} of the ${num(U0.selfJudge.papers)} papers that name both a judge and a studied model, the judge shares a family with a studied model of the same paper.${P.evidence?.cards?.pjudged ? ` Read from the experiments, ${pctf(P.evidence.cards.pjudged.stats.sameFamilyJudges, 0)} of identifiable judges grade a model of their own family (${qLabel('F9')}).` : ''}`, `裁判多是闭源模型（${j.slice(0, 3).map(x => x.label).join('、')}）；同一论文中同时点名裁判和被测模型的 ${num(U0.selfJudge.papers)} 篇里，${pctf(U0.selfJudge.share, 0)} 的裁判与某个被测模型同属一个家族。${P.evidence?.cards?.pjudged ? `逐篇读实验后，可识别的模型裁判中有 ${pctf(P.evidence.cards.pjudged.stats.sameFamilyJudges, 0)} 确实在评判同家族模型（见 ${qLabel('F9')}）。` : ''}`),
             `${BM.mtopRole('judges')}<p class="fd-note">${T('Papers using each generation as a judge. Family overlap between judge and studied model is a configuration to check, not evidence of bias.', '把各代模型当裁判的论文数。裁判与被测模型同一家族是需要核查的配置，本身不是偏差的证据。')}</p>`],
           ['mtrained', T('Which models are trained or fine-tuned?', '大家拿什么模型来训练或微调？'), T(`Open weights only: ${tr.slice(0, 4).map(x => `${x.label} ${num(x.papers)}`).join(', ')} papers.`, `只有开源权重：${tr.slice(0, 4).map(x => `${x.label} ${num(x.papers)} 篇`).join('、')}。`), `${BM.mtopRole('trained')}<p class="fd-note">${T('Papers in which the authors train, fine-tune or distil each generation.', '作者训练、微调或蒸馏各代模型的论文数。')}</p>`],
           ['mattack', T('Which models play the attacker?', '攻击方用什么模型？'), T(`${at.slice(0, 3).map(x => `${x.label} ${num(x.papers)}`).join(', ')} papers; attackers mix closed and open models.`, `${at.slice(0, 3).map(x => `${x.label} ${num(x.papers)} 篇`).join('、')}；攻击方开源与闭源模型都用。`), `${BM.mtopRole('attackers')}<p class="fd-note">${T('Papers using each generation to generate attacks or red-team inputs.', '用各代模型生成攻击或红队输入的论文数。')}</p>`]]; })() : []),
@@ -2872,7 +2961,7 @@ function questionPool() {
         ['otypes', T('What does the open-source side build?', '开源在做什么？'), T(`More and more tools: ${num(ty.counts.tool[h0])} tools were created in ${ty.halves[h0]}, ${num(ty.counts.tool[hk - 1])} in ${ty.halves[hk - 1]}, against ${num(ty.counts.research_implementation[hk - 1])} paper implementations.`, `工具越来越多：${ty.halves[h0]} 新建工具 ${num(ty.counts.tool[h0])} 个，${ty.halves[hk - 1]} 达到 ${num(ty.counts.tool[hk - 1])} 个，同期论文实现 ${num(ty.counts.research_implementation[hk - 1])} 个。`), BO.otypes()],
         ['ogap', T('Which lines have relatively few repositories?', '哪些研究线的仓库覆盖相对较低？'), T(`Repositories concentrate in ${hi.map(li).join(', ')} (share of repositories against share of papers); ${lo.map(li).join(', ')} have relatively low repository coverage.`, `开源仓库相对集中在 ${hi.map(li).join('、')}（仓库份额 ÷ 论文份额）；${lo.map(li).join('、')} 的仓库覆盖相对较低。`), BO.ogap()],
         ['ocode', T('Which papers release their code?', '哪些论文公开了代码？'), T(`Benchmarks most (${pctf(cr.benchmark.withCode)}), then measurements ${pctf(cr.measurement.withCode)}, attacks ${pctf(cr.attack.withCode)} and defences ${pctf(cr.defense.withCode)}; surveys ${pctf(cr.survey_position.withCode)}.`, `基准论文最多（${pctf(cr.benchmark.withCode)}），其次是测量 ${pctf(cr.measurement.withCode)}、攻击 ${pctf(cr.attack.withCode)}、防御 ${pctf(cr.defense.withCode)}；综述 ${pctf(cr.survey_position.withCode)}。`), BO.ocode()],
-        ['ofate', T('What happens to paper code?', '论文代码后来怎样了？'), T(`Three separate measures. Attention: a median of ${num(f.paperCode.medianStars)} stars. Upkeep: ${pctf(f.paperCodeOverAYear.pushed180)} of paper code over a year old was pushed in the last six months (tool repositories of the same age are compared in F6). Licence: none detected for ${pctf(f.paperCode.noLicence)}.`, `分三项看。关注度：中位 ${num(f.paperCode.medianStars)} 颗星。维护：建立超过一年的论文代码中 ${pctf(f.paperCodeOverAYear.pushed180)} 在近半年有更新（与同龄工具仓库的对比见 F6）。许可证：${pctf(f.paperCode.noLicence)} 未检测到许可证。`), BO.ofate()],
+        ['ofate', T('What happens to paper code?', '论文代码后来怎样了？'), T(`Three separate measures. Attention: a median of ${num(f.paperCode.medianStars)} stars. Upkeep: ${pctf(f.paperCodeOverAYear.pushed180)} of paper code over a year old was pushed in the last six months (tool repositories of the same age are compared in ${qLabel('F6')}). Licence: none detected for ${pctf(f.paperCode.noLicence)}.`, `分三项看。关注度：中位 ${num(f.paperCode.medianStars)} 颗星。维护：建立超过一年的论文代码中 ${pctf(f.paperCodeOverAYear.pushed180)} 在近半年有更新（与同龄工具仓库的对比见 ${qLabel('F6')}）。许可证：${pctf(f.paperCode.noLicence)} 未检测到许可证。`), BO.ofate()],
         ['owho', T('Who builds it?', '谁在做开源？'), T(`Mostly individuals: organizations own ${pctf(w.organizations)} of the repositories but hold ${pctf(w.orgStarShare)} of the stars; the most-starred organizations are ${w.topOrgsByStars.slice(0, 3).map(o => o.owner).join(', ')}.`, `大多是个人：组织拥有 ${pctf(w.organizations)} 的仓库，却占 ${pctf(w.orgStarShare)} 的星；星数最多的组织是 ${w.topOrgsByStars.slice(0, 3).map(o => o.owner).join('、')}。`), BO.owho()],
         ['oconc', T('Where does attention go?', '关注集中在哪里？'), T(`To very few: the top 1% of repositories hold ${pctf(c.top1pct)} of all stars and the top 10 ${pctf(c.top10)}; ${pctf(c.under10)} have fewer than 10 stars.`, `集中在极少数：前 1% 的仓库占全部星数的 ${pctf(c.top1pct)}，前 10 个占 ${pctf(c.top10)}；${pctf(c.under10)} 的仓库不足 10 颗星。`), BO.oconc()],
       ]; })(),
@@ -2897,7 +2986,8 @@ function questionPool() {
         ['gaps', T('Which label combinations are thinly covered in the current corpus?', '哪些标签组合在当前语料中覆盖较少？'), cells.length ? T(`${cells.map(c => `${FACET_NAME(c.gx, c.x)} × ${FACET_NAME(c.gy, c.y)}: ${num(c.observed)} works, against a reference of ~${num(Math.round(c.expected))} from similar combinations`).join('; ')}.`, `${cells.map(c => `${FACET_NAME(c.gx, c.x)} × ${FACET_NAME(c.gy, c.y)}：${num(c.observed)} 篇，相似组合推算的参考值约 ${num(Math.round(c.expected))} 篇`).join('；')}。`) : '', B4.gaps()],
         ['imbalance', T('Where do attacks outrun defences, or defences go untested?', '哪里攻多守少，哪里有守无评？'), T(`No combination has three times more attacks than defences${ah ? ` (most attack-heavy: ${FACET_NAME('surface', ah.surface)} in ${FACET_NAME('setting', ah.setting)}, ${ah.attacks} vs ${ah.defenses})` : ''}; but ${un.map(r => `${FACET_NAME('surface', r.surface)} in ${FACET_NAME('setting', r.setting)} has ${r.defenses} defences, ${r.tested} tested in practice`).join('; ')}.`, `没有组合的攻击数达到防御的三倍${ah ? `（最偏攻击：${FACET_NAME('setting', ah.setting)}中的${FACET_NAME('surface', ah.surface)}，${ah.attacks} 对 ${ah.defenses}）` : ''}；但${un.map(r => `${FACET_NAME('setting', r.setting)}中的${FACET_NAME('surface', r.surface)}有 ${r.defenses} 篇防御，只有 ${r.tested} 篇在实战条件下检验`).join('；')}。`), B4.imbalance()],
         ['bridges', T('Which research lines are close in content but do not cite each other?', '哪些研究线内容相近却互不引用？'), br ? T(`e.g. ${br.a.label} (${C.topicName(br.a.cluster || '')}) and ${br.b.label} (${C.topicName(br.b.cluster || '')}): closeness ${br.similarity.toFixed(2)}, ${br.citations} citations where similar pairs have ~${br.expected}.`, `例如 ${br.a.label}（${C.topicName(br.a.cluster || '')}）与 ${br.b.label}（${C.topicName(br.b.cluster || '')}）：接近度 ${br.similarity.toFixed(2)}，相互引用 ${br.citations} 次，同等接近的组合通常约 ${br.expected} 次。`) : '', B4.bridges()],
-        ...(op ? [['open', T('Which open problems do papers keep raising, and what response do they get?', '论文反复提出的开放问题，后来得到了什么回应？'), T(`${num(op.problems)} open problems stated by ${num(op.worksWithProblems)} works; ${num(op.recurring)} recur across three papers or more, and ${num(op.recurringOpen)} of those have no later Atlas work taking them up.`, `${num(op.worksWithProblems)} 篇工作提出 ${num(op.problems)} 个开放问题；${num(op.recurring)} 个被三篇以上论文反复提到，其中 ${num(op.recurringOpen)} 个在 Atlas 中没有看到后续工作接手。`), B4.open()]] : []),
+        ...(op ? [['open', T('Which open problems do papers keep raising, and what response do they get?', '论文反复提出的开放问题，后来得到了什么回应？'), (op.byAnswer ? T(`${num(op.problems)} open problems stated by ${num(op.worksWithProblems)} works; of the ${num(op.recurring)} raised by three papers or more, ${op.byAnswer.yes || 0} were later answered directly, ${op.byAnswer.partly || 0} in part and ${op.byAnswer.none || 0} not yet.`, `${num(op.worksWithProblems)} 篇工作提出 ${num(op.problems)} 个开放问题；被三篇以上论文反复提到的 ${num(op.recurring)} 个中，${op.byAnswer.yes || 0} 个后来有工作直接回应，${op.byAnswer.partly || 0} 个部分回应，${op.byAnswer.none || 0} 个还没有。`)
+          : T(`${num(op.problems)} open problems stated by ${num(op.worksWithProblems)} works; ${num(op.recurring)} recur across three papers or more, and ${num(op.recurringOpen)} of those have no later Atlas work taking them up.`, `${num(op.worksWithProblems)} 篇工作提出 ${num(op.problems)} 个开放问题；${num(op.recurring)} 个被三篇以上论文反复提到，其中 ${num(op.recurringOpen)} 个在 Atlas 中没有看到后续工作接手。`)), B4.open()]] : []),
       ];
     })(),
     navigate: [
@@ -2955,7 +3045,7 @@ function positionOverrides() {
       return [q[1], T(`Of ${num(c.base)} defences of 2026, ${num(a.yes)} were tested against an attacker who adapts to the defence and ${num(a.no)} only against fixed or existing attacks: ${pctf(c.stats.adaptiveShare, 0)} of the defences that say how they were tested.`, `${num(c.base)} 项 2026 年防御中，${num(a.yes)} 项用会针对防御调整的攻击者检验过，${num(a.no)} 项只用固定或已有攻击：在说明了检验方式的防御中占 ${pctf(c.stats.adaptiveShare, 0)}。`), `${def}${QX.F20().fig()}`]; },
     realism: q => { const e = P.lenses.evaluation, h = e.halves, sh = e.share, lst = h.length - 2, keys = ['simulated_environment', 'static_dataset', 'real_system', 'no_experiment'], cols = {simulated_environment: COLORS.supply, static_dataset: M_CLOSED, real_system: COLORS.connection, no_experiment: '#8a9a97'}, nm = EVAL_NAMES();
       const realMax = Math.max(...sh.real_system.filter(v => v != null));
-      return [q[1], T(`Simulated environments carry ${pctf(sh.simulated_environment[lst], 0)} of attack, defence and benchmark papers and static datasets ${pctf(sh.static_dataset[lst], 0)}; experiments on real deployed systems never went above ${pctf(realMax, 0)} (${pctf(sh.real_system[lst], 0)} in ${h[lst]}). Environment type is not a quality ranking: simulations can test real mechanisms and static datasets suit some questions; which actions and consequences are measured, against what papers claim, is F21.`, `攻击、防御与基准论文里，模拟环境占 ${pctf(sh.simulated_environment[lst], 0)}，静态数据集占 ${pctf(sh.static_dataset[lst], 0)}；在真实部署的系统上做实验的从未超过 ${pctf(realMax, 0)}（${h[lst]} 为 ${pctf(sh.real_system[lst], 0)}）。环境类型不是质量等级：模拟环境可以检验真实机制，静态数据集也适合某些问题；实验实际测到哪些行动与后果、是否与论文主张对应，见 F21。`),
+      return [q[1], T(`Simulated environments carry ${pctf(sh.simulated_environment[lst], 0)} of attack, defence and benchmark papers and static datasets ${pctf(sh.static_dataset[lst], 0)}; experiments on real deployed systems never went above ${pctf(realMax, 0)} (${pctf(sh.real_system[lst], 0)} in ${h[lst]}). Which actions and consequences the experiments measure, against what papers claim, is ${qLabel('F21')}.`, `攻击、防御与基准论文里，模拟环境占 ${pctf(sh.simulated_environment[lst], 0)}，静态数据集占 ${pctf(sh.static_dataset[lst], 0)}；在真实部署的系统上做实验的从未超过 ${pctf(realMax, 0)}（${h[lst]} 为 ${pctf(sh.real_system[lst], 0)}）。实验实际测到哪些行动与后果、是否与论文主张对应，见 ${qLabel('F21')}。`),
         `<p class="fd-note">${keys.map(k => `<span class="ln-key-sw" style="background:${cols[k]}"></span>${nm[k]}`).join(' ')}</p><div class="ln-stack">${h.map((hh, i) => `<div class="ln-stack-row${i === h.length - 1 ? ' is-partial' : ''}"><span>${hh}</span><i>${keys.map(k => sh[k][i] ? `<span style="width:${sh[k][i]}%;background:${cols[k]}" data-tip="${esc(`${nm[k]} ${hh}: ${pctf(sh[k][i])}`)}"></span>` : '').join('')}</i><small>${pctf(sh.real_system[i], 0)}</small></div>`).join('')}</div>
         <p class="fd-note">${T('Share of the half-year\'s attack, defence and benchmark papers by how results are obtained; the number on the right is the share run on real systems (deployed products, real websites, real users or robots). The last half-year is incomplete.', '每半年攻击、防御与基准论文按结果获取方式的比例；右侧数字是在真实系统（已部署产品、真实网站、真实用户或机器人）上做实验的比例。最后半年不完整。')}</p>`]; },
   };
