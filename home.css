@@ -256,3 +256,8 @@ html[data-theme="light"] .ln-mrow:hover{background:#eef5f2}
 @media(max-width:640px){.ln-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.ln-orow{grid-template-columns:120px 1fr 48px}}
 html[data-theme="light"] .ln-orow:hover{background:#eef5f2}
 
+/* eight tabs since the evidence board (2026-10-19): one row on wide screens, two rows of four below 1400px */
+.ln-tabs{grid-template-columns:repeat(8,minmax(0,1fr))}
+.ln-tabs button{padding:10px 11px}
+@media(max-width:1400px){.ln-tabs{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:640px){.ln-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}}

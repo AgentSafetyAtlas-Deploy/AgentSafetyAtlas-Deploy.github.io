@@ -1,64 +1,64 @@
 {
  "version": "v1",
  "status": "draft",
- "release": "R070",
- "analysisVersion": "A3.7",
- "builtOn": "2026-10-18",
+ "release": "R071",
+ "analysisVersion": "A4",
+ "builtOn": "2026-10-19",
  "counts": {
-  "works": 9009,
+  "works": 8797,
   "withdrawnKept": 14,
-  "citationRoutes": 52459,
-  "citationWithSentence": 43784,
-  "benchmarkUseRoutes": 640,
-  "institutions": 1610,
-  "candidateClusters": 247,
+  "citationRoutes": 51065,
+  "citationWithSentence": 42593,
+  "benchmarkUseRoutes": 642,
+  "institutions": 1602,
+  "candidateClusters": 246,
   "summariesLeftOut": 0
  },
  "files": [
   {
    "path": "clusters.json",
-   "bytes": 651878,
-   "sha256": "9f909b01314c962b3fee3ab6d772a85d0b4000f75b25dac17114f73ec28e4a5e"
+   "bytes": 647363,
+   "sha256": "fa704e5dd8bb61f786d201d706cc36c0566f29676e67bbdbd913ed33e3d1c0ed"
   },
   {
    "path": "datacard.json",
    "bytes": 4472,
-   "sha256": "d8a02e42ed93bb23de2f6323b70f5ed4cd3fd59fdf859053fbb79020a9607767"
+   "sha256": "c96dbe75e7ed9e2ee482ec6bf46433e257dd55ef505f4ac2f72fbed2cf7ff637"
   },
   {
    "path": "findings.json",
-   "bytes": 2566177,
-   "sha256": "07fb9542508bd84bd44e21c594780e354daff01903b405a1349422b285df2349"
+   "bytes": 2684644,
+   "sha256": "0b809d6e66680df7c96bd8e5bc76be2697b0588b230901e5cd5d30d8fa1296ac"
   },
   {
    "path": "institutions.jsonl",
-   "bytes": 202791,
-   "sha256": "4099d7f2b7e24ce08fbe86a6a34015621338f1e420afe0a0138b3e11e5583b5d"
+   "bytes": 201754,
+   "sha256": "a0f9b1f80ad68e84a7d2769eabeb5f47a158a064587f1bbd0300dba094cd7c1a"
   },
   {
    "path": "relations-01.jsonl",
-   "bytes": 20971041,
-   "sha256": "3b4d76e114b0a58b4a50996f9b5ae053f51e81e5648e05564dc8e5363e9a4c00"
+   "bytes": 20970848,
+   "sha256": "2e679ab7ea75a07527eb4f5bb510cb77ddc41c2193baa3d8f288ff7a239d099e"
   },
   {
    "path": "relations-02.jsonl",
-   "bytes": 4953137,
-   "sha256": "de0665df733bbaa9638ddc9b6e39d1a860c5c67b72b299b1d223afc8e8f4a8ef"
+   "bytes": 4269448,
+   "sha256": "0f532c2177fe03c7ab7d02719a1cc27f32cddeeb687019829d0e05c2575f2f98"
   },
   {
    "path": "starmap-bands.json",
-   "bytes": 128686,
-   "sha256": "07592c09059e9cd9f4a25b4a43da43d01327fdafc8080da0ab3e0e2a78a86d59"
+   "bytes": 125711,
+   "sha256": "6030509eb259ebc9c7fc2155bec5c7bd9f26858d73c53bb9f1cc894069b03f38"
   },
   {
    "path": "works.jsonl",
-   "bytes": 15545585,
-   "sha256": "a599fe59b23e7b316ddc8caf3cfb0d8732490b46cd7d4e2b89267af69486ae37"
+   "bytes": 15243247,
+   "sha256": "653ded3c39d8d9a85face7c2bf62846375da3797974f41fe40c9aead8cfc2112"
   },
   {
    "path": "scripts/build_findings.py",
-   "bytes": 124322,
-   "sha256": "dbc0a18140795c318636fedc0b4cbb48b5f84b3c286128493f1d9e120bca39c3"
+   "bytes": 127666,
+   "sha256": "0dc2dd0d8fe0f5caffd08e1fe6b5dd97fdff1a20f2b7ec2e6321288052682e21"
   },
   {
    "path": "scripts/build_snapshot.py",

@@ -26553,52 +26553,6 @@
       "renewalStatus": "unknown"
     },
     {
-      "id": "buyer-REC-C05-B001-0009",
-      "title": "Fusion CX unifies protection with CrowdStrike Falcon",
-      "date": null,
-      "evidenceLevel": "deployment_case",
-      "companyId": "biz-crowdstrike",
-      "summary": {
-        "en": "Fusion CX unifies protection with CrowdStrike Falcon. See the original source for the attributed claims.",
-        "zh": "CrowdStrike 托管的案例称 Fusion CX 自 2020 年部署 Falcon Sensor、2025 年采用 Falcon Complete，之后扩展到 Falcon Identity Security 和 SIEM；案例把客户采用 AI Agent 列为强化身份安全的背景，而非 Continuous Identity 产品部署证明。"
-      },
-      "sources": [
-        {
-          "url": "https://www.crowdstrike.com/en-us/resources/customer-stories/fusion-cx/",
-          "title": "Fusion CX unifies protection with CrowdStrike Falcon"
-        }
-      ],
-      "detailId": "REC-C05-B001-0009",
-      "paymentStatus": "unknown",
-      "contractAmount": null,
-      "renewalStatus": "unknown"
-    },
-    {
-      "id": "buyer-REC-C05-B003-0017",
-      "title": "CORDIS Periodic Report for the DeepKeep Project",
-      "date": "2026-08-03",
-      "evidenceLevel": "project_report",
-      "companyId": "biz-deepkeep",
-      "summary": {
-        "en": "CORDIS Periodic Report for the DeepKeep Project. See the original source for the attributed claims.",
-        "zh": "欧盟 CORDIS 的第一期项目报告称 DeepKeep 平台达到 TRL7，原型已在运行环境中通过涵盖 vision、language 与 agentic AI 的 POC 和部署演示，其中包括 air-gapped 企业安装；报告还称 guardrails 扩展至工具误用、不安全动作序列与跨会话数据泄露。"
-      },
-      "sources": [
-        {
-          "url": "https://cordis.europa.eu/project/id/101218086",
-          "title": "CORDIS DeepKeep Project Fact Sheet"
-        },
-        {
-          "url": "https://cordis.europa.eu/project/id/101218086/reporting",
-          "title": "CORDIS Periodic Report for the DeepKeep Project"
-        }
-      ],
-      "detailId": "REC-C05-B003-0017",
-      "paymentStatus": "unknown",
-      "contractAmount": null,
-      "renewalStatus": "unknown"
-    },
-    {
       "id": "buyer-REC-C05-B003-0016",
       "title": "TrueFoundry Qualitative Test of DeepKeep AI Firewall Custom Guardrail",
       "date": "2026-08-31",
@@ -26644,6 +26598,52 @@
         }
       ],
       "detailId": "REC-C05-B006-0003",
+      "paymentStatus": "unknown",
+      "contractAmount": null,
+      "renewalStatus": "unknown"
+    },
+    {
+      "id": "buyer-REC-C05-B003-0017",
+      "title": "CORDIS Periodic Report for the DeepKeep Project",
+      "date": "2026-08-03",
+      "evidenceLevel": "project_report",
+      "companyId": "biz-deepkeep",
+      "summary": {
+        "en": "CORDIS Periodic Report for the DeepKeep Project. See the original source for the attributed claims.",
+        "zh": "欧盟 CORDIS 的第一期项目报告称 DeepKeep 平台达到 TRL7，原型已在运行环境中通过涵盖 vision、language 与 agentic AI 的 POC 和部署演示，其中包括 air-gapped 企业安装；报告还称 guardrails 扩展至工具误用、不安全动作序列与跨会话数据泄露。"
+      },
+      "sources": [
+        {
+          "url": "https://cordis.europa.eu/project/id/101218086",
+          "title": "CORDIS DeepKeep Project Fact Sheet"
+        },
+        {
+          "url": "https://cordis.europa.eu/project/id/101218086/reporting",
+          "title": "CORDIS Periodic Report for the DeepKeep Project"
+        }
+      ],
+      "detailId": "REC-C05-B003-0017",
+      "paymentStatus": "unknown",
+      "contractAmount": null,
+      "renewalStatus": "unknown"
+    },
+    {
+      "id": "buyer-REC-C05-B001-0009",
+      "title": "Fusion CX unifies protection with CrowdStrike Falcon",
+      "date": null,
+      "evidenceLevel": "deployment_case",
+      "companyId": "biz-crowdstrike",
+      "summary": {
+        "en": "Fusion CX unifies protection with CrowdStrike Falcon. See the original source for the attributed claims.",
+        "zh": "CrowdStrike 托管的案例称 Fusion CX 自 2020 年部署 Falcon Sensor、2025 年采用 Falcon Complete，之后扩展到 Falcon Identity Security 和 SIEM；案例把客户采用 AI Agent 列为强化身份安全的背景，而非 Continuous Identity 产品部署证明。"
+      },
+      "sources": [
+        {
+          "url": "https://www.crowdstrike.com/en-us/resources/customer-stories/fusion-cx/",
+          "title": "Fusion CX unifies protection with CrowdStrike Falcon"
+        }
+      ],
+      "detailId": "REC-C05-B001-0009",
       "paymentStatus": "unknown",
       "contractAmount": null,
       "renewalStatus": "unknown"
@@ -29380,26 +29380,26 @@
     "patchProposalCount": 62,
     "monitoring": "existing_atlas_updater_bounded_source_checks",
     "sourceMonitoring": {
-      "checkedAt": "2026-10-17T18:10:01+00:00",
+      "checkedAt": "2026-10-18T18:30:01+00:00",
       "scope": "Registered public sources only; discovery is not factual verification",
       "watchlistCount": 35,
       "checkedThisRun": 8,
       "prefetch": {
-        "attempted": 4,
-        "succeeded": 3,
-        "bytesDownloaded": 162602,
-        "cachedPending": 52,
+        "attempted": 0,
+        "succeeded": 0,
+        "bytesDownloaded": 0,
+        "cachedPending": 55,
         "factsPromoted": 0
       },
-      "totalRequestsThisRun": 12,
+      "totalRequestsThisRun": 8,
       "successThisRun": 8,
-      "notModifiedThisRun": 1,
-      "bytesDownloaded": 1746674,
-      "bytesAvoided": 152505,
-      "entriesScanned": 178,
+      "notModifiedThisRun": 0,
+      "bytesDownloaded": 2000850,
+      "bytesAvoided": 0,
+      "entriesScanned": 210,
       "newURLsThisRun": 0,
-      "pendingCandidates": 229,
-      "knownCandidateURLs": 327,
+      "pendingCandidates": 230,
+      "knownCandidateURLs": 328,
       "discoveryQueue": [
         {
           "url": "https://zenity.io/resources/case-studies/employee-rewards-automation-a-case-study-of-exposed-pii-in-power-automate",
@@ -29413,7 +29413,7 @@
           "status": "pending_review",
           "priority": "buyer",
           "discoveryMode": "initial_inventory",
-          "lastSeen": "2026-10-14T18:10:01+00:00",
+          "lastSeen": "2026-10-18T18:10:01+00:00",
           "prefetch": {
             "id": "candidate-3ec58a3d1910fea7d3a8",
             "title": "Employee Rewards Automation: A Case Study of Exposed PII in Power Automate Background & Context In recent years, companies have been looking for ways to streamline their HR processes and make them more… Case Studies",
@@ -29457,7 +29457,7 @@
             "id": "candidate-ddc9b61f3b534e8941e4",
             "title": "A Compliance Management Tool",
             "url": "https://www.find-tender.service.gov.uk/Notice/092790-2026",
-            "checkedAt": "2026-10-17T18:10:01+00:00",
+            "checkedAt": "2026-10-18T18:10:01+00:00",
             "kind": "review_candidate",
             "adapter": "html",
             "status": "failed",
@@ -29596,7 +29596,7 @@
           "status": "pending_review",
           "priority": "transaction",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-15T18:10:01+00:00",
+          "lastSeen": "2026-10-18T18:30:01+00:00",
           "prefetch": {
             "id": "candidate-a19795b6f826ddb092ad",
             "title": "https://www.patronus.ai/blog/announcing-our-50m-series-b",
@@ -29771,7 +29771,7 @@
         },
         {
           "url": "https://noma.security/blog/noma-named-a-market-shaper-in-gartner-emerging-market-quadrant-for-ai-application-security-startup-vendors",
-          "title": "https://noma.security/blog/noma-named-a-market-shaper-in-gartner-emerging-market-quadrant-for-ai-application-security-startup-vendors",
+          "title": "Read On",
           "date": null,
           "id": "2e1b653f64803e42e0a3",
           "firstSeen": "2026-09-29T04:49:37+00:00",
@@ -29781,7 +29781,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00",
+          "lastSeen": "2026-10-18T18:10:01+00:00",
           "prefetch": {
             "id": "candidate-2e1b653f64803e42e0a3",
             "title": "https://noma.security/blog/noma-named-a-market-shaper-in-gartner-emerging-market-quadrant-for-ai-application-security-startup-vendors",
@@ -29808,7 +29808,7 @@
         },
         {
           "url": "https://noma.security/blog/the-rise-of-rogue-ai-agents",
-          "title": "https://noma.security/blog/the-rise-of-rogue-ai-agents",
+          "title": "Read On",
           "date": null,
           "id": "e659d854dae0715f6705",
           "firstSeen": "2026-09-29T04:49:37+00:00",
@@ -29818,7 +29818,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00",
+          "lastSeen": "2026-10-18T18:10:01+00:00",
           "prefetch": {
             "id": "candidate-e659d854dae0715f6705",
             "title": "https://noma.security/blog/the-rise-of-rogue-ai-agents",
@@ -31262,7 +31262,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00",
+          "lastSeen": "2026-10-18T18:10:01+00:00",
           "prefetch": {
             "id": "candidate-03e1c0ddd43ca8b70e20",
             "title": "AI Agent governance",
@@ -31299,7 +31299,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00",
+          "lastSeen": "2026-10-18T18:10:01+00:00",
           "prefetch": {
             "id": "candidate-e0becfc29e5202e15b1b",
             "title": "Conductor × Portkey is now live",
@@ -31336,7 +31336,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00",
+          "lastSeen": "2026-10-18T18:10:01+00:00",
           "prefetch": {
             "id": "candidate-afaad166be66f0c874ef",
             "title": "GitHub Copilot best practices for teams",
@@ -31369,7 +31369,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00",
+          "lastSeen": "2026-10-18T18:10:01+00:00",
           "prefetch": {
             "id": "candidate-a5dbcbaea7aaa1639d82",
             "title": "How to choose the right AIOps platform",
@@ -31406,7 +31406,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00",
+          "lastSeen": "2026-10-18T18:10:01+00:00",
           "prefetch": {
             "id": "candidate-1a272968f80211f69d68",
             "title": "What MCP Governance Actually Means in Production",
@@ -31443,7 +31443,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00",
+          "lastSeen": "2026-10-18T18:10:01+00:00",
           "prefetch": {
             "id": "candidate-c13ab00a56722ef63aed",
             "title": "n8n Best Practices",
@@ -31476,7 +31476,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00",
+          "lastSeen": "2026-10-18T18:10:01+00:00",
           "prefetch": {
             "id": "candidate-c869eeb56e8df5f9d15e",
             "title": "OpenAI Codex best practices",
@@ -31513,7 +31513,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00",
+          "lastSeen": "2026-10-18T18:10:01+00:00",
           "prefetch": {
             "id": "candidate-d1c0512bd9ac40e009a5",
             "title": "Who owns Claude Code at your company? A platform team's guide to managing coding agents at scale",
@@ -31550,7 +31550,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00",
+          "lastSeen": "2026-10-18T18:10:01+00:00",
           "prefetch": {
             "id": "candidate-44a4cc787c2637f9761c",
             "title": "Semantic caching thresholds and why they matter",
@@ -31587,7 +31587,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00",
+          "lastSeen": "2026-10-18T18:10:01+00:00",
           "prefetch": {
             "id": "candidate-49db9093fd5b18ac034a",
             "title": "Introducing Skills Registry",
@@ -31624,7 +31624,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00",
+          "lastSeen": "2026-10-18T18:10:01+00:00",
           "prefetch": {
             "id": "candidate-48282d9b57c1e0489461",
             "title": "What is AgentOps?",
@@ -31661,7 +31661,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00",
+          "lastSeen": "2026-10-18T18:10:01+00:00",
           "prefetch": {
             "id": "candidate-f3038651c2e4eccf0065",
             "title": "What’s an agent gateway?",
@@ -31698,7 +31698,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00",
+          "lastSeen": "2026-10-18T18:10:01+00:00",
           "prefetch": {
             "id": "candidate-cabd73f417c55c099a9a",
             "title": "Why Every Agent Vulnerability is a Trust Boundary Failure",
@@ -31735,7 +31735,30 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00",
+          "prefetch": {
+            "id": "candidate-2af7e0b1251c8df77a6b",
+            "title": "Your First AI Agent Will Go Fine. Your Fiftieth Is Where Things Get Interesting.",
+            "url": "https://portkey.ai/blog/your-first-ai-agent-will-go-fine-your-fiftieth-is-where-things-get-interesting",
+            "checkedAt": "2026-10-18T18:10:01+00:00",
+            "kind": "review_candidate",
+            "adapter": "html",
+            "status": "fetched",
+            "change": "initial_snapshot",
+            "factsPromoted": 0,
+            "bytesDownloaded": 30041,
+            "entriesScanned": 0,
+            "requestURL": "https://portkey.ai/blog/your-first-ai-agent-will-go-fine-your-fiftieth-is-where-things-get-interesting",
+            "sourceFingerprint": "5bcf483f47d9da4c5dadd7ecee07daf1d7b5376a4f8d425faef1b843053eaa1f",
+            "httpStatus": 200,
+            "contentHash": "b916a48e519a8f2db7980e314297f8a27be7b6c8209c0f82dd9265dfb7baf9b7",
+            "previousHash": null,
+            "etag": null,
+            "lastModified": null,
+            "validatorURL": "https://portkey.ai/blog/your-first-ai-agent-will-go-fine-your-fiftieth-is-where-things-get-interesting",
+            "representationBytes": 30041,
+            "readingDepth": "machine_fetch_only"
+          }
         },
         {
           "url": "https://www.lasso.security/resources/agentic-ai-security-platform",
@@ -31749,7 +31772,30 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00",
+          "prefetch": {
+            "id": "candidate-203a6a46f7275453616a",
+            "title": "Learn More",
+            "url": "https://www.lasso.security/resources/agentic-ai-security-platform",
+            "checkedAt": "2026-10-18T18:10:01+00:00",
+            "kind": "review_candidate",
+            "adapter": "html",
+            "status": "fetched",
+            "change": "initial_snapshot",
+            "factsPromoted": 0,
+            "bytesDownloaded": 135722,
+            "entriesScanned": 0,
+            "requestURL": "https://www.lasso.security/resources/agentic-ai-security-platform",
+            "sourceFingerprint": "094b7c1b901a85a211b33397810ac42aa972655dfe3cd49196739b97b0750272",
+            "httpStatus": 200,
+            "contentHash": "e8c40d8cf6572a93680253bf25bfb1736c4b1defb7f3247725a4cb3a17784be6",
+            "previousHash": null,
+            "etag": null,
+            "lastModified": "Fri, 16 Oct 2026 01:07:05 GMT",
+            "validatorURL": "https://www.lasso.security/resources/agentic-ai-security-platform",
+            "representationBytes": 135722,
+            "readingDepth": "machine_fetch_only"
+          }
         },
         {
           "url": "https://www.lasso.security/resources/ai-agent-governance-security-risks",
@@ -31763,7 +31809,30 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00",
+          "prefetch": {
+            "id": "candidate-4ce07e4632f964b21869",
+            "title": "Learn More",
+            "url": "https://www.lasso.security/resources/ai-agent-governance-security-risks",
+            "checkedAt": "2026-10-18T18:10:01+00:00",
+            "kind": "review_candidate",
+            "adapter": "html",
+            "status": "fetched",
+            "change": "initial_snapshot",
+            "factsPromoted": 0,
+            "bytesDownloaded": 134519,
+            "entriesScanned": 0,
+            "requestURL": "https://www.lasso.security/resources/ai-agent-governance-security-risks",
+            "sourceFingerprint": "eaeeafec37c63efb30f303a72c500c2ea47b28f7b303edc093c9bcd9cdf2fe5a",
+            "httpStatus": 200,
+            "contentHash": "36cd1f8eca4885fd998c43a8bf4473a749db6bba23ab21cdd8a938f17aba7b6a",
+            "previousHash": null,
+            "etag": null,
+            "lastModified": "Sun, 18 Oct 2026 18:10:05 GMT",
+            "validatorURL": "https://www.lasso.security/resources/ai-agent-governance-security-risks",
+            "representationBytes": 134519,
+            "readingDepth": "machine_fetch_only"
+          }
         },
         {
           "url": "https://www.lasso.security/resources/ai-browsers-enterprise-security-posture",
@@ -31777,7 +31846,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00"
         },
         {
           "url": "https://www.lasso.security/resources/ai-intent-whitepaper",
@@ -31791,7 +31860,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00"
         },
         {
           "url": "https://www.lasso.security/resources/black-hat-usa-cyber-spotlights-lasso-security",
@@ -31805,7 +31874,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00"
         },
         {
           "url": "https://www.lasso.security/resources/breaking-the-model-when-applications-and-agents-misbehave",
@@ -31819,7 +31888,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00"
         },
         {
           "url": "https://www.lasso.security/resources/case-study-genai-in-healthcare-services",
@@ -31833,7 +31902,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00"
         },
         {
           "url": "https://www.lasso.security/resources/case-study-us-federal-agency-adopts-genai-responsibly",
@@ -31847,7 +31916,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00"
         },
         {
           "url": "https://www.lasso.security/resources/chat-about-ai-llm-security-risks-exposed-with-elad-schulman",
@@ -31861,7 +31930,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00"
         },
         {
           "url": "https://www.lasso.security/resources/custom-policies-creation-wizard-overview-video",
@@ -31875,7 +31944,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00"
         },
         {
           "url": "https://www.lasso.security/resources/customer-spotlight-telit-cinterions-journey-to-secure-genai",
@@ -31889,7 +31958,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00"
         },
         {
           "url": "https://www.lasso.security/resources/dean-sysman-joins-lasso-security-board",
@@ -31903,7 +31972,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00"
         },
         {
           "url": "https://www.lasso.security/resources/emerging-trends-of-llms-security",
@@ -31917,7 +31986,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00"
         },
         {
           "url": "https://www.lasso.security/resources/genai-in-financial-services-powerful-but-risky",
@@ -31931,7 +32000,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00"
         },
         {
           "url": "https://www.lasso.security/resources/genai-security-vs-traditional-dlp",
@@ -31945,7 +32014,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00"
         },
         {
           "url": "https://www.lasso.security/resources/intent-security-for-agentic-ai-real-time-threat-detection",
@@ -31959,7 +32028,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00"
         },
         {
           "url": "https://www.lasso.security/resources/introducing-lassos-expanded-automated-ai-red-teaming",
@@ -31973,7 +32042,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00"
         },
         {
           "url": "https://www.lasso.security/resources/introducing-lassos-genai-security-and-cloudflare-integration",
@@ -31987,7 +32056,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00"
         },
         {
           "url": "https://www.lasso.security/resources/lasso-global-infosec-award-2026-ai-security",
@@ -32001,7 +32070,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00"
         },
         {
           "url": "https://www.lasso.security/resources/lasso-globee-cybersecurity-award-2026",
@@ -32015,7 +32084,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00"
         },
         {
           "url": "https://www.lasso.security/resources/lasso-launches-automated-red-teaming-for-generative-ai-security",
@@ -32029,7 +32098,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00"
         },
         {
           "url": "https://www.lasso.security/resources/lasso-named-a-leader-in-latios-2026-ai-security-market-report",
@@ -32043,7 +32112,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00"
         },
         {
           "url": "https://www.lasso.security/resources/lasso-named-to-the-inaugural-allied-defense-100",
@@ -32057,7 +32126,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00"
         },
         {
           "url": "https://www.lasso.security/resources/lasso-nist-compliance-and-threats-mapping",
@@ -32071,7 +32140,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00"
         },
         {
           "url": "https://www.lasso.security/resources/lasso-red-teaming-ai-models",
@@ -32085,7 +32154,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00"
         },
         {
           "url": "https://www.lasso.security/resources/lasso-security-and-scytale-partner",
@@ -32099,7 +32168,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00"
         },
         {
           "url": "https://www.lasso.security/resources/lasso-security-establishes-lasso-federal-llc-to-deliver-genai-security-solutions-for-the-public-sector",
@@ -32113,7 +32182,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00"
         },
         {
           "url": "https://www.lasso.security/resources/lasso-security-joins-oasis-coalition-for-secure-ai",
@@ -32127,7 +32196,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00"
         },
         {
           "url": "https://www.lasso.security/resources/lasso-security-launches-contextual-data-protection-tool-for-genai-applications",
@@ -32141,7 +32210,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00"
         },
         {
           "url": "https://www.lasso.security/resources/lasso-security-named-2024-gartner-r-cool-vendors-tm-for-ai-security",
@@ -32155,7 +32224,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00"
         },
         {
           "url": "https://www.lasso.security/resources/lasso-security-named-winner-of-the-coveted-top-infosec-innovator-awards-for-2024",
@@ -32169,7 +32238,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00"
         },
         {
           "url": "https://www.lasso.security/resources/lasso-security-solution-available-now-on-aws-marketplace",
@@ -32183,7 +32252,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00"
         },
         {
           "url": "https://www.lasso.security/resources/lasso-security-thecube-nyse-rsa-2024",
@@ -32197,7 +32266,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00"
         },
         {
           "url": "https://www.lasso.security/resources/lasso-security-to-partner-with-openpolicy-on-participation-in-the-department-of-commerce-consortium-dedicated-to-ai-safety",
@@ -32211,7 +32280,7 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00"
         },
         {
           "url": "https://www.lasso.security/resources/lasso-security-unveils-context-based-access-control-for-enhanced-rag-security",
@@ -32225,11 +32294,11 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-14T18:30:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00"
         }
       ],
-      "changesThisRun": 1,
-      "pendingChanges": 48,
+      "changesThisRun": 2,
+      "pendingChanges": 52,
       "changeQueue": [
         {
           "id": "ccgp-awards:708cc6665f7db175ca0abff4445231ab323e394df7b8f09c66bd508c06816af2:0fb2f0b04de02ff85c90596997841759fc73e3c7e61f0a792ecd37327081f06c",
@@ -32710,6 +32779,46 @@
           "previousHash": "6d191f56d03266b103fe0a3072ac76bec6d2ea2af8ac5b4140eec394510ea3a5",
           "contentHash": "d1d7e13414456f44ca73984a01eaf9e7f4ea35abbc4a42790ce1065b3471690d",
           "status": "pending_review"
+        },
+        {
+          "id": "lasso-case-directory:ee3787484f6f633a2546008e39c5f33759d238ccea71b71f672a15993855c253:5644b88aa4fb9f5d4d992e1921f3029a0f9c96e55cbd53dede781e189cc1e937",
+          "sourceId": "lasso-case-directory",
+          "title": "Lasso · customer case directory",
+          "url": "https://www.lasso.security/case-studies",
+          "firstSeen": "2026-10-18T18:10:01+00:00",
+          "previousHash": "ee3787484f6f633a2546008e39c5f33759d238ccea71b71f672a15993855c253",
+          "contentHash": "5644b88aa4fb9f5d4d992e1921f3029a0f9c96e55cbd53dede781e189cc1e937",
+          "status": "pending_review"
+        },
+        {
+          "id": "noma-blog:9da7011636ebf76bf8659f7d5e49f725df28310f88e9241b370a73030758788a:fc265af7846db8cb4c87034496c3d155c2b1d3b0fe2c26e6770a08d1a633fcf4",
+          "sourceId": "noma-blog",
+          "title": "Noma Security · blog",
+          "url": "https://noma.security/blog",
+          "firstSeen": "2026-10-18T18:10:01+00:00",
+          "previousHash": "9da7011636ebf76bf8659f7d5e49f725df28310f88e9241b370a73030758788a",
+          "contentHash": "fc265af7846db8cb4c87034496c3d155c2b1d3b0fe2c26e6770a08d1a633fcf4",
+          "status": "pending_review"
+        },
+        {
+          "id": "ccgp-awards:68293141a4031a84de67453b7860d01e9e52f9825417ab5d403fc1ea4df3b21e:3b95a7fedd33978b5013f9e7babe225d7c716213674dffc08b9977fc47bfa53c",
+          "sourceId": "ccgp-awards",
+          "title": "China Government Procurement · award notices",
+          "url": "https://www.ccgp.gov.cn/cggg/dfgg/zbgg/index.htm",
+          "firstSeen": "2026-10-18T18:30:01+00:00",
+          "previousHash": "68293141a4031a84de67453b7860d01e9e52f9825417ab5d403fc1ea4df3b21e",
+          "contentHash": "3b95a7fedd33978b5013f9e7babe225d7c716213674dffc08b9977fc47bfa53c",
+          "status": "pending_review"
+        },
+        {
+          "id": "ccgp-central-awards:de2db952b65868b83cc34489cbb64ac5e3e6a7393ae482a5d3e3171ccafe6b10:ce474f7fe562f0bb2ef88356672d12552a7ea3ae6081280e5949d425801f337a",
+          "sourceId": "ccgp-central-awards",
+          "title": "中国政府采购 · 中央成交公告",
+          "url": "https://www.ccgp.gov.cn/cggg/zygg/cjgg/index.htm",
+          "firstSeen": "2026-10-18T18:30:01+00:00",
+          "previousHash": "de2db952b65868b83cc34489cbb64ac5e3e6a7393ae482a5d3e3171ccafe6b10",
+          "contentHash": "ce474f7fe562f0bb2ef88356672d12552a7ea3ae6081280e5949d425801f337a",
+          "status": "pending_review"
         }
       ],
       "checks": [
@@ -32717,22 +32826,22 @@
           "id": "aisi-alignment-benchmarks",
           "title": "AISI Alignment Project · benchmark research priorities",
           "url": "https://alignmentproject.aisi.gov.uk/research-area/benchmark-design-and-evaluation",
-          "checkedAt": "2026-10-14T18:30:01+00:00",
+          "checkedAt": "2026-10-18T18:30:01+00:00",
           "kind": "funding_programme",
           "adapter": "html",
-          "status": "not_modified",
+          "status": "fetched",
           "change": "unchanged",
           "factsPromoted": 0,
-          "bytesDownloaded": 0,
+          "bytesDownloaded": 48305,
           "entriesScanned": 0,
           "requestURL": "https://alignmentproject.aisi.gov.uk/research-area/benchmark-design-and-evaluation",
           "sourceFingerprint": "5886f29c27e1ec617c366cf21d2aa42009eb9418c2663bbc39a9001125d8c2f4",
           "etag": null,
-          "lastModified": "Sat, 10 Oct 2026 15:17:14 GMT",
+          "lastModified": "Thu, 15 Oct 2026 16:50:55 GMT",
           "validatorURL": "https://alignmentproject.aisi.gov.uk/research-area/benchmark-design-and-evaluation",
-          "httpStatus": 304,
+          "httpStatus": 200,
           "contentHash": "61ad8d3f90c20d2ae7eba8d906e03fab4ee2361008b8959696d9762f45cd7a28",
-          "bytesAvoided": 48305,
+          "previousHash": "61ad8d3f90c20d2ae7eba8d906e03fab4ee2361008b8959696d9762f45cd7a28",
           "representationBytes": 48305
         },
         {
@@ -32805,13 +32914,13 @@
           "id": "ccgp-awards",
           "title": "China Government Procurement · award notices",
           "url": "https://www.ccgp.gov.cn/cggg/dfgg/zbgg/index.htm",
-          "checkedAt": "2026-10-15T18:10:01+00:00",
+          "checkedAt": "2026-10-18T18:30:01+00:00",
           "kind": "procurement_directory",
           "adapter": "html",
           "status": "fetched",
           "change": "changed_pending_review",
           "factsPromoted": 0,
-          "bytesDownloaded": 22216,
+          "bytesDownloaded": 21533,
           "entriesScanned": 56,
           "requestURL": "https://www.ccgp.gov.cn/cggg/dfgg/zbgg/index.htm",
           "sourceFingerprint": "78ccb15c28dbb223b0142369879782853a862b52b3a510225eb1e944e9f31cb3",
@@ -32819,21 +32928,21 @@
           "lastModified": null,
           "validatorURL": "https://www.ccgp.gov.cn/cggg/dfgg/zbgg/index.htm",
           "httpStatus": 200,
-          "contentHash": "68293141a4031a84de67453b7860d01e9e52f9825417ab5d403fc1ea4df3b21e",
-          "previousHash": "ca74dbb6bb274f7841cdec13a915f2cf3ae4b0eebd8e89bcc49a1774d37683c0",
-          "representationBytes": 22216
+          "contentHash": "3b95a7fedd33978b5013f9e7babe225d7c716213674dffc08b9977fc47bfa53c",
+          "previousHash": "68293141a4031a84de67453b7860d01e9e52f9825417ab5d403fc1ea4df3b21e",
+          "representationBytes": 21533
         },
         {
           "id": "ccgp-central-awards",
           "title": "中国政府采购 · 中央成交公告",
           "url": "https://www.ccgp.gov.cn/cggg/zygg/cjgg/index.htm",
-          "checkedAt": "2026-10-15T18:10:01+00:00",
+          "checkedAt": "2026-10-18T18:30:01+00:00",
           "kind": "procurement_directory",
           "adapter": "html",
           "status": "fetched",
           "change": "changed_pending_review",
           "factsPromoted": 0,
-          "bytesDownloaded": 21102,
+          "bytesDownloaded": 20883,
           "entriesScanned": 56,
           "requestURL": "https://www.ccgp.gov.cn/cggg/zygg/cjgg/index.htm",
           "sourceFingerprint": "48a4c0ad04ddf783114cb254c8e6a3e1489d618482dc5a478a9cd7d90997ceee",
@@ -32841,9 +32950,9 @@
           "lastModified": null,
           "validatorURL": "https://www.ccgp.gov.cn/cggg/zygg/cjgg/index.htm",
           "httpStatus": 200,
-          "contentHash": "de2db952b65868b83cc34489cbb64ac5e3e6a7393ae482a5d3e3171ccafe6b10",
-          "previousHash": "79a2916e044597754e0600ae8c4ea63c42f2ccd4fa6fa1ac05ecaf2085dd51af",
-          "representationBytes": 21102
+          "contentHash": "ce474f7fe562f0bb2ef88356672d12552a7ea3ae6081280e5949d425801f337a",
+          "previousHash": "de2db952b65868b83cc34489cbb64ac5e3e6a7393ae482a5d3e3171ccafe6b10",
+          "representationBytes": 20883
         },
         {
           "id": "ccgp-central-tender-awards",
@@ -32893,13 +33002,13 @@
           "id": "cordis-deepkeep",
           "title": "CORDIS · DeepKeep project 101218086",
           "url": "https://cordis.europa.eu/project/id/101218086",
-          "checkedAt": "2026-10-14T18:30:01+00:00",
+          "checkedAt": "2026-10-18T18:10:01+00:00",
           "kind": "grant_record",
           "adapter": "html",
           "status": "fetched",
           "change": "unchanged",
           "factsPromoted": 0,
-          "bytesDownloaded": 100781,
+          "bytesDownloaded": 100767,
           "entriesScanned": 0,
           "requestURL": "https://cordis.europa.eu/project/id/101218086",
           "sourceFingerprint": "a68c4e7f64a4114b551f4cb9958b8ea4b9451140843bce2a7ff4e02a60fe901e",
@@ -32909,7 +33018,7 @@
           "httpStatus": 200,
           "contentHash": "2e30f7a67427e40fdd06e331ccf7cb56102fc8e69dce2e3dc1df0998638705fa",
           "previousHash": "2e30f7a67427e40fdd06e331ccf7cb56102fc8e69dce2e3dc1df0998638705fa",
-          "representationBytes": 100781
+          "representationBytes": 100767
         },
         {
           "id": "dropbox-dash-security",
@@ -33047,73 +33156,73 @@
           "id": "lasso-case-directory",
           "title": "Lasso · customer case directory",
           "url": "https://www.lasso.security/case-studies",
-          "checkedAt": "2026-10-14T18:10:01+00:00",
+          "checkedAt": "2026-10-18T18:10:01+00:00",
           "kind": "buyer_case_directory",
           "adapter": "html",
           "status": "fetched",
           "change": "changed_pending_review",
           "factsPromoted": 0,
-          "bytesDownloaded": 148968,
-          "entriesScanned": 155,
+          "bytesDownloaded": 149794,
+          "entriesScanned": 157,
           "requestURL": "https://www.lasso.security/case-studies",
           "sourceFingerprint": "596b7852788baa80d0dcabeca7c59bd5027dfef316ca6bed76f68b3f1edc7999",
           "etag": null,
-          "lastModified": "Wed, 14 Oct 2026 14:39:40 GMT",
+          "lastModified": "Fri, 16 Oct 2026 01:01:16 GMT",
           "validatorURL": "https://www.lasso.security/case-studies",
           "httpStatus": 200,
-          "contentHash": "ee3787484f6f633a2546008e39c5f33759d238ccea71b71f672a15993855c253",
-          "previousHash": "e318ed82c21feeb76eaa8e0aab8a1116273a30db79663c136b1258e91bbd2220",
-          "representationBytes": 148968
+          "contentHash": "5644b88aa4fb9f5d4d992e1921f3029a0f9c96e55cbd53dede781e189cc1e937",
+          "previousHash": "ee3787484f6f633a2546008e39c5f33759d238ccea71b71f672a15993855c253",
+          "representationBytes": 149794
         },
         {
           "id": "lasso-resources",
           "title": "Lasso Security · resources directory",
           "url": "https://www.lasso.security/resources",
-          "checkedAt": "2026-10-14T18:30:01+00:00",
+          "checkedAt": "2026-10-18T18:10:01+00:00",
           "kind": "discovery_directory",
           "adapter": "html",
           "status": "fetched",
-          "change": "changed_pending_review",
+          "change": "unchanged",
           "factsPromoted": 0,
           "bytesDownloaded": 238547,
           "entriesScanned": 228,
           "requestURL": "https://www.lasso.security/resources",
           "sourceFingerprint": "d0f0a83f1c36b682bc607fc859d1bb03472b3200bc475f63de1ebe499bf693e7",
           "etag": null,
-          "lastModified": "Wed, 14 Oct 2026 18:30:05 GMT",
+          "lastModified": "Wed, 14 Oct 2026 22:50:48 GMT",
           "validatorURL": "https://www.lasso.security/resources",
           "httpStatus": 200,
           "contentHash": "c1de183bf8de48456fb2eb93a3e025f35efc0e948d9d45f6c328730e3d4fd079",
-          "previousHash": "32c08340951cfad39f6c0d40c1c37fa2bcc471d7f212a871317116bd687a2519",
+          "previousHash": "c1de183bf8de48456fb2eb93a3e025f35efc0e948d9d45f6c328730e3d4fd079",
           "representationBytes": 238547
         },
         {
           "id": "noma-blog",
           "title": "Noma Security · blog",
           "url": "https://noma.security/blog",
-          "checkedAt": "2026-10-14T18:30:01+00:00",
+          "checkedAt": "2026-10-18T18:10:01+00:00",
           "kind": "discovery_directory",
           "adapter": "html",
           "status": "fetched",
           "change": "changed_pending_review",
           "factsPromoted": 0,
-          "bytesDownloaded": 91406,
-          "entriesScanned": 68,
+          "bytesDownloaded": 92480,
+          "entriesScanned": 70,
           "requestURL": "https://noma.security/blog",
           "sourceFingerprint": "03a980c5c1bc7f6334449dc86b01111b37d256f12e1cff1418c3b33e9ef1b593",
           "etag": null,
-          "lastModified": "Wed, 14 Oct 2026 16:00:59 GMT",
+          "lastModified": "Sun, 18 Oct 2026 17:46:43 GMT",
           "validatorURL": "https://noma.security/blog",
           "httpStatus": 200,
-          "contentHash": "9da7011636ebf76bf8659f7d5e49f725df28310f88e9241b370a73030758788a",
-          "previousHash": "9e15debdc0b142d116d1c29be7ea7426ed8a6a12e3f34852b04bec7b2dbc5665",
-          "representationBytes": 91406
+          "contentHash": "fc265af7846db8cb4c87034496c3d155c2b1d3b0fe2c26e6770a08d1a633fcf4",
+          "previousHash": "9da7011636ebf76bf8659f7d5e49f725df28310f88e9241b370a73030758788a",
+          "representationBytes": 92480
         },
         {
           "id": "onyx-news",
           "title": "Onyx Security · news",
           "url": "https://www.onyx.security/news",
-          "checkedAt": "2026-10-14T18:30:01+00:00",
+          "checkedAt": "2026-10-18T18:10:01+00:00",
           "kind": "discovery_directory",
           "adapter": "html",
           "status": "fetched",
@@ -33124,7 +33233,7 @@
           "requestURL": "https://www.onyx.security/news",
           "sourceFingerprint": "8cbb74372b7d455b79288cd2982d63de0c8cf9dd8c6de61b758d659e3da6a12e",
           "etag": null,
-          "lastModified": "Wed, 14 Oct 2026 18:30:06 GMT",
+          "lastModified": "Fri, 16 Oct 2026 18:51:41 GMT",
           "validatorURL": "https://www.onyx.security/news",
           "httpStatus": 200,
           "contentHash": "99689363bc26a0982041e003fa4d042db2997b082fbc7d1bff0df4ba576c2e21",
@@ -33135,7 +33244,7 @@
           "id": "patronus-index",
           "title": "Patronus AI · sitemap",
           "url": "https://www.patronus.ai/sitemap.xml",
-          "checkedAt": "2026-10-15T18:10:01+00:00",
+          "checkedAt": "2026-10-18T18:30:01+00:00",
           "kind": "discovery_directory",
           "adapter": "sitemap",
           "status": "fetched",
@@ -33146,7 +33255,7 @@
           "requestURL": "https://www.patronus.ai/sitemap.xml",
           "sourceFingerprint": "8eb6744fe021ca8d89a3d0a01803e6f62b7e80b5465cbd647eee5f8c92584838",
           "etag": null,
-          "lastModified": "Thu, 15 Oct 2026 11:32:16 GMT",
+          "lastModified": "Sun, 18 Oct 2026 17:50:56 GMT",
           "validatorURL": "https://www.patronus.ai/sitemap.xml",
           "httpStatus": 200,
           "contentHash": "219d5d7731b2591d5e9dcd09802ddcc7e0304ca837adb4428e2e8e2a11a47790",
@@ -33157,7 +33266,7 @@
           "id": "portkey-blog",
           "title": "Portkey · RSS updates",
           "url": "https://portkey.ai/blog/rss/",
-          "checkedAt": "2026-10-14T18:30:01+00:00",
+          "checkedAt": "2026-10-18T18:10:01+00:00",
           "kind": "discovery_directory",
           "adapter": "rss",
           "status": "fetched",
@@ -33167,7 +33276,7 @@
           "entriesScanned": 16,
           "requestURL": "https://portkey.ai/blog/rss/",
           "sourceFingerprint": "9076f0070e1294e44529bfeab72d7880349281e00a18bbaa167b9b3467cf18aa",
-          "etag": "W/\"51124-hsmeHM0piW6nLWnZ9KOXdsAXEw0\"",
+          "etag": "W/\"51124-HASDedcWaJtrDxzdZpI3NGAFmxE\"",
           "lastModified": null,
           "validatorURL": "https://portkey.ai/blog/rss/",
           "httpStatus": 200,
@@ -33245,23 +33354,23 @@
           "id": "price-pillar-marketplace",
           "title": "pillar · Marketplace seller pricing table",
           "url": "https://aws.amazon.com/marketplace/pp/prodview-xphnsjsox7vjw",
-          "checkedAt": "2026-10-14T18:10:01+00:00",
+          "checkedAt": "2026-10-18T18:10:01+00:00",
           "kind": "price_observation",
           "adapter": "marketplace_price_table",
           "status": "fetched",
           "change": "unchanged",
           "factsPromoted": 0,
-          "bytesDownloaded": 475688,
+          "bytesDownloaded": 476346,
           "entriesScanned": 0,
           "requestURL": "https://aws.amazon.com/marketplace/pp/prodview-xphnsjsox7vjw",
           "sourceFingerprint": "a1ce926a463ff8807f1bfa7f71d41cec770325b4717ee3a5867aab6025ef14ae",
-          "etag": "\"abac6a16bc71f101d18f07c77454d3c5\"",
+          "etag": "\"0432e3a6bff46d3cf0c2b73516725543\"",
           "lastModified": null,
           "validatorURL": "https://aws.amazon.com/marketplace/pp/prodview-xphnsjsox7vjw",
           "httpStatus": 200,
           "contentHash": "117a6b496cb49c0639f59369cb67f5ba21c0bf712e50360fcc11435bfa68cf4f",
           "previousHash": "117a6b496cb49c0639f59369cb67f5ba21c0bf712e50360fcc11435bfa68cf4f",
-          "representationBytes": 475688
+          "representationBytes": 476346
         },
         {
           "id": "price-witness-marketplace",
@@ -33333,7 +33442,7 @@
           "id": "thinkific-subprocessors",
           "title": "Thinkific · subprocessor list",
           "url": "https://www.thinkific.com/thinkificsubprocessors/",
-          "checkedAt": "2026-10-14T18:30:01+00:00",
+          "checkedAt": "2026-10-18T18:30:01+00:00",
           "kind": "buyer_material",
           "adapter": "html",
           "status": "fetched",
@@ -33377,7 +33486,7 @@
           "id": "twilio-subprocessors",
           "title": "Twilio · subprocessor list",
           "url": "https://www.twilio.com/en-us/legal/sub-processors",
-          "checkedAt": "2026-10-14T18:30:01+00:00",
+          "checkedAt": "2026-10-18T18:30:01+00:00",
           "kind": "buyer_material",
           "adapter": "html",
           "status": "fetched",
@@ -33387,8 +33496,8 @@
           "entriesScanned": 0,
           "requestURL": "https://www.twilio.com/en-us/legal/sub-processors",
           "sourceFingerprint": "fb21479c793d82391f10e90d5c423b8894c8c9620ae0ed0542852c1a6e857212",
-          "etag": "\"ab17f-65dd10a877ee1\"",
-          "lastModified": "Wed, 14 Oct 2026 18:24:26 GMT",
+          "etag": "\"ab17f-65e19f8b401db\"",
+          "lastModified": "Sun, 18 Oct 2026 09:25:00 GMT",
           "validatorURL": "https://www.twilio.com/en-us/legal/sub-processors",
           "httpStatus": 200,
           "contentHash": "15abab0ce6c9abdce5b2079f8da110ae5918559748108314e66371b14fa7a269",
@@ -33399,11 +33508,11 @@
           "id": "uipath-privacy",
           "title": "UiPath · privacy and subprocessors",
           "url": "https://www.uipath.com/legal/trust-and-security/privacy",
-          "checkedAt": "2026-10-15T18:10:01+00:00",
+          "checkedAt": "2026-10-18T18:30:01+00:00",
           "kind": "buyer_material",
           "adapter": "html",
           "status": "fetched",
-          "change": "changed_pending_review",
+          "change": "unchanged",
           "factsPromoted": 0,
           "bytesDownloaded": 453893,
           "entriesScanned": 0,
@@ -33414,48 +33523,48 @@
           "validatorURL": "https://www.uipath.com/legal/trust-and-security/privacy",
           "httpStatus": 200,
           "contentHash": "dacc22c8556f7a19564e507e5ecdc31a9692d571b6e5d88434ce11bf00a07727",
-          "previousHash": "001560cf42b5a27e9e56946e2e032db3ebc35d72598241bd26c363ca576029e2",
+          "previousHash": "dacc22c8556f7a19564e507e5ecdc31a9692d571b6e5d88434ce11bf00a07727",
           "representationBytes": 453893
         },
         {
           "id": "uk-ocds-awards",
           "title": "UK Find a Tender · OCDS award feed",
           "url": "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages",
-          "checkedAt": "2026-10-15T18:10:01+00:00",
+          "checkedAt": "2026-10-18T18:30:01+00:00",
           "kind": "procurement_api",
           "adapter": "ocds",
           "status": "fetched",
           "change": "page_scanned",
           "factsPromoted": 0,
-          "bytesDownloaded": 1075001,
-          "entriesScanned": 100,
-          "requestURL": "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages?limit=100&updatedFrom=2026-10-02T18:10:01&updatedTo=2026-10-12T18:10:01&stages=award&cursor=dXBkYXRlZEZyb209MjAyNi0xMC0wMlQxODoxMDowMXx1cGRhdGVkVG89MjAyNi0xMC0xMlQxODoxMDowMXxuZXh0Q3Vyc29yPTc0NzcwOQ==",
+          "bytesDownloaded": 457149,
+          "entriesScanned": 36,
+          "requestURL": "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages?limit=100&updatedFrom=2026-10-02T18:10:01&updatedTo=2026-10-12T18:10:01&stages=award&cursor=dXBkYXRlZEZyb209MjAyNi0xMC0wMlQxODoxMDowMXx1cGRhdGVkVG89MjAyNi0xMC0xMlQxODoxMDowMXxuZXh0Q3Vyc29yPTc0NjU2Ng==",
           "sourceFingerprint": "cd2a57219f5ee9933919763c5db9919d2e84f6496e3bfa5f8ac74c1a797bca12",
           "etag": null,
           "lastModified": null,
-          "validatorURL": "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages?limit=100&updatedFrom=2026-10-02T18:10:01&updatedTo=2026-10-12T18:10:01&stages=award&cursor=dXBkYXRlZEZyb209MjAyNi0xMC0wMlQxODoxMDowMXx1cGRhdGVkVG89MjAyNi0xMC0xMlQxODoxMDowMXxuZXh0Q3Vyc29yPTc0NzcwOQ==",
-          "nextURL": "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages?limit=100&updatedFrom=2026-10-02T18:10:01&updatedTo=2026-10-12T18:10:01&stages=award&cursor=dXBkYXRlZEZyb209MjAyNi0xMC0wMlQxODoxMDowMXx1cGRhdGVkVG89MjAyNi0xMC0xMlQxODoxMDowMXxuZXh0Q3Vyc29yPTc0NjU2Ng==",
+          "validatorURL": "https://www.find-tender.service.gov.uk/api/1.0/ocdsReleasePackages?limit=100&updatedFrom=2026-10-02T18:10:01&updatedTo=2026-10-12T18:10:01&stages=award&cursor=dXBkYXRlZEZyb209MjAyNi0xMC0wMlQxODoxMDowMXx1cGRhdGVkVG89MjAyNi0xMC0xMlQxODoxMDowMXxuZXh0Q3Vyc29yPTc0NjU2Ng==",
+          "nextURL": null,
           "window": {
             "start": "2026-10-02T18:10:01",
             "end": "2026-10-12T18:10:01"
           },
-          "completedThrough": "2026-10-03T18:10:01",
+          "completedThrough": "2026-10-12T18:10:01",
           "httpStatus": 200,
-          "contentHash": "aaecbf48e9e1e9c845272891b0a125eb132767fb2fa8d7cc23c2b9a1483c3040",
-          "previousHash": "2000251b78121565dd61306f889a2f578ed04135d57a3cf7ed734f5664e053f4",
-          "representationBytes": 1075001
+          "contentHash": "1d8c761a198766fef33318014363198a9f5394bfcf808b519ecf94d7ed5f68ab",
+          "previousHash": "aaecbf48e9e1e9c845272891b0a125eb132767fb2fa8d7cc23c2b9a1483c3040",
+          "representationBytes": 457149
         },
         {
           "id": "zenity-case-directory",
           "title": "Zenity · customer case directory",
           "url": "https://zenity.io/resources/case-studies",
-          "checkedAt": "2026-10-14T18:10:01+00:00",
+          "checkedAt": "2026-10-18T18:10:01+00:00",
           "kind": "buyer_case_directory",
           "adapter": "html",
           "status": "fetched",
           "change": "unchanged",
           "factsPromoted": 0,
-          "bytesDownloaded": 902365,
+          "bytesDownloaded": 897892,
           "entriesScanned": 145,
           "requestURL": "https://zenity.io/resources/case-studies",
           "sourceFingerprint": "33a33c3171d182c4538f28c1cd9cc37aeba58960f115f87b4bdf81e1a442ad69",
@@ -33465,7 +33574,7 @@
           "httpStatus": 200,
           "contentHash": "05023fc19aa027815a68b3f9cac2ba1d6d7b5be8f242b927300ec3a876b9dd07",
           "previousHash": "05023fc19aa027815a68b3f9cac2ba1d6d7b5be8f242b927300ec3a876b9dd07",
-          "representationBytes": 902365
+          "representationBytes": 897892
         },
         {
           "id": "zscaler-investor-news",
@@ -34142,11 +34251,11 @@
           "distinctURLs": 16
         },
         {
-          "host": "lasso.security",
+          "host": "assets.publishing.service.gov.uk",
           "distinctURLs": 14
         },
         {
-          "host": "assets.publishing.service.gov.uk",
+          "host": "lasso.security",
           "distinctURLs": 14
         },
         {

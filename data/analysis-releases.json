@@ -1,7 +1,34 @@
 {
- "current": "A3.7",
+ "current": "A4",
  "policy": "The observation report is versioned apart from the data: a candidate is computed once a month and published after review.",
  "versions": [
+  {
+   "analysisVersion": "A4",
+   "baseRelease": "R071",
+   "dataCutoff": "2026-10-15",
+   "computedOn": "2026-10-19",
+   "publishedOn": "2026-10-19",
+   "note": "Research questions tab and observation labels; published on the owner's instruction to collect the data and publish.",
+   "headline": {
+    "Works analysed": 8783,
+    "Citation routes": 51065,
+    "Routes with a sentence (%)": 83.6,
+    "Candidate clusters": 246,
+    "Benchmarks used by others": 114,
+    "Countries": 87,
+    "Doubling time (months)": 9.3,
+    "Cross-tradition citations (%)": 7.1,
+    "… expected from sizes (%)": 44.9,
+    "Boundary works (%)": 1.5,
+    "Held-out surveys": 56,
+    "Salience Recall@50": 0.209,
+    "Citations Recall@50": 0.19,
+    "Salience new work in top 20": 0.441,
+    "Citations new work in top 20": 0.005,
+    "New-star share (%)": 36.3,
+    "Band top-10 overlap": 0.038
+   }
+  },
   {
    "analysisVersion": "A3.7",
    "baseRelease": "R070",
