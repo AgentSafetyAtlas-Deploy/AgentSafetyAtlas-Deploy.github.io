@@ -12,7 +12,7 @@ export function renderHero({t, counts, themes, galaxyName}) {
     <span class="hs-kicker">AGENT SAFETY ATLAS · ${t('THE UNIVERSE', '宇宙')}</span>
     <h1>${t('Every star<br>is a paper.', '每一颗星，<br>都是一篇论文。')}</h1>
     <p>${t(`${counts.works.toLocaleString()} papers on the safety and security of AI agents, placed in three dimensions by what they say: ${counts.galaxies} galaxies, ${counts.clusters} clusters and ${counts.routes.toLocaleString()} observed routes between them.`, `${counts.works.toLocaleString()} 篇关于 AI 智能体安全的论文，按内容放进三维空间：${counts.galaxies} 个星系、${counts.clusters} 个星团，以及它们之间 ${counts.routes.toLocaleString()} 条观测到的航线。`)}</p>
-    <div class="hs-cta"><button class="hs-btn is-primary" data-view="discover">${t('Observations', '看观察')} →</button><button class="hs-btn" data-view="papers">${t('Browse the papers', '浏览论文')}</button><button class="hs-btn" data-view="explore">${t('Star map in detail', '详细星图')}</button></div>
+    <div class="hs-cta"><button class="hs-btn is-primary" data-view="synthesis">${t('Key findings', '看核心发现')} →</button><button class="hs-btn" data-view="discover">${t('Observations', '看观察')}</button><button class="hs-btn" data-view="papers">${t('Browse the papers', '浏览论文')}</button><button class="hs-btn" data-view="explore">${t('Star map in detail', '详细星图')}</button></div>
     <p class="hs-hint">${t('Drag to turn the sky · hover a star for its title · click a cluster name to open it', '拖动旋转星空 · 悬停看论文标题 · 点击星团名进入')}</p>
   </div>
   <div class="hs-legend" role="group" aria-label="${t('Galaxies', '星系')}">${themes.map((th, i) => `<button data-hs-theme="${i}" style="--c:${th.color}"><i></i>${esc(galaxyName(th))}</button>`).join('')}</div>

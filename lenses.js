@@ -281,6 +281,8 @@ export function bindLenses(ctx, root = document.querySelector('.fd')) {
   root.addEventListener('change', e => { if (e.target.matches('[data-ps-role]')) { psStop(); ps.role = +e.target.value; ps.hl = null; psRedraw(); } if (e.target.matches('[data-ao-filter]')) aoFilter(root); });
   root.addEventListener('input', e => { if (e.target.matches('[data-ao-filter="text"]')) aoFilter(root);
     if (e.target.matches('[data-qx-rec-q]')) { const fid = e.target.dataset.qxRecQ, st = qxRecState[fid] ??= {q: '', page: 0}; st.q = e.target.value.trim().toLowerCase(); st.page = 0; qxRecRedraw(fid); } });
+  root.addEventListener('click', e => { const j = e.target.closest('[data-gd-jump]'); if (j) document.getElementById(j.dataset.gdJump)?.scrollIntoView({block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'}); });
+  bindMini(root);
   root.addEventListener('toggle', e => { if (e.target.matches?.('[data-qx-rec]') && e.target.open) qxRecOpen(e.target); }, true);
   root.addEventListener('keydown', e => { const st = e.target.closest?.('.qm-st'); if (st && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); qGo(ctx, st.dataset.qGo); } });
   if (ctx.state.findingsQ) { const fq = ctx.state.findingsQ; ctx.state.findingsQ = '';  // a shared link: open the card it names
@@ -340,7 +342,7 @@ export function bindLenses(ctx, root = document.querySelector('.fd')) {
     if (el.dataset.lnGoto) {
       const [lens, qid] = el.dataset.lnGoto.split(':');
       if (ctx.state.view === 'questions') { ctx.state.lens = lens; ctx.state.findingsQ = qid; ctx.setView('discover'); return; }
-      if (lens === 'structure') { ps.sec = Math.max(1, psSectionOf(qid)); }
+      if (lens === 'structure') { ps.sec = Math.max(0, psSectionOf(qid)); }
       else if (BOOK()[lens]) bk[lens] = Math.max(0, bookSectionOf(lens, qid));
       ctx.state.lens = lens; ctx.writeHash(); ctx.render();
       requestAnimationFrame(() => { const h = document.querySelector(`#q-${qid} [data-cr-open], #q-${qid} [data-ps-open], #q-${qid} [data-tj-open], #q-${qid} [data-pl-open]`); if (h && h.getAttribute('aria-expanded') !== 'true') h.click(); document.getElementById('q-' + qid)?.scrollIntoView({block: 'start'}); });
@@ -1126,13 +1128,12 @@ function psIntro() {
   </section>`;
 }
 const PS_SEC_DEFAULT = {object: {y: 'role'}, risk: {y: 'safety'}, attackdef: {y: 'role'}};
-function psSections() { return [['intro', T('Guide', '导读'), T('why two axes, and what each means', '为什么拆成两条轴，各是什么意思'), []], ...LN_GROUPS().structure]; }
+function psSections() { return LN_GROUPS().structure; }  // the guide is on the 导读 tab (owner, 2026-10-19)
 function psBook(qs) {
   const secs = psSections(), k = Math.max(0, Math.min(secs.length - 1, ps.sec || 0)), [key, name, sub, ids] = secs[k], byq = Object.fromEntries(qs.map(q => [q[0], q]));
-  const nav = `<nav class="pb-nav" aria-label="${T('Sections', '节')}">${secs.map(([kk, nm, sb], i) => `<button data-ps-sec="${i}" aria-current="${i === k ? 'page' : 'false'}"><span>${i + 1}</span><b>${nm}</b><small>${sb}</small></button>`).join('')}</nav>`;
+  const nav = `<nav class="pb-nav pb-steps" aria-label="${T('Sections', '节')}">${secs.map(([kk, nm, sb], i) => `<button data-ps-sec="${i}" class="${i < k ? 'is-done' : ''}" aria-current="${i === k ? 'page' : 'false'}"><span>${i + 1}</span><b>${nm}</b><small>${sb}</small></button>`).join('')}</nav>`;
   const next = k < secs.length - 1 ? `<button class="pb-next" data-ps-sec="${k + 1}">${T('Next section', '下一节')}：${secs[k + 1][1]} →</button>` : '';
   const prev = k > 0 ? `<button class="pb-prev" data-ps-sec="${k - 1}">← ${secs[k - 1][1]}</button>` : '<span></span>';
-  if (key === 'intro') return `${nav}${psIntro()}<div class="pb-foot">${prev}${next}</div>`;
   let n = qs.findIndex(q => q[0] === ids.find(id => byq[id])) ;
   const cards = ids.filter(id => byq[id]).map(id => { const [qid, q, a, body] = byq[id]; n = qs.indexOf(byq[id]) + 1;
     return `<article class="cr-card pb-card-q" id="q-${qid}" data-ps-card="${qid}"><button class="cr-card-head" data-ps-open="${qid}" aria-expanded="false"><span class="ln-qn">${String(n).padStart(2, '0')}</span><span class="cr-card-text"><b>${q}${obsBadges('structure', qid)}</b><em>${esc(a)}</em></span><i class="cx-chev" aria-hidden="true"></i></button>${obsMeta('structure', qid)}
@@ -1201,21 +1202,30 @@ const GUIDE = {
   oss: () => `<section class="pb-intro">
     ${guideBlock(T('WHAT IS COUNTED', '怎么计数'), T('Repositories against papers', '仓库与论文对照'), `<p>${T(`${num(P.oss.repos)} repositories in the agent-security group of the open-source set (forks and mirrors left out), metrics captured ${P.oss.capture}. ${P.oss.disclaimer}`, `开源集中 agent 安全组的 ${num(P.oss.repos)} 个仓库（不含 fork 与镜像），数据采集于 ${P.oss.capture}。星数和 fork 数是 GitHub 上的关注度，不代表采用、有效或认可。`)} <a href="#oss">${T('Open the repository table', '打开开源仓库表')} →</a></p>`)}</section>`,
   evidence: () => evGuide()};
+// 导读 (owner, 2026-10-19): the guides of all parts on one tab, so that a part tab opens straight on its tables
+function guidePage() {
+  const parts = [['structure', P.position ? psIntro : null], ['connect', GUIDE.connect], ['lead', GUIDE.lead], ['evolve', P.trajectory ? GUIDE.evolve : null],
+    ['models', P.models2026 ? GUIDE.models : null], ['oss', P.oss ? GUIDE.oss : null]].filter(([, f]) => f);
+  const part = id => partOf(id), name = id => part(id)?.[1] || id, open = id => (part(id)?.[3] || [id])[0];
+  return `<section class="ln-lead gd-lead"><span class="fd-kicker">${T('GUIDE', '导读')} · ${versionKicker()}</span><h2>${T('How each part counts, and how to read its views', '各部分怎么计数，全局视图怎么读')}</h2>
+    <p class="fd-note">${T('Read the part you need before its numbers; every part tab then opens straight on its first section.', '先读需要的那一部分；点进各部分标签，会直接打开它的第一节。')}</p>
+    <nav class="gd-toc" aria-label="${T('Parts', '部分')}">${parts.map(([id]) => `<button data-gd-jump="gd-${id}">${name(id)}</button>`).join('')}</nav></section>
+    ${parts.map(([id, f]) => `<section class="gd-part" id="gd-${id}"><div class="gd-head"><h2>${name(id)}</h2><button class="gd-go" data-ln-lens="${open(id)}">${T(`Open ${name(id)}`, `进入${name(id)}`)} →</button></div>${f()}</section>`).join('')}`;
+}
 function bookSections(id, qs) {
   const have = new Set(qs.map(q => q[0])), used = new Set();
   const secs = BOOK()[id].groups.map(([k, name, sub, ids]) => { const got = ids.filter(x => have.has(x)); got.forEach(x => used.add(x)); return [k, name, sub, got]; }).filter(s => s[3].length);
   const rest = qs.map(q => q[0]).filter(x => !used.has(x));
   if (rest.length) secs.push(['more', T('More', '其他'), T('findings not placed in a section above', '未归入上面各节的观察'), rest]);
-  return GUIDE[id] ? [['intro', T('Guide', '导读'), T('what is counted, and how to read it', '怎么计数，怎么读'), []], ...secs] : secs;
+  return secs;  // the guide is on the 导读 tab
 }
 const bookSectionOf = (id, qid) => bookSections(id, lensQuestions(id)).findIndex(s => s[3].includes(qid));
 function bookBody(id, qs) {
   const b = BOOK()[id], secs = bookSections(id, qs), k = Math.max(0, Math.min(secs.length - 1, bk[id] || 0)), [key, name, sub, ids] = secs[k], byq = Object.fromEntries(qs.map(q => [q[0], q]));
-  const nav = `<nav class="pb-nav" aria-label="${T('Sections', '节')}">${secs.map(([, nm, sb], i) => `<button data-bk-sec="${id}:${i}" aria-current="${i === k ? 'page' : 'false'}"><span>${i + 1}</span><b>${nm}</b><small>${sb}</small></button>`).join('')}</nav>`;
+  const nav = `<nav class="pb-nav pb-steps" aria-label="${T('Sections', '节')}">${secs.map(([, nm, sb], i) => `<button data-bk-sec="${id}:${i}" class="${i < k ? 'is-done' : ''}" aria-current="${i === k ? 'page' : 'false'}"><span>${i + 1}</span><b>${nm}</b><small>${sb}</small></button>`).join('')}</nav>`;
   const next = k < secs.length - 1 ? `<button class="pb-next" data-bk-sec="${id}:${k + 1}">${T('Next section', '下一节')}：${secs[k + 1][1]} →</button>` : '';
   const prev = k > 0 ? `<button class="pb-prev" data-bk-sec="${id}:${k - 1}">← ${secs[k - 1][1]}</button>` : '<span></span>';
   const foot = `<div class="pb-foot">${prev}${next}</div>`;
-  if (key === 'intro') return `${nav}${GUIDE[id]()}${foot}`;
   const head = `<div class="pb-head"><span class="fd-kicker">${T(`SECTION ${k + 1}`, `第 ${k + 1} 节`)}</span><h3>${name}</h3><p class="fd-note">${sub}</p></div>`;
   const no = qid => String(qs.indexOf(byq[qid]) + 1).padStart(2, '0');
   if (b.stage) {
@@ -1369,16 +1379,16 @@ const OB_DEFAULT = {status: 'preliminary', evidence: 'descriptive', f: []};
 const obsOf = (lens, qid) => ({...OB_DEFAULT, ...(ED?.obs?.[`${lens}:${qid}`] || {})});
 function obsBadges(lens, qid) {
   if (!ED) return '';
-  const o = obsOf(lens, qid), L = ED.labels;
-  return o.rec ? `<span class="ob-chip ob-rec ob-${o.rec}">${edT(L.rec[o.rec])}</span>` : '';
+  const o = obsOf(lens, qid);
+  return o.importance === 'core' && ED.importance ? `<span class="ob-chip ob-imp is-${o.importance}">${edT(ED.importance[o.importance])}</span>` : '';
 }
-const fChip = (g, rel) => `<button class="ob-f" data-q-go="${g}" title="${esc(edT(ED.questions[g]?.title))}"><b>${qLabel(g)}</b>${rel ? ` ${edT(ED.rel[rel])}` : ''}</button>`;
+const fChip = (g, rel) => `<button class="ob-f" data-q-go="${g}" title="${esc(edT(ED.questions[g]?.title))}"><b>${qLabel(g)}</b>${ED.questions[g]?.short ? ` ${esc(edT(ED.questions[g].short))}` : ''}${rel ? ` · ${edT(ED.rel[rel])}` : ''}</button>`;
 function obsMeta(lens, qid) {  // shown with the folded card: evidence type, the questions it leads to, a link
   if (!ED) return '';
   const o = obsOf(lens, qid);
   return `<p class="ob-meta"><span class="ob-ev">${edT(ED.labels.evidence[o.evidence])}</span>${o.f?.length ? `<span class="ob-fl">${T('Leads to', '引出追问')}</span>` : ''}${(o.f || []).filter(([g]) => qxShown(g)).slice(0, 3).map(([g, rel]) => fChip(g, rel)).join('')}<button class="ob-copy" data-ob-copy="${lens}:${qid}">${T('Copy link', '复制链接')}</button></p>`;
 }
-const cardLink = (lens, qid) => lens === 'questions' ? `${location.origin}${location.pathname}#questions?fq=${qid}` : `${location.origin}${location.pathname}#findings?${new URLSearchParams({lens, fq: qid})}`;
+const cardLink = (lens, qid) => lens === 'synthesis' ? `${location.origin}${location.pathname}#synthesis?fq=${qid}` : lens === 'questions' ? `${location.origin}${location.pathname}#questions?fq=${qid}` : `${location.origin}${location.pathname}#findings?${new URLSearchParams({lens, fq: qid})}`;
 
 // ---- 精选观察 (the 发现 landing page): six groups, then every observation with filters
 function keyPage() {
@@ -1616,7 +1626,8 @@ const QX = {
   F9() {
     const J = EC('judges')?.stats, K = EC('pjudged')?.stats; if (!J) return null;
     return {
-      head: T('Often: seven in ten judges share a family with a model they grade.', '常常是：七成裁判与被测模型同属一家。'),
+      head: K ? T(`Often: read paper by paper, ${pctf(K.sameFamilyJudges, 0)} of identifiable model judges grade a model of their own family (same-family co-occurrence in a paper: ${pctf(J.sameFamily, 0)}).`, `常常是：逐篇核实后，${pctf(K.sameFamilyJudges, 0)} 的可识别模型裁判在评判同家族模型（同一论文内同家族共现为 ${pctf(J.sameFamily, 0)}）。`)
+        : T('Often: seven in ten judges share a family with a model they grade.', '常常是：七成裁判与被测模型同属一家。'),
       line: T(`In ${num(J.papers)} papers of 2026 naming both a judge and a studied model, ${pctf(J.sameFamily, 0)} have a judge of the same family as a studied model, against ${pctf(J.chance, 0)} expected by chance.${K ? ` Reading who grades whom in the experiments, ${pctf(K.sameFamilyJudges, 0)} of ${num(K.judges)} identifiable judges grade a model of their own family.` : ''}`, `同时点名裁判与被测模型的 ${num(J.papers)} 篇 2026 年论文中，${pctf(J.sameFamily, 0)} 的裁判与某个被测模型同属一家，随机预期是 ${pctf(J.chance, 0)}。${K ? `逐篇读实验中“谁判谁”后，${num(K.judges)} 个可识别的模型裁判中有 ${pctf(K.sameFamilyJudges, 0)} 确实在评判同家族模型。` : ''}`),
       fig: () => qxFig(T('Judges of the same model family as what they grade', '裁判与被评模型同属一家的比例'), qxBars([{label: T('same family in the same paper', '同一论文中同家族'), n: J.papers, value: J.sameFamily}, ...(K ? [{label: T('verified: the judge grades that model', '核实：裁判确实在评它'), n: K.judges, value: K.sameFamilyJudges, color: COLORS.supply}] : [])], {max: 100, ref: {value: J.chance, label: T(`chance ${pctf(J.chance, 0)}`, `随机预期 ${pctf(J.chance, 0)}`)}, title: T('Share', '比例')})),
       how: T('First level: judge and studied models named in the same paper (model roles). Second level: Claude Opus 5.5 reads who grades whom in the experiment passages.', '第一层：同一论文的模型角色中同时出现；第二层：Claude Opus 5.5 读实验段落中的“谁判谁”。'),
@@ -1716,7 +1727,7 @@ const QX = {
     const c = EC('f4mix'); if (!c) return null; const S = c.stats, ps = S.periods, fx = ps.filter(p => p.fixed), a = fx[0], b = fx[fx.length - 1];
     const [lo, hi] = b.fixed.pairShareCI, held = a.fixed.pairShare >= lo && a.fixed.pairShare <= hi, fell = !held && b.fixed.pairShare < a.fixed.pairShare;
     return {
-      head: held ? T('No: benchmarks multiply while the share of shared ones holds.', '没有：基准变多，共用比例没有明显变化。') : fell ? T('Yes, so far: as benchmarks multiply, fewer defences share one.', '目前是：基准变多，共用比例下降。') : T('No: benchmarks multiply and more defences share one.', '没有：基准变多，共用比例反而上升。'),
+      head: held ? T('Not seen: within the windows compared, sharing shows no clear drop as benchmarks multiply.', '未见削弱：在所比较的时间窗口内，基准变多时共用比例没有明确下降。') : fell ? T('Yes, so far: as benchmarks multiply, fewer defences share one.', '目前是：基准变多，共用比例下降。') : T('No: benchmarks multiply and more defences share one.', '没有：基准变多，共用比例反而上升。'),
       line: T(`From ${a.period} to ${b.period} the benchmarks in use went from ${a.benchmarks} to ${b.benchmarks}. At a fixed ${S.fixedN} works per half-year, the share of defence pairs sharing a benchmark is ${pctf(a.fixed.pairShare)} and then ${pctf(b.fixed.pairShare)} (interval ${pctf(lo)}–${pctf(hi)})${held ? ', within the interval' : ''}.`, `${a.period} 到 ${b.period}，用到的基准从 ${a.benchmarks} 个增到 ${b.benchmarks} 个。每半年固定 ${S.fixedN} 项工作重抽后，两两防御论文共用基准的比例为 ${pctf(a.fixed.pairShare)} 和 ${pctf(b.fixed.pairShare)}（后者区间 ${pctf(lo)}–${pctf(hi)}）${held ? '，变化在区间之内' : ''}。`),
       fig: () => qxPanels(
         qxFig(T('Atlas benchmarks in use, by half-year', '用到的 Atlas 基准数，按半年'), qxBars(ps.map(p => ({label: p.period, n: p.works, value: p.benchmarks, color: COLORS.supply})), {fmt: num, title: T('Benchmarks', '基准数')})),
@@ -1860,7 +1871,7 @@ const QXJ = {
     const p = v => pctf(v, 0);
     return {
       q: T('In the same defence papers, do the validation conditions come together, or are they spread over different papers?', '同一批防御论文中，各项验证条件是同时具备，还是分散在不同论文里？'),
-      head: T(`Spread out: of the defences the conditions apply to, ${pctf(ms['4'], 1)} confirm all four; the gaps sit in adaptive testing and the attack budget.`, `分散：适用的防御中，确认四项都报告的只有 ${pctf(ms['4'], 1)}；缺口集中在自适应攻击和攻击预算。`),
+      head: T(`Rarely confirmed together: of the defences the conditions apply to, ${pctf(ms['4'], 1)} confirm all four; most of what is not confirmed is adaptive testing and the attack budget.`, `很少同时得到确认：适用的防御中，四项条件都确认报告的只有 ${pctf(ms['4'], 1)}；未确认的多在自适应攻击和攻击预算。`),
       line: T(`${num(S.applies)} of ${num(S.defences)} defences face an adversary (the other ${num(S.notApplicable)}, such as safe control, are left out). Among them: utility paired with safety ${p(pr.paired.yes)} (explicitly not ${p(pr.paired.no)}, not stated ${p(pr.paired.unstated)}); adaptive attacker ${p(pr.adaptive.yes)} (explicitly not ${p(pr.adaptive.no)}, not stated ${p(pr.adaptive.unstated)}); attack budget stated ${p(pr.budget.yes)}; claim within the measured layer ${p(pr.claim.yes)} (beyond ${p(pr.claim.no)}). All four confirmed: ${pctf(ms['4'], 1)}; three: ${pctf(ms['3'], 1)}. These are confirmed reports: not stated is not the same as not done.`,
         `${num(S.defences)} 项防御中，${num(S.applies)} 项的设定里有对手（其余 ${num(S.notApplicable)} 项如安全控制，不计入）。在这 ${num(S.applies)} 项中：同一配置下配对报告效用 ${p(pr.paired.yes)}（明确没有 ${p(pr.paired.no)}，未说明 ${p(pr.paired.unstated)}）；用自适应攻击检验 ${p(pr.adaptive.yes)}（明确没有 ${p(pr.adaptive.no)}，未说明 ${p(pr.adaptive.unstated)}）；写明攻击预算 ${p(pr.budget.yes)}；主张不高于测量层次 ${p(pr.claim.yes)}（高于 ${p(pr.claim.no)}）。确认四项都报告的 ${pctf(ms['4'], 1)}，三项 ${pctf(ms['3'], 1)}。这里统计的是“确认报告”：未说明不等于没有做。`),
       legend: qxLegend(tri.map(([, l, c]) => [l, c])),
@@ -1905,10 +1916,54 @@ const QXJ = {
 function qxJointCard(jid, k) {
   const spec = QXJ[jid] ? QXJ[jid]() : null;
   if (!spec) return '';
-  return `<article class="qx-card qx-joint" id="q-${jid}" data-qx-card="${jid}"><div class="qx-head"><span class="qx-id">${T(`Joint ${k}`, `联合分析 ${k}`)}</span><button class="ob-copy" data-ob-copy="questions:${jid}">${T('Copy link', '复制链接')}</button></div>
+  return `<article class="qx-card qx-joint" id="q-${jid}" data-qx-card="${jid}"><div class="qx-head"><span class="qx-id">${T(`Joint ${k}`, `联合分析 ${k}`)}</span><button class="ob-copy" data-ob-copy="synthesis:${jid}">${T('Copy link', '复制链接')}</button></div>
     <h3 class="qx-q">${spec.q}</h3><p class="qx-a"><b>${spec.head}</b> ${spec.line}</p>${spec.legend || ''}${spec.fig()}
     <p class="qx-how"><span><b>${T('How it is joined', '怎么连接')}</b>${spec.how}</span></p>
-    <p class="qx-from"><span>${T('Joins', '连接的追问')}</span>${spec.links.filter(qxShown).map(f => fChip(f)).join('')}</p>${qxRecPanel(jid)}</article>`;
+    <p class="qx-from"><span>${T('Joins', '连接的追问')}</span>${spec.links.filter(qxShown).map(f => fChip(f)).join('')}</p>${rolesLine(jid)}${qxRecPanel(jid)}</article>`;
+}
+
+// ---- the three layers (owner, 2026-10-19): 探索与观察 → 追问与检验 → 综合发现. Layer 3 (发现) synthesises the questions; each
+// finding cites the questions and joint analyses it rests on, typed as support, limit, counter or background, quotes their
+// answers live from their cards (one authoritative record per result), and embeds the joint analyses that test it
+const JIDS = ['J1', 'J2', 'J3', 'J4'];
+const SYN_ID = /^(G\d+|J\d+|rejected|map)$/;
+const refOf = id => { if (/^J\d$/.test(id)) { const s = QXJ[id] ? QXJ[id]() : null; return s ? {label: T(`Joint ${id.slice(1)}`, `联合分析 ${id.slice(1)}`), short: edT(ED.jshort?.[id]), q: s.q, head: s.head} : null; }
+  return qxShown(id) ? {label: qLabel(id), short: edT(ED.questions[id].short), q: edT(ED.questions[id].title), head: QX[id]().head} : null; };
+const ROLE_ORDER = ['support', 'limit', 'counter', 'background'];
+const roleColor = r => ({support: COLORS.attention, limit: COLORS.supply, counter: COLORS.connection, background: qxGrey()})[r];
+function findingRoles(id) { const out = []; (ED?.groups || []).forEach((g, i) => (g.roles || []).forEach(([x, role]) => { if (x === id && !out.some(o => o[0] === g.id && o[2] === role)) out.push([g.id, i + 1, role]); })); return out; }
+const rolesLine = id => { const rs = findingRoles(id); return rs.length && ED.roles ? `<p class="qx-from qx-roles"><span>${T('In the findings', '在发现中')}</span>${rs.map(([gid, k, role]) => `<button class="ob-f qx-role" data-q-go="${gid}" style="--c:${roleColor(role)}"><b>${T(`Finding ${k}`, `发现 ${k}`)}</b>${edT(ED.roles[role])}</button>`).join('')}</p>` : ''; };
+const impChip = imp => imp === 'core' && ED?.importance?.[imp] ? `<span class="qx-imp is-${imp}">${edT(ED.importance[imp])}</span>` : '';
+// a cited question or joint analysis: number and short name as a visible link, then its answer (left out where the same
+// item is cited twice in one finding, so each place says only what it supports or limits)
+function synRef(id, head = true) { const r = refOf(id); return r ? `<button class="syn-ref" data-q-go="${id}" title="${esc(r.q)}"><b>${r.label}${r.short ? ` · ${esc(r.short)}` : ''}<i aria-hidden="true">→</i></b>${head ? `<span>${esc(r.head)}</span>` : ''}</button>` : ''; }
+function synFinding(g, i) {
+  const roles = g.roles || [], twice = new Set(roles.map(r => r[0]).filter((x, i, a) => a.indexOf(x) !== i));
+  const cols = ROLE_ORDER.map(role => { const xs = roles.filter(x => x[1] === role && refOf(x[0])).map(([id, , why]) => `<li style="--c:${roleColor(role)}">${synRef(id, !twice.has(id))}<p>${esc(edT(why))}</p></li>`).join('');
+    return xs ? `<div class="syn-col"><span class="syn-role" style="--c:${roleColor(role)}">${edT(ED.roles[role])}</span><ul>${xs}</ul></div>` : ''; }).join('');
+  const shift = g.shift ? `<div class="syn-shift"><div><span>${T('A common view', '常见看法')}</span><p>${esc(edT(g.shift[0]))}</p></div><i aria-hidden="true">→</i><div class="is-data"><span>${T('What the data shows', '数据显示')}</span><p>${esc(edT(g.shift[1]))}</p></div></div>` : '';
+  const tests = (g.tests || []).map(j => qxJointCard(j, +j.slice(1))).join('');
+  return `<article class="syn-finding" id="q-${g.id}" style="--c:${SERIES[i]}"><div class="syn-head"><span class="fd-kicker">${T(`FINDING ${i + 1}`, `发现 ${i + 1}`)} · ${edT(g.name)}</span><button class="ob-copy" data-ob-copy="synthesis:${g.id}">${T('Copy link', '复制链接')}</button></div>
+    <h3>${esc(edT(g.conclusion))}</h3><p class="syn-q">${esc(edT(g.q))}</p>${shift}
+    <div class="syn-evidence"><span class="fd-kicker">${T('WHAT IT RESTS ON', '依据与作用')}</span><div class="syn-cols">${cols}</div></div>
+    ${tests ? `<div class="syn-tests"><span class="fd-kicker">${T('TESTED ON THE SAME RECORDS', '在同一批记录上检验')}</span>${tests}</div>` : ''}</article>`;
+}
+function synRejected() {
+  const rs = (ED.rejected || []).filter(r => refOf(r.ref));
+  return rs.length ? `<section class="syn-rejected" id="q-rejected"><div class="pb-head qx-rqtop"><span class="fd-kicker">${T('READINGS TESTED', '解释的检验结果')}</span><h3>${T('Plausible readings of the observations, and what the tests say', '对观察的几种看似合理的解读，检验结果如何')}</h3><p class="fd-note">${T('Each verdict has its own strength: does not hold, not supported here, holds in part, holds, or cannot be judged yet. The question or joint analysis beside it decides it.', '判定分强弱：不成立、本次未获支持、部分成立、成立、尚不能判断。由旁边的追问或联合分析给出依据。')}</p></div>
+    <div class="syn-rej-list">${rs.map(r => `<article class="syn-rej is-${r.verdict}"><span class="syn-verdict">${edT(ED.verdicts[r.verdict])}</span><h4>${esc(edT(r.claim))}</h4><p><b>${T('How it was tested', '怎么检验')}</b>${esc(edT(r.why))}</p>${synRef(r.ref)}</article>`).join('')}</div></section>` : '';
+}
+export function renderSynthesis(ctx) {
+  setup(ctx); lists.clear();
+  if (!ED?.groups?.[0]?.roles) return shell(`<p class="fd-note">${T('The findings are not available yet.', '发现暂不可用。')}</p>`);
+  const toc = [...ED.groups.map((g, i) => [g.id, T(`Finding ${i + 1}`, `发现 ${i + 1}`), edT(g.name), edT(g.short), SERIES[i]]), ['rejected', T('Readings tested', '解释的检验'), T('which readings hold, and how far', '哪些解读成立、成立到什么程度')], ['map', T('Map', '问题地图'), T('how the questions connect', '追问如何相连')]];
+  const mini = qMini(T('Findings', '发现'), toc.map(([id, a]) => `<button data-q-go="${id}" data-spy="q-${id}" data-label="${esc(a)}">${a}</button>`).join(''), '');
+  const lead = `<section class="ln-lead syn-lead"><span class="fd-kicker">${T('FINDINGS', '发现')} · ${versionKicker()}</span><p class="syn-overq">${esc(edT(ED.overall))}</p>${ED.overallAnswer ? `<h2>${esc(edT(ED.overallAnswer))}</h2>` : ''}${versionNote()}
+    <p class="fd-note">${T('Four findings, each built from the questions and, where possible, tested by a joint analysis on the same records. Under each, the questions it rests on are marked as support, limit, counter or background; their answers are quoted from the question cards.', '四条发现，每条由若干追问综合而来，能检验的都在同一批记录上做了联合分析。每条下面标明各追问的作用：支持、限制、反驳或背景；引用的结论直接取自追问卡片。')}</p>
+    <nav class="syn-toc" aria-label="${T('On this page', '本页')}" data-q-mini-anchor>${toc.map(([id, a, b, c, col]) => c ? `<button class="syn-toc-f" data-q-go="${id}" style="--c:${col}"><small>${a} · ${esc(b)}</small><b>${esc(c)}</b></button>` : `<button data-q-go="${id}"><b>${a}</b><small>${esc(b)}</small></button>`).join('')}</nav></section>`;
+  const jidx = `<section class="syn-jidx"><span class="fd-kicker">${T('ALL JOINT ANALYSES', '全部联合分析')}</span><div>${JIDS.map(j => { const r = refOf(j); if (!r) return ''; const k = ED.groups.findIndex(x => (x.tests || []).includes(j));
+    return `<button class="syn-ref" data-q-go="${j}"><b>${r.label}</b><span>${esc(r.q)}</span>${k >= 0 ? `<small>${T(`under Finding ${k + 1}`, `见发现 ${k + 1}`)}</small>` : ''}</button>`; }).join('')}</div></section>`;
+  return shell(`${mini}${lead}<div class="syn-list">${ED.groups.map(synFinding).join('')}</div>${synRejected()}<section class="pb-intro" id="q-map">${qmStage(null)}</section>${jidx}`, 'qx-lens syn-lens pb-lens');
 }
 
 // -- the card, the sections and the page
@@ -1919,11 +1974,11 @@ function qxFrom(fid) {  // the observations a question starts from, as links bac
 function qxCard(fid) {
   const r = ED.questions[fid], spec = QX[fid](), fig = spec.fig(), from = qxFrom(fid);
   return `<article class="qx-card" id="q-${fid}" data-qx-card="${fid}">
-    <div class="qx-head"><span class="qx-id">${qLabel(fid)}</span><button class="ob-copy" data-ob-copy="questions:${fid}">${T('Copy link', '复制链接')}</button></div>
+    <div class="qx-head"><span class="qx-id">${qLabel(fid)}</span>${impChip(r.importance)}<button class="ob-copy" data-ob-copy="questions:${fid}">${T('Copy link', '复制链接')}</button></div>
     <h3 class="qx-q">${edT(r.title)}</h3>
     <p class="qx-a"><b>${spec.head}</b> ${spec.line}</p>${spec.legend || ''}${fig}
     <p class="qx-how"><span><b>${T('How it is measured', '怎么测')}</b>${spec.how}</span></p>
-    ${from ? `<p class="qx-from"><span>${T('Starts from the observations', '起点观察')}</span>${from}</p>` : ''}${qxRecPanel(fid)}</article>`;
+    ${from ? `<p class="qx-from"><span>${T('Starts from the observations', '起点观察')}</span>${from}</p>` : ''}${rolesLine(fid)}${qxRecPanel(fid)}</article>`;
 }
 const QX_HIDDEN = new Set();  // questions held back from the site (owner's call; F12 shown again 2026-10-19)
 // display numbers (owner 2026-10-19): the questions on the site, numbered Q1, Q2, … in research-question order; ids stay F1–F24
@@ -1935,10 +1990,28 @@ const qxIds = k => Object.keys(ED.questions).filter(f => ED.questions[f].rq === 
 function qxSections() {
   return [['overview', T('Overview', '总览'), T('every answer on one page', '全部结论一页看完'), []],
     ...['RQ1', 'RQ2', 'RQ3', 'RQ4'].map(k => [k, `${k} · ${edT(ED.rq[k].name)}`, edT(ED.rq[k].q), qxIds(k)]),
-    ['joint', T('Story lines', '故事线与联合分析'), T('what the questions add up to, tested on the same records', '追问合起来说明什么，在同一批记录上检验'), []],
     ['standards', T('Method', '方法与规范'), T('denominators, baselines and versions', '分母、基线与版本'), []]];
 }
-const qxSectionOf = fid => /^J\d$/.test(fid) ? qxSections().findIndex(s => s[0] === 'joint') : qxSections().findIndex(s => s[3].includes(fid));
+const qxSectionOf = fid => qxSections().findIndex(s => s[3].includes(fid));
+// the light bar that stays at the top once the page's own section list has scrolled away: where the reader is, and the
+// sections or findings to switch to (expert review, 2026-10-19)
+const qMini = (kicker, buttons, here, spy) => `<div class="q-mini" data-q-mini${spy ? ` data-spy-${spy}` : ''}><div class="q-mini-in"><span class="q-mini-k">${kicker}</span><span class="q-mini-here" data-base="${esc(here || '')}">${esc(here || '')}</span><nav>${buttons}</nav></div></div>`;
+let miniIO = null, miniSpy = null;
+function bindMini(root) {
+  miniIO?.disconnect(); if (miniSpy) removeEventListener('scroll', miniSpy); miniSpy = null;
+  const mini = root?.querySelector('[data-q-mini]'), anchor = root?.querySelector('[data-q-mini-anchor]'); if (!mini || !anchor) return;
+  miniIO = new IntersectionObserver(([e]) => mini.classList.toggle('is-on', !e.isIntersecting && e.boundingClientRect.top < 0)); miniIO.observe(anchor);
+  const here = mini.querySelector('.q-mini-here'), spy = [...mini.querySelectorAll('[data-spy]')], cards = 'spyCards' in mini.dataset;
+  if (!spy.length && !cards) return;
+  miniSpy = () => {
+    if (!mini.isConnected) { removeEventListener('scroll', miniSpy); return; }
+    const line = innerHeight * 0.35;
+    if (spy.length) { let cur = spy[0]; for (const b of spy) { const el = document.getElementById(b.dataset.spy); if (el && el.getBoundingClientRect().top < line) cur = b; } spy.forEach(b => b.classList.toggle('is-here', b === cur)); here.textContent = cur.dataset.label; }
+    else { let cur = null; for (const a of root.querySelectorAll('[data-qx-card]')) if (a.getBoundingClientRect().top < line) cur = a; const f = cur?.dataset.qxCard, r = f && refOf(f);
+      here.textContent = r ? `${here.dataset.base} › ${r.label} · ${r.short}` : here.dataset.base; }
+  };
+  addEventListener('scroll', miniSpy, {passive: true}); miniSpy();
+}
 function qxObsCount() { let n = 0; for (const [, , , ch] of [...PARTS(T), ...TOPICS(T)]) for (const l of ch) n += lensQuestions(l).length; return n; }
 function qxOverview() {
   const n = ['RQ1', 'RQ2', 'RQ3', 'RQ4'].reduce((a, k) => a + qxIds(k).length, 0);
@@ -1946,12 +2019,13 @@ function qxOverview() {
     <i class="qx-relarrow" aria-hidden="true"></i>
     <div class="is-here"><span class="fd-kicker">${T('QUESTIONS', '追问')}</span><b>${T('Does the evidence behind them hold?', '这些现象背后的证据站得住吗')}</b><p>${T(`${n} questions. Each starts from one or more observations and turns them into a defined question with a test, answered with data gathered for it.`, `${n} 个追问：每个从一条或几条观察出发，变成有定义、有检验的研究问题，用专门收集的数据回答。`)}</p></div></div>`;
   const rqs = ['RQ1', 'RQ2', 'RQ3', 'RQ4'].map((k, i) => `<section class="qx-rq" style="--c:${PS_COLORS[i]}"><button class="qx-rqhead" data-bk-sec="questions:${i + 1}"><span class="fd-kicker">${k} · ${edT(ED.rq[k].name)}</span><b>${edT(ED.rq[k].q)}</b></button>
-    <ol>${qxIds(k).map(f => `<li><button data-q-go="${f}"><span class="qx-id">${qLabel(f)}</span><span class="qx-ot"><b>${edT(ED.questions[f].title)}</b><em>${QX[f]().head}</em></span></button></li>`).join('')}</ol></section>`).join('');
-  return `<section class="qx-overview">${rel}<div class="qx-rqs">${rqs}</div></section>`;
+    <ol>${qxIds(k).map(f => `<li><button data-q-go="${f}"><span class="qx-id">${qLabel(f)}</span><span class="qx-ot"><b>${edT(ED.questions[f].title)}</b>${impChip(ED.questions[f].importance)}<em>${QX[f]().head}</em></span></button></li>`).join('')}</ol></section>`).join('');
+  return `<section class="qx-overview"><div class="qx-rqs">${rqs}</div></section>`;
 }
 function qxBook() {
   const secs = qxSections(), k = Math.max(0, Math.min(secs.length - 1, bk.questions || 0)), [key, name, sub, ids] = secs[k];
-  const nav = `<nav class="pb-nav q-nav qx-nav" aria-label="${T('Sections', '节')}">${secs.map(([, nm, sb, f], i) => `<button data-bk-sec="questions:${i}" aria-current="${i === k ? 'page' : 'false'}"><span>${i || '·'}</span><b>${nm}</b><small>${f.length ? T(`${f.length} questions`, `${f.length} 个追问`) : sb}</small></button>`).join('')}</nav>`;
+  const mini = qMini(T('Questions', '追问'), secs.map(([, nm], i) => `<button data-bk-sec="questions:${i}" class="${i === k ? 'is-here' : ''}">${nm.split(' · ')[0]}</button>`).join(''), name, ids.length ? 'cards' : '');
+  const nav = `${mini}<nav class="pb-nav pb-steps q-nav qx-nav" aria-label="${T('Sections', '节')}" data-q-mini-anchor>${secs.map(([, nm, sb, f], i) => `<button data-bk-sec="questions:${i}" class="${i < k ? 'is-done' : ''}" aria-current="${i === k ? 'page' : 'false'}"><span>${i || '·'}</span><b>${nm}</b><small>${f.length ? T(`${f.length} questions`, `${f.length} 个追问`) : sb}</small></button>`).join('')}</nav>`;
   const foot = `<div class="pb-foot">${k > 0 ? `<button class="pb-prev" data-bk-sec="questions:${k - 1}">← ${secs[k - 1][1]}</button>` : '<span></span>'}${k < secs.length - 1 ? `<button class="pb-next" data-bk-sec="questions:${k + 1}">${T('Next', '下一节')}：${secs[k + 1][1]} →</button>` : ''}</div>`;
   if (key === 'overview') return `${nav}${qxOverview()}${foot}`;
   const jcards = key === 'joint' ? ['J1', 'J2', 'J3', 'J4'].map((j, i) => qxJointCard(j, i + 1)).join('') : '';
@@ -2001,7 +2075,9 @@ function qxRecOpen(d) {
 function qxRecRedraw(fid) { const d = document.querySelector(`[data-qx-rec="${fid}"] [data-qx-rec-tab]`); if (d) qxRecLoad(fid).then(R => { if (R) d.innerHTML = qxRecTab(fid, R); }); }
 // go to one question: from another view, open the 追问 view on it; here, scroll to it or open its section
 function qGo(ctx, fid) {
-  if (ctx.state.view !== 'questions') { ctx.state.findingsQ = fid; ctx.setView('questions'); return; }
+  const home = SYN_ID.test(fid) ? 'synthesis' : 'questions';
+  if (ctx.state.view !== home) { ctx.state.findingsQ = fid; ctx.setView(home); return; }
+  if (home === 'synthesis') { document.getElementById('q-' + fid)?.scrollIntoView({block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'}); return; }
   const here = document.getElementById('q-' + fid);
   if (here && here.matches('[data-qx-card]')) { here.scrollIntoView({block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'}); return; }
   bk.questions = Math.max(0, qxSectionOf(fid)); ctx.state.findingsQ = fid; ctx.writeHash(); ctx.render();
@@ -2014,7 +2090,8 @@ function qOpen(art, force) {  // the folded cards of the earlier design (kept fo
 export function renderQuestions(ctx) {
   setup(ctx); lists.clear();
   if (!ED) return shell(`<p class="fd-note">${T('The questions are not available.', '追问数据暂不可用。')}</p>`);
-  if (/^[FJ]\d+$/.test(C.state.findingsQ || '')) bk.questions = Math.max(0, qxSectionOf(C.state.findingsQ));
+  if (SYN_ID.test(C.state.findingsQ || '')) { queueMicrotask(() => C.setView('synthesis')); return shell(`<p class="fd-note">${T('Opening the findings…', '正在打开发现…')}</p>`); }  // old links to the story lines
+  if (/^F\d+$/.test(C.state.findingsQ || '')) bk.questions = Math.max(0, qxSectionOf(C.state.findingsQ));
   const lead = `<section class="ln-lead qx-lead"><span class="fd-kicker">${T('QUESTIONS', '追问')} · ${versionKicker()}</span><h2>${edT(ED.overall)}</h2>${versionNote()}
     <p class="fd-note">${T('Each card gives the question, the answer in a sentence or two with its base, one chart, and how it was measured.', '每张卡给出问题、一两句带分母的结论、一张图，以及怎么测。')}</p></section>`;
   return shell(`${lead}<div data-q-book>${qxBook()}</div>`, 'qx-lens pb-lens');
@@ -3173,7 +3250,8 @@ function lensQuestions(id) {
     if ((PLACE[key] || HOME_LENS[group]) === id) out.push(RENAME[key] ? [RENAME[key], ...q.slice(1)] : q);
   }
   const ord = ORDER()[id] || [], rank = qid => { const i = ord.indexOf(qid); return i < 0 ? ord.length : i; };
-  return out.map((q, i) => [q, i]).sort((a, b) => rank(a[0][0]) - rank(b[0][0]) || a[1] - b[1]).map(x => x[0]);
+  const home = q => { const h = ED?.obs?.[`${id}:${q[0]}`]?.home; return h && q[2] && qxShown(h) ? [q[0], q[1], T(`Tested in ${qLabel(h)}: ${QX[h]().head}`, `检验结论（${qLabel(h)}）：${QX[h]().head}`), ...q.slice(3)] : q; };
+  return out.map((q, i) => [q, i]).sort((a, b) => rank(a[0][0]) - rank(b[0][0]) || a[1] - b[1]).map(x => home(x[0]));
 }
 
 // ================================================================================================ pages
@@ -3211,14 +3289,15 @@ export function renderLens(ctx) {
   setup(ctx); lists.clear();
   const meta = {key: [T('Featured', '精选观察'), T('Six entry points, with status and limits', '六个入口，标明状态与限制')], ...lensMeta(T)};
   if (C.state.findingsQ) { const want0 = LENS_LEGACY[C.state.lens] || C.state.lens, fq = C.state.findingsQ;  // a shared link: open the section holding the card
-    if (want0 === 'structure') ps.sec = Math.max(1, psSectionOf(fq)); else if (BOOK()[want0]) bk[want0] = Math.max(0, bookSectionOf(want0, fq)); }
-  const want = LENS_LEGACY[C.state.lens] || C.state.lens, id = lensIds().includes(want) ? want : 'key', qs = id === 'key' ? [] : lensQuestions(id), part = partOf(id);
+    if (want0 === 'structure') ps.sec = Math.max(0, psSectionOf(fq)); else if (BOOK()[want0]) bk[want0] = Math.max(0, bookSectionOf(want0, fq)); }
+  const want = LENS_LEGACY[C.state.lens] || C.state.lens, id = want === 'guide' ? 'guide' : lensIds().includes(want) ? want : 'key', qs = ['key', 'guide'].includes(id) ? [] : lensQuestions(id), part = partOf(id);
   // the tab bar: featured, then the four parts about papers (labelled as such), then the models and open-source boards
-  const tab = ([k, name, sub, chapters]) => { const on = k === 'key' ? id === 'key' : part?.[0] === k; return `<button data-ln-lens="${chapters[0]}" class="${on ? 'active' : ''}" aria-current="${on ? 'page' : 'false'}" title="${esc(sub)}"><b>${name}</b><small>${sub}</small></button>`; };
-  const tabs = `<nav class="ln-tabs" aria-label="${T('Parts', '部分')}"><span class="ln-tabset">${tab(['key', meta.key[0], meta.key[1], ['key']])}</span><span class="ln-tabset is-papers"><span class="ln-tabset-l">${T('Papers', '论文')}</span>${PARTS(T).map(tab).join('')}</span><span class="ln-tabset">${TOPICS(T).map(tab).join('')}</span></nav>`
+  const tab = ([k, name, sub, chapters]) => { const on = k === 'key' || k === 'guide' ? id === k : part?.[0] === k; return `<button data-ln-lens="${chapters[0]}" class="${on ? 'active' : ''}" aria-current="${on ? 'page' : 'false'}" title="${esc(sub)}"><b>${name}</b><small>${sub}</small></button>`; };
+  const tabs = `<nav class="ln-tabs" aria-label="${T('Parts', '部分')}"><span class="ln-tabset">${tab(['key', meta.key[0], meta.key[1], ['key']])}${tab(['guide', T('Guide', '导读'), T('how each part counts and how to read it', '各部分怎么计数、怎么读'), ['guide']])}</span><span class="ln-tabset is-papers"><span class="ln-tabset-l">${T('Papers', '论文')}</span>${PARTS(T).map(tab).join('')}</span><span class="ln-tabset">${TOPICS(T).map(tab).join('')}</span></nav>`
     + (part && part[3].length > 1 ? `<nav class="ln-chapters" aria-label="${T('Chapters', '章节')}">${part[3].map((k, i) => `<button data-ln-lens="${k}" aria-current="${k === id ? 'page' : 'false'}"><span>${i + 1}</span><b>${meta[k][0]}</b><small>${meta[k][1]}</small></button>`).join('')}</nav>` : '');
   const lead = `<section class="ln-lead"><span class="fd-kicker">${part ? part[1] : ''}${part && part[3].length > 1 ? ' · ' + meta[id][0] : ''} · ${versionKicker()}</span><h2>${meta[id]?.[1] || ''}</h2>${versionNote()}`;
   if (id === 'key') return shell(`${tabs}${ED ? keyPage() : keyFindings(meta)}`, 'kf-lens');
+  if (id === 'guide') return shell(`${tabs}${guidePage()}`, 'pb-lens gd-lens');
   if (id === 'connect' && P.connect) { crStop(); cr.q = ''; cr.focus = -1; return shell(`${tabs}${lead}</section>${bookBody('connect', qs)}`, 'cr-lens pb-lens'); }
   if (id === 'lead' && P.players) { plStop(); pl.q = ''; return shell(`${tabs}${lead}</section>${bookBody('lead', qs)}`, 'cr-lens pl-lens pb-lens'); }
   if (id === 'evolve' && P.trajectory) { tjStop(); tj.q = ''; tj.hl = null; return shell(`${tabs}${lead}</section>${bookBody('evolve', qs)}`, 'cr-lens tj-lens pb-lens'); }
