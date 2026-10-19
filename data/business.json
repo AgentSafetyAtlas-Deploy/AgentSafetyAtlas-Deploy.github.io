@@ -26553,48 +26553,6 @@
       "renewalStatus": "unknown"
     },
     {
-      "id": "buyer-REC-C05-B003-0016",
-      "title": "TrueFoundry Qualitative Test of DeepKeep AI Firewall Custom Guardrail",
-      "date": "2026-08-31",
-      "evidenceLevel": "evaluation_case",
-      "companyId": "biz-deepkeep",
-      "summary": {
-        "en": "TrueFoundry Qualitative Test of DeepKeep AI Firewall Custom Guardrail. See the original source for the attributed claims.",
-        "zh": "TrueFoundry 以 FastAPI wrapper 把 DeepKeep AI Firewall 接入 AI Gateway Custom Guardrail，在 2026-08-20 将六个脚本用例各经网关和 DeepKeep API 运行一次；四类 guardrail 对目标用例触发，clean control 通过，输出 PII 被改写。作者明确称这是定性 POC、非负载测试，也不是原生 provider 集成。"
-      },
-      "sources": [
-        {
-          "url": "https://www.truefoundry.com/blog/wiring-deepkeeps-ai-firewall-into-truefoundry-ai-gateway-as-a-custom-guardrail",
-          "title": "TrueFoundry Qualitative Test of DeepKeep AI Firewall Custom Guardrail"
-        }
-      ],
-      "detailId": "REC-C05-B003-0016",
-      "paymentStatus": "unknown",
-      "contractAmount": null,
-      "renewalStatus": "unknown"
-    },
-    {
-      "id": "buyer-REC-C05-B001-0009",
-      "title": "Fusion CX unifies protection with CrowdStrike Falcon",
-      "date": null,
-      "evidenceLevel": "deployment_case",
-      "companyId": "biz-crowdstrike",
-      "summary": {
-        "en": "Fusion CX unifies protection with CrowdStrike Falcon. See the original source for the attributed claims.",
-        "zh": "CrowdStrike 托管的案例称 Fusion CX 自 2020 年部署 Falcon Sensor、2025 年采用 Falcon Complete，之后扩展到 Falcon Identity Security 和 SIEM；案例把客户采用 AI Agent 列为强化身份安全的背景，而非 Continuous Identity 产品部署证明。"
-      },
-      "sources": [
-        {
-          "url": "https://www.crowdstrike.com/en-us/resources/customer-stories/fusion-cx/",
-          "title": "Fusion CX unifies protection with CrowdStrike Falcon"
-        }
-      ],
-      "detailId": "REC-C05-B001-0009",
-      "paymentStatus": "unknown",
-      "contractAmount": null,
-      "renewalStatus": "unknown"
-    },
-    {
       "id": "buyer-REC-C05-B006-0003",
       "title": "Onyx Security Anonymized Agent Discovery and Runtime Deployment Field Notes",
       "date": "2026-04-15",
@@ -26624,6 +26582,27 @@
       "renewalStatus": "unknown"
     },
     {
+      "id": "buyer-REC-C05-B003-0016",
+      "title": "TrueFoundry Qualitative Test of DeepKeep AI Firewall Custom Guardrail",
+      "date": "2026-08-31",
+      "evidenceLevel": "evaluation_case",
+      "companyId": "biz-deepkeep",
+      "summary": {
+        "en": "TrueFoundry Qualitative Test of DeepKeep AI Firewall Custom Guardrail. See the original source for the attributed claims.",
+        "zh": "TrueFoundry 以 FastAPI wrapper 把 DeepKeep AI Firewall 接入 AI Gateway Custom Guardrail，在 2026-08-20 将六个脚本用例各经网关和 DeepKeep API 运行一次；四类 guardrail 对目标用例触发，clean control 通过，输出 PII 被改写。作者明确称这是定性 POC、非负载测试，也不是原生 provider 集成。"
+      },
+      "sources": [
+        {
+          "url": "https://www.truefoundry.com/blog/wiring-deepkeeps-ai-firewall-into-truefoundry-ai-gateway-as-a-custom-guardrail",
+          "title": "TrueFoundry Qualitative Test of DeepKeep AI Firewall Custom Guardrail"
+        }
+      ],
+      "detailId": "REC-C05-B003-0016",
+      "paymentStatus": "unknown",
+      "contractAmount": null,
+      "renewalStatus": "unknown"
+    },
+    {
       "id": "buyer-REC-C05-B003-0017",
       "title": "CORDIS Periodic Report for the DeepKeep Project",
       "date": "2026-08-03",
@@ -26644,6 +26623,27 @@
         }
       ],
       "detailId": "REC-C05-B003-0017",
+      "paymentStatus": "unknown",
+      "contractAmount": null,
+      "renewalStatus": "unknown"
+    },
+    {
+      "id": "buyer-REC-C05-B001-0009",
+      "title": "Fusion CX unifies protection with CrowdStrike Falcon",
+      "date": null,
+      "evidenceLevel": "deployment_case",
+      "companyId": "biz-crowdstrike",
+      "summary": {
+        "en": "Fusion CX unifies protection with CrowdStrike Falcon. See the original source for the attributed claims.",
+        "zh": "CrowdStrike 托管的案例称 Fusion CX 自 2020 年部署 Falcon Sensor、2025 年采用 Falcon Complete，之后扩展到 Falcon Identity Security 和 SIEM；案例把客户采用 AI Agent 列为强化身份安全的背景，而非 Continuous Identity 产品部署证明。"
+      },
+      "sources": [
+        {
+          "url": "https://www.crowdstrike.com/en-us/resources/customer-stories/fusion-cx/",
+          "title": "Fusion CX unifies protection with CrowdStrike Falcon"
+        }
+      ],
+      "detailId": "REC-C05-B001-0009",
       "paymentStatus": "unknown",
       "contractAmount": null,
       "renewalStatus": "unknown"
@@ -34271,11 +34271,11 @@
           "distinctURLs": 10
         },
         {
-          "host": "investors.paloaltonetworks.com",
+          "host": "gartner.com",
           "distinctURLs": 8
         },
         {
-          "host": "gartner.com",
+          "host": "investors.paloaltonetworks.com",
           "distinctURLs": 8
         },
         {

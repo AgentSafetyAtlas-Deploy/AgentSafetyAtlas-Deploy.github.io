@@ -1,0 +1,145 @@
+/* 追问 (the questions view, F1–F24) and the grouped tab bar of 观察. Dark first, like the site's default theme, with light
+   overrides; kept out of build_theme.py's sources so its generated dark rules do not repaint them. */
+/* 观察: featured, then the four parts about papers under one label, then models and open source */
+.ln-tabs{align-items:center}
+.ln-tabset{display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px;padding:3px;border-radius:999px}
+.ln-tabset.is-papers{border:1px dashed rgba(160,205,195,.3);padding:3px 4px 3px 12px}
+.ln-tabset-l{font-size:12px;font-weight:650;color:#93aea7;letter-spacing:.3px;margin-right:2px}
+.ob-fl{font-size:12px;color:#93aea7}
+@media(max-width:760px){.ln-tabset{flex-wrap:nowrap;flex:0 0 auto}}
+html[data-theme="light"] .ln-tabset.is-papers{border-color:#c9d8d3}
+html[data-theme="light"] .ln-tabset-l,html[data-theme="light"] .ob-fl{color:#5c726c}
+
+/* the page */
+.qx-lead h2{max-width:980px}
+.qx-nav{grid-template-columns:repeat(7,minmax(0,1fr))}
+@media(max-width:1280px){.qx-nav{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:640px){.qx-nav{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* overview: how observations and questions relate, then every answer by research question */
+.qx-overview{display:grid;gap:16px}
+.qx-rel{display:grid;grid-template-columns:minmax(0,1fr) 34px minmax(0,1fr);gap:10px;align-items:stretch}
+.qx-rel>div{display:grid;gap:5px;align-content:start;border:1px solid rgba(160,205,195,.22);border-radius:14px;padding:14px 16px;background:rgba(255,255,255,.025)}
+.qx-rel>div.is-here{border-color:rgba(212,233,102,.55);background:#102622}
+.qx-rel b{font-size:16px;color:#f1f7f4}.qx-rel p{margin:0;font-size:13.5px;line-height:1.65;color:#d0dfdb}
+.qx-relarrow{align-self:center;justify-self:center;width:22px;height:22px;border-top:2px solid #93aea7;border-right:2px solid #93aea7;transform:rotate(45deg);margin-left:-8px}
+.qx-relgo{justify-self:start;margin-top:4px;font:inherit;font-size:13px;font-weight:600;border:1px solid rgba(160,205,195,.4);color:#dfeae6;background:transparent;border-radius:9px;padding:5px 12px;cursor:pointer}
+.qx-relgo:hover{border-color:#d4e966;color:#d4e966}
+.qx-status{display:flex;flex-wrap:wrap;gap:6px;margin:0}.qx-status .ob-chip{margin-left:0}
+.qx-rqs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start}
+.qx-rq{background:#102622;border:1px solid rgba(160,205,195,.18);border-top:3px solid var(--c);border-radius:14px;padding:14px 16px 8px}
+.qx-rqhead{display:grid;gap:4px;width:100%;text-align:left;font:inherit;background:none;border:0;padding:0;color:inherit;cursor:pointer}
+.qx-rqhead b{font-size:15px;line-height:1.5;color:#f1f7f4;font-weight:600}.qx-rqhead:hover b{color:#d4e966}
+.qx-rq ol{list-style:none;margin:10px 0 0;padding:0;display:grid}
+.qx-rq li button{display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:10px;align-items:start;width:100%;text-align:left;font:inherit;background:transparent;border:0;border-top:1px solid rgba(160,205,195,.12);padding:10px 2px;color:inherit;cursor:pointer}
+.qx-rq li button:hover .qx-ot b{color:#d4e966}
+.qx-ot{display:grid;gap:3px;min-width:0}.qx-ot b{font-size:14px;line-height:1.45;color:#f1f7f4;font-weight:600}.qx-ot em{font-style:normal;font-size:13px;line-height:1.55;color:#b6c8c4}
+.qx-rq .ob-chip{margin:3px 0 0;padding:3px 6px}
+.qx-id{font-size:12.5px;font-weight:700;color:#d4e966;font-variant-numeric:tabular-nums;padding-top:2px}
+
+/* a question card: question, answer, chart, one line of method and limit, then the folded record */
+.qx-rqtop{margin-bottom:4px}
+.qx-list{display:grid;gap:16px}
+.qx-card{background:#102622;border:1px solid rgba(160,205,195,.18);border-radius:14px;padding:16px 22px 12px;scroll-margin-top:84px}
+.qx-head{display:flex;align-items:center;gap:8px}.qx-head .ob-chip{margin-left:0}.qx-head .ob-copy{margin-left:auto}
+.qx-q{margin:6px 0 8px;font-size:19px;line-height:1.45;color:#f1f7f4;max-width:920px}
+.qx-a{margin:0 0 14px;font-size:15px;line-height:1.75;color:#d7e5e1;max-width:1000px}.qx-a b{color:#f1f7f4;font-weight:650}
+.qx-none{border:1px dashed rgba(160,205,195,.32);border-radius:10px;padding:10px 14px;margin:2px 0 12px}
+.qx-none b{color:#e8c27a;font-size:14px}.qx-none p{margin:4px 0 0;font-size:13.5px;line-height:1.65;color:#d0dfdb}
+.qx-fig{margin:0 0 12px;padding:0;min-width:0}
+.qx-fig figcaption{font-size:13px;font-weight:600;color:#cfe0dc;margin:0 0 10px;line-height:1.45}
+.qx-fignote{font-size:12px;color:#93aea7;margin:8px 0 0}
+.qx-panels{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:6px 34px}
+.qx-legend{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:12.5px;color:#cfe0dc;margin:0 0 10px}
+.qx-legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px;box-sizing:border-box}
+.qx-how{display:grid;gap:3px;margin:2px 0 8px;padding-top:9px;border-top:1px solid rgba(160,205,195,.12);font-size:12.5px;line-height:1.6;color:#b6c8c4}
+.qx-how b{color:#dfeae6;font-weight:650;margin-right:8px}
+.qx-from{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 8px;font-size:12.5px}.qx-from>span{color:#93aea7;margin-right:2px}
+.qx-obs{font:inherit;font-size:12.5px;line-height:1.4;text-align:left;border:1px solid rgba(160,205,195,.3);background:transparent;color:#dfeae6;border-radius:999px;padding:2px 10px;cursor:pointer}
+.qx-obs:hover{border-color:#d4e966;color:#d4e966}
+.qx-more{border-top:1px dashed rgba(160,205,195,.22);padding-top:8px}
+.qx-more summary{cursor:pointer;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;font-size:13.5px;font-weight:600;color:#d4e966}
+.qx-more summary small{font-weight:400;font-size:12px;color:#93aea7}
+.qx-more-body{display:grid;gap:12px;margin:10px 0 6px}
+.qx-data{font-size:12.5px;margin:4px 0 12px}.qx-data caption{text-align:left;font-weight:600;font-size:12.5px;padding:2px 0 4px;color:#cfe0dc}
+.qx-data td,.qx-data th{padding:5px 8px}
+
+/* chart rows: label | marks (| value) */
+.qx-bars,.qx-stacks,.qx-dots,.qx-twin{display:grid;gap:7px}
+.qx-row{display:grid;grid-template-columns:minmax(110px,30%) minmax(0,1fr);gap:12px;align-items:center;min-height:22px}
+.qx-l{font-size:13px;line-height:1.3;color:#dfeae6;min-width:0;overflow-wrap:anywhere}.qx-l small{margin-left:6px;font-size:11px;color:#93aea7;font-variant-numeric:tabular-nums}
+.qx-row.is-strong .qx-l{font-weight:650;color:#f1f7f4}
+.qx-track{position:relative;display:grid;gap:3px;min-width:0}
+.qx-bar{position:relative;display:block;padding-right:58px;min-height:16px}
+.qx-bar i{display:block;height:12px;margin:2px 0;border-radius:0 4px 4px 0;min-width:2px;cursor:default}
+.qx-bars.is-grouped .qx-bar i{height:9px}
+.qx-bar b{position:absolute;top:50%;transform:translateY(-50%);font-size:12px;font-weight:600;color:#dfeae6;font-variant-numeric:tabular-nums;white-space:nowrap;line-height:1}
+.qx-bars.is-grouped .qx-bar{min-height:13px}.qx-bars.is-grouped .qx-bar b{font-size:11.5px}
+.qx-ref{position:absolute;top:-4px;bottom:-4px;width:0;border-left:1.5px dashed #e8c27a;pointer-events:none}
+.qx-refrow{min-height:14px}.qx-refrow .qx-track{height:14px}
+.qx-reflab{position:absolute;top:0;transform:translateX(-50%);font-style:normal;font-size:11px;color:#e8c27a;white-space:nowrap}
+/* 100% stacks */
+.qx-stack{display:flex;gap:2px;height:22px;min-width:0}
+.qx-stack i{font-style:normal;display:flex;align-items:center;justify-content:center;min-width:2px;overflow:hidden;cursor:default}
+.qx-stack i:first-child{border-radius:4px 0 0 4px}.qx-stack i:last-child{border-radius:0 4px 4px 0}
+.qx-stack i b{font-size:11.5px;font-weight:700;color:#fff;font-variant-numeric:tabular-nums;text-shadow:0 0 3px rgba(0,0,0,.35);white-space:nowrap}
+.qx-stacks .qx-row{grid-template-columns:minmax(110px,30%) minmax(0,1fr)}
+/* dots on a scale, with an interval or a start dot */
+.qx-dots .qx-row{grid-template-columns:minmax(110px,30%) minmax(0,1fr) 92px}
+.qx-axis{position:relative;height:18px;margin:0 8px}
+.qx-axis::before{content:'';position:absolute;left:0;right:0;top:50%;border-top:1px solid rgba(160,205,195,.16)}
+.qx-axis.is-labels{height:14px}.qx-axis.is-labels::before{content:none}
+.qx-tick{position:absolute;top:0;bottom:0;border-left:1px solid rgba(160,205,195,.12)}
+.qx-ticklab{position:absolute;top:0;transform:translateX(-50%);font-style:normal;font-size:11px;color:#93aea7}
+.qx-dots .qx-ref{top:0;bottom:0}
+.qx-dot{position:absolute;top:50%;width:11px;height:11px;margin:-5.5px 0 0 -5.5px;border-radius:50%;box-sizing:border-box;box-shadow:0 0 0 2px #102622;cursor:default}
+.qx-dot.is-from{background:#102622;border:2px solid}
+.qx-span{position:absolute;top:50%;height:2px;margin-top:-1px;opacity:.55}
+.qx-ci{position:absolute;top:50%;height:4px;margin-top:-2px;border-radius:2px;opacity:.35}
+.qx-v{font-size:12px;font-weight:600;color:#dfeae6;font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+/* two aligned columns with their own scales */
+.qx-twin .qx-row{grid-template-columns:minmax(110px,30%) minmax(0,1fr) minmax(0,1fr)}
+.qx-twin-head span{font-size:12px;font-weight:600;color:#93aea7}
+/* matrix */
+.qx-matrix-wrap{overflow-x:auto}
+.qx-matrix{border-collapse:separate;border-spacing:2px;font-size:12.5px;min-width:440px}
+.qx-matrix th{font-size:12px;font-weight:600;color:#cfe0dc;padding:4px 8px;text-align:center}
+.qx-matrix tbody th{text-align:right;white-space:nowrap}.qx-matrix thead th:first-child{font-weight:400;color:#93aea7;text-align:right}
+.qx-cell{width:22%;padding:7px 6px;text-align:center;border-radius:4px;background:color-mix(in srgb,var(--c) calc(var(--a) * 100%),transparent)}
+.qx-cell b{display:block;font-size:13.5px;color:#f1f7f4;font-variant-numeric:tabular-nums}.qx-cell small{font-size:11px;color:#d7e5e1}
+.qx-cell.is-same{box-shadow:inset 0 0 0 1.5px var(--c)}
+
+@media(max-width:900px){.qx-rqs{grid-template-columns:1fr}}
+@media(max-width:640px){
+  .qx-rel{grid-template-columns:1fr}.qx-relarrow{transform:rotate(135deg);margin:-6px 0 0}
+  .qx-card{padding:14px 14px 10px}.qx-q{font-size:17px}.qx-a{font-size:14.5px}
+  .qx-panels{grid-template-columns:1fr}
+  .qx-row,.qx-stacks .qx-row{grid-template-columns:minmax(84px,34%) minmax(0,1fr);gap:8px}
+  .qx-dots .qx-row{grid-template-columns:minmax(84px,32%) minmax(0,1fr) 74px}
+  .qx-twin .qx-row{grid-template-columns:minmax(84px,30%) minmax(0,1fr) minmax(0,1fr)}
+  .qx-l{font-size:12.5px}
+}
+
+/* light theme */
+html[data-theme="light"] .qx-rel>div{background:#f6f9f8;border-color:#dce5e5}html[data-theme="light"] .qx-rel>div.is-here{background:#fff;border-color:#1c6a57}
+html[data-theme="light"] .qx-rel b,html[data-theme="light"] .qx-rqhead b,html[data-theme="light"] .qx-ot b,html[data-theme="light"] .qx-q,html[data-theme="light"] .qx-a b,html[data-theme="light"] .qx-row.is-strong .qx-l{color:#123c36}
+html[data-theme="light"] .qx-rel p,html[data-theme="light"] .qx-a,html[data-theme="light"] .qx-none p{color:#2f4c48}
+html[data-theme="light"] .qx-relarrow{border-color:#7d958e}
+html[data-theme="light"] .qx-relgo,html[data-theme="light"] .qx-obs{color:#203536;border-color:#c9d8d3}
+html[data-theme="light"] .qx-relgo:hover,html[data-theme="light"] .qx-obs:hover,html[data-theme="light"] .qx-rqhead:hover b,html[data-theme="light"] .qx-rq li button:hover .qx-ot b{color:#1c6a57;border-color:#1c6a57}
+html[data-theme="light"] .qx-rq,html[data-theme="light"] .qx-card{background:#fff;border-color:#dce5e5}
+html[data-theme="light"] .qx-rq li button{border-top-color:#e7eeec}
+html[data-theme="light"] .qx-ot em,html[data-theme="light"] .qx-how,html[data-theme="light"] .qx-fignote,html[data-theme="light"] .qx-from>span,html[data-theme="light"] .qx-l small,html[data-theme="light"] .qx-more summary small,html[data-theme="light"] .qx-ticklab,html[data-theme="light"] .qx-twin-head span,html[data-theme="light"] .qx-matrix thead th:first-child{color:#5c726c}
+html[data-theme="light"] .qx-id,html[data-theme="light"] .qx-more summary{color:#1c6a57}
+html[data-theme="light"] .qx-none{border-color:#c9d8d3}html[data-theme="light"] .qx-none b{color:#a8502f}
+html[data-theme="light"] .qx-fig figcaption,html[data-theme="light"] .qx-legend,html[data-theme="light"] .qx-data caption,html[data-theme="light"] .qx-matrix th{color:#203536}
+html[data-theme="light"] .qx-how{border-top-color:#e7eeec}html[data-theme="light"] .qx-how b{color:#123c36}
+html[data-theme="light"] .qx-more{border-top-color:#d4e0dc}
+html[data-theme="light"] .qx-l,html[data-theme="light"] .qx-bar b,html[data-theme="light"] .qx-v{color:#203536}
+html[data-theme="light"] .qx-ref{border-left-color:#a8502f}html[data-theme="light"] .qx-reflab{color:#a8502f}
+html[data-theme="light"] .qx-stack i.is-pale b{color:#123c36;text-shadow:none}
+html[data-theme="light"] .qx-axis::before{border-top-color:#d4e0dc}html[data-theme="light"] .qx-tick{border-left-color:#e7eeec}
+html[data-theme="light"] .qx-dot{box-shadow:0 0 0 2px #fff}html[data-theme="light"] .qx-dot.is-from{background:#fff}
+html[data-theme="light"] .qx-cell{background:color-mix(in srgb,var(--c) calc(var(--a) * 62%),#fff)}
+html[data-theme="light"] .qx-cell b{color:#123c36}html[data-theme="light"] .qx-cell small{color:#2f4c48}
+.qx-nav button b{white-space:normal;min-width:0;overflow-wrap:anywhere;line-height:1.3}
