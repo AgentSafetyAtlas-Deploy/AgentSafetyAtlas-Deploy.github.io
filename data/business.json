@@ -26574,6 +26574,27 @@
       "renewalStatus": "unknown"
     },
     {
+      "id": "buyer-REC-C05-B001-0009",
+      "title": "Fusion CX unifies protection with CrowdStrike Falcon",
+      "date": null,
+      "evidenceLevel": "deployment_case",
+      "companyId": "biz-crowdstrike",
+      "summary": {
+        "en": "Fusion CX unifies protection with CrowdStrike Falcon. See the original source for the attributed claims.",
+        "zh": "CrowdStrike 托管的案例称 Fusion CX 自 2020 年部署 Falcon Sensor、2025 年采用 Falcon Complete，之后扩展到 Falcon Identity Security 和 SIEM；案例把客户采用 AI Agent 列为强化身份安全的背景，而非 Continuous Identity 产品部署证明。"
+      },
+      "sources": [
+        {
+          "url": "https://www.crowdstrike.com/en-us/resources/customer-stories/fusion-cx/",
+          "title": "Fusion CX unifies protection with CrowdStrike Falcon"
+        }
+      ],
+      "detailId": "REC-C05-B001-0009",
+      "paymentStatus": "unknown",
+      "contractAmount": null,
+      "renewalStatus": "unknown"
+    },
+    {
       "id": "buyer-REC-C05-B006-0003",
       "title": "Onyx Security Anonymized Agent Discovery and Runtime Deployment Field Notes",
       "date": "2026-04-15",
@@ -26623,27 +26644,6 @@
         }
       ],
       "detailId": "REC-C05-B003-0017",
-      "paymentStatus": "unknown",
-      "contractAmount": null,
-      "renewalStatus": "unknown"
-    },
-    {
-      "id": "buyer-REC-C05-B001-0009",
-      "title": "Fusion CX unifies protection with CrowdStrike Falcon",
-      "date": null,
-      "evidenceLevel": "deployment_case",
-      "companyId": "biz-crowdstrike",
-      "summary": {
-        "en": "Fusion CX unifies protection with CrowdStrike Falcon. See the original source for the attributed claims.",
-        "zh": "CrowdStrike 托管的案例称 Fusion CX 自 2020 年部署 Falcon Sensor、2025 年采用 Falcon Complete，之后扩展到 Falcon Identity Security 和 SIEM；案例把客户采用 AI Agent 列为强化身份安全的背景，而非 Continuous Identity 产品部署证明。"
-      },
-      "sources": [
-        {
-          "url": "https://www.crowdstrike.com/en-us/resources/customer-stories/fusion-cx/",
-          "title": "Fusion CX unifies protection with CrowdStrike Falcon"
-        }
-      ],
-      "detailId": "REC-C05-B001-0009",
       "paymentStatus": "unknown",
       "contractAmount": null,
       "renewalStatus": "unknown"
@@ -34251,11 +34251,11 @@
           "distinctURLs": 16
         },
         {
-          "host": "assets.publishing.service.gov.uk",
+          "host": "lasso.security",
           "distinctURLs": 14
         },
         {
-          "host": "lasso.security",
+          "host": "assets.publishing.service.gov.uk",
           "distinctURLs": 14
         },
         {

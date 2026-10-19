@@ -2749,7 +2749,8 @@ export function lensCards(ctx) {
   // one card per lens with its first answer: used on the home page
   setup(ctx);
   const lead = {structure: 'traditions', connect: 'hubs', lead: 'shares', evolve: 'growth'};  // the question each home card shows
-  return PARTS(T).map(([, name, sub, chapters]) => { const id = chapters[0], qs = lensQuestions(id), q = qs.find(x => x[0] === lead[id]) || qs[0]; return {id, name, lead: sub, question: q[1], answer: q[2]}; });
+  // the 研究问题 part has no ordinary questions (its cards are F1-F24): the home page keeps one card per findings part
+  return PARTS(T).filter(([k]) => k !== 'questions').map(([, name, sub, chapters]) => { const id = chapters[0], qs = lensQuestions(id), q = qs.find(x => x[0] === lead[id]) || qs[0]; return q ? {id, name, lead: sub, question: q[1], answer: q[2]} : null; }).filter(Boolean);
 }
 const NOTES = () => {
   const con = P.trends.concentration, yl = con.years.map(String), w = P.web, hosts = w.resourceHosts, tot = Object.values(hosts).reduce((a, b) => a + b, 0), s = P.fractures.scale, cs = P.trends.clusterShares, pc = v => v == null ? '—' : Number(v).toFixed(1) + '%', it = P.fractures.timeliness.intake, imp = P.fractures.importance;
