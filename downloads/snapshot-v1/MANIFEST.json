@@ -2,7 +2,7 @@
  "version": "v1",
  "status": "draft",
  "release": "R071",
- "analysisVersion": "A4.1",
+ "analysisVersion": "A4.2",
  "builtOn": "2026-10-19",
  "counts": {
   "works": 8797,
@@ -27,8 +27,8 @@
   },
   {
    "path": "findings.json",
-   "bytes": 8338478,
-   "sha256": "a08d937774e034ec97cd1cc498cf81f2db19c1c83fcf7053270b1037431184e5"
+   "bytes": 8349135,
+   "sha256": "d06732b603740f931f22ae57e555a58c860b84095d9735398d98e4645021fb55"
   },
   {
    "path": "institutions.jsonl",
@@ -57,8 +57,8 @@
   },
   {
    "path": "scripts/build_findings.py",
-   "bytes": 135973,
-   "sha256": "ff23b24197e6fb315911bd110b2300b76d5095b33c07aa0743056fd41049d651"
+   "bytes": 136424,
+   "sha256": "693cbce7d9da64d9a03ee10c4803c3e70c9cc690ec604ac41bf0b8e5a2ee7e1a"
   },
   {
    "path": "scripts/build_snapshot.py",

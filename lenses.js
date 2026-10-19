@@ -1505,6 +1505,13 @@ function qxTwin(rows, [a, b], {title = ''} = {}) {
     <span class="qx-track"><span class="qx-bar"><i style="width:${(100 * r.a / ma).toFixed(1)}%;background:${a.color}" data-tip="${esc(`${r.label} · ${a.label}: ${a.fmt(r.a)}`)}"></i><b style="left:calc((100% - 58px) * ${(r.a / ma).toFixed(4)} + 6px)">${a.fmt(r.a)}</b></span></span>
     <span class="qx-track"><span class="qx-bar"><i style="width:${(100 * r.b / mb).toFixed(1)}%;background:${b.color}" data-tip="${esc(`${r.label} · ${b.label}: ${b.fmt(r.b)}`)}"></i><b style="left:calc((100% - 58px) * ${(r.b / mb).toFixed(4)} + 6px)">${b.fmt(r.b)}</b></span></span></div>`).join('')}</div>`;
 }
+// worked examples: two papers on one benchmark, their reported conditions side by side, the differing ones marked
+function qxCases(cases) {
+  const row = (l, k, c) => `<tr><th>${l}</th>${['a', 'b'].map(s => `<td class="${c.differs.includes(k) ? 'is-diff' : ''}">${esc(k === 'targets' ? c[s].targets.join(', ') : `${c[s][k] || T('not stated', '未写明')}${c[s][k + 'Cat'] && c[s][k + 'Cat'] !== c[s][k] ? ` · ${c[s][k + 'Cat']}` : ''}`)}</td>`).join('')}</tr>`;
+  return `<div class="qx-cases">${cases.map(c => `<table class="fd-table qx-case"><caption>${esc(c.benchmark)} · ${T('differ in', '不同之处')}：${c.differs.map(d => ({version: T('version', '版本'), criterion: T('success criterion', '成功判据'), targets: T('models tested', '被测模型')})[d]).join(T(', ', '、'))}</caption>
+    <thead><tr><th></th>${['a', 'b'].map(s => `<th><button class="fd-paper" data-fd-paper="${esc(c[s].id)}">${esc(title(c[s].id))}</button></th>`).join('')}</tr></thead>
+    <tbody>${row(T('Version or subset', '版本或子集'), 'version', c)}${row(T('Success criterion', '成功判据'), 'criterion', c)}${row(T('Models tested', '被测模型'), 'targets', c)}</tbody></table>`).join('')}</div>`;
+}
 // one figure: what is plotted (with its base), the chart, an optional second panel
 const qxShort = t => { const s = String(t || '').replace(/\$/g, '').split(':')[0].replace(/\s*\(.*\)$/, '').trim(); return s.length > 38 ? s.slice(0, 36).trim() + '…' : s; };
 const qxFig = (title, body, note = '') => `<figure class="qx-fig"><figcaption>${title}</figcaption>${body}${note ? `<p class="qx-fignote">${note}</p>` : ''}</figure>`;
@@ -1664,10 +1671,12 @@ const QX = {
     const rowTot = r => L.reduce((a, m) => a + (M[`${r}|${m}`] || 0), 0);
     return {
       head: T('Mostly yes; the closer a claim is to real consequences, the more often it goes unmeasured.', '大多一致；主张越接近实际后果，越常测不到。'),
-      line: T(`Of ${num(c.base)} papers, ${pctf(S.same, 0)} measure the layer their abstract claims and ${pctf(S.beyond, 0)} claim a higher layer than they measure. Among papers claiming to prevent real consequences (money lost, data leaked, physical harm), ${pctf(S.byClaim.consequence, 0)} measure only a lower layer.`, `${num(c.base)} 篇论文中，${pctf(S.same, 0)} 测到了摘要声称的层次，${pctf(S.beyond, 0)} 声称的层次高于实际测量。声称防止“实际后果”（资金损失、数据外泄、物理伤害）的论文里，${pctf(S.byClaim.consequence, 0)} 的主要结果只测到更低的层次。`),
+      line: S.consequence?.read ? T(`Of ${num(S.consequence.keptPapers ?? c.base)} papers with a claim of their own, ${pctf(S.consequence.sameKept ?? S.same, 0)} measure the layer their abstract claims and ${pctf(S.consequence.beyondKept ?? S.beyond, 0)} claim a higher layer than they measure. Of the ${S.consequence.papers} papers whose main claim concerns real consequences (money lost, data leaked, physical harm), read again: ${S.consequence.explicit} commit to that level and ${S.consequence.explicitBeyond} of those measure only a lower layer; ${S.consequence.motivation} use consequences only as motivation.`,
+          `${num(S.consequence.keptPapers ?? c.base)} 篇有明确主张的论文中，${pctf(S.consequence.sameKept ?? S.same, 0)} 测到了摘要声称的层次，${pctf(S.consequence.beyondKept ?? S.beyond, 0)} 声称的层次高于实际测量。主张涉及“实际后果”（资金损失、数据外泄、物理伤害）的 ${S.consequence.papers} 篇逐篇重读：${S.consequence.explicit} 篇明确承诺在这一层次防止、检测或证明伤害，其中 ${S.consequence.explicitBeyond} 篇的主要结果只测到更低的层次；另有 ${S.consequence.motivation} 篇只是把实际后果作为研究动机。`)
+        : T(`Of ${num(c.base)} papers, ${pctf(S.same, 0)} measure the layer their abstract claims and ${pctf(S.beyond, 0)} claim a higher layer than they measure. Among papers claiming to prevent real consequences (money lost, data leaked, physical harm), ${pctf(S.byClaim.consequence, 0)} measure only a lower layer.`, `${num(c.base)} 篇论文中，${pctf(S.same, 0)} 测到了摘要声称的层次，${pctf(S.beyond, 0)} 声称的层次高于实际测量。声称防止“实际后果”（资金损失、数据外泄、物理伤害）的论文里，${pctf(S.byClaim.consequence, 0)} 的主要结果只测到更低的层次。`),
       fig: () => qxFig(T(`Claimed layer (rows) against the layer the main results measure (columns), ${num(c.base)} papers; shade = share of the row`, `声称保护的层次（行）对主要结果实际测量的层次（列），${num(c.base)} 篇；深浅 = 占该行比例`), qxMatrix(L, L, prName, (r, m) => { const v = M[`${r}|${m}`] || 0, i = L.indexOf(r), j = L.indexOf(m); return {v, share: 100 * v / (rowTot(r) || 1), zone: i === j ? 'same' : j < i ? 'beyond' : 'below'}; }, {title: T('Claim × measured', '主张 × 测量'), corner: T('claimed ↓ / measured →', '声称 ↓ / 测量 →'), zones: {same: COLORS.attention, beyond: COLORS.connection, below: qxGrey()}})),
       legend: qxLegend([[T('same layer', '同一层次'), COLORS.attention], [T('claim beyond what is measured', '主张超出测量'), COLORS.connection], [T('measured deeper than claimed', '测得比声称更深'), qxGrey()]]),
-      how: T('Claimed layer: Claude Opus 5.5 reads the abstract and introduction (claims-v1); measured layer: the experiment protocol card. Order: output < tool call < environment state < consequence.', '声称层次：Claude Opus 5.5 读摘要与引言（规则 claims-v1）；测量层次来自实验方案卡。层次顺序：输出内容 < 工具调用 < 环境状态 < 实际后果。'),
+      how: T('Claimed layer: Claude Opus 5.5 reads the abstract and introduction (claims-v1); consequence claims are read again for whether they are a commitment or motivation; measured layer: the experiment protocol card. Order: output < tool call < environment state < consequence.', '声称层次：Claude Opus 5.5 读摘要与引言（规则 claims-v1）；涉及实际后果的主张再逐篇区分是明确承诺还是研究动机；测量层次来自实验方案卡。层次顺序：输出内容 < 工具调用 < 环境状态 < 实际后果。'),
       limit: T('Claiming beyond the measurement is not by itself wrong: a proxy can be justified. The cells below the diagonal are where it needs to be given.', '主张超出测量本身不等于错：代理指标可以有依据；对角线左下方的格子是需要给出依据的地方。')};
   },
   F22() {
@@ -1745,10 +1754,13 @@ const QX = {
     const keys = [['sameCore', T('same core conditions', '核心条件一致'), COLORS.attention], ['adjust', T('comparable after adjustment', '调整后可比'), COLORS.supply], ['keyDiff', T('key differences', '存在关键差异'), COLORS.connection], ['underReported', T('under-reported', '报告不足'), qxGrey()]];
     const dv = c.alt.find(a => a.key === 'defaultVersion');
     return {
-      head: T('Almost never directly.', '几乎不能直接比较。'),
+      head: T('Sharing a benchmark name rarely means sharing conditions: nearly half of the pairs differ, and four in ten cannot be judged.', '共享同一基准名称，很少意味着条件一致：近一半论文对条件不同，另有四成多因信息不足无法判断。'),
       line: T(`Of ${num(S.fourPairs)} pairs of papers on the ${S.canonBenchmarks} most-used benchmarks, ${pctf(f.sameCore)} share the core conditions (version, success criterion, a studied model family), ${pctf(f.adjust)} are comparable after adjustment and ${pctf(f.keyDiff)} differ in a key condition; ${pctf(f.underReported)} cannot be judged because one side leaves a condition unstated.`, `使用最多的 ${S.canonBenchmarks} 个基准上的 ${num(S.fourPairs)} 对论文中，核心条件（版本、成功判据、被测模型家族）一致的只有 ${pctf(f.sameCore)}，调整后可比的 ${pctf(f.adjust)}，存在关键差异的 ${pctf(f.keyDiff)}；${pctf(f.underReported)} 因至少一方没写清而无法判断。`),
-      fig: () => qxFig(T('Pairs of papers on the same benchmark, by comparability', '同一基准上的论文对，按可比程度'), qxStack([{label: T(`all ${S.canonBenchmarks} benchmarks`, `全部 ${S.canonBenchmarks} 个基准`), n: S.fourPairs, parts: S.four, strong: true}, ...S.fourBenchmarks.slice(0, 8).map(b => ({label: b.name, n: keys.reduce((a, [k]) => a + (b[k] || 0), 0), parts: b}))], keys, {title: T('Comparability', '可比程度'), fmt: v => pctf(v, 0)}) + qxExtra(T('Reported versions and criteria, grouped', '归并后的版本与判据类别'), [T('Benchmark', '基准'), T('Papers', '论文'), T('Version categories', '版本类别'), T('Criterion categories', '判据类别')], S.fourBenchmarks.map(b => [b.name, num(b.papers), num(b.versions), num(b.criteria)]))),
-      how: T('Claude Opus 5.5 groups the versions and success criteria each paper reports into canonical categories per benchmark; studied models match by family.', 'Claude Opus 5.5 把各论文报告的版本与成功判据，按基准归并成标准类别；被测模型按家族匹配。'),
+      legend: qxLegend(keys.map(([, l, c]) => [l, c])),
+      fig: () => qxFig(T('Pairs of papers on the same benchmark, by comparability', '同一基准上的论文对，按可比程度'), qxStack([{label: T(`all ${S.canonBenchmarks} benchmarks`, `全部 ${S.canonBenchmarks} 个基准`), n: S.fourPairs, parts: S.four, strong: true}, ...S.fourBenchmarks.slice(0, 8).map(b => ({label: b.name, n: keys.reduce((a, [k]) => a + (b[k] || 0), 0), parts: b}))], keys, {title: T('Comparability', '可比程度'), fmt: v => pctf(v, 0), legend: false})
+        + (S.robust ? qxFig(T('The same split under other weightings', '换一种加权方式，结果相近'), qxStack(S.robust.map(r => ({label: {pairs: T('every pair counts once', '每个论文对计一次'), equalBenchmarks: T('every benchmark counts equally', '每个基准等权'), withoutTop: T(`without ${r.label} (${pctf(r.topShare, 0)} of pairs)`, `去掉 ${r.label}（占论文对 ${pctf(r.topShare, 0)}）`), sameRole: T('only two defences or two attacks', '只比同类研究（防御对防御、攻击对攻击）')}[r.key], n: r.key === 'equalBenchmarks' ? null : r.n, parts: Object.fromEntries(keys.map(([k]) => [k, r[k]]))})), keys, {title: T('Other weightings', '其他加权'), fmt: v => pctf(v, 0), legend: false})) : '')
+        + (S.cases?.length ? qxFig(T('Worked examples: two defences on the same benchmark whose results look comparable', '例子：同一基准上两项看似可比的防御'), qxCases(S.cases)) : '') + qxExtra(T('Reported versions and criteria, grouped', '归并后的版本与判据类别'), [T('Benchmark', '基准'), T('Papers', '论文'), T('Version categories', '版本类别'), T('Criterion categories', '判据类别')], S.fourBenchmarks.map(b => [b.name, num(b.papers), num(b.versions), num(b.criteria)]))),
+      how: T('Fields read from the whole paper, appendices included; Claude Opus 5.5 groups the versions and success criteria each paper reports into canonical categories per benchmark; studied models match by family. "Different" and "not stated" are kept apart.', '字段从全文（含附录）读取；Claude Opus 5.5 把各论文报告的版本与成功判据，按基准归并成标准类别；被测模型按家族匹配。“条件不同”与“信息不足”分开计。'),
       limit: T(`"Under-reported" is an upper bound: appendices were not read (agent audit: 65% of fields right). Counting an unstated version as the default release, it falls to ${dv ? pctf(dv.value) : '—'}.`, `“报告不足”是上限：附录没有读（智能体审计：字段精度 65%）。把未写版本视为默认版本时，降到 ${dv ? pctf(dv.value) : '—'}。`)};
   },
   F17() {
@@ -1756,17 +1768,18 @@ const QX = {
     const inst = c.alt.find(a => a.key === 'byInstitution'), short = qxShort;
     return {
       head: T('Mostly outside: few uses come from the benchmark\'s own authors.', '大多来自外部：基准作者自己的使用很少。'),
-      line: T(`Across ${num(c.base)} benchmarks used by at least three works, ${pctf(S.selfUseShare, 0)} of uses come from teams sharing an author with the benchmark${inst ? `; counted by shared institution instead, ${pctf(inst.value, 0)}` : ''}.`, `被至少 3 项工作使用的 ${num(c.base)} 个基准中，只有 ${pctf(S.selfUseShare, 0)} 的使用来自与基准作者共享作者的团队${inst ? `；改按“同一机构”计，这一比例是 ${pctf(inst.value, 0)}` : ''}。`),
+      line: T(`Across the ${num(c.base)} benchmarks already used by at least three works, ${pctf(S.selfUseShare, 0)} of uses come from teams sharing an author with the benchmark${inst ? ` and ${pctf(inst.value, 0)} from teams sharing an institution with it` : ''}. This describes benchmarks that have been taken up; how many new benchmarks get there at all is ${qLabel('F1')}.`,
+        `已被至少 3 项工作使用的 ${num(c.base)} 个基准中，${pctf(S.selfUseShare, 0)} 的使用来自与基准作者共享作者的团队${inst ? `，${pctf(inst.value, 0)} 来自与之同机构的团队` : ''}。这描述的是已获采用的基准；新基准有多少能走到这一步，见 ${qLabel('F1')}。`),
       fig: () => qxFig(T('Uses of the most used benchmarks, by who uses them', '使用最多的基准：使用来自谁'), qxStack(rows.map(r => ({label: short(title(r.id)), n: r.uses, parts: {out: r.noSharedAuthor, own: r.uses - r.noSharedAuthor}})), [['out', T('teams sharing no author', '不共享作者的团队'), COLORS.attention], ['own', T('the authors\' circle', '作者圈子'), COLORS.connection]], {title: T('Who uses it', '使用来自谁')}) + qxExtra(T('Independent use of the most used benchmarks', '使用最多的基准的独立使用'), [T('Benchmark', '基准'), T('Uses', '使用'), T('No shared author', '不共享作者'), T('No shared institution', '不共享机构'), T('Independent teams', '独立团队'), T('Months to first outside use', '首次外部使用（月）')], I.byIndependent.slice(0, 10).map(r => [short(title(r.id)), num(r.uses), num(r.noSharedAuthor), r.noSharedInstitution == null ? '—' : num(r.noSharedInstitution), num(r.independentTeams), r.firstNoAuthorMonths ?? '—']))),
       how: T('Uses come from the benchmark-use detection in full texts; the authors\' circle = at least one shared author.', '使用关系来自全文中的基准使用检测；作者圈子 = 至少一位共同作者。'),
       limit: T('Authorship only: a colleague of the same lab counts as outside (see the institution definition).', '只看署名：同实验室的不同作者也算外部（按机构计见换口径）。')};
   },
   F18() {
     const q = EC('citeuse')?.stats?.quadrants, b = EC('cbench'); if (!b) return null; const S = b.stats, it = S.intents;
-    const hi = q ? q.citedNotUsed + q.both : 0, short = qxShort;
+    const hi = q ? q.citedNotUsed + q.both : 0, short = qxShort, jc = EC('jcite')?.stats;
     return {
       head: T('Mostly cited, rarely used.', '多数只被引用，很少被使用。'),
-      line: T(`Of ${num(b.base)} citing sentences to Atlas benchmarks, ${pctf(S.background, 0)} only mention them as background and ${pctf(S.used, 0)} actually run experiments on them.${q ? ` Of the ${hi} benchmarks in the top quarter by citations (same year and cluster), ${pctf(EC('citeuse').stats.citedNotUsedShare, 0)} are not highly used.` : ''}`, `指向 Atlas 基准的 ${num(b.base)} 条引用句中，${pctf(S.background, 0)} 只是背景提及，真正用它做实验的是 ${pctf(S.used, 0)}。${q ? `被引排在同年同星团前四分之一的 ${hi} 个基准中，${pctf(EC('citeuse').stats.citedNotUsedShare, 0)} 用得并不多。` : ''}`),
+      line: T(`Counted by citing sentence: of ${num(b.base)} citing sentences to Atlas benchmarks, ${pctf(S.background, 0)} only mention them as background and ${pctf(S.used, 0)} actually run experiments on them.${q ? ` Of the ${hi} benchmarks in the top quarter by citations (same year and cluster), ${pctf(EC('citeuse').stats.citedNotUsedShare, 0)} are not highly used.` : ''}${jc ? ` Counted per citing paper and benchmark, ${pctf(jc.used, 0)} of ${num(jc.relations)} citations come from a paper that runs experiments on the benchmark or says it uses it.` : ''}`, `按引用句计，指向 Atlas 基准的 ${num(b.base)} 条引用句中，${pctf(S.background, 0)} 只是背景提及，真正用它做实验的是 ${pctf(S.used, 0)}。${q ? `被引排在同年同星团前四分之一的 ${hi} 个基准中，${pctf(EC('citeuse').stats.citedNotUsedShare, 0)} 用得并不多。` : ''}${jc ? `按“论文—基准”关系计，${num(jc.relations)} 次引用中，引用方真的在该基准上做实验或在引用句中说明使用的只占 ${pctf(jc.used, 0)}。` : ''}`),
       fig: () => qxPanels(
         qxFig(T(`What citing sentences do with a benchmark (${num(b.base)} citations)`, `引用句对基准做了什么（${num(b.base)} 条引用）`), qxStack([{label: T('citations', '引用'), n: b.base, parts: {u: it.uses_artifact, m: it.adopts_method, c: it.compares, o: (it.critique || 0) + (it.supports || 0) + (it.counterevidence || 0), b: it.background}}], [['u', prName('uses_artifact'), COLORS.attention], ['m', prName('adopts_method'), COLORS.supply], ['c', prName('compares'), SERIES[3]], ['o', T('supports, critique, counter-evidence', '支持、批评与反证'), COLORS.connection], ['b', prName('background'), qxGrey()]], {title: T('Intent', '引用意图')})),
         qxFig(T('Most cited benchmarks: citations that use, adopt or compare', '被引最多的基准：引用中使用、采用或比较的比例'), qxBars(S.benchmarks.slice(0, 6).map(r => ({label: short(r.title), n: r.citations, value: r.share})), {max: 30, title: T('Engaged share', '实际使用比例')}))),
@@ -1813,6 +1826,77 @@ const QX = {
   },
 };
 
+// -- joint analyses: relations tested on the same records, joined paper by paper or benchmark by benchmark (review forwarded by
+// the owner, 2026-10-19: no share is multiplied across different sets)
+const QXJ = {
+  J1() {
+    const c = EC('jadopt'); if (!c) return null; const S = c.stats, t = S.tiers, j = (f, k) => t.map(r => pctf(k ? r[k] : f(r), 1)).join(T(', ', '、'));
+    const keys = [['sameCore', T('same core conditions', '核心条件一致'), COLORS.attention], ['adjust', T('comparable after adjustment', '调整后可比'), COLORS.supply], ['keyDiff', T('key differences', '存在关键差异'), COLORS.connection], ['underReported', T('under-reported', '报告不足'), qxGrey()]];
+    return {
+      q: T('Are the benchmarks that more papers use set up more alike, and reported more fully?', '被更多论文使用的基准，评测条件是否更一致、报告是否更完整？'),
+      head: T('No: widely used benchmarks are not set up more alike, and are reported only slightly more fully.', '没有：使用多的基准，条件并不更一致，报告也只略完整一些。'),
+      line: T(`By how many papers use them (${t.map(r => r.tier).join(', ')}), pairs with the same core conditions are ${j(null, 'sameCore')} and pairs with key differences ${j(null, 'keyDiff')}; uses that state version, criterion and models are ${j(null, 'complete')}. Across benchmarks, the rank correlation between papers using it and the comparable share is ${S.rhoComparable}.`,
+        `按使用论文数分三档（${t.map(r => r.tier).join('、')} 篇），核心条件一致的论文对分别为 ${j(null, 'sameCore')}，存在关键差异的 ${j(null, 'keyDiff')}；完整写明版本、判据与被测模型的使用占 ${j(null, 'complete')}。按基准看，使用论文数与可比比例的秩相关为 ${S.rhoComparable}。`),
+      legend: qxLegend(keys.map(([, l, c]) => [l, c])),
+      fig: () => qxPanels(
+        qxFig(T('Pairs of papers on the same benchmark, by how many papers use the benchmark', '同一基准上的论文对，按基准的使用论文数分档'), qxStack(t.map(r => ({label: T(`${r.tier} papers (${r.benchmarks} benchmarks)`, `${r.tier} 篇（${r.benchmarks} 个基准）`), n: r.pairs, parts: Object.fromEntries(keys.map(([k]) => [k, r[k]]))})), keys, {title: T('Comparability', '可比程度'), legend: false})),
+        qxFig(T('Uses that state version, criterion and models', '完整写明版本、判据与被测模型的使用'), qxBars(t.map(r => ({label: T(`${r.tier} papers`, `${r.tier} 篇`), value: r.complete})), {max: 100, title: T('Complete', '完整')}))),
+      how: T("The benchmark-use records of the comparability question, summed per benchmark and grouped by how many papers use the benchmark; complete = one use states version, success criterion and models tested.", '把“同一基准可比性”的逐项记录按基准汇总，再按使用该基准的论文数分档；完整 = 一次使用同时写明版本、成功判据与被测模型。'),
+      links: ['F16', 'F17', 'F1']};
+  },
+  J2() {
+    const c = EC('jcover'); if (!c) return null; const S = c.stats, sg = S.single, ms = S.metShare;
+    const nm = {paired: T('utility paired', '效用配对'), adaptive: T('adaptive attacker', '自适应攻击'), budget: T('attack budget', '攻击预算'), claim: T('claim within measurement', '主张相符')};
+    const combo = h => h.length ? h.map(k => nm[k]).join(' + ') : T('none', '都没有');
+    return {
+      q: T('In the same defence papers, do the validation conditions come together, or are they spread over different papers?', '同一批防御论文中，各项验证条件是同时具备，还是分散在不同论文里？'),
+      head: T('Spread out: only 2% meet all four, and the gaps sit in stress testing.', '分散：四项都具备的只有 2%，缺口集中在压力测试。'),
+      line: T(`Of ${num(c.base)} defences, ${pctf(sg.paired, 0)} report utility paired with safety and ${pctf(sg.claim, 0)} claim no more than they measure, but ${pctf(sg.adaptive, 0)} test an adaptive attacker and ${pctf(sg.budget, 0)} state the attack budget. All four: ${pctf(ms['4'], 1)}; three: ${pctf(ms['3'], 1)}. The most common profile is "${combo(S.combos[0].has)}" (${pctf(S.combos[0].share, 0)}), which lacks both stress tests. Even among the ${S.adaptive} defences tested adaptively, ${pctf(S.adaptiveBudget, 0)} state the budget.`,
+        `${num(c.base)} 项防御中，同一配置下配对报告效用的占 ${pctf(sg.paired, 0)}，主张不高于实际测量层次的 ${pctf(sg.claim, 0)}；但用自适应攻击检验的只有 ${pctf(sg.adaptive, 0)}，写明攻击预算的 ${pctf(sg.budget, 0)}。四项都满足的 ${pctf(ms['4'], 1)}，满足三项的 ${pctf(ms['3'], 1)}。最常见的组合是“${combo(S.combos[0].has)}”（${pctf(S.combos[0].share, 0)}），恰好缺少两项压力测试。做了自适应检验的 ${S.adaptive} 项防御中，写明预算的也只有 ${pctf(S.adaptiveBudget, 0)}。`),
+      fig: () => qxPanels(
+        qxFig(T(`How many of the four conditions each defence meets (${num(c.base)} defences)`, `每项防御满足四项条件中的几项（${num(c.base)} 项防御）`), qxBars([0, 1, 2, 3, 4].map(k => ({label: T(`${k} of 4`, `${k} 项`), value: ms[String(k)], color: k >= 3 ? COLORS.attention : qxGrey()})), {max: 60, title: T('Share', '占比')})),
+        qxFig(T(`The most common combinations (${num(S.known4)} defences whose claim was read)`, `最常见的组合（${num(S.known4)} 项读出了主张的防御）`), qxBars(S.combos.slice(0, 6).map(r => ({label: combo(r.has), value: r.share, color: r.has.includes('adaptive') || r.has.includes('budget') ? COLORS.attention : qxGrey()})), {max: 50, title: T('Share', '占比')}))),
+      how: T('Joined per paper: the experiment protocol card (utility paired with safety, adaptive attacker, attack budget) and the claim reading (claimed layer against measured layer); only what a paper reports counts as met.', '按论文连接实验方案卡（效用配对、自适应攻击、攻击预算）与主张读取（声称层次对测量层次）；只有论文明确报告的才算满足。'),
+      links: ['F19', 'F20', 'F21']};
+  },
+  J3() {
+    const c = EC('jcite'); if (!c) return null; const S = c.stats, ages = S.byAge.map(r => r.used);
+    return {
+      q: T('How far does citation reflect actual use?', '引用量在多大程度上反映实际采用？'),
+      head: T('Only partly: most papers that cite a benchmark do not run experiments on it.', '很有限：引用某个基准的论文，多数并不在它上面做实验。'),
+      line: T(`Of ${num(S.relations)} Atlas citations from a paper to a benchmark, ${pctf(S.used, 0)} come from a paper that runs experiments on it or says it uses it. The benchmark's age barely matters (${pctf(Math.min(...ages), 0)}–${pctf(Math.max(...ages), 0)} across ages); a shared author raises it (${pctf(S.byAuthors.own, 0)} against ${pctf(S.byAuthors.outside, 0)}). Across benchmarks, citations and uses correlate at ${S.rhoCitesUses}.`,
+        `Atlas 内 ${num(S.relations)} 次“论文引用基准”的关系中，引用方在该基准上做实验或在引用句中说明使用的只占 ${pctf(S.used, 0)}。基准发布多久影响不大（各年龄段 ${pctf(Math.min(...ages), 0)}–${pctf(Math.max(...ages), 0)}）；引用方与基准作者有共同作者时更高（${pctf(S.byAuthors.own, 0)} 对 ${pctf(S.byAuthors.outside, 0)}）。按基准看，被引次数与使用次数的秩相关为 ${S.rhoCitesUses}，引用量只能部分反映采用。`),
+      fig: () => qxPanels(
+        qxFig(T("Citations from a paper that uses the benchmark, by the benchmark's age when cited (months)", '引用方实际使用该基准的比例，按引用时基准的年龄（月）'), qxBars(S.byAge.map(r => ({label: r.age, n: r.relations, value: r.used})), {max: 25, title: T('Used', '使用')})),
+        qxFig(T('… by authorship', '……按作者关系'), qxBars([{label: T('citing paper shares an author', '有共同作者'), value: S.byAuthors.own, color: COLORS.connection}, {label: T('no shared author', '无共同作者'), value: S.byAuthors.outside}], {max: 25, title: T('Used', '使用')}))
+        + (S.underCounted?.length ? qxFig(T('Used more than cited: benchmarks that citation counts undervalue', '用得多、被引少：被引用指标低估的基准'), qxTwin(S.underCounted.slice(0, 5).map(r => ({label: qxShort(r.title), a: r.users, b: r.citations || 0})), [{label: T('works using it', '使用它的工作'), color: COLORS.attention, fmt: num}, {label: T('citations', '被引次数'), color: qxGrey(), fmt: num}], {title: T('Uses and citations', '使用与被引')})) : '')),
+      how: T("One row per paper-benchmark relation: an Atlas citation, joined with the benchmark-use detection in the citing paper's full text, the citing sentence's intent where read, the benchmark's age when cited and shared authors.", '每个“论文—基准”关系一行：Atlas 内的一次引用，连接引用方全文中的基准使用检测、读过的引用句意图、引用时基准的年龄与作者关系。'),
+      links: ['F18', 'F17', 'F1']};
+  },
+  J4() {
+    const c = EC('jdepend'); if (!c) return null; const S = c.stats, g = S.byStudied;
+    const grp = [['open', T('studied: open weights', '被测：开放权重')], ['mixed', T('studied: both', '被测：两者都有')], ['closed', T('studied: API only', '被测：仅 API')]].filter(([k]) => g[k]?.papers);
+    const bars = [['closedJudge', T('API-only judge', '仅 API 裁判'), COLORS.connection], ['prompt', T('judge prompt released', '公开裁判提示词'), COLORS.attention], ['human', T('compared with people', '与人工对照'), COLORS.supply], ['unchecked', T('cannot be checked', '无法检查'), qxGrey()]];
+    return {
+      q: T('Can the evaluation of open models be checked, and do the dependencies pile up in the same studies?', '开放模型的评测过程是否可检查？评测依赖是否集中在同一批研究中？'),
+      head: T('Mostly on API-only judges; over a third release neither the judge prompt nor a human comparison.', '多半依赖闭源裁判；三分之一以上既不公开裁判提示词，也没有人工对照。'),
+      line: T(`Of ${num(c.base)} 2026 papers judged by a model, ${pctf(S.closedJudge, 0)} use an API-only judge, ${pctf(S.prompt, 0)} release the judge prompt and ${pctf(S.human, 0)} compare it with people. Of the ${g.open?.papers || 0} papers testing only open-weight models, ${pctf(g.open?.closedJudge, 0)} still use an API-only judge and ${pctf(g.open?.unchecked, 0)} cannot be checked (API judge, no prompt, no human comparison); with only API models studied it is ${pctf(g.closed?.unchecked, 0)}.`,
+        `${num(c.base)} 篇用模型裁判的 2026 年论文中，${pctf(S.closedJudge, 0)} 的裁判是仅 API 模型，公开裁判提示词的 ${pctf(S.prompt, 0)}，与人工对照的 ${pctf(S.human, 0)}。被测模型全是开放权重的 ${g.open?.papers || 0} 篇中，仍有 ${pctf(g.open?.closedJudge, 0)} 用仅 API 裁判，${pctf(g.open?.unchecked, 0)} 的评测无法检查（仅 API 裁判，既不公开提示词也没有人工对照）；被测模型全是 API 模型的论文中这一比例是 ${pctf(g.closed?.unchecked, 0)}。`),
+      legend: qxLegend(bars.map(([, l, c]) => [l, c])),
+      fig: () => qxFig(T('The judging, by the openness of the studied models', '按被测模型的开放程度看裁判'), qxBars(grp.map(([k, l]) => ({label: l, n: g[k].papers, bars: bars.map(([b, bl, bc]) => ({name: bl, value: g[k][b], color: bc}))})), {max: 100, title: T('Share', '占比')})),
+      how: T('Joined per paper: model roles matched to the model registry (openness), and the experiment protocol card (judge prompt released, human comparison); cannot be checked = an API-only judge with neither.', '按论文连接模型角色（开放状态来自模型登记表）与实验方案卡（是否公开裁判提示词、是否与人工对照）；无法检查 = 仅 API 裁判，且两者都没有。'),
+      links: ['F10', 'F9', 'F15']};
+  },
+};
+function qxJointCard(jid, k) {
+  const spec = QXJ[jid] ? QXJ[jid]() : null;
+  if (!spec) return '';
+  return `<article class="qx-card qx-joint" id="q-${jid}" data-qx-card="${jid}"><div class="qx-head"><span class="qx-id">${T(`Joint ${k}`, `联合分析 ${k}`)}</span><button class="ob-copy" data-ob-copy="questions:${jid}">${T('Copy link', '复制链接')}</button></div>
+    <h3 class="qx-q">${spec.q}</h3><p class="qx-a"><b>${spec.head}</b> ${spec.line}</p>${spec.legend || ''}${spec.fig()}
+    <p class="qx-how"><span><b>${T('How it is joined', '怎么连接')}</b>${spec.how}</span></p>
+    <p class="qx-from"><span>${T('Joins', '连接的追问')}</span>${spec.links.filter(qxShown).map(f => fChip(f)).join('')}</p>${qxRecPanel(jid)}</article>`;
+}
+
 // -- the card, the sections and the page
 function qxFrom(fid) {  // the observations a question starts from, as links back to 观察
   const cache = {};
@@ -1837,10 +1921,10 @@ const qxIds = k => Object.keys(ED.questions).filter(f => ED.questions[f].rq === 
 function qxSections() {
   return [['overview', T('Overview', '总览'), T('every answer on one page', '全部结论一页看完'), []],
     ...['RQ1', 'RQ2', 'RQ3', 'RQ4'].map(k => [k, `${k} · ${edT(ED.rq[k].name)}`, edT(ED.rq[k].q), qxIds(k)]),
-    ['joint', T('Joint analyses', '联合分析'), T('four chains of questions on the same papers', '四组问题链，在同一批论文上联合分析'), []],
+    ['joint', T('Joint analyses', '联合分析'), T('four relations tested on the same records', '四项关系，在同一批记录上检验'), []],
     ['standards', T('Method', '方法与规范'), T('denominators, baselines and versions', '分母、基线与版本'), []]];
 }
-const qxSectionOf = fid => qxSections().findIndex(s => s[3].includes(fid));
+const qxSectionOf = fid => /^J\d$/.test(fid) ? qxSections().findIndex(s => s[0] === 'joint') : qxSections().findIndex(s => s[3].includes(fid));
 function qxObsCount() { let n = 0; for (const [, , , ch] of [...PARTS(T), ...TOPICS(T)]) for (const l of ch) n += lensQuestions(l).length; return n; }
 function qxOverview() {
   const n = ['RQ1', 'RQ2', 'RQ3', 'RQ4'].reduce((a, k) => a + qxIds(k).length, 0);
@@ -1856,7 +1940,10 @@ function qxBook() {
   const nav = `<nav class="pb-nav q-nav qx-nav" aria-label="${T('Sections', '节')}">${secs.map(([, nm, sb, f], i) => `<button data-bk-sec="questions:${i}" aria-current="${i === k ? 'page' : 'false'}"><span>${i || '·'}</span><b>${nm}</b><small>${f.length ? T(`${f.length} questions`, `${f.length} 个追问`) : sb}</small></button>`).join('')}</nav>`;
   const foot = `<div class="pb-foot">${k > 0 ? `<button class="pb-prev" data-bk-sec="questions:${k - 1}">← ${secs[k - 1][1]}</button>` : '<span></span>'}${k < secs.length - 1 ? `<button class="pb-next" data-bk-sec="questions:${k + 1}">${T('Next', '下一节')}：${secs[k + 1][1]} →</button>` : ''}</div>`;
   if (key === 'overview') return `${nav}${qxOverview()}${foot}`;
-  if (key === 'joint') return `${nav}<section class="pb-intro">${qmStage(null)}</section>${qJoint()}${foot}`;
+  const jcards = key === 'joint' ? ['J1', 'J2', 'J3', 'J4'].map((j, i) => qxJointCard(j, i + 1)).join('') : '';
+  if (key === 'joint' && !jcards) return `${nav}<section class="pb-intro">${qmStage(null)}</section>${qJoint()}${foot}`;
+  if (key === 'joint') return `${nav}<div class="pb-head qx-rqtop"><span class="fd-kicker">${T('JOINT ANALYSES', '联合分析')}</span><h3>${T('Relations tested on the same records', '在同一批记录上检验问题之间的关系')}</h3><p class="fd-note">${T('Each analysis joins the records paper by paper or benchmark by benchmark; no share is multiplied across different sets.', '每项分析都按论文或基准逐条连接记录，不把不同集合的比例相乘。')}</p></div>
+    <div class="qx-list">${jcards}</div><section class="pb-intro">${qmStage(null)}</section>${qJoint()}${foot}`;
   if (key === 'standards') return `${nav}${qStandards()}${foot}`;
   return `${nav}<div class="pb-head qx-rqtop"><span class="fd-kicker">${T(`RESEARCH QUESTION ${k} OF 4`, `第 ${k} 组研究问题，共 4 组`)}</span><h3>${name}</h3><p class="fd-note">${sub}</p></div><div class="qx-list">${ids.map(qxCard).join('')}</div>${foot}`;
 }
@@ -1912,7 +1999,7 @@ function qOpen(art, force) {  // the folded cards of the earlier design (kept fo
 export function renderQuestions(ctx) {
   setup(ctx); lists.clear();
   if (!ED) return shell(`<p class="fd-note">${T('The questions are not available.', '追问数据暂不可用。')}</p>`);
-  if (/^F\d+$/.test(C.state.findingsQ || '')) bk.questions = Math.max(0, qxSectionOf(C.state.findingsQ));
+  if (/^[FJ]\d+$/.test(C.state.findingsQ || '')) bk.questions = Math.max(0, qxSectionOf(C.state.findingsQ));
   const lead = `<section class="ln-lead qx-lead"><span class="fd-kicker">${T('QUESTIONS', '追问')} · ${versionKicker()}</span><h2>${edT(ED.overall)}</h2>${versionNote()}
     <p class="fd-note">${T('Each card gives the question, the answer in a sentence or two with its base, one chart, and how it was measured.', '每张卡给出问题、一两句带分母的结论、一张图，以及怎么测。')}</p></section>`;
   return shell(`${lead}<div data-q-book>${qxBook()}</div>`, 'qx-lens pb-lens');

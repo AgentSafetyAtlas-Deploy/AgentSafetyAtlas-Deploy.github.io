@@ -169,3 +169,15 @@ html[data-theme="light"] .qx-rec summary small,html[data-theme="light"] .qx-rec-
 html[data-theme="light"] .qx-rec-basis b{color:#123c36}html[data-theme="light"] .qx-rec-ev q{color:#2f4c48}
 html[data-theme="light"] .qx-rec-tools input{background:#fff;color:#203536;border-color:#c9d8d3}
 html[data-theme="light"] .qx-rec-pages button{color:#203536;border-color:#c9d8d3}html[data-theme="light"] .qx-rec-pages{color:#5c726c}
+/* worked examples under Q19: two papers' reported conditions side by side */
+.qx-cases{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:12px}
+.qx-case{font-size:12px;margin:0;table-layout:fixed}
+.qx-case caption{text-align:left;font-size:12.5px;font-weight:600;color:#cfe0dc;padding:0 0 6px}
+.qx-case th:first-child{width:22%;color:#93aea7;font-weight:500}
+.qx-case thead th{vertical-align:top}.qx-case thead .fd-paper{font-size:12px;text-align:left}
+.qx-case td{vertical-align:top;line-height:1.45;overflow-wrap:anywhere}
+.qx-case td.is-diff{background:color-mix(in srgb,var(--qx-diff,#d4714b) 16%,transparent);box-shadow:inset 3px 0 0 var(--qx-diff,#d4714b)}
+.qx-joint{border-color:rgba(212,233,102,.28)}
+html[data-theme="light"] .qx-case caption{color:#203536}html[data-theme="light"] .qx-case th:first-child{color:#5c726c}
+html[data-theme="light"] .qx-case td.is-diff{--qx-diff:#c26541}html[data-theme="light"] .qx-joint{border-color:#c9d8c4}
+.qx-fig .qx-fig{margin-top:18px}

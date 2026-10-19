@@ -1,5 +1,5 @@
 {
- "analysisVersion": "A4.1",
+ "analysisVersion": "A4.2",
  "release": "R071",
  "questions": {
   "F1": {
@@ -168,6 +168,34 @@
    "unit": [
     "judge in a paper",
     "论文中的模型裁判"
+   ]
+  },
+  "J1": {
+   "rows": 86,
+   "unit": [
+    "benchmark used by five papers or more",
+    "被至少 5 篇论文使用的基准"
+   ]
+  },
+  "J2": {
+   "rows": 1336,
+   "unit": [
+    "defence paper",
+    "防御论文"
+   ]
+  },
+  "J3": {
+   "rows": 5781,
+   "unit": [
+    "citation from a work to an Atlas benchmark",
+    "一项工作对 Atlas 基准的引用"
+   ]
+  },
+  "J4": {
+   "rows": 800,
+   "unit": [
+    "2026 paper with a model judge",
+    "使用模型裁判的 2026 年论文"
    ]
   }
  }
