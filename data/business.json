@@ -26553,31 +26553,6 @@
       "renewalStatus": "unknown"
     },
     {
-      "id": "buyer-REC-C05-B003-0017",
-      "title": "CORDIS Periodic Report for the DeepKeep Project",
-      "date": "2026-08-03",
-      "evidenceLevel": "project_report",
-      "companyId": "biz-deepkeep",
-      "summary": {
-        "en": "CORDIS Periodic Report for the DeepKeep Project. See the original source for the attributed claims.",
-        "zh": "欧盟 CORDIS 的第一期项目报告称 DeepKeep 平台达到 TRL7，原型已在运行环境中通过涵盖 vision、language 与 agentic AI 的 POC 和部署演示，其中包括 air-gapped 企业安装；报告还称 guardrails 扩展至工具误用、不安全动作序列与跨会话数据泄露。"
-      },
-      "sources": [
-        {
-          "url": "https://cordis.europa.eu/project/id/101218086",
-          "title": "CORDIS DeepKeep Project Fact Sheet"
-        },
-        {
-          "url": "https://cordis.europa.eu/project/id/101218086/reporting",
-          "title": "CORDIS Periodic Report for the DeepKeep Project"
-        }
-      ],
-      "detailId": "REC-C05-B003-0017",
-      "paymentStatus": "unknown",
-      "contractAmount": null,
-      "renewalStatus": "unknown"
-    },
-    {
       "id": "buyer-REC-C05-B006-0003",
       "title": "Onyx Security Anonymized Agent Discovery and Runtime Deployment Field Notes",
       "date": "2026-04-15",
@@ -26607,22 +26582,26 @@
       "renewalStatus": "unknown"
     },
     {
-      "id": "buyer-REC-C05-B001-0009",
-      "title": "Fusion CX unifies protection with CrowdStrike Falcon",
-      "date": null,
-      "evidenceLevel": "deployment_case",
-      "companyId": "biz-crowdstrike",
+      "id": "buyer-REC-C05-B003-0017",
+      "title": "CORDIS Periodic Report for the DeepKeep Project",
+      "date": "2026-08-03",
+      "evidenceLevel": "project_report",
+      "companyId": "biz-deepkeep",
       "summary": {
-        "en": "Fusion CX unifies protection with CrowdStrike Falcon. See the original source for the attributed claims.",
-        "zh": "CrowdStrike 托管的案例称 Fusion CX 自 2020 年部署 Falcon Sensor、2025 年采用 Falcon Complete，之后扩展到 Falcon Identity Security 和 SIEM；案例把客户采用 AI Agent 列为强化身份安全的背景，而非 Continuous Identity 产品部署证明。"
+        "en": "CORDIS Periodic Report for the DeepKeep Project. See the original source for the attributed claims.",
+        "zh": "欧盟 CORDIS 的第一期项目报告称 DeepKeep 平台达到 TRL7，原型已在运行环境中通过涵盖 vision、language 与 agentic AI 的 POC 和部署演示，其中包括 air-gapped 企业安装；报告还称 guardrails 扩展至工具误用、不安全动作序列与跨会话数据泄露。"
       },
       "sources": [
         {
-          "url": "https://www.crowdstrike.com/en-us/resources/customer-stories/fusion-cx/",
-          "title": "Fusion CX unifies protection with CrowdStrike Falcon"
+          "url": "https://cordis.europa.eu/project/id/101218086",
+          "title": "CORDIS DeepKeep Project Fact Sheet"
+        },
+        {
+          "url": "https://cordis.europa.eu/project/id/101218086/reporting",
+          "title": "CORDIS Periodic Report for the DeepKeep Project"
         }
       ],
-      "detailId": "REC-C05-B001-0009",
+      "detailId": "REC-C05-B003-0017",
       "paymentStatus": "unknown",
       "contractAmount": null,
       "renewalStatus": "unknown"
@@ -26644,6 +26623,27 @@
         }
       ],
       "detailId": "REC-C05-B003-0016",
+      "paymentStatus": "unknown",
+      "contractAmount": null,
+      "renewalStatus": "unknown"
+    },
+    {
+      "id": "buyer-REC-C05-B001-0009",
+      "title": "Fusion CX unifies protection with CrowdStrike Falcon",
+      "date": null,
+      "evidenceLevel": "deployment_case",
+      "companyId": "biz-crowdstrike",
+      "summary": {
+        "en": "Fusion CX unifies protection with CrowdStrike Falcon. See the original source for the attributed claims.",
+        "zh": "CrowdStrike 托管的案例称 Fusion CX 自 2020 年部署 Falcon Sensor、2025 年采用 Falcon Complete，之后扩展到 Falcon Identity Security 和 SIEM；案例把客户采用 AI Agent 列为强化身份安全的背景，而非 Continuous Identity 产品部署证明。"
+      },
+      "sources": [
+        {
+          "url": "https://www.crowdstrike.com/en-us/resources/customer-stories/fusion-cx/",
+          "title": "Fusion CX unifies protection with CrowdStrike Falcon"
+        }
+      ],
+      "detailId": "REC-C05-B001-0009",
       "paymentStatus": "unknown",
       "contractAmount": null,
       "renewalStatus": "unknown"
@@ -29380,23 +29380,23 @@
     "patchProposalCount": 62,
     "monitoring": "existing_atlas_updater_bounded_source_checks",
     "sourceMonitoring": {
-      "checkedAt": "2026-10-18T18:30:01+00:00",
+      "checkedAt": "2026-10-19T18:10:01+00:00",
       "scope": "Registered public sources only; discovery is not factual verification",
       "watchlistCount": 35,
       "checkedThisRun": 8,
       "prefetch": {
-        "attempted": 0,
-        "succeeded": 0,
-        "bytesDownloaded": 0,
-        "cachedPending": 55,
+        "attempted": 4,
+        "succeeded": 3,
+        "bytesDownloaded": 404051,
+        "cachedPending": 58,
         "factsPromoted": 0
       },
-      "totalRequestsThisRun": 8,
+      "totalRequestsThisRun": 12,
       "successThisRun": 8,
       "notModifiedThisRun": 0,
-      "bytesDownloaded": 2000850,
+      "bytesDownloaded": 1496756,
       "bytesAvoided": 0,
-      "entriesScanned": 210,
+      "entriesScanned": 492,
       "newURLsThisRun": 0,
       "pendingCandidates": 230,
       "knownCandidateURLs": 328,
@@ -29457,7 +29457,7 @@
             "id": "candidate-ddc9b61f3b534e8941e4",
             "title": "A Compliance Management Tool",
             "url": "https://www.find-tender.service.gov.uk/Notice/092790-2026",
-            "checkedAt": "2026-10-18T18:10:01+00:00",
+            "checkedAt": "2026-10-19T18:10:01+00:00",
             "kind": "review_candidate",
             "adapter": "html",
             "status": "failed",
@@ -29485,7 +29485,7 @@
           "status": "pending_review",
           "priority": "transaction",
           "discoveryMode": "initial_inventory",
-          "lastSeen": "2026-10-13T18:10:01+00:00",
+          "lastSeen": "2026-10-19T18:10:01+00:00",
           "prefetch": {
             "id": "candidate-bbf7707ee7a94b4cb70a",
             "title": "Zscaler to Acquire Symmetry Systems, Combining Zero Trust and Access Graph Technology to Map and Secure AI Agent Communication",
@@ -29522,7 +29522,7 @@
           "status": "pending_review",
           "priority": "transaction",
           "discoveryMode": "initial_inventory",
-          "lastSeen": "2026-10-13T18:10:01+00:00",
+          "lastSeen": "2026-10-19T18:10:01+00:00",
           "prefetch": {
             "id": "candidate-9c7c7aa74cdaedfc99a9",
             "title": "Zscaler Acquires SquareX to Advance Zero Trust Browser Security for the AI Era",
@@ -29559,7 +29559,7 @@
           "status": "pending_review",
           "priority": "transaction",
           "discoveryMode": "initial_inventory",
-          "lastSeen": "2026-10-13T18:10:01+00:00",
+          "lastSeen": "2026-10-19T18:10:01+00:00",
           "prefetch": {
             "id": "candidate-b777907963a9e3e6ffe9",
             "title": "Zscaler Announces Strong Second-Quarter Fiscal 2026 Results; Raises Fiscal 2026 ARR Guidance to 24%",
@@ -31846,7 +31846,30 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-18T18:10:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00",
+          "prefetch": {
+            "id": "candidate-003f948462612d4ea25b",
+            "title": "Learn More",
+            "url": "https://www.lasso.security/resources/ai-browsers-enterprise-security-posture",
+            "checkedAt": "2026-10-19T18:10:01+00:00",
+            "kind": "review_candidate",
+            "adapter": "html",
+            "status": "fetched",
+            "change": "initial_snapshot",
+            "factsPromoted": 0,
+            "bytesDownloaded": 134860,
+            "entriesScanned": 0,
+            "requestURL": "https://www.lasso.security/resources/ai-browsers-enterprise-security-posture",
+            "sourceFingerprint": "cb59b679342cee6f7244c9db19b2132fe124b724d7541a888f30572a49495feb",
+            "httpStatus": 200,
+            "contentHash": "1889f0f2d3b1484e36f34737ad4c5d32b230774f3e30623c47f24b20ac6b923a",
+            "previousHash": null,
+            "etag": null,
+            "lastModified": "Mon, 19 Oct 2026 18:10:06 GMT",
+            "validatorURL": "https://www.lasso.security/resources/ai-browsers-enterprise-security-posture",
+            "representationBytes": 134860,
+            "readingDepth": "machine_fetch_only"
+          }
         },
         {
           "url": "https://www.lasso.security/resources/ai-intent-whitepaper",
@@ -31860,7 +31883,30 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-18T18:10:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00",
+          "prefetch": {
+            "id": "candidate-2095714d7982da50b0af",
+            "title": "Learn More",
+            "url": "https://www.lasso.security/resources/ai-intent-whitepaper",
+            "checkedAt": "2026-10-19T18:10:01+00:00",
+            "kind": "review_candidate",
+            "adapter": "html",
+            "status": "fetched",
+            "change": "initial_snapshot",
+            "factsPromoted": 0,
+            "bytesDownloaded": 133871,
+            "entriesScanned": 0,
+            "requestURL": "https://www.lasso.security/resources/ai-intent-whitepaper",
+            "sourceFingerprint": "e80e77eb76780ddbd7144180eb4e5452e21c886b3e2ffdc3c0d1441effa70789",
+            "httpStatus": 200,
+            "contentHash": "9db78808530c5f4abb9d431491b60024b7f5510f8d555e6e1106ecf384ff5f9b",
+            "previousHash": null,
+            "etag": null,
+            "lastModified": "Mon, 19 Oct 2026 18:10:06 GMT",
+            "validatorURL": "https://www.lasso.security/resources/ai-intent-whitepaper",
+            "representationBytes": 133871,
+            "readingDepth": "machine_fetch_only"
+          }
         },
         {
           "url": "https://www.lasso.security/resources/black-hat-usa-cyber-spotlights-lasso-security",
@@ -31874,7 +31920,30 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-18T18:10:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00",
+          "prefetch": {
+            "id": "candidate-5aa438b3582d2d9aa908",
+            "title": "Learn More",
+            "url": "https://www.lasso.security/resources/black-hat-usa-cyber-spotlights-lasso-security",
+            "checkedAt": "2026-10-19T18:10:01+00:00",
+            "kind": "review_candidate",
+            "adapter": "html",
+            "status": "fetched",
+            "change": "initial_snapshot",
+            "factsPromoted": 0,
+            "bytesDownloaded": 135320,
+            "entriesScanned": 0,
+            "requestURL": "https://www.lasso.security/resources/black-hat-usa-cyber-spotlights-lasso-security",
+            "sourceFingerprint": "1c12b54285bdc39c2dcec466fde00f51c32208b620df39677ecff902705ba902",
+            "httpStatus": 200,
+            "contentHash": "da3793aeb8617aa4de7742095508e2b8a6ea06873f5fcd19b5264725889e1d5a",
+            "previousHash": null,
+            "etag": null,
+            "lastModified": "Mon, 19 Oct 2026 18:10:06 GMT",
+            "validatorURL": "https://www.lasso.security/resources/black-hat-usa-cyber-spotlights-lasso-security",
+            "representationBytes": 135320,
+            "readingDepth": "machine_fetch_only"
+          }
         },
         {
           "url": "https://www.lasso.security/resources/breaking-the-model-when-applications-and-agents-misbehave",
@@ -32297,7 +32366,7 @@
           "lastSeen": "2026-10-18T18:10:01+00:00"
         }
       ],
-      "changesThisRun": 2,
+      "changesThisRun": 0,
       "pendingChanges": 52,
       "changeQueue": [
         {
@@ -32870,11 +32939,11 @@
           "id": "aria-funding",
           "title": "ARIA · funding calls and programme changes",
           "url": "https://aria.org.uk/funding-opportunities",
-          "checkedAt": "2026-10-16T18:10:01+00:00",
+          "checkedAt": "2026-10-19T18:10:01+00:00",
           "kind": "funding_programme",
           "adapter": "html",
           "status": "fetched",
-          "change": "changed_pending_review",
+          "change": "unchanged",
           "factsPromoted": 0,
           "bytesDownloaded": 97333,
           "entriesScanned": 44,
@@ -32885,14 +32954,14 @@
           "validatorURL": "https://aria.org.uk/funding-opportunities",
           "httpStatus": 200,
           "contentHash": "af9a602687ab0ec8c04e137cfc7d72e13d7cfe401967238008f180b8125ffb56",
-          "previousHash": "733bfb57d1f7b358d485fe4176ea4716c004562e4389288f656e14aa2c468629",
+          "previousHash": "af9a602687ab0ec8c04e137cfc7d72e13d7cfe401967238008f180b8125ffb56",
           "representationBytes": 97333
         },
         {
           "id": "aria-safeguarded-projects",
           "title": "ARIA · Safeguarded AI funded projects",
           "url": "https://aria.org.uk/opportunity-spaces/trust-everything-everywhere/safeguarded-ai/funded-projects",
-          "checkedAt": "2026-10-16T18:10:01+00:00",
+          "checkedAt": "2026-10-19T18:10:01+00:00",
           "kind": "funding_programme",
           "adapter": "html",
           "status": "fetched",
@@ -32980,7 +33049,7 @@
           "id": "checkpoint-news",
           "title": "Check Point · press releases and financial results",
           "url": "https://www.checkpoint.com/press-releases/",
-          "checkedAt": "2026-10-16T18:10:01+00:00",
+          "checkedAt": "2026-10-19T18:10:01+00:00",
           "kind": "issuer_disclosures",
           "adapter": "html",
           "status": "fetched",
@@ -33112,11 +33181,11 @@
           "id": "f5-investor-news",
           "title": "F5 · investor press releases",
           "url": "https://investors.f5.com/news/default.aspx",
-          "checkedAt": "2026-10-16T18:10:01+00:00",
+          "checkedAt": "2026-10-19T18:10:01+00:00",
           "kind": "issuer_disclosures",
           "adapter": "html",
           "status": "fetched",
-          "change": "changed_pending_review",
+          "change": "unchanged",
           "factsPromoted": 0,
           "bytesDownloaded": 110145,
           "entriesScanned": 37,
@@ -33127,7 +33196,7 @@
           "validatorURL": "https://investors.f5.com/news/default.aspx",
           "httpStatus": 200,
           "contentHash": "a05b9f30703c07b88fff3d383847b4f436737b875b5b8c803a3dcc1e7c196bad",
-          "previousHash": "acbbbb42bf2a1ab13e0df8e86b17dcb62184f43c8fe60c8e27556f99efe97d5f",
+          "previousHash": "a05b9f30703c07b88fff3d383847b4f436737b875b5b8c803a3dcc1e7c196bad",
           "representationBytes": 110145
         },
         {
@@ -33332,23 +33401,23 @@
           "id": "price-noma-marketplace",
           "title": "noma · Marketplace seller pricing table",
           "url": "https://aws.amazon.com/marketplace/pp/prodview-kd2qklag2zzym",
-          "checkedAt": "2026-10-15T18:10:01+00:00",
+          "checkedAt": "2026-10-19T18:10:01+00:00",
           "kind": "price_observation",
           "adapter": "marketplace_price_table",
           "status": "fetched",
           "change": "unchanged",
           "factsPromoted": 0,
-          "bytesDownloaded": 469415,
+          "bytesDownloaded": 470073,
           "entriesScanned": 0,
           "requestURL": "https://aws.amazon.com/marketplace/pp/prodview-kd2qklag2zzym",
           "sourceFingerprint": "30aa41decbe52e1565fda3c1ad5045b13586977b0e57d1a0271f027da4d00a6a",
-          "etag": "\"91b5696449398f28317347bc0c1cb821\"",
+          "etag": "\"763169c2224eeca33c7b0aa3c5d31f40\"",
           "lastModified": null,
           "validatorURL": "https://aws.amazon.com/marketplace/pp/prodview-kd2qklag2zzym",
           "httpStatus": 200,
           "contentHash": "61656237e56536ee6885490468e1681ab97d167da6e4e7fc6c9c76ce313c645f",
           "previousHash": "61656237e56536ee6885490468e1681ab97d167da6e4e7fc6c9c76ce313c645f",
-          "representationBytes": 469415
+          "representationBytes": 470073
         },
         {
           "id": "price-pillar-marketplace",
@@ -33420,7 +33489,7 @@
           "id": "rasa-security-assessment",
           "title": "Rasa · security assessment publication",
           "url": "https://rasa.com/blog/ai-agent-architecture-security-deep-dive",
-          "checkedAt": "2026-10-15T18:10:01+00:00",
+          "checkedAt": "2026-10-19T18:10:01+00:00",
           "kind": "buyer_material",
           "adapter": "html",
           "status": "fetched",
@@ -33431,7 +33500,7 @@
           "requestURL": "https://rasa.com/blog/ai-agent-architecture-security-deep-dive",
           "sourceFingerprint": "f88f492119bd3cfc4aeebbffa32d7d63dae1152a553fad7728ab3b5e81d89689",
           "etag": null,
-          "lastModified": "Thu, 15 Oct 2026 18:10:02 GMT",
+          "lastModified": "Mon, 19 Oct 2026 07:07:14 GMT",
           "validatorURL": "https://rasa.com/blog/ai-agent-architecture-security-deep-dive",
           "httpStatus": 200,
           "contentHash": "81bf8da0f71cf223a36c40c411fe0bc6a267b5fe6d77502697ecb950951c0119",
@@ -33464,7 +33533,7 @@
           "id": "twilio-ai-assistants-lifecycle",
           "title": "Twilio · AI Assistants lifecycle documentation",
           "url": "https://www.twilio.com/docs/api/errors/99004",
-          "checkedAt": "2026-10-15T18:10:01+00:00",
+          "checkedAt": "2026-10-19T18:10:01+00:00",
           "kind": "product_lifecycle",
           "adapter": "html",
           "status": "fetched",
@@ -33474,7 +33543,7 @@
           "entriesScanned": 0,
           "requestURL": "https://www.twilio.com/docs/api/errors/99004",
           "sourceFingerprint": "dec32a6af353d5ac17827122e31718a3e3fe0cde67b920619ec83b5a16a30ad2",
-          "etag": "\"yzb320qo1r3e52\"",
+          "etag": "\"7o0rnbbvcg3e52\"",
           "lastModified": null,
           "validatorURL": "https://www.twilio.com/docs/api/errors/99004",
           "httpStatus": 200,
@@ -33580,22 +33649,22 @@
           "id": "zscaler-investor-news",
           "title": "Zscaler · investor news releases",
           "url": "https://ir.zscaler.com/news-events/press-releases",
-          "checkedAt": "2026-10-16T18:10:01+00:00",
+          "checkedAt": "2026-10-19T18:10:01+00:00",
           "kind": "issuer_disclosures",
           "adapter": "html",
-          "status": "not_modified",
+          "status": "fetched",
           "change": "unchanged",
           "factsPromoted": 0,
-          "bytesDownloaded": 0,
-          "entriesScanned": 0,
+          "bytesDownloaded": 85467,
+          "entriesScanned": 136,
           "requestURL": "https://ir.zscaler.com/news-events/press-releases",
           "sourceFingerprint": "bc598e6044538c34ac84ba32859eb3e1b8338bfa871e56a4a8fcff3dd1a6f7a7",
-          "etag": "\"1791906812\"",
-          "lastModified": "Tue, 13 Oct 2026 15:53:32 GMT",
+          "etag": "\"1792424724\"",
+          "lastModified": "Mon, 19 Oct 2026 15:45:24 GMT",
           "validatorURL": "https://ir.zscaler.com/news-events/press-releases",
-          "httpStatus": 304,
+          "httpStatus": 200,
           "contentHash": "96d3d5946ef6b3fd93198d3810cd69a26d9eefb35bf7de96ebdb7744f787d6e6",
-          "bytesAvoided": 85467,
+          "previousHash": "96d3d5946ef6b3fd93198d3810cd69a26d9eefb35bf7de96ebdb7744f787d6e6",
           "representationBytes": 85467
         }
       ]
@@ -34251,11 +34320,11 @@
           "distinctURLs": 16
         },
         {
-          "host": "lasso.security",
+          "host": "assets.publishing.service.gov.uk",
           "distinctURLs": 14
         },
         {
-          "host": "assets.publishing.service.gov.uk",
+          "host": "lasso.security",
           "distinctURLs": 14
         },
         {

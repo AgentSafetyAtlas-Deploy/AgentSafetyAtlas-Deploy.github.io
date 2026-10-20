@@ -3,6 +3,15 @@
 <head>
   <script>try{document.documentElement.dataset.theme=localStorage.getItem("atlas-theme")||"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
   <meta charset="utf-8">
+  <script>/* start the data the first view needs at once, in parallel with the stylesheets and scripts, instead of after
+    them (owner, 2026-10-20: first visits were slow). Each preload matches the page's own fetch, so nothing loads twice. */
+  (function(){try{var d=document,h=(location.hash||'').slice(1).split('?')[0]||'home',zh=false;try{zh=localStorage.getItem('atlas-language')==='zh'}catch(e){}
+  var add=function(u,m){var l=d.createElement('link');if(m){l.rel='modulepreload';l.href=u}else{l.rel='preload';l.as='fetch';l.href=u;l.crossOrigin='anonymous'}d.head.appendChild(l)};
+  ['./data/atlas.json','./data/land.json','./data/topic-taxonomy.json','./data/borders.json','./data/updates.json','./data/pipeline-summary.json','./data/analysis-releases.json'].forEach(function(u){add(u)});
+  if(zh)add('./data/translations.zh.json');
+  var lens=['home','discover','findings','questions','synthesis','notes','method'].indexOf(h)>=0;
+  if(lens){['./data/findings.json','./data/editorial.json','./data/records/index.json'].forEach(function(u){add(u)});add('./lenses.js',1);add('./flags.js',1)}
+  if(h==='home'){add('./data/starmap.json');add('./data/starmap-3d.json');add('./home.js',1);add('./home-sky.js',1)}}catch(e){}})();</script>
 <meta name="robots" content="noindex, nofollow">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#142526">
