@@ -1,7 +1,34 @@
 {
- "current": "A6",
+ "current": "A6.1",
  "policy": "The observation report is versioned apart from the data: a candidate is computed once a month and published after review.",
  "versions": [
+  {
+   "analysisVersion": "A6.1",
+   "baseRelease": "R071",
+   "dataCutoff": "2026-10-15",
+   "computedOn": "2026-10-21",
+   "publishedOn": "2026-10-21",
+   "note": "A6.1 (owner, 2026-10-21: the map's timeline by month): adds per-month country counts (works, most-cited tenth, pairs) to the countries and institutions section; no existing number changes.",
+   "headline": {
+    "Works analysed": 8783,
+    "Citation routes": 51065,
+    "Routes with a sentence (%)": 83.6,
+    "Candidate clusters": 246,
+    "Benchmarks used by others": 135,
+    "Countries": 87,
+    "Doubling time (months)": 9.3,
+    "Cross-tradition citations (%)": 7.1,
+    "… expected from sizes (%)": 44.9,
+    "Boundary works (%)": 1.5,
+    "Held-out surveys": 56,
+    "Salience Recall@50": 0.209,
+    "Citations Recall@50": 0.19,
+    "Salience new work in top 20": 0.441,
+    "Citations new work in top 20": 0.005,
+    "New-star share (%)": 36.3,
+    "Band top-10 overlap": 0.038
+   }
+  },
   {
    "analysisVersion": "A6",
    "baseRelease": "R071",

@@ -276,7 +276,9 @@ export function bindLenses(ctx, root = document.querySelector('.fd')) {
   setup(ctx);
   if (!root) return;
   const tip = root.querySelector('.fd-tip');
-  root.addEventListener('input', e => { if (e.target.matches('[data-ps-yearpos]')) { psStop(); const ys = ['early', ...P.position.years.slice(1)]; ps.year = ys[+e.target.value]; const f = document.querySelector('[data-ps-fig]'); if (f) f.innerHTML = psTable(); ytUpdate(e.target, psYears(), psSide); return; }
+  root.addEventListener('input', e => { if (e.target.matches('[data-ps-month]')) { psStop(); ps.year = 'm'; ps.m = +e.target.value; const f = document.querySelector('[data-ps-fig]'); if (f) f.innerHTML = psTable(); mtUpdate(e.target, psM(), psMSide); return; }
+    if (e.target.matches('[data-pl-month]')) { plStop(); pl.m = +e.target.value; const f = document.querySelector('[data-pl-fig]'); if (f) f.innerHTML = plMapSvg(); mtUpdate(e.target, plM(), plMSide); return; }
+    if (e.target.matches('[data-ps-yearpos]')) { psStop(); const ys = ['early', ...P.position.years.slice(1)]; ps.year = ys[+e.target.value]; const f = document.querySelector('[data-ps-fig]'); if (f) f.innerHTML = psTable(); ytUpdate(e.target, psYears(), psSide); return; }
     if (e.target.matches('[data-pl-yearpos]')) { plStop(); const D = P.players; pl.year = D.years[+e.target.value]; const f = document.querySelector('[data-pl-fig]'); if (f) f.innerHTML = plMapSvg(); ytUpdate(e.target, plYears(), plSide); return; } if (e.target.matches('[data-tj-month]')) { tjStop(); tj.m = +e.target.value; tjRedraw('month'); return; } if (e.target.matches('[data-cr-month]')) { const was = cr.timer; crStop(); cr.m = +e.target.value; crRedraw('month'); if (was) { const b = root.querySelector('[data-cr-play]'); if (b) b.textContent = '▶'; } } });
   crBind(root); psBind(root); tjBind(root); plBind(root);
   root.addEventListener('change', e => { if (e.target.matches('[data-ps-role]')) { psStop(); ps.role = +e.target.value; ps.hl = null; psRedraw(); } if (e.target.matches('[data-ao-filter]')) aoFilter(root); });
@@ -289,7 +291,7 @@ export function bindLenses(ctx, root = document.querySelector('.fd')) {
   if (ctx.state.findingsQ) { const fq = ctx.state.findingsQ; ctx.state.findingsQ = '';  // a shared link: open the card it names
     requestAnimationFrame(() => { const art = document.getElementById('q-' + fq); if (!art) return; if (art.matches('[data-q-card]')) qOpen(art, true); else { const h = art.querySelector('[aria-expanded="false"]'); if (h) h.click(); } art.scrollIntoView({block: 'start'}); }); }
   root.addEventListener('click', e => {
-    const el = e.target.closest('[data-q-open],[data-q-go],[data-qx-rec-page],[data-ob-copy],[data-ln-q-standards],[data-stage-reset],[data-bk-sec],[data-ps-yearmode],[data-ps-mode],[data-ps-sec],[data-pl-view],[data-pl-year],[data-pl-play],[data-pl-open],[data-pl-show],[data-pl-cc],[data-tj-play],[data-tj-open],[data-tj-show],[data-tj-line],[data-ps-y],[data-ps-year],[data-ps-play],[data-ps-open],[data-ps-show],[data-ps-cell],[data-cr-view],[data-cr-level],[data-cr-layer],[data-cr-win],[data-cr-play],[data-cr-open],[data-cr-show],[data-cr-pair],[data-cr-unit],[data-fd-ids],[data-fd-paper],[data-fd-list],[data-fd-jump],[data-fd-layer],[data-fd-pair],[data-fd-bench],[data-ln-lens],[data-ln-goto],[data-ln-q],[data-ln-ms-kind],[data-ln-insight],.fd-close');
+    const el = e.target.closest('[data-ps-win],[data-pl-win],[data-q-open],[data-q-go],[data-qx-rec-page],[data-ob-copy],[data-ln-q-standards],[data-stage-reset],[data-bk-sec],[data-ps-yearmode],[data-ps-mode],[data-ps-sec],[data-pl-view],[data-pl-year],[data-pl-play],[data-pl-open],[data-pl-show],[data-pl-cc],[data-tj-play],[data-tj-open],[data-tj-show],[data-tj-line],[data-ps-y],[data-ps-year],[data-ps-play],[data-ps-open],[data-ps-show],[data-ps-cell],[data-cr-view],[data-cr-level],[data-cr-layer],[data-cr-win],[data-cr-play],[data-cr-open],[data-cr-show],[data-cr-pair],[data-cr-unit],[data-fd-ids],[data-fd-paper],[data-fd-list],[data-fd-jump],[data-fd-layer],[data-fd-pair],[data-fd-bench],[data-ln-lens],[data-ln-goto],[data-ln-q],[data-ln-ms-kind],[data-ln-insight],.fd-close');
     if (!el) return;
     if (el.matches('.fd-close')) { root.querySelector('.fd-drawer').hidden = true; return; }
     if (el.dataset.psSec) { psGoSection(+el.dataset.psSec, root); return; }
@@ -305,6 +307,8 @@ export function bindLenses(ctx, root = document.querySelector('.fd')) {
     }
     if (el.dataset.plView) { plStop(); pl.view = el.dataset.plView; pl.hl = null; pl.arc = null; plRedraw(); return; }
     if (el.dataset.plYear) { plStop(); pl.year = +el.dataset.plYear; plRedraw(); return; }
+    if (el.dataset.psWin) { psStop(); const w = el.dataset.psWin; if (w === 'all') ps.year = 'all'; else { ps.year = 'm'; ps.win = w === 'cum' ? 'cum' : 12; } psRedraw(); return; }
+    if (el.dataset.plWin) { plStop(); pl.win = el.dataset.plWin === 'cum' ? 'cum' : 12; plRedraw(); return; }
     if ('plPlay' in el.dataset) { plPlay(); return; }
     if (el.dataset.plOpen) { const art = el.closest('.cr-card'), open = el.getAttribute('aria-expanded') === 'true'; el.setAttribute('aria-expanded', String(!open)); art.querySelector('.cr-body').hidden = open; plActivate(el.dataset.plOpen); return; }
     if (el.dataset.plShow) { plActivate(el.dataset.plShow); root.querySelector('[data-pl-stage]')?.scrollIntoView({block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'}); return; }
@@ -943,14 +947,15 @@ const PS_NAMES = () => ({
   stage: {prevention: T('Prevention', '事前预防'), runtime_detection: T('Runtime detection', '运行时检测与拦截'), formal_guarantee: T('Formal guarantee', '形式保证'), after_the_fact: T('After the fact', '事后诊断与恢复')},
   surface: SURFACE_NAMES()});
 const PS_DIMS = () => [['role', T('Contribution', '贡献类型')], ['safety', T('Safety requirement', '安全要求')], ['origin', T('Risk origin', '风险来源')], ['components', T('Component', '系统组件')], ['surface', T('Attack entry point', '攻击入口')], ['harm', T('Harm domain', '伤害领域')], ['stage', T('Defence stage', '防御环节')]];
-const ps = {y: 'role', year: 'all', role: -1, hl: null, q: '', timer: 0, sec: 0, mode: 'count'};
+const ps = {y: 'role', year: 'all', role: -1, hl: null, q: '', timer: 0, sec: 0, mode: 'count', m: null, win: 12};
 // which column of the per-work codes holds a dimension, and whether it is a bit set (a work in several parts counts in each, fractionally)
 const PS_COL = {safety: [1, false], origin: [2, false], components: [3, true], harm: [4, true], role: [5, false], stage: [6, true], surface: [11, true]};
 function psRows() {
   const P0 = P.position, yr = ps.year, rows = [];
   for (let k = 0; k < P0.codes.length; k++) {
     const c = P0.codes[k], y = c[7];
-    if (yr !== 'all' && (yr === 'early' ? !(y && y < P0.years[1]) : y !== +yr)) continue;
+    if (yr === 'm') { const w = psWk(c), hi = Math.min(ps.m ?? 1e9, psMonths().length - 1); if (w == null || w > hi || (ps.win !== 'cum' && w < hi - 11)) continue; }
+    else if (yr !== 'all' && (yr === 'early' ? !(y && y < P0.years[1]) : y !== +yr)) continue;
     if (ps.role >= 0 && c[5] !== ps.role) continue;
     if (ps.y === 'stage' && !c[6]) continue;  // defence stages exist only for defences
     rows.push(k);
@@ -1008,6 +1013,21 @@ function yearTime({id, labels, counts, cur, playing, side = '', note = ''}) {
       <div class="cr-ticks yt-ticks">${labels.map((l, i) => `<span style="left:${(100 * (i + 0.5) / n).toFixed(2)}%">${esc(l)}</span>`).join('')}</div></div>
     <div class="cr-time-side" data-yt-side>${side}</div></div>${note ? `<p class="fd-note cr-spark-note">${note}</p>` : ''}`;
 }
+// by month (owner, 2026-10-21: "按照月份，点击即可播放"): a bar per month, the window lit, ticks at each January
+function monthTime({id, months, counts, lo, hi, cur, playing, side = '', note = ''}) {
+  const n = months.length, mx = Math.max(...counts, 1);
+  const ticks = months.map((m, i) => m.endsWith('-01') ? `<span style="left:${(100 * (i + 0.5) / n).toFixed(2)}%">${m.slice(0, 4)}</span>` : '').join('');
+  return `<div class="cr-time yt-time"><button class="cr-play" data-${id}-play aria-label="${playing ? T('Pause', '暂停') : T('Play month by month', '逐月播放')}">${playing ? '❚❚' : '▶'}</button>
+    <div class="cr-track"><svg class="cr-spark" data-yt-spark viewBox="0 0 ${n} 40" preserveAspectRatio="none" aria-hidden="true">${mtBars(months, counts, lo, hi, mx)}</svg><input type="range" class="cr-range" min="0" max="${n - 1}" value="${cur}" data-${id}-month aria-label="${T('Month', '月份')}">
+      <div class="cr-ticks yt-ticks">${ticks}</div></div>
+    <div class="cr-time-side" data-yt-side>${side}</div></div>${note ? `<p class="fd-note cr-spark-note">${note}</p>` : ''}`;
+}
+const mtBars = (months, counts, lo, hi, mx) => counts.map((v, i) => { const h = 38 * Math.min(1, v / mx); return h ? `<rect x="${i + 0.1}" y="${(40 - h).toFixed(2)}" width="0.8" height="${h.toFixed(2)}" class="${i >= lo && i <= hi ? 'is-in' : ''}"><title>${months[i]}: ${num(Math.round(v))}</title></rect>` : ''; }).join('');
+function mtUpdate(input, M, side) {
+  const box = input.closest('.yt-time'); if (!box) return;
+  const sp = box.querySelector('[data-yt-spark]'); if (sp) sp.innerHTML = mtBars(M.months, M.counts, M.lo, M.hi, Math.max(...M.counts, 1));
+  const sd = box.querySelector('[data-yt-side]'); if (sd) sd.innerHTML = side(M);
+}
 const ytBars = (labels, counts, cur, mx) => counts.map((v, i) => { const h = 38 * Math.min(1, v / mx); return `<rect x="${i + 0.2}" y="${(40 - h).toFixed(2)}" width="0.6" height="${h.toFixed(2)}" class="${cur < 0 || i === cur ? 'is-in' : ''}"><title>${esc(labels[i])}: ${num(Math.round(v))}</title></rect>`; }).join('');
 function psYears() {  // the year steps of Positioning, their labels and works per year (under the current contribution type)
   const P0 = P.position, seq = ['early', ...P0.years.slice(1)], labels = [`≤${P0.years[0]}`, ...P0.years.slice(1).map(String)], counts = seq.map(() => 0);
@@ -1020,7 +1040,26 @@ function ytUpdate(input, Y, side) {
   const sd = box.querySelector('[data-yt-side]'); if (sd) sd.innerHTML = side(Y);
 }
 const psSide = ({labels, cur}) => `<b>${cur < 0 ? T('All years', '全部年份') : labels[cur]}</b><span class="cx-seg">${[['all', T('All years', '全部年份')], ['year', T('By year', '按年份')]].map(([m, l]) => `<button data-ps-yearmode="${m}" aria-pressed="${(m === 'year') === (cur >= 0)}">${l}</button>`).join('')}</span>`;
+function psMonths() {  // months from 2020-01 to the data cutoff
+  if (psMonths.at === P.universe.asOf) return psMonths.list;
+  const [ay, am] = P.universe.asOf.split('-').map(Number), list = [];
+  for (let y = 2020, m = 1; y < ay || (y === ay && m <= am); m === 12 ? (y++, m = 1) : m++) list.push(`${y}-${String(m).padStart(2, '0')}`);
+  psMonths.at = P.universe.asOf; return psMonths.list = list;
+}
+const psWk = c => c[12] >= 999 ? null : psMonths().length - 1 - c[12];  // month index; below 0 = before 2020; null = no date
+function psM() {
+  const months = psMonths(), n = months.length, counts = new Array(n).fill(0), tm = ps.year === 'm';
+  for (const c of P.position.codes) { if (ps.role >= 0 && c[5] !== ps.role) continue; const k = psWk(c); if (k != null && k >= 0) counts[k]++; }
+  const m = tm ? Math.min(ps.m ?? n - 1, n - 1) : n - 1;
+  return {months, counts, tm, cur: m, lo: tm ? (ps.win === 'cum' ? 0 : Math.max(0, m - 11)) : 0, hi: m};
+}
+const psMSide = M => `<b>${!M.tm ? T('All years', '全部年份') : ps.win === 'cum' ? T(`up to ${M.months[M.hi]}`, `截至 ${M.months[M.hi]}`) : `${M.months[M.lo]} – ${M.months[M.hi]}`}</b><span class="cx-seg">${[['all', T('All years', '全部年份')], ['12', T('12 months', '近 12 个月')], ['cum', T('Up to then', '累计')]].map(([k, l]) => `<button data-ps-win="${k}" aria-pressed="${!M.tm ? k === 'all' : String(ps.win) === k}">${l}</button>`).join('')}</span>`;
 function psTime() {
+  const M = psM();
+  return monthTime({id: 'ps', months: M.months, counts: M.counts, lo: M.lo, hi: M.hi, cur: M.cur, playing: !!ps.timer, side: psMSide(M),
+    note: T('Bars: works per month (for the contribution type chosen). Click or drag along the bars to show the 12 months up to there, or everything up to there; ▶ plays month by month.', '柱：每月的工作数（按所选贡献类型）。点击或拖动柱子，查看截至该月的近 12 个月或累计；▶ 逐月播放。')});
+}
+function psTimeYearly() {
   const Y = psYears();
   return yearTime({id: 'ps', labels: Y.labels, counts: Y.counts, cur: Y.cur, playing: !!ps.timer, side: psSide(Y),
     note: T('Bars: works per year (for the contribution type chosen). Click or drag along the bars to show one year; ▶ plays the years.', '柱：每年的工作数（按所选贡献类型）。点击或拖动柱子查看某一年，▶ 逐年播放。')});
@@ -1057,11 +1096,16 @@ function psConfig(qid) {
 }
 function psRedraw() { const s = document.querySelector('[data-ps-inner]'); if (s) s.innerHTML = psStageInner(); }
 function psStop() { if (ps.timer) { clearInterval(ps.timer); ps.timer = 0; } }
-function psPlay() {
+function psPlay() {  // month by month: the 12-month window (or everything up to the month) moves to the data cutoff
   if (ps.timer) { psStop(); psRedraw(); return; }
-  const seq = ['early', ...P.position.years.slice(1)];
-  let k = 0; ps.year = seq[0]; psRedraw();
-  ps.timer = setInterval(() => { if (!document.querySelector('[data-ps-stage]')) return psStop(); k++; if (k >= seq.length) { psStop(); ps.year = seq[seq.length - 1]; } else ps.year = seq[k]; psRedraw(); }, 1300);
+  const n = psMonths().length; ps.year = 'm'; ps.m = ps.win === 'cum' ? 0 : 11; psRedraw();
+  ps.timer = setInterval(() => {
+    if (!document.querySelector('[data-ps-stage]')) return psStop();
+    ps.m++; if (ps.m >= n - 1) { ps.m = n - 1; psStop(); psRedraw(); return; }
+    const f = document.querySelector('[data-ps-fig]'); if (f) f.innerHTML = psTable();
+    const r = document.querySelector('[data-ps-month]'); if (r) { r.value = ps.m; mtUpdate(r, psM(), psMSide); }
+  }, 220);
+  psRedraw();
 }
 function psActivate(qid) {
   if (ps.q === qid) return;
@@ -2506,7 +2550,7 @@ const BT = {
 // Countries on a world map (bubble = works that year or in one cluster; colour = share of the year's most-cited tenth ÷
 // share of works; arcs = works shared by two countries) and institutions on an output × influence plane (size =
 // benchmarks others use, colour = sector). The findings scroll beside it and set it to what they describe.
-const pl = {view: 'map', year: null, cluster: -1, hl: null, arc: null, q: '', timer: 0};
+const pl = {view: 'map', year: null, cluster: -1, hl: null, arc: null, q: '', timer: 0, m: null, win: 12};
 let plGeo = null, plGeoLoading = null;
 function plLoadGeo() {
   if (plGeo || plGeoLoading) return plGeoLoading;
@@ -2516,18 +2560,18 @@ function plLoadGeo() {
 const PL_SECTOR = () => ({academia: [T('Universities', '高校'), '#336aab'], industry: [T('Companies', '企业'), '#c26541'], public: [T('Public research', '公共研究机构'), '#5e8c2e'], other: [T('Other', '其他'), '#8a9a97']});
 const plRatioColor = r => r == null ? '#8a9a97' : r >= 1.25 ? '#c26541' : r >= 1.05 ? '#d9946f' : r > 0.95 ? '#9aa8a5' : r > 0.75 ? '#7d9cc4' : '#336aab';
 function plMapSvg() {
-  const D = P.players, yi = D.years.indexOf(pl.year ?? D.years[D.years.length - 1]), byC = pl.cluster >= 0 ? D.byCluster[pl.cluster] : null;
+  const D = P.players, byC = pl.cluster >= 0 ? D.byCluster[pl.cluster] : null, V = byC ? null : plVals();
   const land = plGeo ? Object.values(plGeo).map(c => `<path d="${c.d}" class="pl-land${pl.hl?.countries?.includes(c.cc) ? ' is-hl' : ''}" data-pl-cc="${c.cc}"/>`).join('') : `<text x="480" y="200" text-anchor="middle" class="fd-axis">${T('Loading the map…', '正在加载地图…')}</text>`;
-  const val = cc => byC ? byC[cc] || 0 : D.countries[cc]?.works[yi] || 0, max = Math.max(...D.order.map(val), 1), maxR = byC ? 52 : 48;
+  const val = cc => byC ? byC[cc] || 0 : V.works[cc] || 0, max = Math.max(...D.order.map(val), 1), maxR = byC ? 52 : 48;
   const hlc = pl.hl?.countries ? new Set(pl.hl.countries) : null;
   const bubbles = plGeo ? D.order.filter(cc => plGeo[cc] && val(cc) > 0).sort((a, b) => val(b) - val(a)).map(cc => {
-    const c = D.countries[cc], g = plGeo[cc], v = val(cc), r = Math.max(3.5, maxR * Math.sqrt(v / max)), ratio = !byC && c.topShare[yi] != null && c.share[yi] ? c.topShare[yi] / c.share[yi] : null, on = hlc ? hlc.has(cc) : null;
+    const g = plGeo[cc], v = val(cc), r = Math.max(3.5, maxR * Math.sqrt(v / max)), sh = V?.share(cc), ts = V?.topShare(cc), ratio = !byC && ts != null && sh ? ts / sh : null, on = hlc ? hlc.has(cc) : null;
     const tip = byC ? T(`${country(cc)}: ${pctf(v)} of ${cl(pl.cluster)} works since ${D.instSince}`, `${country(cc)}：${D.instSince} 年以来“${cl(pl.cluster)}”工作的 ${pctf(v)}`)
-      : T(`${country(cc)} ${D.years[yi]}: ${num(Math.round(v))} works (${pctf(c.share[yi])} of located works); most-cited tenth ${pctf(c.topShare[yi])}${ratio ? ` (×${ratio.toFixed(2)})` : ''}`, `${country(cc)} ${D.years[yi]}：${num(Math.round(v))} 项工作（占已定位工作 ${pctf(c.share[yi])}）；被引前 10% 中占 ${pctf(c.topShare[yi])}${ratio ? `（${ratio.toFixed(2)} 倍）` : ''}`);
+      : T(`${country(cc)} ${V.label}: ${num(Math.round(v))} works (${pctf(sh)} of located works); most-cited tenth ${pctf(ts)}${ratio ? ` (×${ratio.toFixed(2)})` : ''}`, `${country(cc)} ${V.label}：${num(Math.round(v))} 项工作（占已定位工作 ${pctf(sh)}）；被引前 10% 中占 ${pctf(ts)}${ratio ? `（${ratio.toFixed(2)} 倍）` : ''}`);
     return `<circle class="pl-bub${on === true ? ' is-hl' : on === false ? ' is-dim' : ''}" cx="${g.lx}" cy="${g.ly}" r="${r.toFixed(1)}" fill="${byC ? COLORS.attention : plRatioColor(ratio)}" data-pl-cc="${cc}" data-tip="${esc(tip)}"/>${r > 11 ? `<text x="${g.lx}" y="${g.ly + 4}" text-anchor="middle" class="pl-cc">${cc}</text>` : ''}`; }).join('') : '';
-  const pairs = !byC && plGeo ? Object.entries(D.pairs[D.years[yi]] || {}).slice(0, 18) : [], pmax = Math.max(...pairs.map(p => p[1]), 1);
+  const pairs = !byC && plGeo ? V.pairs.slice(0, 18) : [], pmax = Math.max(...pairs.map(p => p[1]), 1);
   const arcs = pairs.map(([k, n]) => { const [a, b] = k.split('|'), A = plGeo[a], B = plGeo[b]; if (!A || !B) return ''; const mx = (A.lx + B.lx) / 2, my = (A.ly + B.ly) / 2 - Math.hypot(B.lx - A.lx, B.ly - A.ly) * 0.28, on = pl.arc ? pl.arc === k : null;
-    return `<path class="pl-arc${on === true ? ' is-hl' : on === false ? ' is-dim' : ''}" d="M${A.lx},${A.ly} Q${mx.toFixed(1)},${my.toFixed(1)} ${B.lx},${B.ly}" stroke-width="${(1.2 + 7 * n / pmax).toFixed(1)}" data-tip="${esc(T(`${country(a)} – ${country(b)} ${D.years[yi]}: ${n} works with institutions in both`, `${country(a)} – ${country(b)} ${D.years[yi]}：${n} 项两国机构合作的工作`))}"/>`; }).join('');
+    return `<path class="pl-arc${on === true ? ' is-hl' : on === false ? ' is-dim' : ''}" d="M${A.lx},${A.ly} Q${mx.toFixed(1)},${my.toFixed(1)} ${B.lx},${B.ly}" stroke-width="${(1.2 + 7 * n / pmax).toFixed(1)}" data-tip="${esc(T(`${country(a)} – ${country(b)} ${V.label}: ${n} works with institutions in both`, `${country(a)} – ${country(b)} ${V.label}：${n} 项两国机构合作的工作`))}"/>`; }).join('');
   return `<svg class="pl-map${hlc || pl.arc ? ' has-hl' : ''}" viewBox="0 40 960 340" role="img" aria-label="${T('Countries in agent safety', 'Agent 安全中的国家')}">${land}${arcs}${bubbles}</svg>`;
 }
 function plInstSvg() {
@@ -2552,7 +2596,7 @@ function plInstSvg() {
 function plControls() {
   const D = P.players, seg = (attr, items, cur) => `<span class="cx-seg">${items.map(([k, l]) => `<button data-${attr}="${k}" aria-pressed="${String(k) === String(cur)}">${l}</button>`).join('')}</span>`;
   const map = pl.view === 'map';
-  return `<div class="cr-controls">${seg('pl-view', [['map', T('Countries', '国家地图')], ['inst', T('Institutions', '机构')]], pl.view)}${map ? `<label class="ps-role">${T('Cluster', '星团')} <select data-pl-cluster><option value="-1">${T('all works, by year', '全部工作，按年')}</option>${P.meta.clusters.map((_, k) => `<option value="${k}"${k === pl.cluster ? ' selected' : ''}>${esc(cl(k))}</option>`).join('')}</select></label>` : ''}</div>
+  return `<div class="cr-controls">${seg('pl-view', [['map', T('Countries', '国家地图')], ['inst', T('Institutions', '机构')]], pl.view)}${map ? `<label class="ps-role">${T('Cluster', '星团')} <select data-pl-cluster><option value="-1">${(plMon() ? T('all works, by month', '全部工作，按月') : T('all works, by year', '全部工作，按年'))}</option>${P.meta.clusters.map((_, k) => `<option value="${k}"${k === pl.cluster ? ' selected' : ''}>${esc(cl(k))}</option>`).join('')}</select></label>` : ''}</div>
 `;
 }
 function plLegend() {
@@ -2560,9 +2604,31 @@ function plLegend() {
   if (pl.cluster >= 0) return `<p class="fd-note">${T(`Bubble: the country's share of ${cl(pl.cluster)} works since ${P.players.instSince}.`, `气泡：该国在 ${P.players.instSince} 年以来“${cl(pl.cluster)}”工作中的份额。`)}</p>`;
   return `<div class="ps-legend">${[[1.3, T('cited above its share', '被引高于份额')], [1, T('about even', '大致相当')], [0.7, T('below', '低于份额')]].map(([r, l]) => `<span><i style="background:${plRatioColor(r)}"></i>${l}</span>`).join('')}<span>${T('size: works; arcs: works shared by two countries', '大小：工作数；弧线：两国机构合作的工作')}</span></div>`;
 }
+const plMon = () => P.players?.monthly;
+function plM() {
+  const M = plMon(), n = M.months.length, m = Math.min(pl.m ?? n - 1, n - 1);
+  M._tot ??= M.months.map((_, k) => Object.values(M.countries).reduce((a, c) => a + c.works[k], 0));
+  return {months: M.months, counts: M._tot, cur: m, lo: pl.win === 'cum' ? 0 : Math.max(0, m - 11), hi: m};
+}
+const plWinLabel = W => pl.win === 'cum' ? T(`up to ${W.months[W.hi]}`, `截至 ${W.months[W.hi]}`) : `${W.months[W.lo]} – ${W.months[W.hi]}`;
+function plVals() {  // works, share, the most-cited tenth and pairs per country: summed over the window of months, or one year
+  const D = P.players, M = plMon();
+  if (M) {
+    const W = plM(), works = {}, top = {}, pairs = {}; let tw = 0, tt = 0;
+    for (const [cc, c] of Object.entries(M.countries)) { let w = 0, t = 0; for (let k = W.lo; k <= W.hi; k++) { w += c.works[k]; t += c.top[k]; } works[cc] = w; top[cc] = t; tw += w; tt += t; }
+    for (let k = W.lo; k <= W.hi; k++) for (const [p, x] of Object.entries(M.pairs[k] || {})) pairs[p] = (pairs[p] || 0) + x;
+    return {works, share: cc => tw ? 100 * (works[cc] || 0) / tw : 0, topShare: cc => tt ? 100 * (top[cc] || 0) / tt : null, pairs: Object.entries(pairs).sort((a, b) => b[1] - a[1]), label: plWinLabel(W)};
+  }
+  const yi = D.years.indexOf(pl.year ?? D.years.at(-1));
+  return {works: Object.fromEntries(Object.entries(D.countries).map(([cc, c]) => [cc, c.works[yi]])), share: cc => D.countries[cc]?.share[yi], topShare: cc => D.countries[cc]?.topShare[yi], pairs: Object.entries(D.pairs[D.years[yi]] || {}), label: String(D.years[yi])};
+}
+const plMSide = W => `<b>${plWinLabel(W)}</b><span class="cx-seg">${[['12', T('12 months', '近 12 个月')], ['cum', T('Up to then', '累计')]].map(([k, l]) => `<button data-pl-win="${k}" aria-pressed="${String(pl.win) === k}">${l}</button>`).join('')}</span>`;
 const plYears = () => { const D = P.players; return {labels: D.years.map(String), counts: D.located, cur: D.years.indexOf(pl.year)}; };
 const plSide = ({labels, cur}) => `<b>${labels[cur] ?? ''}</b>`;
 function plTime() {
+  if (plMon()) { const W = plM();
+    return monthTime({id: 'pl', months: W.months, counts: W.counts, lo: W.lo, hi: W.hi, cur: W.cur, playing: !!pl.timer, side: plMSide(W),
+      note: T('Bars: located works per month. Click or drag along the bars to move the window; ▶ plays month by month.', '柱：每月已定位的工作数。点击或拖动柱子移动时间窗，▶ 逐月播放。')}); }
   const Y = plYears();
   return yearTime({id: 'pl', labels: Y.labels, counts: Y.counts, cur: Y.cur, playing: !!pl.timer, side: plSide(Y),
     note: T('Bars: located works per publication year. Click or drag along the bars to change the year; ▶ plays the years.', '柱：每个发表年份已定位的工作数。点击或拖动柱子切换年份，▶ 逐年播放。')});
@@ -2578,7 +2644,7 @@ function plConfig(qid) {
   const D = P.players, c = {view: 'map', year: D?.years[D.years.length - 1], cluster: -1, hl: null, arc: null, note: ''};
   if (!D) return c;
   const idx = n => P.meta.clusters.indexOf(n), I = D.institutions, last = D.years[D.years.length - 1];
-  const notes = {shares: T('Map: works by country in the latest year; press play from 2020.', '地图：最近一年各国的工作数；按播放从 2020 年看起。'),
+  const notes = {shares: T('Map: works by country in the last 12 months; press play to go month by month from 2020.', '地图：最近 12 个月各国的工作数；按播放从 2020 年起逐月看。'),
     rising: T('Map: the fastest-growing countries are lit.', '地图：亮出增长最快的国家。'), directions: T('Map: one cluster where the lead differs.', '地图：一个主导国家不同的星团。'),
     pioneers: T('Map: a cluster whose lead moved after its first works.', '地图：一个起步之后领先者换了的星团。'), geoconc: T('Map: the cluster most dependent on one country.', '地图：最依赖单一国家的星团。'),
     punch: T('Map: colour is citation share against output share.', '地图：颜色是被引份额与产出份额之比。'), apart: T('Map: the China–US arc against the other partners.', '地图：中美之间的弧线与其他合作伙伴对照。'),
@@ -2596,6 +2662,17 @@ function plRedraw() { const s = document.querySelector('[data-pl-inner]'); if (s
 function plStop() { if (pl.timer) { clearInterval(pl.timer); pl.timer = 0; } }
 function plPlay() {
   if (pl.timer) { plStop(); plRedraw(); return; }
+  const M = plMon();
+  if (M) {
+    const n = M.months.length; pl.cluster = -1; pl.m = pl.win === 'cum' ? 0 : 11; plRedraw();
+    pl.timer = setInterval(() => {
+      if (!document.querySelector('[data-pl-stage]')) return plStop();
+      pl.m++; if (pl.m >= n - 1) { pl.m = n - 1; plStop(); plRedraw(); return; }
+      const f = document.querySelector('[data-pl-fig]'); if (f) f.innerHTML = plMapSvg();
+      const r = document.querySelector('[data-pl-month]'); if (r) { r.value = pl.m; mtUpdate(r, plM(), plMSide); }
+    }, 220);
+    plRedraw(); return;
+  }
   const ys = P.players.years; let k = 0; pl.year = ys[0]; pl.cluster = -1; plRedraw();
   pl.timer = setInterval(() => { if (!document.querySelector('[data-pl-stage]')) return plStop(); k++; if (k >= ys.length) { plStop(); pl.year = ys.at(-1); } else pl.year = ys[k]; plRedraw(); }, 1100);
 }
@@ -2603,6 +2680,7 @@ function plActivate(qid) {
   if (pl.q === qid) return;
   const c = plConfig(qid); plStop();
   Object.assign(pl, {q: qid, view: c.view, year: c.year, cluster: c.cluster, hl: c.hl, arc: c.arc});
+  if (plMon()) { const ms = plMon().months, k = ms.indexOf(`${c.year}-12`); Object.assign(pl, {win: 12, m: k >= 0 ? k : ms.length - 1}); }
   for (const el of document.querySelectorAll('.cr-card[data-pl-card]')) el.classList.toggle('is-active', el.dataset.plCard === qid);
   plRedraw();
 }
