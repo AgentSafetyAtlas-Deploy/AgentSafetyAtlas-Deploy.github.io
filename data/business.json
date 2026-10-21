@@ -26553,27 +26553,6 @@
       "renewalStatus": "unknown"
     },
     {
-      "id": "buyer-REC-C05-B001-0009",
-      "title": "Fusion CX unifies protection with CrowdStrike Falcon",
-      "date": null,
-      "evidenceLevel": "deployment_case",
-      "companyId": "biz-crowdstrike",
-      "summary": {
-        "en": "Fusion CX unifies protection with CrowdStrike Falcon. See the original source for the attributed claims.",
-        "zh": "CrowdStrike 托管的案例称 Fusion CX 自 2020 年部署 Falcon Sensor、2025 年采用 Falcon Complete，之后扩展到 Falcon Identity Security 和 SIEM；案例把客户采用 AI Agent 列为强化身份安全的背景，而非 Continuous Identity 产品部署证明。"
-      },
-      "sources": [
-        {
-          "url": "https://www.crowdstrike.com/en-us/resources/customer-stories/fusion-cx/",
-          "title": "Fusion CX unifies protection with CrowdStrike Falcon"
-        }
-      ],
-      "detailId": "REC-C05-B001-0009",
-      "paymentStatus": "unknown",
-      "contractAmount": null,
-      "renewalStatus": "unknown"
-    },
-    {
       "id": "buyer-REC-C05-B006-0003",
       "title": "Onyx Security Anonymized Agent Discovery and Runtime Deployment Field Notes",
       "date": "2026-04-15",
@@ -26603,6 +26582,31 @@
       "renewalStatus": "unknown"
     },
     {
+      "id": "buyer-REC-C05-B003-0017",
+      "title": "CORDIS Periodic Report for the DeepKeep Project",
+      "date": "2026-08-03",
+      "evidenceLevel": "project_report",
+      "companyId": "biz-deepkeep",
+      "summary": {
+        "en": "CORDIS Periodic Report for the DeepKeep Project. See the original source for the attributed claims.",
+        "zh": "欧盟 CORDIS 的第一期项目报告称 DeepKeep 平台达到 TRL7，原型已在运行环境中通过涵盖 vision、language 与 agentic AI 的 POC 和部署演示，其中包括 air-gapped 企业安装；报告还称 guardrails 扩展至工具误用、不安全动作序列与跨会话数据泄露。"
+      },
+      "sources": [
+        {
+          "url": "https://cordis.europa.eu/project/id/101218086",
+          "title": "CORDIS DeepKeep Project Fact Sheet"
+        },
+        {
+          "url": "https://cordis.europa.eu/project/id/101218086/reporting",
+          "title": "CORDIS Periodic Report for the DeepKeep Project"
+        }
+      ],
+      "detailId": "REC-C05-B003-0017",
+      "paymentStatus": "unknown",
+      "contractAmount": null,
+      "renewalStatus": "unknown"
+    },
+    {
       "id": "buyer-REC-C05-B003-0016",
       "title": "TrueFoundry Qualitative Test of DeepKeep AI Firewall Custom Guardrail",
       "date": "2026-08-31",
@@ -26624,26 +26628,22 @@
       "renewalStatus": "unknown"
     },
     {
-      "id": "buyer-REC-C05-B003-0017",
-      "title": "CORDIS Periodic Report for the DeepKeep Project",
-      "date": "2026-08-03",
-      "evidenceLevel": "project_report",
-      "companyId": "biz-deepkeep",
+      "id": "buyer-REC-C05-B001-0009",
+      "title": "Fusion CX unifies protection with CrowdStrike Falcon",
+      "date": null,
+      "evidenceLevel": "deployment_case",
+      "companyId": "biz-crowdstrike",
       "summary": {
-        "en": "CORDIS Periodic Report for the DeepKeep Project. See the original source for the attributed claims.",
-        "zh": "欧盟 CORDIS 的第一期项目报告称 DeepKeep 平台达到 TRL7，原型已在运行环境中通过涵盖 vision、language 与 agentic AI 的 POC 和部署演示，其中包括 air-gapped 企业安装；报告还称 guardrails 扩展至工具误用、不安全动作序列与跨会话数据泄露。"
+        "en": "Fusion CX unifies protection with CrowdStrike Falcon. See the original source for the attributed claims.",
+        "zh": "CrowdStrike 托管的案例称 Fusion CX 自 2020 年部署 Falcon Sensor、2025 年采用 Falcon Complete，之后扩展到 Falcon Identity Security 和 SIEM；案例把客户采用 AI Agent 列为强化身份安全的背景，而非 Continuous Identity 产品部署证明。"
       },
       "sources": [
         {
-          "url": "https://cordis.europa.eu/project/id/101218086",
-          "title": "CORDIS DeepKeep Project Fact Sheet"
-        },
-        {
-          "url": "https://cordis.europa.eu/project/id/101218086/reporting",
-          "title": "CORDIS Periodic Report for the DeepKeep Project"
+          "url": "https://www.crowdstrike.com/en-us/resources/customer-stories/fusion-cx/",
+          "title": "Fusion CX unifies protection with CrowdStrike Falcon"
         }
       ],
-      "detailId": "REC-C05-B003-0017",
+      "detailId": "REC-C05-B001-0009",
       "paymentStatus": "unknown",
       "contractAmount": null,
       "renewalStatus": "unknown"
@@ -34419,11 +34419,11 @@
           "distinctURLs": 10
         },
         {
-          "host": "investors.paloaltonetworks.com",
+          "host": "gartner.com",
           "distinctURLs": 8
         },
         {
-          "host": "gartner.com",
+          "host": "investors.paloaltonetworks.com",
           "distinctURLs": 8
         },
         {

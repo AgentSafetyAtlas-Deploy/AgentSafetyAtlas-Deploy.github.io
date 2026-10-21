@@ -10194,49 +10194,49 @@
   {
     "topic": "Deception and control",
     "year": 2020,
-    "included_works": 9,
+    "included_works": 5,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Deception and control",
     "year": 2021,
-    "included_works": 7,
+    "included_works": 5,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Deception and control",
     "year": 2022,
-    "included_works": 10,
+    "included_works": 8,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Deception and control",
     "year": 2023,
-    "included_works": 27,
+    "included_works": 24,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Deception and control",
     "year": 2024,
-    "included_works": 45,
+    "included_works": 41,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Deception and control",
     "year": 2025,
-    "included_works": 195,
+    "included_works": 187,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Deception and control",
     "year": 2026,
-    "included_works": 499,
+    "included_works": 497,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
@@ -11426,7 +11426,7 @@
   {
     "topic": "Embodied and physical-world safety",
     "year": 2021,
-    "included_works": 107,
+    "included_works": 106,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
@@ -11454,7 +11454,7 @@
   {
     "topic": "Embodied and physical-world safety",
     "year": 2025,
-    "included_works": 440,
+    "included_works": 439,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
@@ -13771,7 +13771,7 @@
   {
     "topic": "Formal guarantees",
     "year": 2020,
-    "included_works": 27,
+    "included_works": 26,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
@@ -13785,35 +13785,35 @@
   {
     "topic": "Formal guarantees",
     "year": 2022,
-    "included_works": 51,
+    "included_works": 49,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Formal guarantees",
     "year": 2023,
-    "included_works": 87,
+    "included_works": 84,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Formal guarantees",
     "year": 2024,
-    "included_works": 90,
+    "included_works": 89,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Formal guarantees",
     "year": 2025,
-    "included_works": 142,
+    "included_works": 140,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Formal guarantees",
     "year": 2026,
-    "included_works": 475,
+    "included_works": 472,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
@@ -14275,35 +14275,35 @@
   {
     "topic": "Goal and behavior alignment",
     "year": 2022,
-    "included_works": 29,
+    "included_works": 28,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Goal and behavior alignment",
     "year": 2023,
-    "included_works": 67,
+    "included_works": 64,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Goal and behavior alignment",
     "year": 2024,
-    "included_works": 92,
+    "included_works": 90,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Goal and behavior alignment",
     "year": 2025,
-    "included_works": 251,
+    "included_works": 246,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Goal and behavior alignment",
     "year": 2026,
-    "included_works": 746,
+    "included_works": 737,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
@@ -15731,7 +15731,7 @@
   {
     "topic": "Human autonomy and control",
     "year": 2020,
-    "included_works": 8,
+    "included_works": 7,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
@@ -15759,21 +15759,21 @@
   {
     "topic": "Human autonomy and control",
     "year": 2024,
-    "included_works": 32,
+    "included_works": 29,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Human autonomy and control",
     "year": 2025,
-    "included_works": 105,
+    "included_works": 102,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Human autonomy and control",
     "year": 2026,
-    "included_works": 343,
+    "included_works": 340,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
@@ -19637,14 +19637,14 @@
   {
     "topic": "Memory and retrieval safety",
     "year": 2025,
-    "included_works": 89,
+    "included_works": 87,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Memory and retrieval safety",
     "year": 2026,
-    "included_works": 563,
+    "included_works": 561,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
@@ -21464,49 +21464,49 @@
   {
     "topic": "Multi-agent safety",
     "year": 2020,
-    "included_works": 20,
+    "included_works": 16,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Multi-agent safety",
     "year": 2021,
-    "included_works": 32,
+    "included_works": 29,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Multi-agent safety",
     "year": 2022,
-    "included_works": 33,
+    "included_works": 27,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Multi-agent safety",
     "year": 2023,
-    "included_works": 77,
+    "included_works": 71,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Multi-agent safety",
     "year": 2024,
-    "included_works": 88,
+    "included_works": 82,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Multi-agent safety",
     "year": 2025,
-    "included_works": 323,
+    "included_works": 317,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Multi-agent safety",
     "year": 2026,
-    "included_works": 866,
+    "included_works": 861,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
@@ -22388,7 +22388,7 @@
   {
     "topic": "Non-adversarial safety failures",
     "year": 2026,
-    "included_works": 438,
+    "included_works": 429,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
@@ -23284,42 +23284,42 @@
   {
     "topic": "Oversight and assurance",
     "year": 2021,
-    "included_works": 22,
+    "included_works": 21,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Oversight and assurance",
     "year": 2022,
-    "included_works": 33,
+    "included_works": 32,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Oversight and assurance",
     "year": 2023,
-    "included_works": 52,
+    "included_works": 49,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Oversight and assurance",
     "year": 2024,
-    "included_works": 70,
+    "included_works": 67,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Oversight and assurance",
     "year": 2025,
-    "included_works": 287,
+    "included_works": 280,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Oversight and assurance",
     "year": 2026,
-    "included_works": 1360,
+    "included_works": 1341,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
@@ -23725,7 +23725,7 @@
   {
     "topic": "Permissions and identity",
     "year": 2021,
-    "included_works": 3,
+    "included_works": 2,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
@@ -23760,7 +23760,7 @@
   {
     "topic": "Permissions and identity",
     "year": 2026,
-    "included_works": 803,
+    "included_works": 802,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
@@ -25678,49 +25678,49 @@
   {
     "topic": "Privacy and data protection",
     "year": 2020,
-    "included_works": 6,
-    "field_denominator": null,
-    "coverage_status": "collection_counts_only"
-  },
-  {
-    "topic": "Privacy and data protection",
-    "year": 2021,
     "included_works": 4,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Privacy and data protection",
+    "year": 2021,
+    "included_works": 2,
+    "field_denominator": null,
+    "coverage_status": "collection_counts_only"
+  },
+  {
+    "topic": "Privacy and data protection",
     "year": 2022,
-    "included_works": 8,
+    "included_works": 5,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Privacy and data protection",
     "year": 2023,
-    "included_works": 19,
+    "included_works": 15,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Privacy and data protection",
     "year": 2024,
-    "included_works": 40,
+    "included_works": 38,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Privacy and data protection",
     "year": 2025,
-    "included_works": 133,
+    "included_works": 129,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Privacy and data protection",
     "year": 2026,
-    "included_works": 453,
+    "included_works": 451,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
@@ -27015,14 +27015,14 @@
   {
     "topic": "Red teaming",
     "year": 2022,
-    "included_works": 20,
+    "included_works": 18,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Red teaming",
     "year": 2023,
-    "included_works": 38,
+    "included_works": 37,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
@@ -29318,14 +29318,14 @@
   {
     "topic": "Runtime monitoring",
     "year": 2022,
-    "included_works": 23,
+    "included_works": 22,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Runtime monitoring",
     "year": 2023,
-    "included_works": 29,
+    "included_works": 28,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
@@ -29339,14 +29339,14 @@
   {
     "topic": "Runtime monitoring",
     "year": 2025,
-    "included_works": 202,
+    "included_works": 200,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Runtime monitoring",
     "year": 2026,
-    "included_works": 1079,
+    "included_works": 1076,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
@@ -29605,14 +29605,14 @@
   {
     "topic": "Safe reinforcement learning",
     "year": 2021,
-    "included_works": 102,
+    "included_works": 101,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Safe reinforcement learning",
     "year": 2022,
-    "included_works": 103,
+    "included_works": 102,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
@@ -29626,7 +29626,7 @@
   {
     "topic": "Safe reinforcement learning",
     "year": 2024,
-    "included_works": 190,
+    "included_works": 189,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
@@ -29640,7 +29640,7 @@
   {
     "topic": "Safe reinforcement learning",
     "year": 2026,
-    "included_works": 384,
+    "included_works": 383,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
@@ -30137,49 +30137,49 @@
   {
     "topic": "Safety evaluation",
     "year": 2020,
-    "included_works": 22,
+    "included_works": 21,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Safety evaluation",
     "year": 2021,
-    "included_works": 30,
-    "field_denominator": null,
-    "coverage_status": "collection_counts_only"
-  },
-  {
-    "topic": "Safety evaluation",
-    "year": 2022,
     "included_works": 29,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Safety evaluation",
+    "year": 2022,
+    "included_works": 27,
+    "field_denominator": null,
+    "coverage_status": "collection_counts_only"
+  },
+  {
+    "topic": "Safety evaluation",
     "year": 2023,
-    "included_works": 66,
+    "included_works": 65,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Safety evaluation",
     "year": 2024,
-    "included_works": 134,
+    "included_works": 127,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Safety evaluation",
     "year": 2025,
-    "included_works": 473,
+    "included_works": 467,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Safety evaluation",
     "year": 2026,
-    "included_works": 2056,
+    "included_works": 2046,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
@@ -33161,7 +33161,7 @@
   {
     "topic": "Supply-chain security",
     "year": 2025,
-    "included_works": 69,
+    "included_works": 68,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
@@ -33882,28 +33882,28 @@
   {
     "topic": "Tool and execution safety",
     "year": 2023,
-    "included_works": 12,
+    "included_works": 11,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Tool and execution safety",
     "year": 2024,
-    "included_works": 35,
+    "included_works": 31,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Tool and execution safety",
     "year": 2025,
-    "included_works": 187,
+    "included_works": 185,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
   {
     "topic": "Tool and execution safety",
     "year": 2026,
-    "included_works": 1354,
+    "included_works": 1349,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },
@@ -35170,7 +35170,7 @@
   {
     "topic": "Trust boundaries",
     "year": 2025,
-    "included_works": 18,
+    "included_works": 17,
     "field_denominator": null,
     "coverage_status": "collection_counts_only"
   },

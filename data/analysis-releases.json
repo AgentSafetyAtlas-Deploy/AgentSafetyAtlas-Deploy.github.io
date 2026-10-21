@@ -1,7 +1,34 @@
 {
- "current": "A6.1",
+ "current": "A7",
  "policy": "The observation report is versioned apart from the data: a candidate is computed once a month and published after review.",
  "versions": [
+  {
+   "analysisVersion": "A7",
+   "baseRelease": "R071",
+   "dataCutoff": "2026-10-15",
+   "computedOn": "2026-10-22",
+   "publishedOn": "2026-10-22",
+   "note": "R071 with the corrections of 2026-10-22 (104 early curated works the cascade excluded removed: 8,679 analysed); paper structure section (RQ1-RQ4) with item-level records; Section 4 checks",
+   "headline": {
+    "Works analysed": 8679,
+    "Citation routes": 50776,
+    "Routes with a sentence (%)": 83.6,
+    "Candidate clusters": 235,
+    "Benchmarks used by others": 135,
+    "Countries": 87,
+    "Doubling time (months)": 9.2,
+    "Cross-tradition citations (%)": 6.9,
+    "… expected from sizes (%)": 44.8,
+    "Boundary works (%)": 1.5,
+    "Held-out surveys": 56,
+    "Salience Recall@50": 0.21,
+    "Citations Recall@50": 0.191,
+    "Salience new work in top 20": 0.441,
+    "Citations new work in top 20": 0.005,
+    "New-star share (%)": 36.8,
+    "Band top-10 overlap": 0.039
+   }
+  },
   {
    "analysisVersion": "A6.1",
    "baseRelease": "R071",

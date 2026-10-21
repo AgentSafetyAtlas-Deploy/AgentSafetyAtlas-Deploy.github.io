@@ -14,9 +14,9 @@
 
 | 数据对象 | 当前数量 | 正确理解 |
 |---|---:|---|
-| 正式研究库已纳入研究 | 8,797 项 | 按 workId 去重的已纳入工作，不是候选条目总数 |
-| 待复核展示记录 | 409 条 | 不计入上述 8,797 项 |
-| 关联资源记录 | 3,145 条 | 代码、数据、模型等资源记录；不表示全部已验证开源许可 |
+| 正式研究库已纳入研究 | 8,693 项 | 按 workId 去重的已纳入工作，不是候选条目总数 |
+| 待复核展示记录 | 513 条 | 不计入上述 8,693 项 |
+| 关联资源记录 | 3,090 条 | 代码、数据、模型等资源记录；不表示全部已验证开源许可 |
 | 机构与团队实体 | 5,857 个 | 不等于 5,857 家商业公司，也不等于独立研究者人数 |
 | 企业档案 | 16 家 | EP001 首批企业试刊 3 家（TrojAI、Lasso Security、Patronus AI）；EP002 商业报告结构化增量 13 家 |
 | 资本事件 | 16 笔 | 8 笔融资、8 笔并购；EP001 首批企业试刊 4 笔；EP002 商业报告结构化增量 12 笔 |
@@ -37,25 +37,25 @@
 
 ### 2. 正式研究卡片当前链接到哪些来源
 
-以下统计针对 8,797 项已纳入工作，每项只统计当前卡片的主要链接域名。它不是所有证据链接的总数，也不是各数据库的完整覆盖率。
+以下统计针对 8,693 项已纳入工作，每项只统计当前卡片的主要链接域名。它不是所有证据链接的总数，也不是各数据库的完整覆盖率。
 
 | 来源入口 | 当前主要链接数 | 主要作用 |
 |---|---:|---|
-| [arXiv](https://arxiv.org/) | 5,343 | 预印本元数据、摘要和版本记录 |
-| [DOI](https://doi.org/) | 1,797 | 出版方 DOI 解析链接：期刊、会议论文集与书籍章节 |
-| [PMLR](https://proceedings.mlr.press/) | 255 | ICML 等会议及其他 PMLR 论文 |
-| [ACL Anthology](https://aclanthology.org/) | 251 | ACL 系列论文、Findings 与轨道 |
-| [NeurIPS Proceedings](https://proceedings.neurips.cc/) | 196 | 正式论文与轨道信息 |
+| [arXiv](https://arxiv.org/) | 5,302 | 预印本元数据、摘要和版本记录 |
+| [DOI](https://doi.org/) | 1,763 | 出版方 DOI 解析链接：期刊、会议论文集与书籍章节 |
+| [PMLR](https://proceedings.mlr.press/) | 254 | ICML 等会议及其他 PMLR 论文 |
+| [ACL Anthology](https://aclanthology.org/) | 247 | ACL 系列论文、Findings 与轨道 |
+| [NeurIPS Proceedings](https://proceedings.neurips.cc/) | 195 | 正式论文与轨道信息 |
 | [ICLR Proceedings](https://proceedings.iclr.cc/) | 145 | ICLR 官方论文信息 |
 | [ICML 官方目录](https://icml.cc/) | 118 | 官方论文／会议信息 |
 | [USENIX](https://www.usenix.org/) | 61 | 安全会议论文与材料 |
-| [AAAI OJS](https://ojs.aaai.org/) | 44 | AAAI 系列正式论文 |
-| 其他正式出版、会议与预印本入口 | 587 | OpenReview、IEEE、Springer、ACM、NDSS、AAMAS、IJCAI、CEUR-WS 等 |
-| **合计** | **8,797** | 每项已纳入工作恰计一次 |
+| [AAAI OJS](https://ojs.aaai.org/) | 42 | AAAI 系列正式论文 |
+| 其他正式出版、会议与预印本入口 | 566 | OpenReview、IEEE、Springer、ACM、NDSS、AAMAS、IJCAI、CEUR-WS 等 |
+| **合计** | **8,693** | 每项已纳入工作恰计一次 |
 
-正式库中，2,990 项标记已发表，462 项标记已录用，5,345 项的正式发表状态尚未核实。纳入 Agent Safety 研究范围与正式发表状态是两件事；尚未核实不表示未发表。
+正式库中，2,932 项标记已发表，457 项标记已录用，5,304 项的正式发表状态尚未核实。纳入 Agent Safety 研究范围与正式发表状态是两件事；尚未核实不表示未发表。
 
-3,145 条资源记录中，2,396 条链接到 GitHub，275 条链接到 Hugging Face，44 条链接到 Zenodo，其余 430 条来自项目网站等入口。以上是资源链接数，不是独立仓库维护者数，也不证明资源均完整可复用。
+3,090 条资源记录中，2,362 条链接到 GitHub，268 条链接到 Hugging Face，44 条链接到 Zenodo，其余 416 条来自项目网站等入口。以上是资源链接数，不是独立仓库维护者数，也不证明资源均完整可复用。
 
 ### 3. 从候选到平台的处理过程
 

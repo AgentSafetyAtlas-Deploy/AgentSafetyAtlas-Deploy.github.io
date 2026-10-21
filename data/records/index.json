@@ -1,30 +1,30 @@
 {
- "analysisVersion": "A6.1",
+ "analysisVersion": "A7",
  "release": "R071",
  "questions": {
   "F1": {
-   "rows": 733,
+   "rows": 722,
    "unit": [
     "Atlas benchmark",
     "Atlas 基准"
    ]
   },
   "F10": {
-   "rows": 656,
+   "rows": 655,
    "unit": [
     "2026 paper",
     "2026 年论文"
    ]
   },
   "F11": {
-   "rows": 227,
+   "rows": 219,
    "unit": [
     "research line (candidate cluster)",
     "研究线（候选星团）"
    ]
   },
   "F12": {
-   "rows": 669,
+   "rows": 616,
    "unit": [
     "cold research line at a quarter",
     "某季度的冷门研究线"
@@ -38,14 +38,14 @@
    ]
   },
   "F14": {
-   "rows": 2302,
+   "rows": 2298,
    "unit": [
     "2026 paper",
     "2026 年论文"
    ]
   },
   "F15": {
-   "rows": 2564,
+   "rows": 2560,
    "unit": [
     "work using an Atlas benchmark (last two years) or 2026 paper with model roles",
     "使用 Atlas 基准的工作（近两年）或有模型角色的 2026 年论文"
@@ -73,21 +73,21 @@
    ]
   },
   "F19": {
-   "rows": 1336,
+   "rows": 1334,
    "unit": [
     "defence paper",
     "防御论文"
    ]
   },
   "F2": {
-   "rows": 126,
+   "rows": 128,
    "unit": [
     "pair of clusters (main cluster of each work)",
     "星团对（按每项工作的主星团）"
    ]
   },
   "F20": {
-   "rows": 1336,
+   "rows": 1334,
    "unit": [
     "defence paper",
     "防御论文"
@@ -136,7 +136,7 @@
    ]
   },
   "F5": {
-   "rows": 8777,
+   "rows": 8673,
    "unit": [
     "work",
     "工作"
@@ -150,7 +150,7 @@
    ]
   },
   "F7": {
-   "rows": 1078,
+   "rows": 1059,
    "unit": [
     "work published before 2025-01-01 and cited before then",
     "2025-01-01 之前发表且已被引用的工作"
@@ -178,14 +178,14 @@
    ]
   },
   "J2": {
-   "rows": 1336,
+   "rows": 1334,
    "unit": [
     "defence paper",
     "防御论文"
    ]
   },
   "J3": {
-   "rows": 5863,
+   "rows": 5842,
    "unit": [
     "pair of a work and an Atlas benchmark",
     "“工作—Atlas 基准”关系"
@@ -199,17 +199,115 @@
    ]
   },
   "J5": {
-   "rows": 5546,
+   "rows": 5465,
    "unit": [
     "work of a complete half-year since 2023",
     "2023 年以来完整半年内的一项工作"
    ]
   },
   "J6": {
-   "rows": 12800,
+   "rows": 12744,
    "unit": [
     "citation to a defence by an outside work",
     "外部工作对防御的一次引用"
+   ]
+  },
+  "P1a": {
+   "rows": 8324,
+   "unit": [
+    "work since 2019 with labels on both axes",
+    "2019 年以来两类标签齐全的工作"
+   ]
+  },
+  "P1b": {
+   "rows": 614,
+   "unit": [
+    "work naming a new component",
+    "提到新组件的工作"
+   ]
+  },
+  "P2a": {
+   "rows": 2758,
+   "unit": [
+    "attack, measurement or benchmark work (2021 on)",
+    "攻击、测量或基准工作（2021 年起）"
+   ]
+  },
+  "P2b": {
+   "rows": 106,
+   "unit": [
+    "requirement x mechanism pair with threat work",
+    "有威胁工作的目标 × 机制组合"
+   ]
+  },
+  "P2c": {
+   "rows": 2496,
+   "unit": [
+    "defence with a protocol card",
+    "有实验方案卡的防御"
+   ]
+  },
+  "P2d": {
+   "rows": 1254,
+   "unit": [
+    "work in a risk-path case",
+    "风险路径案例中的工作"
+   ]
+  },
+  "P3a": {
+   "rows": 2590,
+   "unit": [
+    "defence corresponding to an established mechanism",
+    "对应既有安全机制的防御"
+   ]
+  },
+  "P3b": {
+   "rows": 31059,
+   "unit": [
+    "ordered pair of candidate clusters joined by a route",
+    "有途径相连的有序方向对"
+   ]
+  },
+  "P3bNew": {
+   "rows": 106,
+   "unit": [
+    "algorithmic cluster formed since 2024-07-01",
+    "2024-07-01 以后成形的算法簇"
+   ]
+  },
+  "P3c": {
+   "rows": 1227,
+   "unit": [
+    "citation between digital- and physical-agent works",
+    "数字与物理 agent 工作之间的一次引用"
+   ]
+  },
+  "P4a": {
+   "rows": 1057,
+   "unit": [
+    "work of an algorithmic cluster whose share fell, up to its peak",
+    "份额下降的算法簇在高峰前的工作"
+   ]
+  },
+  "P4b": {
+   "rows": 661,
+   "unit": [
+    "named benchmark dated to the day",
+    "日期精确到日的有名称基准"
+   ]
+  },
+  "P4c": {
+   "rows": 5468,
+   "unit": [
+    "agent-security repository",
+    "agent 安全仓库"
+   ]
+  },
+  "PWeb": {
+   "rows": 2426,
+   "unit": [
+    "work in the Web subset",
+    "Web 子集中的工作"
    ]
   }
  }

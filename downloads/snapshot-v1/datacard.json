@@ -5,17 +5,17 @@
  "release": "R071",
  "cutoff": "2026-10-15",
  "worksDatedThrough": "2026-10-15",
- "builtOn": "2026-10-21",
- "scopePolicy": "agent-safety-v3 (5,464 works), agent-safety-v4 (3,294 works), unrecorded (25 works)",
+ "builtOn": "2026-10-22",
+ "scopePolicy": "agent-safety-v3 (5,360 works), agent-safety-v4 (3,294 works), unrecorded (25 works)",
  "description": "Deduplicated research works on the safety and security of LLM-based and learned agents, with typed relations that keep their basis, editorial clusters, automatic candidate clusters, institutions, and the observation report computed on this release.",
  "counts": {
-  "works": 8797,
+  "works": 8693,
   "withdrawnKept": 14,
-  "citationRoutes": 51065,
-  "citationWithSentence": 42593,
+  "citationRoutes": 50776,
+  "citationWithSentence": 42347,
   "benchmarkUseRoutes": 696,
   "institutions": 1602,
-  "candidateClusters": 246,
+  "candidateClusters": 235,
   "summariesLeftOut": 0
  },
  "relationTypes": {
