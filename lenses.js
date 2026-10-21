@@ -276,7 +276,8 @@ export function bindLenses(ctx, root = document.querySelector('.fd')) {
   setup(ctx);
   if (!root) return;
   const tip = root.querySelector('.fd-tip');
-  root.addEventListener('input', e => { if (e.target.matches('[data-ps-yearpos]')) { psStop(); const ys = ['early', ...P.position.years.slice(1)]; ps.year = ys[+e.target.value]; const f = document.querySelector('[data-ps-fig]'); if (f) f.innerHTML = psTable(); const b = e.target.closest('.ps-time')?.querySelector('b'); if (b) b.textContent = ps.year === 'early' ? `≤${P.position.years[0]}` : ps.year; return; } if (e.target.matches('[data-tj-month]')) { tjStop(); tj.m = +e.target.value; tjRedraw('month'); return; } if (e.target.matches('[data-cr-month]')) { const was = cr.timer; crStop(); cr.m = +e.target.value; crRedraw('month'); if (was) { const b = root.querySelector('[data-cr-play]'); if (b) b.textContent = '▶'; } } });
+  root.addEventListener('input', e => { if (e.target.matches('[data-ps-yearpos]')) { psStop(); const ys = ['early', ...P.position.years.slice(1)]; ps.year = ys[+e.target.value]; const f = document.querySelector('[data-ps-fig]'); if (f) f.innerHTML = psTable(); ytUpdate(e.target, psYears(), psSide); return; }
+    if (e.target.matches('[data-pl-yearpos]')) { plStop(); const D = P.players; pl.year = D.years[+e.target.value]; const f = document.querySelector('[data-pl-fig]'); if (f) f.innerHTML = plMapSvg(); ytUpdate(e.target, plYears(), plSide); return; } if (e.target.matches('[data-tj-month]')) { tjStop(); tj.m = +e.target.value; tjRedraw('month'); return; } if (e.target.matches('[data-cr-month]')) { const was = cr.timer; crStop(); cr.m = +e.target.value; crRedraw('month'); if (was) { const b = root.querySelector('[data-cr-play]'); if (b) b.textContent = '▶'; } } });
   crBind(root); psBind(root); tjBind(root); plBind(root);
   root.addEventListener('change', e => { if (e.target.matches('[data-ps-role]')) { psStop(); ps.role = +e.target.value; ps.hl = null; psRedraw(); } if (e.target.matches('[data-ao-filter]')) aoFilter(root); });
   root.addEventListener('input', e => { if (e.target.matches('[data-ao-filter="text"]')) aoFilter(root);
@@ -995,15 +996,36 @@ function psControls() {
   const seg = (attr, items, cur) => `<span class="cx-seg">${items.map(([k, l]) => `<button data-${attr}="${k}" aria-pressed="${String(k) === String(cur)}">${l}</button>`).join('')}</span>`;
   const P0 = P.position, years = [['all', T('All years', '全部')], ['early', `≤${P0.years[0]}`], ...P0.years.slice(1).map(y => [y, String(y)])], names = PS_NAMES();
   return `<div class="cr-controls">${seg('ps-y', PS_DIMS(), ps.y)}</div>
-    <div class="cr-controls">${seg('ps-mode', [['count', T('Works and share', '数量与比例')], ['growth', T('Growth', '增长')]], ps.mode)}${ps.mode === 'growth' ? `<span class="fd-note">${T('last 12 months against the 12 before', '近 12 个月对前 12 个月')}</span>` : `${psTimeline(years)}`}
+    <div class="cr-controls">${seg('ps-mode', [['count', T('Works and share', '数量与比例')], ['growth', T('Growth', '增长')]], ps.mode)}${ps.mode === 'growth' ? `<span class="fd-note">${T('last 12 months against the 12 before', '近 12 个月对前 12 个月')}</span>` : ''}
       <label class="ps-role">${T('Contribution', '贡献类型')} <select data-ps-role><option value="-1">${T('all', '全部')}</option>${P0.dims.role.map((r, i) => `<option value="${i}"${i === ps.role ? ' selected' : ''}>${esc(names.role[r])}</option>`).join('')}</select></label></div>`;
 }
-function psTimeline(years) {  // time as a slider over the years, like the other parts; "all years" is the default
-  const ys = years.slice(1), k = ys.findIndex(([y]) => String(y) === String(ps.year)), byYear = k >= 0;
-  return `<span class="cx-seg">${[['all', T('All years', '全部年份')], ['year', T('By year', '按年份')]].map(([m, l]) => `<button data-ps-yearmode="${m}" aria-pressed="${(m === 'year') === byYear}">${l}</button>`).join('')}</span>
-    ${byYear ? `<span class="ps-time"><button class="cr-play" data-ps-play aria-label="${T('Play the years', '逐年播放')}">${ps.timer ? '❚❚' : '▶'}</button><span class="ps-track"><input type="range" min="0" max="${ys.length - 1}" value="${k}" data-ps-yearpos aria-label="${T('Year', '年份')}"><span class="ps-ticks">${ys.map(([, l], i) => `<span style="left:${(100 * i / Math.max(1, ys.length - 1)).toFixed(1)}%">${l}</span>`).join('')}</span></span><b>${ys[k][1]}</b></span>` : ''}`;
+// a timeline over years for the global views of Positioning and Countries & institutions (owner, 2026-10-21: the same
+// progress bar as Connection): play, a bar per year (how many works), an invisible slider over the bars, ticks, the year
+function yearTime({id, labels, counts, cur, playing, side = '', note = ''}) {
+  const n = labels.length, mx = Math.max(...counts, 1);
+  return `<div class="cr-time yt-time"><button class="cr-play" data-${id}-play aria-label="${playing ? T('Pause', '暂停') : T('Play year by year', '逐年播放')}">${playing ? '❚❚' : '▶'}</button>
+    <div class="cr-track"><svg class="cr-spark" data-yt-spark viewBox="0 0 ${n} 40" preserveAspectRatio="none" aria-hidden="true">${ytBars(labels, counts, cur, mx)}</svg><input type="range" class="cr-range" min="0" max="${n - 1}" value="${cur < 0 ? n - 1 : cur}" data-${id}-yearpos aria-label="${T('Year', '年份')}">
+      <div class="cr-ticks yt-ticks">${labels.map((l, i) => `<span style="left:${(100 * (i + 0.5) / n).toFixed(2)}%">${esc(l)}</span>`).join('')}</div></div>
+    <div class="cr-time-side" data-yt-side>${side}</div></div>${note ? `<p class="fd-note cr-spark-note">${note}</p>` : ''}`;
 }
-function psStageInner() { return `${psControls()}<div class="cr-figure" data-ps-fig>${psTable()}</div><p class="fd-note">${psNote()}</p>`; }
+const ytBars = (labels, counts, cur, mx) => counts.map((v, i) => { const h = 38 * Math.min(1, v / mx); return `<rect x="${i + 0.2}" y="${(40 - h).toFixed(2)}" width="0.6" height="${h.toFixed(2)}" class="${cur < 0 || i === cur ? 'is-in' : ''}"><title>${esc(labels[i])}: ${num(Math.round(v))}</title></rect>`; }).join('');
+function psYears() {  // the year steps of Positioning, their labels and works per year (under the current contribution type)
+  const P0 = P.position, seq = ['early', ...P0.years.slice(1)], labels = [`≤${P0.years[0]}`, ...P0.years.slice(1).map(String)], counts = seq.map(() => 0);
+  for (const c of P0.codes) { const y = c[7]; if (!y || (ps.role >= 0 && c[5] !== ps.role)) continue; const k = y < P0.years[1] ? 0 : seq.indexOf(y); if (k >= 0) counts[k]++; }
+  return {seq, labels, counts, cur: ps.year === 'all' ? -1 : seq.findIndex(x => String(x) === String(ps.year))};
+}
+function ytUpdate(input, Y, side) {
+  const box = input.closest('.yt-time'); if (!box) return;
+  const sp = box.querySelector('[data-yt-spark]'); if (sp) sp.innerHTML = ytBars(Y.labels, Y.counts, Y.cur, Math.max(...Y.counts, 1));
+  const sd = box.querySelector('[data-yt-side]'); if (sd) sd.innerHTML = side(Y);
+}
+const psSide = ({labels, cur}) => `<b>${cur < 0 ? T('All years', '全部年份') : labels[cur]}</b><span class="cx-seg">${[['all', T('All years', '全部年份')], ['year', T('By year', '按年份')]].map(([m, l]) => `<button data-ps-yearmode="${m}" aria-pressed="${(m === 'year') === (cur >= 0)}">${l}</button>`).join('')}</span>`;
+function psTime() {
+  const Y = psYears();
+  return yearTime({id: 'ps', labels: Y.labels, counts: Y.counts, cur: Y.cur, playing: !!ps.timer, side: psSide(Y),
+    note: T('Bars: works per year (for the contribution type chosen). Click or drag along the bars to show one year; ▶ plays the years.', '柱：每年的工作数（按所选贡献类型）。点击或拖动柱子查看某一年，▶ 逐年播放。')});
+}
+function psStageInner() { return `${psControls()}<div class="cr-figure" data-ps-fig>${psTable()}</div>${ps.mode === 'growth' ? '' : psTime()}<p class="fd-note">${psNote()}</p>`; }
 function psStage() {
   return `<section class="cr-stage ps-stage" data-ps-stage><span class="fd-kicker">${T('THE PLACEMENT TABLE', '全局视图 · 落点表')}</span>${resetBtn('ps')}<h3>${T('Where works sit: agent kind × one dimension', '论文落在哪里：智能体类型 × 一个维度')}</h3>
     <p class="fd-note cr-intro">${T('Columns: the four kinds of agent and all works; rows: the dimension chosen above (contribution type first). Each cell gives works and the share of its column, or their growth. Each finding on the right sets the table to what it describes.', '列是四类智能体和全部工作；行是上方选中的维度（默认贡献类型）。每格给出工作数和在该列的比例，或者增长倍数。右边每条观察都会把表切到它说的那种情况。')}</p>
@@ -2531,14 +2553,21 @@ function plControls() {
   const D = P.players, seg = (attr, items, cur) => `<span class="cx-seg">${items.map(([k, l]) => `<button data-${attr}="${k}" aria-pressed="${String(k) === String(cur)}">${l}</button>`).join('')}</span>`;
   const map = pl.view === 'map';
   return `<div class="cr-controls">${seg('pl-view', [['map', T('Countries', '国家地图')], ['inst', T('Institutions', '机构')]], pl.view)}${map ? `<label class="ps-role">${T('Cluster', '星团')} <select data-pl-cluster><option value="-1">${T('all works, by year', '全部工作，按年')}</option>${P.meta.clusters.map((_, k) => `<option value="${k}"${k === pl.cluster ? ' selected' : ''}>${esc(cl(k))}</option>`).join('')}</select></label>` : ''}</div>
-    ${map && pl.cluster < 0 ? `<div class="cr-controls">${seg('pl-year', D.years.map(y => [y, String(y)]), pl.year)}<button class="cr-play" data-pl-play aria-label="${T('Play the years', '逐年播放')}">${pl.timer ? '❚❚' : '▶'}</button></div>` : ''}`;
+`;
 }
 function plLegend() {
   if (pl.view === 'inst') return `<div class="ps-legend">${Object.values(PL_SECTOR()).map(([l, c]) => `<span><i style="background:${c}"></i>${l}</span>`).join('')}<span>${T('size: benchmarks used by others', '大小：基准被他人使用的次数')}</span></div>`;
   if (pl.cluster >= 0) return `<p class="fd-note">${T(`Bubble: the country's share of ${cl(pl.cluster)} works since ${P.players.instSince}.`, `气泡：该国在 ${P.players.instSince} 年以来“${cl(pl.cluster)}”工作中的份额。`)}</p>`;
   return `<div class="ps-legend">${[[1.3, T('cited above its share', '被引高于份额')], [1, T('about even', '大致相当')], [0.7, T('below', '低于份额')]].map(([r, l]) => `<span><i style="background:${plRatioColor(r)}"></i>${l}</span>`).join('')}<span>${T('size: works; arcs: works shared by two countries', '大小：工作数；弧线：两国机构合作的工作')}</span></div>`;
 }
-function plStageInner() { return `${plControls()}<div class="cr-figure" data-pl-fig>${pl.view === 'map' ? plMapSvg() : plInstSvg()}</div>${plLegend()}<p class="fd-note">${pl.view === 'map' ? T('Located works only; a work with institutions in several countries counts in part for each. The most-cited tenth is computed within each publication year; recent years are still collecting citations.', '只计已定位的工作；一项工作有多国机构时各计一部分。被引前 10% 在每个发表年份内计算；近年的论文引用仍在累积。') : T(`Institutions with at least ${P.players.minWorks} works since ${P.players.instSince} (fractional over a work's institutions). Hover for details.`, `${P.players.instSince} 年以来至少 ${P.players.minWorks} 项工作的机构（一项工作的多个机构各计一部分）。悬停查看详情。`)}</p>`; }
+const plYears = () => { const D = P.players; return {labels: D.years.map(String), counts: D.located, cur: D.years.indexOf(pl.year)}; };
+const plSide = ({labels, cur}) => `<b>${labels[cur] ?? ''}</b>`;
+function plTime() {
+  const Y = plYears();
+  return yearTime({id: 'pl', labels: Y.labels, counts: Y.counts, cur: Y.cur, playing: !!pl.timer, side: plSide(Y),
+    note: T('Bars: located works per publication year. Click or drag along the bars to change the year; ▶ plays the years.', '柱：每个发表年份已定位的工作数。点击或拖动柱子切换年份，▶ 逐年播放。')});
+}
+function plStageInner() { return `${plControls()}<div class="cr-figure" data-pl-fig>${pl.view === 'map' ? plMapSvg() : plInstSvg()}</div>${pl.view === 'map' && pl.cluster < 0 ? plTime() : ''}${plLegend()}<p class="fd-note">${pl.view === 'map' ? T('Located works only; a work with institutions in several countries counts in part for each. The most-cited tenth is computed within each publication year; recent years are still collecting citations.', '只计已定位的工作；一项工作有多国机构时各计一部分。被引前 10% 在每个发表年份内计算；近年的论文引用仍在累积。') : T(`Institutions with at least ${P.players.minWorks} works since ${P.players.instSince} (fractional over a work's institutions). Hover for details.`, `${P.players.instSince} 年以来至少 ${P.players.minWorks} 项工作的机构（一项工作的多个机构各计一部分）。悬停查看详情。`)}</p>`; }
 function plStage() {
   if (pl.year == null) pl.year = P.players.years[P.players.years.length - 1];
   return `<section class="cr-stage pl-stage" data-pl-stage><span class="fd-kicker">${T('THE POWER MAP', '全局视图 · 国家与机构地图')}</span>${resetBtn('pl')}<h3>${T('Who does agent safety: countries and institutions', '谁在做 agent 安全：国家与机构')}</h3>

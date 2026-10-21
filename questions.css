@@ -387,3 +387,8 @@ html[data-theme="light"] .q-mini nav button{color:#4d6863}html[data-theme="light
 
 /* the home evidence box has no number column */
 .ln-qhead.is-solo{grid-template-columns:1fr!important}
+
+/* year timelines on the Positioning and Countries & institutions views (same shape as the Connection timeline) */
+.yt-time{margin:10px 0 2px}
+.yt-ticks span,.yt-ticks span:first-child{transform:translateX(-50%)}
+.yt-time .cr-time-side{gap:6px}

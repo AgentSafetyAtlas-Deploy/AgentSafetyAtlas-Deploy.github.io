@@ -26607,27 +26607,6 @@
       "renewalStatus": "unknown"
     },
     {
-      "id": "buyer-REC-C05-B003-0016",
-      "title": "TrueFoundry Qualitative Test of DeepKeep AI Firewall Custom Guardrail",
-      "date": "2026-08-31",
-      "evidenceLevel": "evaluation_case",
-      "companyId": "biz-deepkeep",
-      "summary": {
-        "en": "TrueFoundry Qualitative Test of DeepKeep AI Firewall Custom Guardrail. See the original source for the attributed claims.",
-        "zh": "TrueFoundry 以 FastAPI wrapper 把 DeepKeep AI Firewall 接入 AI Gateway Custom Guardrail，在 2026-08-20 将六个脚本用例各经网关和 DeepKeep API 运行一次；四类 guardrail 对目标用例触发，clean control 通过，输出 PII 被改写。作者明确称这是定性 POC、非负载测试，也不是原生 provider 集成。"
-      },
-      "sources": [
-        {
-          "url": "https://www.truefoundry.com/blog/wiring-deepkeeps-ai-firewall-into-truefoundry-ai-gateway-as-a-custom-guardrail",
-          "title": "TrueFoundry Qualitative Test of DeepKeep AI Firewall Custom Guardrail"
-        }
-      ],
-      "detailId": "REC-C05-B003-0016",
-      "paymentStatus": "unknown",
-      "contractAmount": null,
-      "renewalStatus": "unknown"
-    },
-    {
       "id": "buyer-REC-C05-B001-0009",
       "title": "Fusion CX unifies protection with CrowdStrike Falcon",
       "date": null,
@@ -26644,6 +26623,27 @@
         }
       ],
       "detailId": "REC-C05-B001-0009",
+      "paymentStatus": "unknown",
+      "contractAmount": null,
+      "renewalStatus": "unknown"
+    },
+    {
+      "id": "buyer-REC-C05-B003-0016",
+      "title": "TrueFoundry Qualitative Test of DeepKeep AI Firewall Custom Guardrail",
+      "date": "2026-08-31",
+      "evidenceLevel": "evaluation_case",
+      "companyId": "biz-deepkeep",
+      "summary": {
+        "en": "TrueFoundry Qualitative Test of DeepKeep AI Firewall Custom Guardrail. See the original source for the attributed claims.",
+        "zh": "TrueFoundry 以 FastAPI wrapper 把 DeepKeep AI Firewall 接入 AI Gateway Custom Guardrail，在 2026-08-20 将六个脚本用例各经网关和 DeepKeep API 运行一次；四类 guardrail 对目标用例触发，clean control 通过，输出 PII 被改写。作者明确称这是定性 POC、非负载测试，也不是原生 provider 集成。"
+      },
+      "sources": [
+        {
+          "url": "https://www.truefoundry.com/blog/wiring-deepkeeps-ai-firewall-into-truefoundry-ai-gateway-as-a-custom-guardrail",
+          "title": "TrueFoundry Qualitative Test of DeepKeep AI Firewall Custom Guardrail"
+        }
+      ],
+      "detailId": "REC-C05-B003-0016",
       "paymentStatus": "unknown",
       "contractAmount": null,
       "renewalStatus": "unknown"
@@ -29380,23 +29380,23 @@
     "patchProposalCount": 62,
     "monitoring": "existing_atlas_updater_bounded_source_checks",
     "sourceMonitoring": {
-      "checkedAt": "2026-10-19T18:10:01+00:00",
+      "checkedAt": "2026-10-20T18:10:01+00:00",
       "scope": "Registered public sources only; discovery is not factual verification",
       "watchlistCount": 35,
       "checkedThisRun": 8,
       "prefetch": {
         "attempted": 4,
         "succeeded": 3,
-        "bytesDownloaded": 404051,
-        "cachedPending": 58,
+        "bytesDownloaded": 408931,
+        "cachedPending": 61,
         "factsPromoted": 0
       },
       "totalRequestsThisRun": 12,
       "successThisRun": 8,
-      "notModifiedThisRun": 0,
-      "bytesDownloaded": 1496756,
-      "bytesAvoided": 0,
-      "entriesScanned": 492,
+      "notModifiedThisRun": 1,
+      "bytesDownloaded": 1739986,
+      "bytesAvoided": 152505,
+      "entriesScanned": 56,
       "newURLsThisRun": 0,
       "pendingCandidates": 230,
       "knownCandidateURLs": 328,
@@ -29457,7 +29457,7 @@
             "id": "candidate-ddc9b61f3b534e8941e4",
             "title": "A Compliance Management Tool",
             "url": "https://www.find-tender.service.gov.uk/Notice/092790-2026",
-            "checkedAt": "2026-10-19T18:10:01+00:00",
+            "checkedAt": "2026-10-20T18:10:01+00:00",
             "kind": "review_candidate",
             "adapter": "html",
             "status": "failed",
@@ -31957,7 +31957,30 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-18T18:10:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00",
+          "prefetch": {
+            "id": "candidate-f22b8d3da173f6fbfd5b",
+            "title": "Learn More",
+            "url": "https://www.lasso.security/resources/breaking-the-model-when-applications-and-agents-misbehave",
+            "checkedAt": "2026-10-20T18:10:01+00:00",
+            "kind": "review_candidate",
+            "adapter": "html",
+            "status": "fetched",
+            "change": "initial_snapshot",
+            "factsPromoted": 0,
+            "bytesDownloaded": 136517,
+            "entriesScanned": 0,
+            "requestURL": "https://www.lasso.security/resources/breaking-the-model-when-applications-and-agents-misbehave",
+            "sourceFingerprint": "ecaf3d36821ee73b33fb9ebc098711ecee863424b27f23e417da606ce6cd7349",
+            "httpStatus": 200,
+            "contentHash": "0366a56dd57920da012ff12dd5a9cb87ef7cac3f5d733876f84c833fb8635ca6",
+            "previousHash": null,
+            "etag": null,
+            "lastModified": "Tue, 20 Oct 2026 18:10:07 GMT",
+            "validatorURL": "https://www.lasso.security/resources/breaking-the-model-when-applications-and-agents-misbehave",
+            "representationBytes": 136517,
+            "readingDepth": "machine_fetch_only"
+          }
         },
         {
           "url": "https://www.lasso.security/resources/case-study-genai-in-healthcare-services",
@@ -31971,7 +31994,30 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-18T18:10:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00",
+          "prefetch": {
+            "id": "candidate-c40d6cc0744579eb8100",
+            "title": "Learn More",
+            "url": "https://www.lasso.security/resources/case-study-genai-in-healthcare-services",
+            "checkedAt": "2026-10-20T18:10:01+00:00",
+            "kind": "review_candidate",
+            "adapter": "html",
+            "status": "fetched",
+            "change": "initial_snapshot",
+            "factsPromoted": 0,
+            "bytesDownloaded": 136523,
+            "entriesScanned": 0,
+            "requestURL": "https://www.lasso.security/resources/case-study-genai-in-healthcare-services",
+            "sourceFingerprint": "a0fce498cc060574873729fa2221e3f01a0656f7ac500758e1c23b76bde329c1",
+            "httpStatus": 200,
+            "contentHash": "bb4c28ebe720c4c9dc6dae035eba55aa8894fc7a25a3877e2a2cab6fac0e79aa",
+            "previousHash": null,
+            "etag": null,
+            "lastModified": "Tue, 20 Oct 2026 18:10:07 GMT",
+            "validatorURL": "https://www.lasso.security/resources/case-study-genai-in-healthcare-services",
+            "representationBytes": 136523,
+            "readingDepth": "machine_fetch_only"
+          }
         },
         {
           "url": "https://www.lasso.security/resources/case-study-us-federal-agency-adopts-genai-responsibly",
@@ -31985,7 +32031,30 @@
           "status": "pending_review",
           "priority": "company",
           "discoveryMode": "incremental",
-          "lastSeen": "2026-10-18T18:10:01+00:00"
+          "lastSeen": "2026-10-18T18:10:01+00:00",
+          "prefetch": {
+            "id": "candidate-ce0bd6eb387194d5a2ef",
+            "title": "Learn More",
+            "url": "https://www.lasso.security/resources/case-study-us-federal-agency-adopts-genai-responsibly",
+            "checkedAt": "2026-10-20T18:10:01+00:00",
+            "kind": "review_candidate",
+            "adapter": "html",
+            "status": "fetched",
+            "change": "initial_snapshot",
+            "factsPromoted": 0,
+            "bytesDownloaded": 135891,
+            "entriesScanned": 0,
+            "requestURL": "https://www.lasso.security/resources/case-study-us-federal-agency-adopts-genai-responsibly",
+            "sourceFingerprint": "5c414d15159b508435066d08ba62347ac2261369a2d5e5a424263e866192d23e",
+            "httpStatus": 200,
+            "contentHash": "b0c4a6274a62b825a38cd3a7b37ff5d70ef5c98d513256f6dddb34195996f71c",
+            "previousHash": null,
+            "etag": null,
+            "lastModified": "Tue, 20 Oct 2026 18:10:10 GMT",
+            "validatorURL": "https://www.lasso.security/resources/case-study-us-federal-agency-adopts-genai-responsibly",
+            "representationBytes": 135891,
+            "readingDepth": "machine_fetch_only"
+          }
         },
         {
           "url": "https://www.lasso.security/resources/chat-about-ai-llm-security-risks-exposed-with-elad-schulman",
@@ -32366,8 +32435,8 @@
           "lastSeen": "2026-10-18T18:10:01+00:00"
         }
       ],
-      "changesThisRun": 0,
-      "pendingChanges": 52,
+      "changesThisRun": 1,
+      "pendingChanges": 53,
       "changeQueue": [
         {
           "id": "ccgp-awards:708cc6665f7db175ca0abff4445231ab323e394df7b8f09c66bd508c06816af2:0fb2f0b04de02ff85c90596997841759fc73e3c7e61f0a792ecd37327081f06c",
@@ -32888,6 +32957,16 @@
           "previousHash": "de2db952b65868b83cc34489cbb64ac5e3e6a7393ae482a5d3e3171ccafe6b10",
           "contentHash": "ce474f7fe562f0bb2ef88356672d12552a7ea3ae6081280e5949d425801f337a",
           "status": "pending_review"
+        },
+        {
+          "id": "ccgp-central-tender-awards:d1d7e13414456f44ca73984a01eaf9e7f4ea35abbc4a42790ce1065b3471690d:7aecf0a4e7c191ac8adb0e74fae26a9872f58229a1e693e33a923a4342ad8b9a",
+          "sourceId": "ccgp-central-tender-awards",
+          "title": "中国政府采购 · 中央中标公告",
+          "url": "https://www.ccgp.gov.cn/cggg/zygg/zbgg/index.htm",
+          "firstSeen": "2026-10-20T18:10:01+00:00",
+          "previousHash": "d1d7e13414456f44ca73984a01eaf9e7f4ea35abbc4a42790ce1065b3471690d",
+          "contentHash": "7aecf0a4e7c191ac8adb0e74fae26a9872f58229a1e693e33a923a4342ad8b9a",
+          "status": "pending_review"
         }
       ],
       "checks": [
@@ -33027,13 +33106,13 @@
           "id": "ccgp-central-tender-awards",
           "title": "中国政府采购 · 中央中标公告",
           "url": "https://www.ccgp.gov.cn/cggg/zygg/zbgg/index.htm",
-          "checkedAt": "2026-10-17T18:10:01+00:00",
+          "checkedAt": "2026-10-20T18:10:01+00:00",
           "kind": "procurement_directory",
           "adapter": "html",
           "status": "fetched",
           "change": "changed_pending_review",
           "factsPromoted": 0,
-          "bytesDownloaded": 20945,
+          "bytesDownloaded": 20258,
           "entriesScanned": 56,
           "requestURL": "https://www.ccgp.gov.cn/cggg/zygg/zbgg/index.htm",
           "sourceFingerprint": "0deb7822251556208fcb4068879e735b301300bbd0393100c37673e4b9de8fd8",
@@ -33041,9 +33120,9 @@
           "lastModified": null,
           "validatorURL": "https://www.ccgp.gov.cn/cggg/zygg/zbgg/index.htm",
           "httpStatus": 200,
-          "contentHash": "d1d7e13414456f44ca73984a01eaf9e7f4ea35abbc4a42790ce1065b3471690d",
-          "previousHash": "6d191f56d03266b103fe0a3072ac76bec6d2ea2af8ac5b4140eec394510ea3a5",
-          "representationBytes": 20945
+          "contentHash": "7aecf0a4e7c191ac8adb0e74fae26a9872f58229a1e693e33a923a4342ad8b9a",
+          "previousHash": "d1d7e13414456f44ca73984a01eaf9e7f4ea35abbc4a42790ce1065b3471690d",
+          "representationBytes": 20258
         },
         {
           "id": "checkpoint-news",
@@ -33093,7 +33172,7 @@
           "id": "dropbox-dash-security",
           "title": "Dropbox Dash · buyer security statement",
           "url": "https://dash.dropbox.com/security",
-          "checkedAt": "2026-10-17T18:10:01+00:00",
+          "checkedAt": "2026-10-20T18:10:01+00:00",
           "kind": "buyer_material",
           "adapter": "html",
           "status": "not_modified",
@@ -33115,7 +33194,7 @@
           "id": "dsit-spend-2024",
           "title": "DSIT · spending files for 2024",
           "url": "https://www.gov.uk/government/publications/dsit-spending-over-25000-in-2024",
-          "checkedAt": "2026-10-17T18:10:01+00:00",
+          "checkedAt": "2026-10-20T18:10:01+00:00",
           "kind": "buyer_payment_publication",
           "adapter": "html",
           "status": "fetched",
@@ -33125,7 +33204,7 @@
           "entriesScanned": 0,
           "requestURL": "https://www.gov.uk/government/publications/dsit-spending-over-25000-in-2024",
           "sourceFingerprint": "bd78d26962f1455b3a01506ce3a0ce3e51fe26e0f8d928f45e4f09988ae36d4b",
-          "etag": "W/\"999f37b3121c1de7d1ad6e553e72df68\"",
+          "etag": "W/\"c7764f076331a1114a280191cf3550ec\"",
           "lastModified": null,
           "validatorURL": "https://www.gov.uk/government/publications/dsit-spending-over-25000-in-2024",
           "httpStatus": 200,
@@ -33137,7 +33216,7 @@
           "id": "dsit-spend-2025",
           "title": "DSIT · spending files for 2025",
           "url": "https://www.gov.uk/government/publications/dsit-spending-over-25000-in-2025",
-          "checkedAt": "2026-10-17T18:10:01+00:00",
+          "checkedAt": "2026-10-20T18:10:01+00:00",
           "kind": "buyer_payment_publication",
           "adapter": "html",
           "status": "fetched",
@@ -33147,7 +33226,7 @@
           "entriesScanned": 0,
           "requestURL": "https://www.gov.uk/government/publications/dsit-spending-over-25000-in-2025",
           "sourceFingerprint": "df95b9f784be074011e4358d8034b548e721cc277965c1dad5d35539d26ecc71",
-          "etag": "W/\"7ac13bd75109463f5f3e5765a94bbb96\"",
+          "etag": "W/\"567cd8f37dd10727315b16da2a20af63\"",
           "lastModified": null,
           "validatorURL": "https://www.gov.uk/government/publications/dsit-spending-over-25000-in-2025",
           "httpStatus": 200,
@@ -33159,7 +33238,7 @@
           "id": "dsit-spend-collection",
           "title": "DSIT · monthly spending collection",
           "url": "https://www.gov.uk/government/collections/dsit-departmental-spending-over-25000",
-          "checkedAt": "2026-10-17T18:10:01+00:00",
+          "checkedAt": "2026-10-20T18:10:01+00:00",
           "kind": "buyer_payment_publication",
           "adapter": "html",
           "status": "fetched",
@@ -33169,7 +33248,7 @@
           "entriesScanned": 0,
           "requestURL": "https://www.gov.uk/government/collections/dsit-departmental-spending-over-25000",
           "sourceFingerprint": "24913f360fec4195809adae31ed185b4cd7746f4d28aca5700a866699a9db464",
-          "etag": "W/\"2bcf5094381ecafd5edcc7c76a34c7dc\"",
+          "etag": "W/\"56ea0cfb6496dae7a03730e3490ee4c3\"",
           "lastModified": null,
           "validatorURL": "https://www.gov.uk/government/collections/dsit-departmental-spending-over-25000",
           "httpStatus": 200,
@@ -33357,45 +33436,45 @@
           "id": "price-lasso-employees-marketplace",
           "title": "lasso-employees · Marketplace seller pricing table",
           "url": "https://aws.amazon.com/marketplace/pp/prodview-7ygm7pa3k5agg",
-          "checkedAt": "2026-10-16T18:10:01+00:00",
+          "checkedAt": "2026-10-20T18:10:01+00:00",
           "kind": "price_observation",
           "adapter": "marketplace_price_table",
           "status": "fetched",
           "change": "unchanged",
           "factsPromoted": 0,
-          "bytesDownloaded": 469911,
+          "bytesDownloaded": 471703,
           "entriesScanned": 0,
           "requestURL": "https://aws.amazon.com/marketplace/pp/prodview-7ygm7pa3k5agg",
           "sourceFingerprint": "0e1a7d5c7a45417c203c99a05af84e49bea5f47f56684195316587ccc8a46853",
-          "etag": "\"68a9dfcd928cdb4e929862284a207a24\"",
+          "etag": "\"38a0ee845ea6eeb3b6fa58d1da7f3f02\"",
           "lastModified": null,
           "validatorURL": "https://aws.amazon.com/marketplace/pp/prodview-7ygm7pa3k5agg",
           "httpStatus": 200,
           "contentHash": "b2f10b5b67daaa84175daf43f023fb762ab44d389040d51bb7971aa3905401f6",
           "previousHash": "b2f10b5b67daaa84175daf43f023fb762ab44d389040d51bb7971aa3905401f6",
-          "representationBytes": 469911
+          "representationBytes": 471703
         },
         {
           "id": "price-lasso-gateway-marketplace",
           "title": "lasso-gateway · Marketplace seller pricing table",
           "url": "https://aws.amazon.com/marketplace/pp/prodview-noabqkrq6zbq4",
-          "checkedAt": "2026-10-16T18:10:01+00:00",
+          "checkedAt": "2026-10-20T18:10:01+00:00",
           "kind": "price_observation",
           "adapter": "marketplace_price_table",
           "status": "fetched",
           "change": "unchanged",
           "factsPromoted": 0,
-          "bytesDownloaded": 475387,
+          "bytesDownloaded": 476393,
           "entriesScanned": 0,
           "requestURL": "https://aws.amazon.com/marketplace/pp/prodview-noabqkrq6zbq4",
           "sourceFingerprint": "d552cf232b1ec9a621996c980d3df1192e6caa11b6155d504d8f5054b2d61bf4",
-          "etag": "\"f3ab228548fb3795a629a87e46834482\"",
+          "etag": "\"c4303d506aa6dd57694ee61a5b82c400\"",
           "lastModified": null,
           "validatorURL": "https://aws.amazon.com/marketplace/pp/prodview-noabqkrq6zbq4",
           "httpStatus": 200,
           "contentHash": "fb3cc3bca684162e65ef52008b2d4229c8612435f6a92d8583657a0ab9cf83ed",
           "previousHash": "fb3cc3bca684162e65ef52008b2d4229c8612435f6a92d8583657a0ab9cf83ed",
-          "representationBytes": 475387
+          "representationBytes": 476393
         },
         {
           "id": "price-noma-marketplace",
@@ -33445,23 +33524,23 @@
           "id": "price-witness-marketplace",
           "title": "witness · Marketplace seller pricing table",
           "url": "https://aws.amazon.com/marketplace/pp/prodview-5h2rg6gvjyywg",
-          "checkedAt": "2026-10-16T18:10:01+00:00",
+          "checkedAt": "2026-10-20T18:10:01+00:00",
           "kind": "price_observation",
           "adapter": "marketplace_price_table",
           "status": "fetched",
           "change": "unchanged",
           "factsPromoted": 0,
-          "bytesDownloaded": 486430,
+          "bytesDownloaded": 490377,
           "entriesScanned": 0,
           "requestURL": "https://aws.amazon.com/marketplace/pp/prodview-5h2rg6gvjyywg",
           "sourceFingerprint": "b14f33fcd98ca366d10a3c25e29f60f2338bb70f7c1d4ec5b0f029d75a850be1",
-          "etag": "\"d343e2c6442a33822e6321fa631fb172\"",
+          "etag": "\"8e2eb4368c3fcec611cdb2fff426d734\"",
           "lastModified": null,
           "validatorURL": "https://aws.amazon.com/marketplace/pp/prodview-5h2rg6gvjyywg",
           "httpStatus": 200,
           "contentHash": "96f61fb412926556dc2841335657a5a2c27d8f22604a0be1dfb89ebf1a8707ea",
           "previousHash": "96f61fb412926556dc2841335657a5a2c27d8f22604a0be1dfb89ebf1a8707ea",
-          "representationBytes": 486430
+          "representationBytes": 490377
         },
         {
           "id": "price-zenity-marketplace",
