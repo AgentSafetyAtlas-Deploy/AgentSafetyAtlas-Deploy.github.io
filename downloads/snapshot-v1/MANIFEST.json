@@ -2,14 +2,14 @@
  "version": "v1",
  "status": "draft",
  "release": "R071",
- "analysisVersion": "A7.1",
+ "analysisVersion": "A7.2",
  "builtOn": "2026-10-22",
  "counts": {
   "works": 8693,
   "withdrawnKept": 14,
   "citationRoutes": 50776,
   "citationWithSentence": 42347,
-  "benchmarkUseRoutes": 836,
+  "benchmarkUseRoutes": 832,
   "institutions": 1602,
   "candidateClusters": 235,
   "summariesLeftOut": 0
@@ -23,12 +23,12 @@
   {
    "path": "datacard.json",
    "bytes": 4472,
-   "sha256": "b5ed6d16025350ebcef24d3cc1a3804621d92adf47207b7e7c685b6fc6ffb247"
+   "sha256": "63be71d3e9a93b265ee28185b8d0f11eb63302c9a367b038ddb956e022fe8084"
   },
   {
    "path": "findings.json",
-   "bytes": 2912186,
-   "sha256": "f39760386d7ff587502fd83cc98c3d7017384ffb5dde05ac55fcc2f603527160"
+   "bytes": 2910663,
+   "sha256": "fb38b7aed5385e217b5c9fd5c392005022707a7619317620541d682699338056"
   },
   {
    "path": "institutions.jsonl",
@@ -37,8 +37,8 @@
   },
   {
    "path": "paper-inputs/benchmark-routes.jsonl",
-   "bytes": 762253,
-   "sha256": "a5f913bd2b5ad6e22f1f868694fcec062f447d65ecaee8a6a2812cf4293893ed"
+   "bytes": 760942,
+   "sha256": "a450456136f56f58d31b3eab3978db0d9e0bf2fac29d013fee48879f910e0607"
   },
   {
    "path": "paper-inputs/benchmarks.json",
@@ -152,33 +152,33 @@
   },
   {
    "path": "relations-02.jsonl",
-   "bytes": 4208038,
-   "sha256": "eaf488d592ad3862b265a0b75feb898bfd840adf1504c52d20404d818162b072"
+   "bytes": 4206419,
+   "sha256": "7817a57f3ab855b407fc5154d895c8fbe9887f50248d987a9bcda04b82e38079"
   },
   {
    "path": "scripts/__pycache__/cites_analysis.cpython-310.pyc",
    "bytes": 23896,
-   "sha256": "c338db078972764d00bed191edd8df232885906eac8d83926c9015c424cc1b9f"
+   "sha256": "63808f381d8ddbc0bc9934d502e9812be6005765eb3433365f564ac70e5e65bf"
   },
   {
    "path": "scripts/__pycache__/evidence_analysis.cpython-310.pyc",
    "bytes": 41071,
-   "sha256": "47ac94d5040edb7166b118762201b2d70bf05c73db51e85937dd6ffbcc475438"
+   "sha256": "a1b97b4b5cc8915c8a29b037583e9c0a8c3a5260592a665a9a37298adadedeaf"
   },
   {
    "path": "scripts/__pycache__/paper_analysis.cpython-310.pyc",
    "bytes": 132018,
-   "sha256": "5800f47b6b2c2db81521c08dde2db447bdd83a0237c3c0a115ed4bf214c96d89"
+   "sha256": "8e6196acd84c5b6e3664ec215ad12f4f7e28f869e32e939f0e3f8a5f5f202fc9"
   },
   {
    "path": "scripts/__pycache__/protocol_analysis.cpython-310.pyc",
    "bytes": 50365,
-   "sha256": "54220528248c399af87a7a62951118e688f18de9fc4340583a78153ee42f9cf7"
+   "sha256": "c26dd5209402ac1a47c2bb14a4cbcaa99d2c233e120b29f274da13e825a4ef12"
   },
   {
    "path": "scripts/build_findings.py",
-   "bytes": 142750,
-   "sha256": "dbbf0e6ea841de6144e119102e10508fec752e75601eb0915e03c0129adba179"
+   "bytes": 143781,
+   "sha256": "f95268031a2ee5c3c72cc4ee9ae6c6e89c7110f856109f522957da5c2444c598"
   },
   {
    "path": "scripts/build_snapshot.py",
@@ -233,7 +233,7 @@
   {
    "path": "starmap-bands.json",
    "bytes": 124374,
-   "sha256": "4d2fa28e1bfb4b5deeb679ae9e2089489a5b56910512fb78dc30848c28c984e7"
+   "sha256": "a67c781b0f443358bac86382a67c0dc657111b470414c4f34ddce9a2fdd86794"
   },
   {
    "path": "works.jsonl",

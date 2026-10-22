@@ -1,5 +1,5 @@
 {
- "analysisVersion": "A7.1",
+ "analysisVersion": "A7.2",
  "release": "R071",
  "questions": {
   "F1": {
@@ -45,7 +45,7 @@
    ]
   },
   "F15": {
-   "rows": 2653,
+   "rows": 2650,
    "unit": [
     "work using an Atlas benchmark (last two years) or 2026 paper with model roles",
     "使用 Atlas 基准的工作（近两年）或有模型角色的 2026 年论文"
@@ -80,7 +80,7 @@
    ]
   },
   "F2": {
-   "rows": 150,
+   "rows": 149,
    "unit": [
     "pair of clusters (main cluster of each work)",
     "星团对（按每项工作的主星团）"
@@ -129,7 +129,7 @@
    ]
   },
   "F4": {
-   "rows": 388,
+   "rows": 386,
    "unit": [
     "work using an Atlas benchmark",
     "使用 Atlas 基准的工作"
@@ -185,7 +185,7 @@
    ]
   },
   "J3": {
-   "rows": 6961,
+   "rows": 6957,
    "unit": [
     "pair of a work and an Atlas benchmark",
     "“工作—Atlas 基准”关系"
@@ -262,7 +262,7 @@
    ]
   },
   "P3b": {
-   "rows": 31083,
+   "rows": 31082,
    "unit": [
     "ordered pair of candidate clusters joined by a route",
     "有途径相连的有序方向对"

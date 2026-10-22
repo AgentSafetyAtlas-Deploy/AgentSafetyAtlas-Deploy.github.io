@@ -1,7 +1,34 @@
 {
- "current": "A7.1",
+ "current": "A7.2",
  "policy": "The observation report is versioned apart from the data: a candidate is computed once a month and published after review.",
  "versions": [
+  {
+   "analysisVersion": "A7.2",
+   "baseRelease": "R071",
+   "dataCutoff": "2026-10-15",
+   "computedOn": "2026-10-22",
+   "publishedOn": "2026-10-22",
+   "note": "A7.1 with benchmark names that the citing work defines for itself no longer read as uses of the benchmark (WASP, CATCH, ASTRA, BrowserART)",
+   "headline": {
+    "Works analysed": 8679,
+    "Citation routes": 50776,
+    "Routes with a sentence (%)": 83.7,
+    "Candidate clusters": 235,
+    "Benchmarks used by others": 141,
+    "Countries": 87,
+    "Doubling time (months)": 9.2,
+    "Cross-tradition citations (%)": 6.9,
+    "… expected from sizes (%)": 44.8,
+    "Boundary works (%)": 1.5,
+    "Held-out surveys": 56,
+    "Salience Recall@50": 0.21,
+    "Citations Recall@50": 0.192,
+    "Salience new work in top 20": 0.43,
+    "Citations new work in top 20": 0.002,
+    "New-star share (%)": 37.0,
+    "Band top-10 overlap": 0.04
+   }
+  },
   {
    "analysisVersion": "A7.1",
    "baseRelease": "R071",
