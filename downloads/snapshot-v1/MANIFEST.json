@@ -2,14 +2,14 @@
  "version": "v1",
  "status": "draft",
  "release": "R071",
- "analysisVersion": "A7",
+ "analysisVersion": "A7.1",
  "builtOn": "2026-10-22",
  "counts": {
   "works": 8693,
   "withdrawnKept": 14,
   "citationRoutes": 50776,
   "citationWithSentence": 42347,
-  "benchmarkUseRoutes": 696,
+  "benchmarkUseRoutes": 836,
   "institutions": 1602,
   "candidateClusters": 235,
   "summariesLeftOut": 0
@@ -23,12 +23,12 @@
   {
    "path": "datacard.json",
    "bytes": 4472,
-   "sha256": "82f7f3d631f3a9eb85e3f7b2ca23dca38c5f54770817039c81a4a1a203982731"
+   "sha256": "b5ed6d16025350ebcef24d3cc1a3804621d92adf47207b7e7c685b6fc6ffb247"
   },
   {
    "path": "findings.json",
-   "bytes": 2889075,
-   "sha256": "3e439adb792c201d684c2d75098c23280333a03490193efbae602bfe34f28576"
+   "bytes": 2912186,
+   "sha256": "f39760386d7ff587502fd83cc98c3d7017384ffb5dde05ac55fcc2f603527160"
   },
   {
    "path": "institutions.jsonl",
@@ -37,8 +37,8 @@
   },
   {
    "path": "paper-inputs/benchmark-routes.jsonl",
-   "bytes": 637507,
-   "sha256": "5ed4c5294c805a93bd66b5273bb8b2b9ab3cabf46f20908e69d8c75a2bbb54fc"
+   "bytes": 762253,
+   "sha256": "a5f913bd2b5ad6e22f1f868694fcec062f447d65ecaee8a6a2812cf4293893ed"
   },
   {
    "path": "paper-inputs/benchmarks.json",
@@ -52,8 +52,8 @@
   },
   {
    "path": "paper-inputs/labels/adaptive_v2.jsonl",
-   "bytes": 337442,
-   "sha256": "50e055402cc91b8dedc928560cfc7aed54743b6df7f4652e19738e6645a81425"
+   "bytes": 386498,
+   "sha256": "4da8d6a1c8282493aa5243c862e74245fe9549c2fd3a6e64f383e5b262f1291c"
   },
   {
    "path": "paper-inputs/labels/axes.jsonl",
@@ -62,13 +62,13 @@
   },
   {
    "path": "paper-inputs/labels/boundary_v1.jsonl",
-   "bytes": 1199271,
-   "sha256": "b4591f180c48d94097d4a4a0509aa25258f7ffdc1bba3fd6c1ed6d766d2161ae"
+   "bytes": 1319316,
+   "sha256": "1d033c12b38a74d7d17fe0e9474a69f6ba1c21ed0e10d9c6f0fd84b9bf3c1fe4"
   },
   {
    "path": "paper-inputs/labels/chains_v2.jsonl",
-   "bytes": 543861,
-   "sha256": "d2b36387545b99ef254c5d7abec2c4ae84c864ebf94d344e8efabcc869350864"
+   "bytes": 615535,
+   "sha256": "a86e55402d6893b2013d5c7dade7dc9768c7ba341a772cf6c55eccff4b513c1e"
   },
   {
    "path": "paper-inputs/labels/cites_first.jsonl",
@@ -92,8 +92,8 @@
   },
   {
    "path": "paper-inputs/labels/fill_v1.jsonl",
-   "bytes": 429636,
-   "sha256": "37f7a6db25902d9793beda566e0ea3393715e51a0785376add7318aaeaaa4567"
+   "bytes": 548387,
+   "sha256": "7fdf26ddc544b69e744a97e3d105737ac689c1aa60e9c841a31e8d10e6050702"
   },
   {
    "path": "paper-inputs/labels/inherit_v1.jsonl",
@@ -102,8 +102,8 @@
   },
   {
    "path": "paper-inputs/labels/judgecheck_v2.jsonl",
-   "bytes": 304234,
-   "sha256": "40ffd2f7ad131cd3fa2bf7ab74ee5c5e07c211fd19feff838200e7ae1ce5fb2c"
+   "bytes": 350835,
+   "sha256": "bdcf9c5bd69589b791da05f8eb5c997d8b8431659c0e86144b4bc73d123f72c1"
   },
   {
    "path": "paper-inputs/labels/novelty_v1.jsonl",
@@ -112,13 +112,13 @@
   },
   {
    "path": "paper-inputs/labels/protocol.jsonl",
-   "bytes": 12478508,
-   "sha256": "715229ade54697f02319873680a96c0d61bf7c3f7afc35e3174467bd02980f0d"
+   "bytes": 13907472,
+   "sha256": "7c721ed2e8d8af9032f2a21b15e879eacda3f179e027889b173ff33e07054390"
   },
   {
    "path": "paper-inputs/labels/protocol_older.jsonl",
-   "bytes": 4531810,
-   "sha256": "01d68f26d04dc0d905fd540db75981f8c1dfda1d3b2e6afecac686547c2f3a7c"
+   "bytes": 5076784,
+   "sha256": "288ce1704ee57fb717cec32cbc886979225a3697ac31701637b17efe5011237e"
   },
   {
    "path": "paper-inputs/lines.json",
@@ -142,8 +142,8 @@
   },
   {
    "path": "paper-inputs/works.jsonl",
-   "bytes": 7720303,
-   "sha256": "8d46a3e666b57ac4e2d8e6bbb894744a2fdae56e00270c987b525fb4f5e0f732"
+   "bytes": 7720164,
+   "sha256": "382f4c40b20f7dfe2430daecfec5262942e869ddd258e0f556a34a8122cef8cf"
   },
   {
    "path": "relations-01.jsonl",
@@ -152,33 +152,33 @@
   },
   {
    "path": "relations-02.jsonl",
-   "bytes": 4151124,
-   "sha256": "6818b5e6754175c8aec7420b5ce14350f3d34ea4798cf621dc3e95d51db5f3e8"
+   "bytes": 4208038,
+   "sha256": "eaf488d592ad3862b265a0b75feb898bfd840adf1504c52d20404d818162b072"
   },
   {
    "path": "scripts/__pycache__/cites_analysis.cpython-310.pyc",
-   "bytes": 23894,
-   "sha256": "e40d10d318b831cd96c4f13913babe83f0ccf18bb6f8b3cd3bc535448c9e5d06"
+   "bytes": 23896,
+   "sha256": "c338db078972764d00bed191edd8df232885906eac8d83926c9015c424cc1b9f"
   },
   {
    "path": "scripts/__pycache__/evidence_analysis.cpython-310.pyc",
-   "bytes": 41069,
-   "sha256": "93f7702b6ae20d1019461ed03856c0d76ef3867548dcd8fa9f6e6a5649d77b1d"
+   "bytes": 41071,
+   "sha256": "47ac94d5040edb7166b118762201b2d70bf05c73db51e85937dd6ffbcc475438"
   },
   {
    "path": "scripts/__pycache__/paper_analysis.cpython-310.pyc",
-   "bytes": 132001,
-   "sha256": "0019a0eec379fcf40e72239f7483d8dba338a05ae4605771e44ca3c080b3684e"
+   "bytes": 132018,
+   "sha256": "5800f47b6b2c2db81521c08dde2db447bdd83a0237c3c0a115ed4bf214c96d89"
   },
   {
    "path": "scripts/__pycache__/protocol_analysis.cpython-310.pyc",
-   "bytes": 50363,
-   "sha256": "6461e7f7a4db83eae9372d13d94e5f8ef578544f63b852f496658457253e2bbe"
+   "bytes": 50365,
+   "sha256": "54220528248c399af87a7a62951118e688f18de9fc4340583a78153ee42f9cf7"
   },
   {
    "path": "scripts/build_findings.py",
-   "bytes": 139530,
-   "sha256": "21f540bd7631a4f6c5687b7f5c02b2716a25b04ec4004e947b1b084a926d0c5b"
+   "bytes": 142750,
+   "sha256": "dbbf0e6ea841de6144e119102e10508fec752e75601eb0915e03c0129adba179"
   },
   {
    "path": "scripts/build_snapshot.py",
@@ -217,8 +217,8 @@
   },
   {
    "path": "scripts/paper_analysis.py",
-   "bytes": 109114,
-   "sha256": "86f6c541845c2b46fd75d43aa95d307df310d306b8033c5fb73d76d7829c0d52"
+   "bytes": 109236,
+   "sha256": "3bf48d574d03896a6986b91d42404b072c19b6853cd837d856189820b49a3481"
   },
   {
    "path": "scripts/protocol_analysis.py",
@@ -232,8 +232,8 @@
   },
   {
    "path": "starmap-bands.json",
-   "bytes": 124188,
-   "sha256": "6be73abd9ae0489391e74c5fc0cbcfbf2e1e0b4e6661a78227b4fcecedc1b61d"
+   "bytes": 124374,
+   "sha256": "4d2fa28e1bfb4b5deeb679ae9e2089489a5b56910512fb78dc30848c28c984e7"
   },
   {
    "path": "works.jsonl",

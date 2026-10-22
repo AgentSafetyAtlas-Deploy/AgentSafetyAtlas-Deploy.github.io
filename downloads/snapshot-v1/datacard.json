@@ -13,14 +13,14 @@
   "withdrawnKept": 14,
   "citationRoutes": 50776,
   "citationWithSentence": 42347,
-  "benchmarkUseRoutes": 696,
+  "benchmarkUseRoutes": 836,
   "institutions": 1602,
   "candidateClusters": 235,
   "summariesLeftOut": 0
  },
  "relationTypes": {
   "cites": "A's Semantic Scholar reference list contains B; contexts and intents are Semantic Scholar's when available (record-level otherwise)",
-  "uses_benchmark": "a sentence in A's full text evaluates on, adopts or reports results on benchmark B; spot-check precision 85.9% (n = 78), roughly half of uses found"
+  "uses_benchmark": "a sentence in A's full text evaluates on, adopts or reports results on benchmark B; spot-check precision 87.0% (n = 77), roughly half of uses found"
  },
  "definitions": {
   "newStarMonths": 6,
