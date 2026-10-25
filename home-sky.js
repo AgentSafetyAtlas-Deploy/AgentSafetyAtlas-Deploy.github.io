@@ -49,7 +49,7 @@ export function mountSky(host, ctx) {
   const resize = () => {
     const r = canvas.getBoundingClientRect(); dpr = Math.min(2, window.devicePixelRatio || 1); W = r.width; H = r.height;
     canvas.width = W * dpr; canvas.height = H * dpr;
-    const wide = W > 900; CX = wide ? W * 0.63 : W / 2; CY = wide ? H * 0.5 : H * 0.66; R = wide ? Math.min(W * 0.34, H * 0.5) : Math.min(W * 0.6, H * 0.27);
+    const wide = W > 900; CX = wide ? W * 0.64 : W / 2; CY = wide ? H * 0.47 : H * 0.66; R = wide ? Math.min(W * 0.3, H * 0.6) : Math.min(W * 0.6, H * 0.27);
   };
   function frame(now) {
     const dt = Math.min(0.05, (now - (st.last || now)) / 1000); st.last = now;

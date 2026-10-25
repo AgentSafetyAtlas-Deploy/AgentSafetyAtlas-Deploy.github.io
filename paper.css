@@ -110,6 +110,13 @@ html[data-theme="light"] .pp{--pp-pois:#1E4D49;--pp-clean:#8DBDB6;--pp-c1:#c9dfd
 .pp-flowmini .ar{color:var(--rq-muted);padding-top:6px}
 .pp-f4h{border-bottom:0;padding:0}
 .pp-f4h .rec{font-size:12px;font-style:italic;line-height:1.2}
+/* home hero (owner, 10-25: the words covered the sky): smaller title and copy column, compact legend */
+.view-home .hs-copy{width:min(440px,calc(100vw - 48px))}
+.view-home .hs-copy h1{font-size:clamp(28px,3.4vw,46px);letter-spacing:-1px;margin:12px 0 14px}
+.view-home .hs-copy p{font-size:14.5px;line-height:1.6;margin-bottom:18px}
+.view-home .hs-btn{padding:8px 15px;font-size:13px}
+.view-home .hs-legend{max-width:min(500px,46vw);gap:5px}
+.view-home .hs-legend button{padding:3px 9px;font-size:11px}
 /* home guide (home.js) */
 .hs-toggle{display:inline-flex;align-items:center;gap:8px;margin-top:10px;font-size:13px;color:#cfe1e2;cursor:pointer}
 .hs-toggle input{accent-color:#d4e966;width:15px;height:15px}
