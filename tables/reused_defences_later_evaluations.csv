@@ -1,0 +1,6 @@
+defence,later_evaluation,reported_security_and_utility,what_it_establishes
+Spotlighting,"Gemini 2.0, data-marking variant",Non-adaptive → adaptive ASR: Actor-Critic 18.0% → 82.4%; Beam Search 13.0% → 64.8%; TAP 75.2% → 82.2%.,Attacker adaptation changes the protection observed.
+CaMeL,"ADI, three configurations","ASR: No Policy 25.0%, Normal 23.1%, Strict 0%. Strict utility 36.5%; undefended 86.5%.",Flow tracking and implementation details affect protection and its utility cost.
+CaMeL,"AgentDyn, dynamic tasks",Clean-task utility 0% across four tested models.,No clean-task utility in these dynamic settings.
+Progent,AutoDojo,Adaptive ASR 0.5–7.7%; clean-task utility 57.9–78.9% across five models.,Permission enforcement keeps protection in these instruction-injection settings.
+Progent,ADI,ASR 22.2%; clean-task utility 81.4%.,The evaluated policy remains open to some data-injection attacks.

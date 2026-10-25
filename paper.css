@@ -1,5 +1,5 @@
 /* the paper pages carry their own heading */
-.view-rq1 .pagehead,.view-rq2 .pagehead,.view-rq3 .pagehead,.view-evidence .pagehead,.view-method .pagehead,.view-versions .pagehead{display:none}
+.view-evolution .pagehead,.view-foundations .pagehead,.view-opportunities .pagehead,.view-evidence .pagehead,.view-method .pagehead,.view-versions .pagehead{display:none}
 .pp-head{padding:6px 0 20px;border-bottom:1px solid var(--rq-line)}
 .pp-head h1{font-size:clamp(26px,3.2vw,38px);line-height:1.15;margin:.25em 0 .4em;max-width:30ch}
 .pp-head>p{color:var(--rq-muted);max-width:90ch;line-height:1.6;font-size:15px}
@@ -141,3 +141,35 @@ html[data-theme="light"] .pp{--pp-pois:#1E4D49;--pp-clean:#8DBDB6;--pp-c1:#c9dfd
 .hm-foot{margin-top:24px;font-size:13px;color:var(--muted,#b5c2c2)}
 .linkish{background:none;border:0;color:#d4e966;cursor:pointer;font:inherit;font-weight:600;padding:0}
 @media (max-width:640px){.pp-segrow,.pp-fig4 .pp-segrow{grid-template-columns:100px 1fr 90px}.pp-fig4 .rec{display:none}.pp-design dl{grid-template-columns:1fr}.pp-downloads li{grid-template-columns:1fr}}
+
+/* second pass (owner, 10-25): conclusion + chart, data folded away */
+.pp-sec h2{font-family:inherit;font-weight:650;font-size:clamp(19px,2vw,24px);line-height:1.3;max-width:52ch}
+.pp-more{margin:14px 0 4px;border-top:1px solid var(--rq-line);padding-top:8px}
+.pp-more>summary{cursor:pointer;color:var(--rq-accent);font-size:13px;font-weight:600;list-style:none}
+.pp-more>summary::before{content:"＋ "}.pp-more[open]>summary::before{content:"－ "}
+.pp-div{display:grid;gap:5px;max-width:860px}
+.pp-divrow{display:grid;grid-template-columns:230px 1fr 1fr 56px;align-items:center;gap:0;font-size:13px}
+.pp-divrow .lab{display:flex;align-items:center;gap:7px;padding-right:10px}
+.pp-divrow .lab i{width:9px;height:9px;border-radius:50%;flex:none}
+.pp-divrow .neg,.pp-divrow .pos{display:flex;height:14px;background:var(--pp-track)}
+.pp-divrow .neg{justify-content:flex-end;border-right:1px solid var(--rq-muted)}
+.pp-divrow .neg>span,.pp-divrow .pos>span{display:block;height:100%;opacity:.85;filter:saturate(.7)}
+.pp-divrow .num{text-align:right;font-variant-numeric:tabular-nums}
+.pp-cases3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.pp-case-when{font-size:12px;font-weight:700;color:var(--rq-accent);letter-spacing:.04em}
+.pp-case h3{margin:2px 0 6px}
+.pp-case-n{margin:0 0 6px;color:var(--rq-muted);font-size:13px}.pp-case-n b{font-size:22px;color:var(--rq-ink);margin-right:4px}
+.pp-chain{display:flex;align-items:stretch;gap:0;overflow-x:auto}
+.pp-chain-step{flex:1 1 0;min-width:170px;background:var(--rq-soft);border-radius:10px;padding:10px 12px;font-size:13px}
+.pp-chain-step b{display:block;margin-bottom:6px;color:var(--rq-ink)}
+.pp-chain-step ul{list-style:none;padding:0;margin:0;display:grid;gap:3px}
+.pp-chain-link{flex:0 0 46px;display:flex;align-items:center;justify-content:center;color:var(--rq-muted);font-size:18px}
+.pp-chain-link.is-gap{flex-basis:96px;border-top:2px dashed #e0a24f;border-bottom:2px dashed #e0a24f;margin:22px 4px;color:#e0a24f;font-size:12px;font-weight:700;text-align:center;line-height:1.25}
+.pp-matrix td.pp-mark{text-align:center;font-size:16px;font-weight:700}
+.pp-mark.is-yes{color:#7cc0b2}.pp-mark.is-no{color:#e08a6a}.pp-mark.is-part{color:#d9c36a}
+@media (max-width:640px){.pp-divrow{grid-template-columns:120px 1fr 1fr 44px}.pp-chain{flex-direction:column}.pp-chain-link{flex-basis:28px}.pp-chain-link.is-gap{margin:4px 0;flex-basis:40px}}
+.pp-ep table{table-layout:fixed}
+.pp-ep th{width:62px}
+.pp-ep td.num{width:72px}
+.pp-ep td:not(.num){padding:4px 6px}
+.pp-epbar{width:100%}

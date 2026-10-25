@@ -9,12 +9,12 @@
   var add=function(u,m){var l=d.createElement('link');if(m){l.rel='modulepreload';l.href=u}else{l.rel='preload';l.as='fetch';l.href=u;l.crossOrigin='anonymous'}d.head.appendChild(l)};
   ['./data/atlas.json','./data/land.json','./data/topic-taxonomy.json','./data/borders.json','./data/pipeline-summary.json'].forEach(function(u){add(u)});
   if(zh)add('./data/translations.zh.json');
-  if(h==='home'){add('./data/starmap.json');add('./data/starmap-3d.json');add('./data/paper-home.json');add('./home.js',1);add('./home-sky.js',1)}
-  if(['rq1','rq2','rq3','evidence','method','versions'].indexOf(h)>=0){add('./data/paper-'+h+'.json');add('./paper.js',1)}}catch(e){}})();</script>
+  if(h==='home'){add('./data/starmap.json');add('./data/starmap-3d.json');add('./data/page-home.json');add('./home.js',1);add('./home-sky.js',1)}
+  if(['evolution','foundations','opportunities','evidence','method','versions'].indexOf(h)>=0){add('./data/page-'+h+'.json');add('./paper.js',1)}}catch(e){}})();</script>
 <meta name="robots" content="noindex, nofollow">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#142526">
-  <meta name="description" content="Agent Safety Atlas: the field map, evidence records and checks behind the paper on research trends and opportunities in agent safety.">
+  <meta name="description" content="Agent Safety Atlas: a frozen field map of agent-safety research, with findings, evidence records and checks.">
   <title>Agent Safety Atlas</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="icon" href="./favicon-32.png" type="image/png" sizes="32x32">

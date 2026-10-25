@@ -1,5 +1,6 @@
-// The paper pages of the review copy (owner, 2026-10-25): RQ1, RQ2, RQ3, Evidence, Method, Data & versions.
-// Each page is a static JSON file written once from the frozen results (review/paper_data.py); this module only draws it.
+// Findings pages of the frozen release (owner, 2026-10-25): research evolution, foundations, opportunities, evidence, method,
+// data & versions. Each section is one conclusion with a chart; data and notes sit in a collapsed box. Pages are static JSON
+// files written once from the frozen results (review/site_data.py); this module only draws them.
 const cache = {};
 let recs = null, LANG = 'en';
 const tables = new Map();
@@ -10,17 +11,17 @@ const pctf = (v, d = 0) => `${(100 * v).toFixed(d)}%`;
 const get = n => fetch(`./data/${n}`).then(r => { if (!r.ok) throw Error(n); return r.json(); });
 
 export async function loadPaper(v) {
-  if (!cache[v]) cache[v] = await get(`paper-${v}.json`);
-  if (!cache.home) cache.home = await get('paper-home.json');
+  if (!cache[v]) cache[v] = await get(`page-${v}.json`);
+  if (!cache.home) cache.home = await get('page-home.json');
 }
 
 export function renderPaper(v, ctx) {
   LANG = ctx.lang === 'zh' ? 'zh' : 'en';
   const P = cache[v];
   tables.clear();
-  const toc = P.sections.map(s => `<a href="#pp-${s.id}" class="rq-jump">${/^[0-9.]+$/.test(tx(s.kicker)) ? esc(tx(s.kicker)) + ' ' : ''}${esc(tx(s.title))}</a>`).join('');
+  const toc = P.sections.map(s => `<a href="#pp-${s.id}" class="rq-jump">${esc(tx(s.kicker))}</a>`).join('');
   return `<div class="rq pp" data-pp-view="${v}">
-  <div class="pp-head"><span class="rq-eyebrow">${esc(tx(P.kicker))}</span><h1>${esc(tx(P.title))}</h1><p>${esc(tx(P.lead))}</p>
+  <div class="pp-head"><span class="rq-eyebrow">${esc(tx(P.kicker))}</span><h1>${esc(tx(P.title))}</h1>${P.lead ? `<p>${esc(tx(P.lead))}</p>` : ''}
   <nav class="rq-toc" aria-label="${T('On this page', '本页目录')}">${toc}</nav></div>
   ${P.sections.map(s => `<section class="rq-sec pp-sec" id="pp-${s.id}"><div class="rq-sec-head"><span class="rq-eyebrow">${esc(tx(s.kicker))}</span><h2>${esc(tx(s.title))}</h2></div>
   ${s.blocks.map((b, i) => block(b, `${s.id}-${i}`, ctx)).join('')}</section>`).join('')}
@@ -47,18 +48,23 @@ function block(b, id, ctx) {
     case 'design': return `<div class="pp-design">${head(b.title)}<dl>${b.items.map(([k, v]) => `<dt>${esc(tx(k))}</dt><dd>${esc(tx(v))}</dd>`).join('')}</dl>${note(b.note)}</div>`;
     case 'flow': return `<ol class="pp-flow">${b.steps.map(([k, v]) => `<li><strong>${esc(tx(k))}</strong><span>${esc(tx(v))}</span></li>`).join('')}</ol>`;
     case 'records': return `<div class="pp-records" data-records="${id}">${head(b.title, b.csv)}<button class="btn pp-load" data-load-records="${id}">${T('Show the 810 records', '显示 810 条记录')}</button></div>`;
+    case 'details': return `<details class="pp-more"><summary>${esc(tx(b.label))}</summary>${b.blocks.map((x, i) => block(x, `${id}-${i}`, ctx)).join('')}</details>`;
+    case 'divbars': return divbars(b);
+    case 'hbars': return hbars(b);
+    case 'chain': return chain(b, ctx);
+    case 'matrix': return matrix(b);
     case 'downloads': return `<ul class="pp-downloads">${cache.home.downloads.map(d => `<li>${csvLink(d.file, d.file.replace('tables/', ''))}<span>${esc(d.en)}</span></li>`).join('')}</ul>`;
     default: return '';
   }
 }
 
 // ---------------------------------------------------------------- tables: search, filters, pages, links to papers
-const VIEW_LABEL = {rq1: 'RQ1', rq2: 'RQ2', rq3: 'RQ3', evidence: 'Evidence', versions: 'Data & versions', method: 'Method'};
-function gotoLabel(view, anchor) {
-  const m = /^s(\d)(\d)$/.exec(anchor || '');
-  const a = !anchor ? '' : m ? `§${m[1]}.${m[2]}` : anchor === 's4c' ? T('Appendix C checks', '附录 C 核查') : anchor === 'samples' ? T('sample manifest', '样本清单') : anchor;
-  return (LANG === 'zh' && view === 'versions' ? '数据与版本' : LANG === 'zh' && view === 'evidence' ? '证据与核查' : VIEW_LABEL[view] || view) + (a ? ' · ' + a : '');
-}
+const NAMES = {home: ['Universe', '宇宙'], evolution: ['Research evolution', '研究演化'], foundations: ['Foundations & protection', '基础与保护'], opportunities: ['Opportunities & tests', '机会与检验'],
+  evidence: ['Evidence', '证据与核查'], versions: ['Data & versions', '数据与版本'], method: ['Method', '方法'], action: ['Problem lines', '问题主线'], themes: ['Themes', '主题'], cases: ['Cases', '案例'],
+  outcomes: ['Evaluation', '评测'], checks: ['Checks', '核查'], uses: ['Experimental use', '实验使用'], inputs: ['Trusted inputs', '可信输入'], conditions: ['Conditions', '条件'],
+  chain: ['Memory and delegation', '记忆与委托'], defences: ['Retrieval defences', '检索防御'], retrieval: ['Retrieval to record', '检索到记录']};
+const nm = k => NAMES[k] ? T(...NAMES[k]) : k;
+function gotoLabel(view, anchor) { return nm(view) + (anchor ? ' · ' + nm(anchor) : ''); }
 function cellHtml(c, v, row, ctx) {
   const s = tx(v);
   if (c.kind === 'work') {
@@ -112,13 +118,13 @@ function endpoints(b) {
     const v = p[k] / p.n, [lo, hi] = p.bounds[k];
     return `<div class="pp-epbar" title="${esc(lab)}: ${p[k]}/${p.n} = ${pctf(v)} · ${T('missing-data bound', '缺失数据界')} ${pctf(lo)}–${pctf(hi)}"><span class="rng" style="left:${100 * lo}%;width:${100 * (hi - lo)}%"></span><span class="val" style="width:${100 * v}%;background:${c}"></span></div>`;
   }).join('')}</td><td class="num">${p.n}/${p.n + p.missing}</td></tr>`).join('')}</tbody></table></div>`;
-  return `<figure class="pp-fig">${head(L_('Deepest evaluated outcome among defences (Figure 2c, Table 6)', '防御测到的最深结果（图 2c、表 6）'), b.csv)}<div class="pp-legend">${cats.map(([, l, c]) => `<span><i style="background:${c}"></i>${esc(l)}</span>`).join('')}<span><i class="rng"></i>${T('missing-data bound', '缺失数据界')}</span></div>
+  return `<figure class="pp-fig">${head(L_('Deepest evaluated outcome among defences, by problem line', '各问题主线中防御测到的最深结果'), b.csv)}<div class="pp-legend">${cats.map(([, l, c]) => `<span><i style="background:${c}"></i>${esc(l)}</span>`).join('')}<span><i class="rng"></i>${T('missing-data bound', '缺失数据界')}</span></div>
   <div class="pp-eps">${b.lines.map(panel).join('')}</div>${note(b.note)}</figure>`;
 }
 const L_ = (en, zh) => ({en, zh});
 
 function stack(parts, total, soft = false) {
-  const op = soft ? 'opacity:.8;filter:saturate(.6) brightness(1.08);' : '';   // theme colours softened like the ribbons of Figure 3 (owner, 10-25)
+  const op = soft ? 'opacity:.8;filter:saturate(.6) brightness(1.08);' : '';   // theme colours softened (owner, 10-25: too loud at full saturation)
   return `<div class="pp-stack">${parts.map(([lab, v, c]) => `<span style="flex:${v};${op}${c === 'hollow' ? 'background:transparent;border:1px solid var(--rq-ink)' : `background:${c}`}" title="${esc(tx(lab))}: ${v}/${total}"></span>`).join('')}</div>
   <div class="pp-stack-l">${parts.map(([lab, v, c]) => `<span><i style="${op}${c === 'hollow' ? 'border:1px solid var(--rq-ink)' : `background:${c}`}"></i>${esc(tx(lab))} <b>${v}</b></span>`).join('')}</div>`;
 }
@@ -140,18 +146,18 @@ function fig4(b) {
   const bb = b.b.map(g => `<div class="pp-f4g"><span class="lab">${esc(tx(g.label))}</span><div>${g.rows.map(r => `<div class="pp-segrow"><span class="lab2">${esc(tx(r.input))}</span><div class="pp-segbar"><span style="width:${100 * r.yes / 90}%;background:${r.kind === 'clean' ? 'var(--pp-clean)' : 'var(--pp-pois)'}"></span><span class="unc" style="width:${100 * r.unc / 90}%"></span><span style="flex:1;background:var(--pp-track)"></span></div><span class="num">${r.yes}${r.unc ? ` · ${r.unc} ${T('uncertain', '含糊')}` : ''}</span><span class="num rec">${r.recovery}/90</span></div>`).join('')}</div></div>`).join('');
   return `<figure class="pp-fig pp-fig4">
   <div class="pp-flowmini"><span class="st">${T('Retrieved Passages', '检索材料')}</span><span class="ar">→</span><span class="st">${T('Knowledge Tool', '知识工具')} <small>${T('Answer + Sources', '答案 + 来源')}</small><em>● ${T('Tool Answer', '工具回答')}</em></span><span class="ar">→</span><span class="st">Agent</span><span class="ar">→</span><span class="st">${T('Final Record', '最终记录')}<em>● ${T('Final Record', '最终记录')}</em></span></div>
-  <h3>${T('(a) Target answer in the final record, original poisoning', '(a) 目标答案进入最终记录（原始投毒）')}</h3><div class="pp-seg">${a}</div>
+  <h3>${T('Target answer in the final record, original poisoning', '目标答案进入最终记录（原始投毒）')}</h3><div class="pp-seg">${a}</div>
   <p class="pp-diff">${T('TrustRAG − no defence', 'TrustRAG − 无防御')}: <b>${esc(b.diff)} ${T('percentage points', '个百分点')}</b> <span>(${T('paired 95% bootstrap interval', '逐题配对 95% bootstrap 区间')} ${esc(b.ci)})</span></p>
-  <h3>${T('(b) Correct and clean completion, and tasks requiring recovery prompts', '(b) 正确且无越权地完成，以及需要补救提示的任务')}</h3>
+  <h3>${T('Correct and clean completion, and tasks requiring recovery prompts', '正确且无越权地完成，以及需要补救提示的任务')}</h3>
   <div class="pp-legend"><span><i style="background:var(--pp-clean)"></i>${T('Judged correct · clean', '判为正确 · 干净')}</span><span><i style="background:var(--pp-pois)"></i>${T('Judged correct · original poisoning', '判为正确 · 原始投毒')}</span><span><i class="unc"></i>${T('Uncertain', '含糊')}</span></div>
   <div class="pp-f4g pp-f4h"><span></span><div class="pp-segrow"><span></span><span></span><span></span><span class="num rec">${T('Tasks requiring recovery prompts', '需要补救提示的任务')}</span></div></div>
   <div class="pp-seg">${bb}</div>${note(b.note)}</figure>`;
 }
 
 function cases(b, ctx) {
-  return `<div class="pp-cases">${head(L_('Case records', '案例记录'), b.csv)}${b.cases.map(c => `<article class="pp-case"><h3>${esc(tx(c.title))}</h3>
-  <p class="pp-case-meta"><span>${esc(c.interval)}</span><span>${T('Jaccard v1/v2', 'v1/v2 Jaccard')} ${c.jaccard.toFixed(2)}</span><span>${esc(c.count)} ${T('later works', '篇后期论文')}</span></p><p>${esc(tx(c.lead))}</p>
-  <details><summary>${T(`All ${c.rows.length} records with passages`, `全部 ${c.rows.length} 条记录与原文`)}</summary><ul class="pp-evl">${c.rows.map(r => `<li><span class="pp-tagl">${esc(tx(r.side))} · ${esc(r.date)}</span> ${cellHtml({kind: 'work'}, r.work, r, ctx)}<q class="pp-quote">${esc(r.quote)}</q><small>${esc(r.where)} · ${esc(tx(r.support))}</small></li>`).join('')}</ul></details></article>`).join('')}</div>`;
+  return `<div class="pp-cases pp-cases3">${b.cases.map(c => `<article class="pp-case"><span class="pp-case-when">${esc(c.when)}</span><h3>${esc(tx(c.title))}</h3>
+  <p class="pp-case-n"><b>${esc(c.count)}</b> ${T('later works on the new condition', '篇后期论文涉及新条件')}</p><p>${esc(tx(c.lead))}</p>
+  <details><summary>${T(`${c.rows.length} records with passages`, `${c.rows.length} 条记录与原文`)}</summary><ul class="pp-evl">${c.rows.map(r => `<li><span class="pp-tagl">${esc(tx(r.side))} · ${esc(r.date)}</span> ${cellHtml({kind: 'work'}, r.work, r, ctx)}<q class="pp-quote">${esc(r.quote)}</q><small>${esc(r.where)} · ${esc(tx(r.support))}</small></li>`).join('')}</ul></details></article>`).join('')}</div>${b.csv ? `<p class="pp-extra">${csvLink(b.csv)}</p>` : ''}`;
 }
 
 function coverage(b, ctx) {
@@ -159,9 +165,33 @@ function coverage(b, ctx) {
   <details><summary>${T('Evidence', '证据')}</summary>${w.quotes.map(q => `<q class="pp-quote">${esc(q.quote)}</q><small>${esc(q.where)}</small>`).join('')}</details></td>${w.fields.map(f => `<td>${esc(f)}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`;
 }
 
+function divbars(b) {
+  const m = Math.max(...b.rows.map(r => Math.abs(r.v))) || 1;
+  return `<figure class="pp-fig">${head(b.title)}<div class="pp-div">${b.rows.map(r => `<div class="pp-divrow" title="${esc(r.note || '')}"><span class="lab"><i style="background:${r.color}"></i>${esc(tx(r.label))}</span>
+  <span class="neg">${r.v < 0 ? `<span style="width:${50 * -r.v / m}%;background:${r.color}"></span>` : ''}</span><span class="pos">${r.v > 0 ? `<span style="width:${50 * r.v / m}%;background:${r.color}"></span>` : ''}</span>
+  <span class="num">${r.v > 0 ? '+' : ''}${r.v.toFixed(1)}</span></div>`).join('')}</div></figure>`;
+}
+
+function hbars(b) {
+  return `<figure class="pp-fig">${head(b.title)}<div class="pp-seg">${b.rows.map(r => `<div class="pp-segrow"><span class="lab">${esc(tx(r.label))}</span><div class="pp-segbar"><span style="width:${100 * r.v / b.n}%;background:var(--pp-pois)"></span><span style="flex:1;background:var(--pp-track)"></span></div><span class="num">${r.v} / ${b.n}</span></div>`).join('')}</div></figure>`;
+}
+
+function chain(b, ctx) {
+  const step = (s, i) => `<div class="pp-chain-step"><b>${esc(tx(s.label))}</b><ul>${s.works.map(w => `<li>${ctx.data.papers.some(p => p.id === w.id) ? `<button class="pp-work" data-paper="${esc(w.id)}">${esc(w.name)}</button>` : esc(w.name)}</li>`).join('')}</ul></div>`;
+  const link = i => `<div class="pp-chain-link${i === b.gap ? ' is-gap' : ''}"><span>${i === b.gap ? T('not tested together', '没有被一起检验') : '→'}</span></div>`;
+  return `<figure class="pp-fig">${head(b.title)}<div class="pp-chain">${b.steps.map((s, i) => step(s, i) + (i < b.steps.length - 1 ? link(i) : '')).join('')}</div></figure>`;
+}
+
+function matrix(b) {
+  const icon = v => /^yes/i.test(v) ? ['✓', 'yes'] : /^no/i.test(v) ? ['✗', 'no'] : ['◐', 'part'];
+  return `<figure class="pp-fig">${head(b.title, b.csv)}<div class="rq-scroll"><table class="pp-tbl pp-matrix"><thead><tr><th></th>${b.cols.map(c => `<th>${esc(tx(c))}</th>`).join('')}</tr></thead>
+  <tbody>${b.rows.map(([m, ...vals]) => `<tr><td>${esc(m)}</td>${vals.map(v => { const [g, k] = icon(v); return `<td class="pp-mark is-${k}" title="${esc(v)}">${g}</td>`; }).join('')}</tr>`).join('')}</tbody></table></div>
+  <p class="pp-legend"><span>✓ ${T('yes', '是')}</span><span>◐ ${T('partly', '部分')}</span><span>✗ ${T('no', '否')}</span></p></figure>`;
+}
+
 // ---------------------------------------------------------------- the 810 experiment records (loaded on demand)
 async function showRecords(host, ctx) {
-  recs ??= await get('paper-rq3-records.json');
+  recs ??= await get('page-records.json');
   const id = host.dataset.records;
   const b = {page: 15, search: true, filters: ['input', 'def', 'rec_t', 'rec_c'], rows: recs,
              cols: [{k: 'q', en: 'Q', zh: '题'}, {k: 'question', en: 'Question', zh: '问题'}, {k: 'correct', en: 'Correct answer', zh: '正确答案'}, {k: 'target', en: 'Target answer', zh: '目标答案'},
