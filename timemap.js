@@ -134,7 +134,7 @@ function insights(ctx) {
       cfg: {month: last, window: 'rolling', cluster: tp, role: '', focus: cc}});
   }
   lead.sort((x, y) => y.n - x.n);
-  return [...gain];
+  return [];
 }
 function country(ctx, cc) {
   try { return new Intl.DisplayNames([ctx.state.lang === 'zh' ? 'zh-CN' : 'en'], {type: 'region'}).of(cc); } catch { return cc; }
@@ -162,13 +162,15 @@ function side(ctx, st, agg, prev) {
   const {t} = ctx;
   const rows = agg.countries.slice(0, 10).map(c => {
     const sh = c.credit / agg.n, d = sh - shareOf(prev, c.cc);
-    return `<tr class="${st.focus === c.cc ? 'is-focus' : ''}"><th><button class="tm-cc" data-tm-focus="${c.cc}">${flag(c.cc)}${esc(country(ctx, c.cc))}</button></th><td>${(100 * sh).toFixed(1)}%</td><td>${Math.round(c.credit).toLocaleString()}</td><td class="${d >= 0 ? 'tm-up' : 'tm-down'}">${prev.n ? (d >= 0 ? '+' : '') + (100 * d).toFixed(1) : ''}</td></tr>`;
+    return `<tr class="${st.focus === c.cc ? 'is-focus' : ''}"><th><button class="tm-cc" data-tm-focus="${c.cc}" title="${esc(country(ctx, c.cc))}">${flag(c.cc)}${esc(country(ctx, c.cc))}</button></th><td>${(100 * sh).toFixed(1)}%</td><td>${Math.round(c.credit).toLocaleString()}</td><td class="${d >= 0 ? 'tm-up' : 'tm-down'}">${prev.n ? (d >= 0 ? '+' : '') + (100 * d).toFixed(1) : ''}</td></tr>`;
   }).join('');
   const focusInsts = st.focus ? agg.insts.filter(i => i.cc === st.focus) : agg.insts;
-  return `<div><h4>${t('Countries and regions', '国家和地区')}</h4>${agg.n ? `<table class="fd-table tm-table"><thead><tr><th></th><th>${t('Share', '份额')}</th><th>${t('Works', '工作')}</th><th>${t('Change', '变化')}</th></tr></thead><tbody>${rows}</tbody></table>
-  <p class="fd-note">${t('Fractional credit when a paper has institutions in several countries. Change: share points against the window ending 12 months earlier. Click a country (here or on the map) to highlight it.', '论文的机构分布在多个国家时按比例计。变化：与早 12 个月结束的时间窗相比的份额百分点。点击国家（此处或地图上）可高亮。')}</p>` : `<p class="muted">${t('No work in this window.', '本时间窗内没有工作。')}</p>`}</div>
-  <div><h4>${st.focus ? flag(st.focus) : ''}${st.focus ? t(`Institutions in ${country(ctx, st.focus)}`, `${country(ctx, st.focus)}的机构`) : t('Institutions', '机构')}</h4><ol class="tm-insts">${focusInsts.slice(0, 12).map(i => `<li><button data-tm-inst="${esc(i.key)}">${flag(i.cc)}${esc(i.name)}</button><span>${i.ids.length}</span></li>`).join('') || '<li class="muted">—</li>'}</ol>
-  <p class="fd-note">${t('Works in the window; click for the papers.', '本时间窗内的工作数；点击查看论文。')}</p></div>`;
+  const irows = focusInsts.slice(0, 10).map(i => `<tr><th><button class="tm-cc" data-tm-inst="${esc(i.key)}" title="${esc(i.name)}">${flag(i.cc)}${esc(i.name)}</button></th><td>${agg.n ? (100 * i.ids.length / agg.n).toFixed(1) + '%' : ''}</td><td>${i.ids.length.toLocaleString()}</td></tr>`).join('');
+  const head = cols => `<thead><tr><th></th>${cols.map(c => `<th>${c}</th>`).join('')}</tr></thead>`;
+  if (!agg.n) return `<p class="muted">${t('No work in this window.', '本时间窗内没有工作。')}</p>`;
+  return `<div><h4>${t('Countries and regions', '国家和地区')}</h4><table class="fd-table tm-table tm-rank tm-rank-c">${head([t('Share', '份额'), t('Works', '工作'), t('Change', '变化')])}<tbody>${rows}</tbody></table></div>
+  <div><h4>${st.focus ? flag(st.focus) : ''}${st.focus ? t(`Institutions in ${country(ctx, st.focus)}`, `${country(ctx, st.focus)}的机构`) : t('Institutions', '机构')}</h4><table class="fd-table tm-table tm-rank tm-rank-i">${head([t('Share', '占比'), t('Works', '工作')])}<tbody>${irows || '<tr><th>—</th><td></td><td></td></tr>'}</tbody></table></div>
+`;
 }
 function redraw(ctx) {
   // everything that changes with the month, filters or focus; the country shapes stay in place and only change class
@@ -241,9 +243,8 @@ export function renderTimeMap(ctx) {
   <div class="tm-time"><button class="tm-play" data-tm-play aria-label="${timer ? t('Pause', '暂停') : t('Play', '播放')}">${timer ? '❚❚' : '▶'}</button><input type="range" min="0" max="${model.nMonths - 1}" value="${st.month}" data-tm="month" aria-label="${t('Month', '月份')}"><b class="tm-when"></b></div>
   <div class="tm-grid"><div class="tm-main"><div class="tm-map"><div class="tm-zoom" role="group" aria-label="${t('Map zoom', '地图缩放')}"><button data-tm-zoom="in" aria-label="${t('Zoom in', '放大')}">+</button><button data-tm-zoom="out" aria-label="${t('Zoom out', '缩小')}">−</button><button data-tm-zoom="reset" aria-label="${t('Reset view', '复位')}">⟲</button></div><svg viewBox="${view.x} ${view.y} ${view.w} ${view.h}" role="img" aria-label="${t('Countries shaded by agent-safety works', '按 Agent 安全工作着色的国家')}"><path d="${landPath()}" class="tm-land"/>
   <g class="tm-countries">${countries.countries.map(c => `<path d="${c.d}" data-cc="${c.cc}" data-tm-focus="${c.cc}" class="tm-c s0"/>`).join('')}</g><g class="tm-small"></g><g class="tm-dots"></g><g class="tm-labels" aria-hidden="true"></g></svg></div>
-  <div class="tm-legend"></div><p class="fd-note tm-summary"></p><div class="tm-side"></div></div>
-  <aside class="tm-insights"><h4>${t('Insights · click to see', '洞察 · 点击查看')}</h4><ul>${model.insights.map((x, k) => `<li><button data-tm-insight="${k}">${esc(x.text)}</button></li>`).join('') || `<li class="muted">${t('No insight on this snapshot.', '本快照中暂无。')}</li>`}</ul>
-  <p class="fd-note">${t('Computed from the data on this page when it loads; cluster leads use the last 12 months and need at least 30 located works.', '页面加载时由本页数据计算；星团领先者按近 12 个月计算，且至少需要 30 项已定位工作。')}</p></aside></div>
+  <div class="tm-legend"></div><p class="fd-note tm-summary"></p><p class="fd-note tm-rank-note">${t('Rankings: papers with institutions in several countries count in part for each; change is in share points against the window 12 months earlier; the share of an institution is its works over all located works. Click to highlight or open the papers.', '右侧排行：多国机构的论文按比例计入各国；变化为与早 12 个月的时间窗相比的份额百分点；机构占比为其参与的工作占已定位工作的比例。点击可高亮或查看论文。')}</p></div>
+  <aside class="tm-ranks"><div class="tm-side"></div></aside></div>
   <div class="fd-tip" hidden></div><aside class="fd-drawer" hidden aria-live="polite"><div class="fd-drawer-head"><h3></h3><button class="fd-close" aria-label="${t('Close', '关闭')}">×</button></div><div class="fd-drawer-body"></div></aside></div>`;
 }
 function stop() { if (timer) { clearInterval(timer); timer = null; } }

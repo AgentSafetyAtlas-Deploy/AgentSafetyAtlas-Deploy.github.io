@@ -173,3 +173,84 @@ html[data-theme="light"] .pp{--pp-pois:#1E4D49;--pp-clean:#8DBDB6;--pp-c1:#c9dfd
 .pp-ep td.num{width:72px}
 .pp-ep td:not(.num){padding:4px 6px}
 .pp-epbar{width:100%}
+
+/* Explore map (owner, 10-26): country and institution rankings in the column right of the map, in place of the insights */
+/* three columns (owner's sketch, 10-26): map | country ranking | institution ranking */
+@media (min-width: 1201px) {
+  .tm-grid { grid-template-columns: minmax(0, 1fr) 560px; gap: 22px; }
+  .tm-ranks .tm-side { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); margin-top: 0; gap: 20px; }
+}
+.tm-ranks .tm-side { margin-top: 0; }
+.tm-ranks .tm-insts { gap: 6px; }
+.tm-ranks .tm-insts li { align-items: baseline; }
+.tm-ranks h4 { font-size: 12px; letter-spacing: .6px; text-transform: uppercase; color: #93aea7; margin: 0 0 8px; font-weight: 650; }
+:root[data-theme=light] .tm-ranks h4 { color: #64786c; }
+.tm-ranks .fd-note { margin: 6px 0 0; }
+
+/* Observations drop-down: name and one-line description on separate lines */
+.site-nav-obs .site-nav-panel a b { display: block; font-weight: 650; }
+.site-nav-obs .site-nav-panel a small { display: block; margin-top: 1px; font-size: 12px; opacity: .72; }
+
+/* twin ranking tables beside the map: identical rows, names cut with an ellipsis so every row stays one line */
+.tm-ranks .tm-rank { width: 100%; table-layout: fixed; }
+.tm-ranks .tm-rank thead th:not(:first-child) { width: 46px; text-align: right; }
+.tm-ranks .tm-rank td { text-align: right; }
+.tm-ranks .tm-rank th, .tm-ranks .tm-rank td { height: 30px; padding: 0 4px; vertical-align: middle; white-space: nowrap; }
+.tm-ranks .tm-side { row-gap: 6px; }
+.tm-ranks .tm-rank tbody th .tm-cc { display: block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tm-ranks .tm-rank tbody th .tm-cc img { vertical-align: -2px; }
+.view-landscape .tm-rank-note { margin-top: 4px; }
+/* the two tables stretch to the height of the map column, so both columns end level */
+@media (min-width: 1201px) {
+  .view-landscape .tm-grid { align-items: stretch; }
+  .tm-ranks { display: flex; }
+  .tm-ranks .tm-side { flex: 1; }
+  .tm-ranks .tm-side > div { display: flex; flex-direction: column; }
+  .tm-ranks .tm-rank { flex: 1; }
+}
+
+/* findings pages, showcase blocks (owner, 10-26): film, theme heat map, bars, the wall of checks, adoption ranges */
+.pp-film .rq-sec { margin: 0; padding: 0; border: 0; }
+.pp-film { margin: 6px 0 18px; }
+.pp-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 8px; vertical-align: 0; }
+.pp-vbars { height: 170px; }
+.pp-wall { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 8px 0 18px; }
+@media (max-width: 900px) { .pp-wall { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .pp-wall { grid-template-columns: minmax(0, 1fr); } }
+.pp-ranges + .pp-note { margin-top: 14px; }
+.pp-wcard { position: relative; padding: 18px 18px 16px; border: 1px solid var(--rq-line); border-radius: 14px; background: linear-gradient(160deg, color-mix(in srgb, var(--rq-heat) 16%, transparent), transparent 70%); }
+.pp-wcard strong { display: block; font-size: 30px; line-height: 1.1; letter-spacing: -.5px; margin: 6px 0 8px; font-variant-numeric: tabular-nums; }
+.pp-wcard p { margin: 0; font-size: 13.5px; line-height: 1.55; color: var(--rq-muted); }
+.pp-wicon { font-size: 18px; color: var(--rq-heat); }
+.pp-ranges { display: grid; gap: 12px; margin-top: 8px; }
+.pp-rrow { display: grid; grid-template-columns: 120px minmax(0, 1fr) 150px; align-items: center; gap: 14px; font-size: 14px; }
+.pp-rbar { display: flex; height: 16px; border-radius: 8px; background: var(--pp-track, rgba(127,127,127,.15)); overflow: hidden; }
+.pp-rbar .hi { opacity: .35; }
+.pp-rrow .num { font-variant-numeric: tabular-nums; }
+.pp-rrow .num small { color: var(--rq-muted); margin-left: 4px; }
+@media (max-width: 640px) { .pp-rrow { grid-template-columns: 90px minmax(0, 1fr); } .pp-rrow .num { grid-column: 2; } }
+
+/* bar charts: one label column sized to the longest label, labels never wrap (owner, 10-26) */
+.pp-div { grid-template-columns: max-content minmax(0, 1fr) minmax(0, 1fr) 56px; row-gap: 6px; }
+.pp-divrow { display: contents; }
+.pp-divrow .lab { white-space: nowrap; padding-right: 14px; }
+.pp-fig:not(.pp-fig4) > .pp-seg { grid-template-columns: max-content minmax(0, 1fr) max-content; column-gap: 12px; row-gap: 6px; }
+.pp-fig:not(.pp-fig4) > .pp-seg > .pp-segrow { display: contents; }
+.pp-fig:not(.pp-fig4) > .pp-seg .lab { white-space: nowrap; }
+.pp-heat tbody th { white-space: nowrap; }
+@media (max-width: 640px) {
+  .pp-div { grid-template-columns: 120px minmax(0, 1fr) minmax(0, 1fr) 44px; }
+  .pp-fig:not(.pp-fig4) > .pp-seg { grid-template-columns: 110px minmax(0, 1fr) max-content; }
+  .pp-divrow .lab, .pp-fig:not(.pp-fig4) > .pp-seg .lab { overflow: hidden; text-overflow: ellipsis; }
+}
+/* home cards: one number column across both rows, so labels never run under a wide number */
+.hm-nums { grid-template-columns: max-content minmax(0, 1fr); column-gap: 12px; row-gap: 8px; }
+.hm-nums li { display: contents; }
+
+/* navigation menus above every sticky bar of the pages (Explore's section bar, lens tabs) */
+header.site-header { z-index: 60; }
+/* Observations menu: eight entries in two columns, all visible without scrolling */
+@media (min-width: 760px) {
+  .site-nav-obs .site-nav-panel { width: 480px; max-height: none; }
+  .site-nav-obs .site-nav-group { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 6px; }
+}

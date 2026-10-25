@@ -2,7 +2,7 @@
 // data & versions. Each section is one conclusion with a chart; data and notes sit in a collapsed box. Pages are static JSON
 // files written once from the frozen results (review/site_data.py); this module only draws them.
 const cache = {};
-let recs = null, LANG = 'en';
+let recs = null, LANG = 'en', RQ = null;  // RQ: the film player of the earlier research pages (rq.js), loaded only where a page shows the film
 const tables = new Map();
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
 const tx = o => o == null ? '' : (typeof o === 'object' ? (o[LANG] ?? o.en ?? '') : String(o));
@@ -13,12 +13,13 @@ const get = n => fetch(`./data/${n}`).then(r => { if (!r.ok) throw Error(n); ret
 export async function loadPaper(v) {
   if (!cache[v]) cache[v] = await get(`page-${v}.json`);
   if (!cache.home) cache.home = await get('page-home.json');
+  if (cache[v].sections.some(s => s.blocks.some(b => b.t === 'film'))) { RQ ??= await import('./rq.js'); await RQ.loadRq(); }
 }
 
 export function renderPaper(v, ctx) {
   LANG = ctx.lang === 'zh' ? 'zh' : 'en';
   const P = cache[v];
-  tables.clear();
+  tables.clear(); RQ?.stopFilm();
   const toc = P.sections.map(s => `<a href="#pp-${s.id}" class="rq-jump">${esc(tx(s.kicker))}</a>`).join('');
   return `<div class="rq pp" data-pp-view="${v}">
   <div class="pp-head"><span class="rq-eyebrow">${esc(tx(P.kicker))}</span><h1>${esc(tx(P.title))}</h1>${P.lead ? `<p>${esc(tx(P.lead))}</p>` : ''}
@@ -53,6 +54,11 @@ function block(b, id, ctx) {
     case 'hbars': return hbars(b);
     case 'chain': return chain(b, ctx);
     case 'matrix': return matrix(b);
+    case 'film': return `<div class="pp-film">${RQ ? RQ.filmSection(T) : ''}</div>`;
+    case 'heat': return heatmap(b);
+    case 'vbars': { const m = Math.max(...b.values) || 1; return `<figure class="pp-fig">${head(b.title)}<div class="rq-bars pp-vbars">${b.values.map((n, j) => `<div class="rq-bar"><span style="height:${Math.max(2, 100 * n / m)}%" title="${n}"></span><b>${n.toLocaleString('en-US')}</b><i>${esc(b.cols[j])}</i></div>`).join('')}</div>${note(b.note)}</figure>`; }
+    case 'wall': return `<div class="pp-wall">${b.items.map(w => `<div class="pp-wcard"><span class="pp-wicon" aria-hidden="true">${esc(w.icon)}</span><strong>${esc(w.v)}</strong><p>${esc(tx(w.label))}</p></div>`).join('')}</div>`;
+    case 'ranges': return ranges(b);
     case 'downloads': return `<ul class="pp-downloads">${cache.home.downloads.map(d => `<li>${csvLink(d.file, d.file.replace('tables/', ''))}<span>${esc(d.en)}</span></li>`).join('')}</ul>`;
     default: return '';
   }
@@ -60,9 +66,10 @@ function block(b, id, ctx) {
 
 // ---------------------------------------------------------------- tables: search, filters, pages, links to papers
 const NAMES = {home: ['Universe', '宇宙'], evolution: ['Research evolution', '研究演化'], foundations: ['Foundations & protection', '基础与保护'], opportunities: ['Opportunities & tests', '机会与检验'],
-  evidence: ['Evidence', '证据与核查'], versions: ['Data & versions', '数据与版本'], method: ['Method', '方法'], action: ['Problem lines', '问题主线'], themes: ['Themes', '主题'], cases: ['Cases', '案例'],
+  evidence: ['Checks', '核查'], versions: ['Data & versions', '数据与版本'], method: ['Method', '方法'], action: ['Problem lines', '问题主线'], themes: ['Themes', '主题'], cases: ['Cases', '案例'],
   outcomes: ['Evaluation', '评测'], checks: ['Checks', '核查'], uses: ['Experimental use', '实验使用'], inputs: ['Trusted inputs', '可信输入'], conditions: ['Conditions', '条件'],
-  chain: ['Memory and delegation', '记忆与委托'], defences: ['Retrieval defences', '检索防御'], retrieval: ['Retrieval to record', '检索到记录']};
+  chain: ['Memory and delegation', '记忆与委托'], defences: ['Retrieval defences', '检索防御'], retrieval: ['Retrieval to record', '检索到记录'],
+  wall: ['Checks', '核查'], film: ['Evolution film', '演化片'], quarters: ['Quarter by quarter', '逐季度'], adoption: ['Adoption', '外部采用'], experiment: ['The experiment', '实验']};
 const nm = k => NAMES[k] ? T(...NAMES[k]) : k;
 function gotoLabel(view, anchor) { return nm(view) + (anchor ? ' · ' + nm(anchor) : ''); }
 function cellHtml(c, v, row, ctx) {
@@ -165,6 +172,18 @@ function coverage(b, ctx) {
   <details><summary>${T('Evidence', '证据')}</summary>${w.quotes.map(q => `<q class="pp-quote">${esc(q.quote)}</q><small>${esc(q.where)}</small>`).join('')}</details></td>${w.fields.map(f => `<td>${esc(f)}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`;
 }
 
+function heatmap(b) {
+  const max = Math.max(...b.rows.flatMap(r => r.values)) || 1;
+  return `<figure class="pp-fig">${head(b.title)}<div class="rq-scroll"><table class="rq-heat pp-heat"><thead><tr><th></th>${b.cols.map(c => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${b.rows.map(r =>
+    `<tr><th scope="row"><i class="pp-dot" style="background:${r.color}"></i>${esc(tx(r.label))}</th>${r.values.map((v, j) => `<td style="--h:${Math.round(85 * v / max)}%" title="${esc(r.titles?.[j] || '')}">${pctf(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>${note(b.note)}</figure>`;
+}
+
+function ranges(b) {
+  return `<figure class="pp-fig">${head(b.title)}<div class="pp-ranges">${b.rows.map(r => `<div class="pp-rrow"><span class="lab">${esc(tx(r.label))}</span>
+  <div class="pp-rbar"><span class="lo" style="width:${100 * r.lo}%;background:${r.color}"></span><span class="hi" style="width:${100 * (r.hi - r.lo)}%;background:${r.color}"></span></div>
+  <span class="num"><b>${pctf(r.lo)}–${pctf(r.hi)}</b> <small>n = ${r.n}</small></span></div>`).join('')}</div>${note(b.note)}</figure>`;
+}
+
 function divbars(b) {
   const m = Math.max(...b.rows.map(r => Math.abs(r.v))) || 1;
   return `<figure class="pp-fig">${head(b.title)}<div class="pp-div">${b.rows.map(r => `<div class="pp-divrow" title="${esc(r.note || '')}"><span class="lab"><i style="background:${r.color}"></i>${esc(tx(r.label))}</span>
@@ -213,6 +232,7 @@ export function bindPaper(v, ctx) {
   const root = document.querySelector('.pp');
   if (!root) return;
   bindTables(root, ctx);
+  if (RQ && root.querySelector('#rq-canvas')) RQ.startFilm(ctx, root);
   root.addEventListener('click', e => {
     const p = e.target.closest('[data-tp]');
     if (p) { const st = tables.get(p.dataset.tp); st.page += +p.dataset.d; root.querySelector(`[data-tbody="${p.dataset.tp}"]`).innerHTML = tableBody(p.dataset.tp, ctx); return; }
