@@ -134,7 +134,7 @@ function insights(ctx) {
       cfg: {month: last, window: 'rolling', cluster: tp, role: '', focus: cc}});
   }
   lead.sort((x, y) => y.n - x.n);
-  return [...cross.slice(0, 3), ...gain, ...role, ...lead.slice(0, 4)];
+  return [...gain];
 }
 function country(ctx, cc) {
   try { return new Intl.DisplayNames([ctx.state.lang === 'zh' ? 'zh-CN' : 'en'], {type: 'region'}).of(cc); } catch { return cc; }

@@ -1,5 +1,5 @@
 // Research paths · star map. Universe (every active Atlas work) → cluster (星团, one editorial topic; rings are years,
-// sectors are candidate clusters) → candidate cluster (候选星团, one automatic thread) → one paper and everything related to
+// sectors are clusters) → cluster (星团, one automatic thread) → one paper and everything related to
 // it. Theme groups are galaxies (星系). Star size follows the selected observation band (data/starmap-bands.json).
 // What the picture means is stated next to it: position = SPECTER2 content similarity (UMAP), size = Semantic Scholar
 // citations (unknown stays unknown), lines = a citation inside the Atlas, shared references, papers cited together, or
@@ -162,7 +162,7 @@ export function renderStarmap(ctx) {
    <div class="sky-overlay">
     <span class="sky-eyebrow">${t('THE UNIVERSE · STAR MAP', '宇宙 · 星图')}</span>
     <h2>${t('Every star is a paper.', '每一颗星，都是一篇论文。')}</h2>
-    <p>${t(`${sky.n.toLocaleString()} agent-safety papers in three dimensions. Drag to turn, double-click to fly closer; click a cluster (topic) to open it, or any star to see everything related to it.`, `${sky.n.toLocaleString()} 篇 Agent 安全论文，放在三维空间里。拖动旋转，双击飞近；点击专题名进入这个星团，点击任意一颗星，查看与它相关的全部论文。`)}</p>
+    <p>${t(`${sky.n.toLocaleString()} agent-safety papers of the frozen field map in three dimensions. Drag to turn, double-click to fly closer; click a cluster name to open it, or any star to see everything related to it.`, `冻结领域地图中的 ${sky.n.toLocaleString()} 篇 Agent 安全论文，放在三维空间里。拖动旋转，双击飞近；点击星团名进入这个星团，点击任意一颗星，查看与它相关的全部论文。`)}</p>
     <form class="sky-search" data-sky-search><input type="search" data-sky-q autocomplete="off" placeholder="${t('Find a paper by title…', '按标题找一篇论文…')}" aria-label="${t('Find a paper on the map', '在星图中找论文')}"><ul class="sky-suggest" data-sky-suggest role="listbox"></ul></form>
    </div>
    <div class="sky-tools"><button data-sky-motion aria-pressed="true" title="${t('Pause or resume the slow rotation', '暂停或继续缓慢旋转')}">${t('Pause rotation', '暂停旋转')}</button><button data-sky-zoom="1.4" aria-label="${t('Zoom in', '放大')}">+</button><button data-sky-zoom="0.7" aria-label="${t('Zoom out', '缩小')}">−</button><button data-sky-reset>${t('Reset', '复位')}</button>${sky.bands ? `<label class="sky-band">${t('Brightness', '亮度')} <select data-sky-band aria-label="${t('Observation band: what makes a star bright', '观测波段：什么让一颗星变亮')}">${BANDS.map(b => `<option value="${b}"${b === band ? ' selected' : ''}>${bandName(b, t)}</option>`).join('')}</select></label>` : ''}</div>
@@ -181,7 +181,7 @@ export function renderStarmap(ctx) {
 // ------------------------------------------------------------------ universe canvas
 // The universe in 3-D: the same coordinates as the home sky (3-D UMAP of SPECTER2 vectors, data/starmap-3d.json). It turns
 // slowly about the vertical axis (paused on hover, off with reduced motion), mouse-drag turns it, double-click flies to the
-// star under the pointer and zooms in, ctrl/⌘+wheel and the +/− buttons zoom. Opening a cluster, candidate cluster or paper
+// star under the pointer and zooms in, ctrl/⌘+wheel and the +/− buttons zoom. Opening a cluster, cluster or paper
 // flies the turning point to it. Stars are depth-sorted and dimmer at the back; cluster names sit at the cluster's medoid.
 function universe(canvas, opts) {
   const ctx2 = canvas.getContext('2d'), dpr = Math.min(2, window.devicePixelRatio || 1), n = sky.n;
@@ -357,8 +357,8 @@ function solar(k, ctx) {
     for (const [m, [x, y]] of xy) {const att = (th.attached || []).includes(m); stars += `<circle class="sky-sys-star${att ? ' is-attached' : ''}" data-sky-star="${m}" data-th="${key}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(sizeOf(m) * 0.95).toFixed(2)}" fill="${fill}"${novaOf(m) ? ' stroke="#e6f28a" stroke-width="0.8"' : ''}><title>${esc(titleOf(m))} · ${yearOf(m) || '—'}</title></circle>`;}
     for (const [i, j, kind] of th.edges) {const a = xy.get(i), b = xy.get(j); if (a && b) lines += `<line class="sky-edge sky-edge-${kind}" data-th="${key}" x1="${a[0].toFixed(1)}" y1="${a[1].toFixed(1)}" x2="${b[0].toFixed(1)}" y2="${b[1].toFixed(1)}"/>`;}
     const mid = start + span / 2, lr = R + 26, lx = Math.cos(mid) * lr, ly = Math.sin(mid) * lr;
-    sectors += `<path class="sky-sector${th.unclustered ? ' is-outside' : ''}" data-sky-thread="${th.unclustered ? '' : th.ti}" data-th="${key}" d="M0 0 L${(Math.cos(start) * (R + 8)).toFixed(1)} ${(Math.sin(start) * (R + 8)).toFixed(1)} A${R + 8} ${R + 8} 0 ${span > Math.PI ? 1 : 0} 1 ${(Math.cos(start + span) * (R + 8)).toFixed(1)} ${(Math.sin(start + span) * (R + 8)).toFixed(1)} Z"><title>${esc(th.unclustered ? t('Not in a candidate cluster', '未归入候选星团') : th.label.join(' · '))} · ${n}</title></path>`;
-    if (span > 0.16) labels += `<g class="sky-sector-label${th.unclustered ? ' is-outside' : ''}" data-th="${key}" data-sky-anchor="${lx.toFixed(1)},${ly.toFixed(1)}" ${th.unclustered ? '' : `data-sky-thread="${th.ti}" role="button" tabindex="0"`} transform="translate(${lx.toFixed(1)} ${ly.toFixed(1)})"><text text-anchor="middle">${esc(th.unclustered ? t('not in a candidate cluster', '未归入候选星团') : th.label.slice(0, 2).join(' · '))}</text><text class="sky-sector-count" text-anchor="middle" dy="14">${n}</text></g>`;
+    sectors += `<path class="sky-sector${th.unclustered ? ' is-outside' : ''}" data-sky-thread="${th.unclustered ? '' : th.ti}" data-th="${key}" d="M0 0 L${(Math.cos(start) * (R + 8)).toFixed(1)} ${(Math.sin(start) * (R + 8)).toFixed(1)} A${R + 8} ${R + 8} 0 ${span > Math.PI ? 1 : 0} 1 ${(Math.cos(start + span) * (R + 8)).toFixed(1)} ${(Math.sin(start + span) * (R + 8)).toFixed(1)} Z"><title>${esc(th.unclustered ? t('Not in a cluster', '未归入星团') : th.label.join(' · '))} · ${n}</title></path>`;
+    if (span > 0.16) labels += `<g class="sky-sector-label${th.unclustered ? ' is-outside' : ''}" data-th="${key}" data-sky-anchor="${lx.toFixed(1)},${ly.toFixed(1)}" ${th.unclustered ? '' : `data-sky-thread="${th.ti}" role="button" tabindex="0"`} transform="translate(${lx.toFixed(1)} ${ly.toFixed(1)})"><text text-anchor="middle">${esc(th.unclustered ? t('not in a cluster', '未归入星团') : th.label.slice(0, 2).join(' · '))}</text><text class="sky-sector-count" text-anchor="middle" dy="14">${n}</text></g>`;
   }
   const rings = edgesR.slice(1).map((r, k) => `<circle class="sky-ring${k === YEARS ? ' is-unknown' : ''}" r="${r.toFixed(1)}"/>`).join('');
   const ringLabels = edgesR.slice(0, -1).map((lo, k) => (edgesR[k + 1] - lo) > 11 ? `<text class="sky-ring-label" x="${(-R - 96).toFixed(0)}" y="${(-(lo + edgesR[k + 1]) / 2 + 3).toFixed(1)}">${k === YEARS ? t('year unknown', '年份未知') : k === 0 ? '≤' + YEAR0 : YEAR0 + k}</text><line class="sky-ring-tick" x1="${(-R - 50).toFixed(0)}" x2="-8" y1="${(-(lo + edgesR[k + 1]) / 2).toFixed(1)}" y2="${(-(lo + edgesR[k + 1]) / 2).toFixed(1)}"/>` : '').join('');
@@ -368,10 +368,10 @@ function solar(k, ctx) {
    <circle r="64" fill="url(#sky-sun)"/><text class="sky-sun-name" text-anchor="middle" dy="-2">${esc(topicLabel(tp.name))}</text><text class="sky-sun-count" text-anchor="middle" dy="16">${(tp.count || 0).toLocaleString()} ${t('papers', '篇')}</text></svg>`;
   const list = named.sort((a, b) => size(b) - size(a)).map(th => {
     const ex = th.members[0];
-    return `<button class="sky-thread-card" data-sky-thread="${th.ti}" data-th="${th.ti}"><span class="sky-thread-top"><b>${esc(th.label.join(' · ') || t('unlabelled candidate cluster', '未命名候选星团'))}</b><em>${size(th)}</em></span><span class="sky-thread-meta">${t('median year ', '中位年份 ')}${th.medianYear || '—'} · ${th.members.length} ${t('core', '核心')}${th.attached?.length ? ` + ${th.attached.length} ${t('loosely attached', '松散归入')}` : ''}</span><span class="sky-thread-ex">${t('e.g. ', '例：')}${esc(titleOf(ex))}</span></button>`;
+    return `<button class="sky-thread-card" data-sky-thread="${th.ti}" data-th="${th.ti}"><span class="sky-thread-top"><b>${esc(th.label.join(' · ') || t('unlabelled cluster', '未命名星团'))}</b><em>${size(th)}</em></span><span class="sky-thread-meta">${t('median year ', '中位年份 ')}${th.medianYear || '—'} · ${th.members.length} ${t('core', '核心')}${th.attached?.length ? ` + ${th.attached.length} ${t('loosely attached', '松散归入')}` : ''}</span><span class="sky-thread-ex">${t('e.g. ', '例：')}${esc(titleOf(ex))}</span></button>`;
   }).join('');
-  return `<div class="sky-system-wrap"><div class="sky-system-figure">${svg}<p class="sky-note">${t('Rings are years (inner = older). Sectors are candidate clusters found automatically from paper content, labelled with their most distinctive keywords; they are not an expert taxonomy. Lines join each candidate cluster\'s most cited papers: solid = citation, dashed = shared references (both observed), dotted = similar content (a candidate only). Star size follows the brightness band selected above.', '圆环是年份（越靠内越早）。扇区是根据论文内容自动找到的候选星团，用最有区分度的关键词命名，不是专家分类。连线串起每个候选星团被引最多的论文：实线＝引用，虚线＝共同参考文献（均为观测到的关系），点线＝内容相近（只是候选）。星的大小随上方选择的亮度波段变化。')}</p></div>
-   <div class="sky-thread-list"><h3>${t('Candidate clusters in this cluster', '这个星团里的候选星团')} <span>${named.length}</span></h3>${list}${outside ? `<p class="sky-small" data-th="out">${outside.members.length} ${t('papers sit outside every candidate cluster; they still appear in the sky and in search.', '篇论文不属于任何候选星团；它们仍在星空和搜索中。')}</p>` : ''}</div></div>`;
+  return `<div class="sky-system-wrap"><div class="sky-system-figure">${svg}<p class="sky-note">${t('Rings are years (inner = older). The sector is the cluster, labelled with its most distinctive keywords (c-TF-IDF). Lines join its most cited papers: solid = citation, dashed = shared references (both observed), dotted = similar content (a candidate only). Star size follows the brightness band selected above.', '圆环是年份（越靠内越早）。扇区就是这个星团，用最有区分度的关键词（c-TF-IDF）标注。连线串起它被引最多的论文：实线＝引用，虚线＝共同参考文献（均为观测到的关系），点线＝内容相近（只是候选）。星的大小随上方选择的亮度波段变化。')}</p></div>
+   <div class="sky-thread-list"><h3>${t('This cluster', '这个星团')}</h3>${list}${outside ? `<p class="sky-small" data-th="out">${outside.members.length} ${t('papers sit outside every cluster; they still appear in the sky and in search.', '篇论文不属于任何星团；它们仍在星空和搜索中。')}</p>` : ''}</div></div>`;
 }
 
 // ------------------------------------------------------------------ constellation (one thread)
@@ -380,7 +380,7 @@ async function constellation(ti, ctx) {
   const shown = [...new Set([...th.bright, ...[...all].sort((a, b) => sky.cites[b] - sky.cites[a]).slice(0, 150), ...th.members, ...(th.attached || [])])].slice(0, 240);
   const rels = new Map(await Promise.all(all.map(async i => [i, await rel(i)])));
   const set = new Set(all), shownSet = new Set(shown);
-  // 3-D: the papers' places in the home sky (3-D UMAP), spread inside this candidate cluster; drawn by mount3d
+  // 3-D: the papers' places in the home sky (3-D UMAP), spread inside this cluster; drawn by mount3d
   await load3d();
   const pts = spread3d(shown), at = new Map(shown.map((i, n) => [i, n])), links = [];
   for (const i of shown) {
@@ -407,14 +407,14 @@ async function constellation(ti, ctx) {
   const latest = [...all].sort((a, b) => (yearOf(b) || 0) - (yearOf(a) || 0) || sky.cites[b] - sky.cites[a]).slice(0, 8);
   const bgTop = top(bgCount, 8, 2);
   const lists = `<div class="sky-lists">
-   <section><h4>${t('Prior works', '前序工作')}</h4><p class="sky-small">${t('Atlas papers outside this candidate cluster that its papers cite most.', '这个候选星团引用最多的 Atlas 论文（团外）。')}</p><ol>${top(priorCount, 8, 2).map(([i, c]) => row(i, `${t('cited by ', '被 ')}${c}${t(' papers here', ' 篇线内论文引用')}`)).join('') || `<li class="sky-small">${t('No recorded citations yet.', '暂无已记录的引用。')}</li>`}</ol>
+   <section><h4>${t('Prior works', '前序工作')}</h4><p class="sky-small">${t('Atlas papers outside this cluster that its papers cite most.', '这个星团引用最多的 Atlas 论文（团外）。')}</p><ol>${top(priorCount, 8, 2).map(([i, c]) => row(i, `${t('cited by ', '被 ')}${c}${t(' papers here', ' 篇线内论文引用')}`)).join('') || `<li class="sky-small">${t('No recorded citations yet.', '暂无已记录的引用。')}</li>`}</ol>
     ${bgTop.length ? `<details class="sky-bg"><summary>${t('Background outside the Atlas', 'Atlas 以外的背景文献')} (${bgTop.length})</summary><ol data-sky-bglist="${bgTop.map(([b, c]) => b + ':' + c).join(',')}"><li class="sky-small">${t('Loading…', '加载中…')}</li></ol></details>` : ''}</section>
-   <section><h4>${t('Derivative works', '后续工作')}</h4><p class="sky-small">${t('Atlas papers outside this candidate cluster that cite several of its papers.', '引用了这个候选星团多篇论文的 Atlas 论文（团外）。')}</p><ol>${top(deriv, 8, 2).map(([i, c]) => row(i, `${t('cites ', '引用了 ')}${c}${t(' papers here', ' 篇线内论文')}`)).join('') || `<li class="sky-small">${t('None recorded with two or more links.', '暂无引用两篇以上的记录。')}</li>`}</ol></section>
-   <section><h4>${t('Latest in this candidate cluster', '这个候选星团的最新论文')}</h4><ol>${latest.map(i => row(i, sky.cites[i] >= 0 ? sky.cites[i] + t(' citations', ' 次被引') : t('citations unknown', '被引未知'))).join('')}</ol></section>
-   <section><h4>${t('Bridges', '桥梁论文')}</h4><p class="sky-small">${t('Papers here whose citations or shared references reach other candidate clusters.', '通过引用或共同参考文献连到其他候选星团的论文。')}</p><ol>${[...bridges.entries()].sort((a, b) => b[1].size - a[1].size).slice(0, 8).map(([i, o]) => row(i, t('reaches ', '连到 ') + [...o].slice(0, 2).map(k => esc(sky.threads[k].label.slice(0, 2).join(' · '))).join('；'))).join('') || `<li class="sky-small">${t('No recorded links to other candidate clusters.', '暂无已记录的跨团连接。')}</li>`}</ol></section></div>`;
-  return `<div class="sky-const"><div class="sky-const-head"><h3>${esc(th.label.join(' · ') || t('Unlabelled candidate cluster', '未命名候选星团'))}</h3><p>${all.length} ${t('papers', '篇论文')} · ${t('median year ', '中位年份 ')}${th.medianYear || '—'} · ${t('showing ', '图中显示 ')}${shown.length}/${all.length}</p></div>
-   <div class="sky-c3d" data-sky-c3d><canvas tabindex="0" role="img" aria-label="${t('Candidate cluster map in 3-D; drag or use the arrow keys to turn', '候选星团 3-D 图；拖动或用方向键旋转')}"></canvas><div class="sky-c3d-labels">${labelBtns}</div><div class="sky-c3d-tip" data-g3-tip hidden></div><p class="sky-c3d-hint">${t('Drag to turn · hover a star for its title and routes · click to open', '拖动旋转 · 悬停看标题和它的连线 · 点击打开')}</p></div>
-   <p class="sky-note">${t('Positions are the papers\' places in the 3-D sky (content similarity), re-centred on this candidate cluster and spread apart to avoid overlap; nearness is not a citation. Colour is year (blue older → yellow-green newer); size follows the brightness band selected above. Lines with arrowheads are citations inside the Atlas (pointing to the cited paper); dashed lines join papers with three or more shared references. Labelled stars are this candidate cluster\'s most cited papers.', '位置是论文在 3-D 星空中的位置（内容相近），以这个候选星团为中心重新铺开并略作分开；靠得近不代表有引用。颜色是年份（蓝＝较早 → 黄绿＝较新），大小随上方选择的亮度波段变化。带箭头的线是 Atlas 内的引用（指向被引论文）；虚线连接共享三篇以上参考文献的论文。带标签的是这个候选星团被引最多的论文。')}</p>${lists}</div>`;
+   <section><h4>${t('Derivative works', '后续工作')}</h4><p class="sky-small">${t('Atlas papers outside this cluster that cite several of its papers.', '引用了这个星团多篇论文的 Atlas 论文（团外）。')}</p><ol>${top(deriv, 8, 2).map(([i, c]) => row(i, `${t('cites ', '引用了 ')}${c}${t(' papers here', ' 篇线内论文')}`)).join('') || `<li class="sky-small">${t('None recorded with two or more links.', '暂无引用两篇以上的记录。')}</li>`}</ol></section>
+   <section><h4>${t('Latest in this cluster', '这个星团的最新论文')}</h4><ol>${latest.map(i => row(i, sky.cites[i] >= 0 ? sky.cites[i] + t(' citations', ' 次被引') : t('citations unknown', '被引未知'))).join('')}</ol></section>
+   <section><h4>${t('Bridges', '桥梁论文')}</h4><p class="sky-small">${t('Papers here whose citations or shared references reach other clusters.', '通过引用或共同参考文献连到其他星团的论文。')}</p><ol>${[...bridges.entries()].sort((a, b) => b[1].size - a[1].size).slice(0, 8).map(([i, o]) => row(i, t('reaches ', '连到 ') + [...o].slice(0, 2).map(k => esc(sky.threads[k].label.slice(0, 2).join(' · '))).join('；'))).join('') || `<li class="sky-small">${t('No recorded links to other clusters.', '暂无已记录的跨团连接。')}</li>`}</ol></section></div>`;
+  return `<div class="sky-const"><div class="sky-const-head"><h3>${esc(th.label.join(' · ') || t('Unlabelled cluster', '未命名星团'))}</h3><p>${all.length} ${t('papers', '篇论文')} · ${t('median year ', '中位年份 ')}${th.medianYear || '—'} · ${t('showing ', '图中显示 ')}${shown.length}/${all.length}</p></div>
+   <div class="sky-c3d" data-sky-c3d><canvas tabindex="0" role="img" aria-label="${t('Cluster map in 3-D; drag or use the arrow keys to turn', '星团 3-D 图；拖动或用方向键旋转')}"></canvas><div class="sky-c3d-labels">${labelBtns}</div><div class="sky-c3d-tip" data-g3-tip hidden></div><p class="sky-c3d-hint">${t('Drag to turn · hover a star for its title and routes · click to open', '拖动旋转 · 悬停看标题和它的连线 · 点击打开')}</p></div>
+   <p class="sky-note">${t('Positions are the papers\' places in the 3-D sky (content similarity), re-centred on this cluster and spread apart to avoid overlap; nearness is not a citation. Colour is year (blue older → yellow-green newer); size follows the brightness band selected above. Lines with arrowheads are citations inside the Atlas (pointing to the cited paper); dashed lines join papers with three or more shared references. Labelled stars are this cluster\'s most cited papers.', '位置是论文在 3-D 星空中的位置（内容相近），以这个星团为中心重新铺开并略作分开；靠得近不代表有引用。颜色是年份（蓝＝较早 → 黄绿＝较新），大小随上方选择的亮度波段变化。带箭头的线是 Atlas 内的引用（指向被引论文）；虚线连接共享三篇以上参考文献的论文。带标签的是这个星团被引最多的论文。')}</p>${lists}</div>`;
 }
 
 // ------------------------------------------------------------------ 3-D views (drawing in graph3d.js)
@@ -530,7 +530,7 @@ export function mountStarmap(root, ctx) {
     ctx.writeHash?.();
   }
   // The panel is a stack of levels that stay open: 1 a cluster, chosen from the row of clusters right above its disc of
-  // candidate clusters, 2 one candidate cluster, 3 one paper. Choosing something opens the next level below without closing
+  // clusters, 2 one cluster, 3 one paper. Choosing something opens the next level below without closing
   // those above, and the largest cluster is open by default so the disc is visible without a click. Only a level whose
   // content changed is redrawn, so the 3-D views and the turning disc above keep their state.
   const defaultTopic = sky.topics.map((tp, k) => [tp.count || 0, k]).sort((a, b) => b[0] - a[0])[0][1], drawn = {};
@@ -556,9 +556,9 @@ export function mountStarmap(root, ctx) {
       const sec = panel.querySelector(`[data-sky-level="${n}"]`);
       pending3d = null;
       let body;
-      if (n === 1) body = head(1, t(`Cluster “${name}” and its candidate clusters`, `星团“${name}”和它的候选星团`)) + clusterRow(c, topicK) + solar(topicK, c);
-      else if (n === 2) body = v.thread === '' ? head(2, t('Candidate cluster', '候选星团')) + hint(t('Click a sector or a card in the disc above to open that candidate cluster here: its papers in 3-D, and its prior, derivative, latest and bridge works.', '在上面的星盘里点一个扇区或一张卡片，这里会展开那个候选星团：论文的 3-D 图，以及前序、后续、最新和桥梁论文。'))
-        : head(2, t('Candidate cluster', '候选星团'), true) + await constellation(+v.thread, c);
+      if (n === 1) body = head(1, t(`Cluster “${name}”`, `星团“${name}”`)) + clusterRow(c, topicK) + solar(topicK, c);
+      else if (n === 2) body = v.thread === '' ? head(2, t('Cluster', '星团')) + hint(t('Click a sector or a card in the disc above to open that cluster here: its papers in 3-D, and its prior, derivative, latest and bridge works.', '在上面的星盘里点一个扇区或一张卡片，这里会展开那个星团：论文的 3-D 图，以及前序、后续、最新和桥梁论文。'))
+        : head(2, t('Cluster', '星团'), true) + await constellation(+v.thread, c);
       else body = v.paper === '' ? head(3, t('Paper', '论文')) + hint(t('Click any star, in the sky or in the levels above, to open that paper here with everything related to it.', '点击任意一颗星（上方星空或以上各层里），这里会展开那篇论文和与它相关的全部论文。'))
         : head(3, t('Paper', '论文'), true) + await paperView(v.paper, c, v);
       sec.innerHTML = body; drawn[n] = want[n];
@@ -567,7 +567,7 @@ export function mountStarmap(root, ctx) {
       if (n === 1) {spin(); const row = sec.querySelector('.sky-chips'), on = row?.querySelector('.is-active'); if (on) row.scrollLeft = on.offsetLeft - (row.clientWidth - on.offsetWidth) / 2;}
       fillBackground(sec); fillContexts(sec, t);
     }
-    // the chosen cluster and candidate cluster stay marked on the levels above
+    // the chosen cluster and cluster stay marked on the levels above
     for (const el of panel.querySelectorAll('[data-sky-level="1"] [data-th]')) el.classList.toggle('is-picked', v.thread !== '' && el.dataset.th === String(v.thread));
     if (scrollTo) panel.querySelector(`[data-sky-level="${scrollTo}"]`)?.scrollIntoView({block: 'start', behavior: reduceMotion() ? 'instant' : 'smooth'});
   }
@@ -632,7 +632,7 @@ export function mountStarmap(root, ctx) {
     const hits = []; lower.forEach((x, k) => {if (terms.every(w => x.includes(w))) hits.push(k);});
     list.innerHTML = hits.sort((a, b) => sky.cites[b] - sky.cites[a]).slice(0, 8).map(k => `<li><button type="button" data-sky-cb="${k}">${esc(titleOf(k))}<span>${yearOf(k) || ''}</span></button></li>`).join('') || `<li class="sky-small">${t('No title matches.', '没有匹配的标题。')}</li>`;
   });
-  // a sector, its label, its stars and its card name the same candidate cluster: hovering any of them lights up the rest
+  // a sector, its label, its stars and its card name the same cluster: hovering any of them lights up the rest
   function lightThread(wrap, key, fromFigure) {
     if ((wrap.dataset.hl ?? '') === (key ?? '')) return;
     wrap.dataset.hl = key ?? '';
@@ -665,5 +665,5 @@ function clusterRow(ctx, active) {
   const {t, topicLabel} = ctx, m = sky.meta.coverage;
   const chips = sky.topics.map((tp, k) => ({tp, k})).sort((a, b) => (b.tp.count || 0) - (a.tp.count || 0))
     .map(({tp, k}) => `<button class="sky-chip${k === active ? ' is-active' : ''}" data-sky-topic="${k}" aria-pressed="${k === active}" style="--c:${sky.light[tp.theme]}"><i></i>${esc(topicLabel(tp.name))}<span>${(tp.count || 0).toLocaleString()}</span></button>`).join('');
-  return `<p class="sky-small">${t('Choose a cluster (星团, one topic); its colour is its galaxy (星系, theme group). Below, the disc shows its candidate clusters: groups found automatically from paper content, candidates rather than an expert taxonomy. Papers can belong to several clusters.', '选择一个星团（一个专题），颜色表示它所属的星系（主题大类）。下面的星盘显示它的候选星团：根据论文内容自动找到的分组，只是候选，不是专家分类。一篇论文可以属于多个星团。')} ${t(`${m.worksWithAtlasLink.toLocaleString()} papers have at least one recorded citation link inside the Atlas.`, `${m.worksWithAtlasLink.toLocaleString()} 篇论文至少有一条 Atlas 内部引用关系。`)}</p><div class="sky-chips" role="group" aria-label="${t('Clusters', '星团')}">${chips}</div>`;
+  return `<p class="sky-small">${t('Choose one of the 61 consensus clusters of the field map; its colour is its theme (galaxy). Each paper belongs to at most one cluster; the disc below shows the cluster\'s papers by year.', '从领域地图的 61 个共识星团中选择一个，颜色表示它所属的主题（星系）。每篇论文至多属于一个星团；下面的星盘按年份展示这个星团的论文。')} ${t(`${m.worksWithAtlasLink.toLocaleString()} of the ${sky.n.toLocaleString()} papers have at least one recorded citation link to another paper of the map.`, `${sky.n.toLocaleString()} 篇论文中有 ${m.worksWithAtlasLink.toLocaleString()} 篇至少有一条与地图中其他论文的引用关系。`)}</p><div class="sky-chips" role="group" aria-label="${t('Clusters', '星团')}">${chips}</div>`;
 }

@@ -1,0 +1,9 @@
+method,what_it_protects,used_in_an_action_flow,measured_action_consequences,integration
+RobustRAG,Answers: correct even when a few retrieved passages are corrupted (certifiable),No (question answering only in RAG Security Bench),No,Must change the method: aggregate over actions instead of answers; certification needs redefining per action
+TrustRAG,The retrieved set: k-means filtering plus conflict resolution with the model's own knowledge,No,No,Interface adaptation: the filter can sit at the tool return or memory read; conflict resolution aimed at action decisions would be a method change
+RevPRAG,Generation: detects poisoned responses from model activations,No,No,Must change the method: train on poisoned actions instead of poisoned responses; white-box model needed
+SMSR,Persistent memory: signed provenance at write time plus random ablation and majority aggregation at query time,"Partly: persistent agent memory, but measures answers or verdicts",No,Already adapted to agent memory; action flows still need action-level aggregation
+Cordon-MAS,"Answer synthesis: evidence extraction, cross-review and synthesis split across agents with different permissions","No (multi-agent structure, question-answering task)",No,Interface adaptation: the synthesis agent becomes the acting agent; flow rules must cover tool arguments
+RAGuard,Retrieved results: wider retrieval plus chunk perplexity and similarity filtering,No,No,Can attach directly to retrieved results or tool returns; effect on actions untested
+RAG Security Bench (evaluation),"Evaluates 7 defences (incl. RobustRAG, TrustRAG) against 13 attacks","Agent setting tests attacks only (AgentPoison, ReAct-StrategyQA)",No (target answers),—
+Oracle Poisoning (evaluation),"Knowledge graph queried through tools; 5 defences (read-only access control, cross-validation, prompt hardening, …)",Yes (real SDK tool calls),No (acceptance of forged conclusions),—; the evaluated defences are not RAG retrieval defences

@@ -1,0 +1,11 @@
+rank,cluster_id,cluster_en,cluster_zh,theme_map_number,papers_2026_JanSep,share_of_2026_papers,share_change_pp_2025H1_to_2026H1,papers_2025H1,papers_2026H1,all_works_in_map,jaccard_deletion,jaccard_seed
+1,10,Memory poisoning and long-term memory,记忆投毒与长期记忆安全,T12,158,0.046,3.0,6,84,169,0.92,0.97
+2,3,VLA safety,VLA 安全（视觉-语言-动作模型）,T3,153,0.0445,1.0,17,85,211,0.91,1.0
+3,5,Indirect injection defences for tool agents,工具型 Agent 的间接注入防御,T2,150,0.0437,1.6,12,79,189,0.78,0.87
+4,0,"Deception, scheming and sandbagging",欺骗、谋划与故意藏拙,T5,143,0.0416,-3.0,42,101,260,0.8,0.98
+5,9,Process evaluation and execution auditing of agents,Agent 过程评测与执行审计,T1,141,0.041,1.4,9,63,170,0.74,0.94
+6,14,Multi-agent runtimes and engineering,多智能体运行时与工程框架,T1,116,0.0338,2.4,8,79,144,0.72,0.88
+7,1,Injection and deception against GUI and web agents,GUI 与网页 Agent 的注入与欺骗,T10,115,0.0335,-3.5,37,72,214,0.91,1.0
+8,16,Agent skills ecosystem security,Agent 技能生态安全,T2,114,0.0332,3.1,0,63,114,0.92,0.95
+9,6,Agent societies and cooperation,智能体社会与合作行为,T7,111,0.0323,-1.0,25,77,184,0.75,0.94
+10,2,RAG poisoning and retrieval security,RAG 投毒与检索安全,T11,107,0.0311,-4.7,43,71,213,0.96,0.99

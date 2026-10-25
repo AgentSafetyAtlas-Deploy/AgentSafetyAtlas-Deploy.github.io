@@ -1,0 +1,8 @@
+safety_question,≤2023,2024 H1,2024 H2,2025 H1,2025 H2,2026 H1,2026 Q3
+L1 External information → authorised action,35,33,49,134,250,745,542
+L2 Stored information → future tasks,20,39,48,109,165,529,407
+L3 Decisions → safe actions,37,30,72,126,206,541,432
+L4 Multi-agent safety,57,20,32,133,192,503,312
+L5 Autonomous-agent oversight,104,42,55,150,201,532,330
+None of the five,26,17,20,44,66,94,44
+All works in period,236,145,224,527,811,2032,1405

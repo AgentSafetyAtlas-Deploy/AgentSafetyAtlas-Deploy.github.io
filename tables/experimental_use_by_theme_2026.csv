@@ -1,0 +1,16 @@
+theme,works,works_with_outside_experimental_use,use_links,use_links_within_theme,outside_citation_links,links_with_readable_sentence,coverage
+"T1 Tool execution, coding and runtime",709,62,68,44,2305,2107,91.4%
+"T2 Tool-agent injection, skills",454,120,226,89,5750,5304,92.2%
+T3 Embodied agents,295,39,49,44,1145,1036,90.5%
+"T5 Deception, AI control",276,64,99,84,1815,1662,91.6%
+"T8 Identity, MCP, governance",246,14,17,3,1790,1637,91.5%
+T7 Multi-agent societies,235,35,61,36,1218,1106,90.8%
+"T9 Evaluation, guardrails",216,76,153,79,1858,1704,91.7%
+Unassigned,181,16,27,2,730,678,92.9%
+"T4 Alignment, oversight",178,3,3,2,630,550,87.3%
+T6 LLM-app prompt injection,171,62,129,103,1498,1378,92.0%
+T12 Memory poisoning,158,33,59,30,946,872,92.2%
+"T10 Web, GUI, computer use",117,29,60,35,1089,993,91.2%
+T11 RAG security,107,29,53,42,755,647,85.7%
+T13 Contextual privacy,63,20,34,26,520,497,95.6%
+T14 Offensive cyber,31,3,6,5,199,189,95.0%

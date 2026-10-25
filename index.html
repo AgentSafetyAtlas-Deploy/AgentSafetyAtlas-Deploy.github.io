@@ -7,38 +7,35 @@
     them (owner, 2026-10-20: first visits were slow). Each preload matches the page's own fetch, so nothing loads twice. */
   (function(){try{var d=document,h=(location.hash||'').slice(1).split('?')[0]||'home',zh=false;try{zh=localStorage.getItem('atlas-language')==='zh'}catch(e){}
   var add=function(u,m){var l=d.createElement('link');if(m){l.rel='modulepreload';l.href=u}else{l.rel='preload';l.as='fetch';l.href=u;l.crossOrigin='anonymous'}d.head.appendChild(l)};
-  ['./data/atlas.json','./data/land.json','./data/topic-taxonomy.json','./data/borders.json','./data/updates.json','./data/pipeline-summary.json','./data/analysis-releases.json'].forEach(function(u){add(u)});
+  ['./data/atlas.json','./data/land.json','./data/topic-taxonomy.json','./data/borders.json','./data/pipeline-summary.json'].forEach(function(u){add(u)});
   if(zh)add('./data/translations.zh.json');
-  var lens=['home','discover','findings','questions','synthesis','notes','method'].indexOf(h)>=0;
-  if(lens){['./data/findings.json','./data/editorial.json','./data/records/index.json'].forEach(function(u){add(u)});add('./lenses.js',1);add('./flags.js',1)}
-  if(h==='home'){add('./data/starmap.json');add('./data/starmap-3d.json');add('./home.js',1);add('./home-sky.js',1)}}catch(e){}})();</script>
+  if(h==='home'){add('./data/starmap.json');add('./data/starmap-3d.json');add('./data/paper-home.json');add('./home.js',1);add('./home-sky.js',1)}
+  if(['rq1','rq2','rq3','evidence','method','versions'].indexOf(h)>=0){add('./data/paper-'+h+'.json');add('./paper.js',1)}}catch(e){}})();</script>
 <meta name="robots" content="noindex, nofollow">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#142526">
-  <meta name="description" content="Explore agent safety research, open resources, research teams, timelines and geography through traceable primary evidence.">
+  <meta name="description" content="Agent Safety Atlas: the field map, evidence records and checks behind the paper on research trends and opportunities in agent safety.">
   <title>Agent Safety Atlas</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="icon" href="./favicon-32.png" type="image/png" sizes="32x32">
   <link rel="apple-touch-icon" href="./apple-touch-icon.png">
   <link rel="stylesheet" href="./styles.css">
-  <link rel="stylesheet" href="./insights.css">
   <link rel="stylesheet" href="./topic-guides.css">
   <link rel="stylesheet" href="./research-paths.css">
   <link rel="stylesheet" href="./research-explorer.css">
 <link rel="stylesheet" href="./research-starmap.css">
 <link rel="stylesheet" href="./research-dark.css">
-<link rel="stylesheet" href="./lenses.css">
 <link rel="stylesheet" href="./home.css">
 <link rel="stylesheet" href="./timemap.css">
 <link rel="stylesheet" href="./pages.css">
-<link rel="stylesheet" href="./snapshot.css">
 <link rel="stylesheet" href="./theme-dark.css">
 <link rel="stylesheet" href="./stages.css">
-<link rel="stylesheet" href="./questions.css">
+<link rel="stylesheet" href="./rq.css">
+<link rel="stylesheet" href="./paper.css">
   <script type="module" src="./app.js"></script>
 </head>
 <body>
   <div id="app"><main class="boot" aria-busy="true"><span class="boot-mark" aria-hidden="true"><svg viewBox="0 0 40 40"><rect x="1" y="1" width="38" height="38" rx="11"/><g class="xstrokes"><path d="M11 27 18 14 28 20 26 30" style="stroke-width:2"/><circle cx="11" cy="27" r="2.6"/><circle cx="18" cy="14" r="2.6"/><circle cx="28" cy="20" r="3.4"/><circle cx="26" cy="30" r="2.2"/></g></svg></span><div class="boot-kicker">RESEARCH &amp; OPEN RESOURCES</div><h1>Agent Safety Atlas</h1><div class="boot-bar" aria-hidden="true"><span></span></div><p role="status">Loading the research index…</p></main></div>
-  <noscript>Enable JavaScript to browse and filter research. <a href="./data/atlas.json">Download research data</a></noscript>
+  <noscript>Enable JavaScript to browse the atlas.</noscript>
 </body>
 </html>

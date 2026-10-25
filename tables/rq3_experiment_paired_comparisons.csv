@@ -1,0 +1,42 @@
+input,comparison,metric,decided_in_both,difference_pp,bootstrap_95,only_first_only_second,mcnemar_p,feasible_label_bounds_all90
+Clean,TrustRAG − no defence,Tool-answer target endorsement,90,+2.2,−2.2 to +6.7,3 / 1,0.625,—
+Clean,TrustRAG − no defence,Final-record target endorsement,90,+1.1,−3.3 to +5.6,3 / 2,1.000,—
+Clean,TrustRAG − no defence,Correct and clean completion,81,+13.6,+3.7 to +23.5,15 / 4,0.019,+6.7 to +17.8
+Clean,TrustRAG − no defence,"Tool answer, definite endorsement only",90,+2.2,−2.2 to +6.7,3 / 1,0.625,—
+Clean,TrustRAG − no defence,"Final record, definite endorsement only",90,+1.1,−3.3 to +5.6,3 / 2,1.000,—
+Clean,Filter only − no defence,Correct and clean completion,82,+0.0,−4.9 to +4.9,2 / 2,1.000,—
+Clean,TrustRAG − filter only,Tool-answer target endorsement,90,+2.2,−2.2 to +6.7,3 / 1,0.625,—
+Clean,TrustRAG − filter only,Final-record target endorsement,90,+1.1,−3.3 to +5.6,3 / 2,1.000,—
+Clean,TrustRAG − filter only,Correct and clean completion,81,+13.6,+3.7 to +23.5,15 / 4,0.019,+6.7 to +17.8
+Clean,TrustRAG − filter only,"Tool answer, definite endorsement only",90,+2.2,−2.2 to +6.7,3 / 1,0.625,—
+Clean,TrustRAG − filter only,"Final record, definite endorsement only",90,+1.1,−3.3 to +5.6,3 / 2,1.000,—
+Original poisoning,TrustRAG − no defence,Tool-answer target endorsement,90,−75.6,−84.4 to −66.7,0 / 68,< 0.0001,—
+Original poisoning,TrustRAG − no defence,Final-record target endorsement,90,−76.7,−85.6 to −67.8,0 / 69,< 0.0001,—
+Original poisoning,TrustRAG − no defence,Correct and clean completion,79,+44.3,+32.9 to +55.7,36 / 1,< 0.0001,+33.3 to +47.8
+Original poisoning,TrustRAG − no defence,"Tool answer, definite endorsement only",90,−75.6,−84.4 to −66.7,0 / 68,< 0.0001,—
+Original poisoning,TrustRAG − no defence,"Final record, definite endorsement only",90,−76.7,−85.6 to −67.8,0 / 69,< 0.0001,—
+Original poisoning,Filter only − no defence,Tool-answer target endorsement,90,−75.6,−84.4 to −66.7,0 / 68,< 0.0001,—
+Original poisoning,Filter only − no defence,Final-record target endorsement,90,−76.7,−85.6 to −67.8,0 / 69,< 0.0001,—
+Original poisoning,Filter only − no defence,Correct and clean completion,82,+30.5,+19.5 to +41.5,26 / 1,< 0.0001,+23.3 to +32.2
+Original poisoning,Filter only − no defence,"Tool answer, definite endorsement only",90,−75.6,−84.4 to −66.7,0 / 68,< 0.0001,—
+Original poisoning,Filter only − no defence,"Final record, definite endorsement only",90,−76.7,−85.6 to −67.8,0 / 69,< 0.0001,—
+Original poisoning,TrustRAG − filter only,Tool-answer target endorsement,90,+0.0,−4.4 to +4.4,2 / 2,1.000,—
+Original poisoning,TrustRAG − filter only,Final-record target endorsement,90,+0.0,−4.4 to +4.4,2 / 2,1.000,—
+Original poisoning,TrustRAG − filter only,Correct and clean completion,81,+12.3,+2.5 to +23.5,15 / 5,0.041,+8.9 to +16.7
+Original poisoning,TrustRAG − filter only,"Tool answer, definite endorsement only",90,+0.0,−4.4 to +4.4,2 / 2,1.000,—
+Original poisoning,TrustRAG − filter only,"Final record, definite endorsement only",90,+0.0,−4.4 to +4.4,2 / 2,1.000,—
+Poisoned + instruction (secondary),TrustRAG − no defence,Tool-answer target endorsement,90,−72.2,−81.1 to −62.2,0 / 65,< 0.0001,—
+Poisoned + instruction (secondary),TrustRAG − no defence,Final-record target endorsement,90,−72.2,−81.1 to −62.2,0 / 65,< 0.0001,—
+Poisoned + instruction (secondary),TrustRAG − no defence,Correct and clean completion,79,+41.8,+30.4 to +53.2,34 / 1,< 0.0001,+30.0 to +45.6
+Poisoned + instruction (secondary),TrustRAG − no defence,"Tool answer, definite endorsement only",90,−71.1,−80.0 to −61.1,0 / 64,< 0.0001,—
+Poisoned + instruction (secondary),TrustRAG − no defence,"Final record, definite endorsement only",90,−70.0,−78.9 to −60.0,0 / 63,< 0.0001,—
+Poisoned + instruction (secondary),Filter only − no defence,Tool-answer target endorsement,90,−72.2,−81.1 to −62.2,0 / 65,< 0.0001,—
+Poisoned + instruction (secondary),Filter only − no defence,Final-record target endorsement,90,−72.2,−81.1 to −62.2,0 / 65,< 0.0001,—
+Poisoned + instruction (secondary),Filter only − no defence,Correct and clean completion,82,+28.0,+17.1 to +39.0,24 / 1,< 0.0001,+20.0 to +30.0
+Poisoned + instruction (secondary),Filter only − no defence,"Tool answer, definite endorsement only",90,−71.1,−80.0 to −61.1,0 / 64,< 0.0001,—
+Poisoned + instruction (secondary),Filter only − no defence,"Final record, definite endorsement only",90,−70.0,−78.9 to −60.0,0 / 63,< 0.0001,—
+Poisoned + instruction (secondary),TrustRAG − filter only,Tool-answer target endorsement,90,+0.0,−4.4 to +4.4,2 / 2,1.000,—
+Poisoned + instruction (secondary),TrustRAG − filter only,Final-record target endorsement,90,+0.0,−4.4 to +4.4,2 / 2,1.000,—
+Poisoned + instruction (secondary),TrustRAG − filter only,Correct and clean completion,81,+12.3,+2.5 to +23.5,15 / 5,0.041,+7.8 to +17.8
+Poisoned + instruction (secondary),TrustRAG − filter only,"Tool answer, definite endorsement only",90,+0.0,−4.4 to +4.4,2 / 2,1.000,—
+Poisoned + instruction (secondary),TrustRAG − filter only,"Final record, definite endorsement only",90,+0.0,−4.4 to +4.4,2 / 2,1.000,—

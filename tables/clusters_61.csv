@@ -1,0 +1,62 @@
+cluster_id,name_en,name_zh,theme,works_in_map,naming
+C00,"Deception, scheming and sandbagging",欺骗、谋划与故意藏拙,"T5 Deception, AI control",260,inherited from v1 (best-overlap match)
+C01,Injection and deception against GUI and web agents,GUI 与网页 Agent 的注入与欺骗,"T10 Web, GUI, computer use",214,inherited from v1 (best-overlap match)
+C02,RAG poisoning and retrieval security,RAG 投毒与检索安全,T11 RAG security,213,inherited from v1 (best-overlap match)
+C03,VLA safety,VLA 安全（视觉-语言-动作模型）,T3 Embodied agents,211,inherited from v1 (best-overlap match)
+C04,"Alignment and AGI risk (positions, theory)",对齐与 AGI 风险（立场与理论）,"T4 Alignment, oversight",190,inherited from v1 (best-overlap match)
+C05,Indirect injection defences for tool agents,工具型 Agent 的间接注入防御,"T2 Tool-agent injection, skills",189,inherited from v1 (best-overlap match)
+C06,Agent societies and cooperation,智能体社会与合作行为,T7 Multi-agent societies,184,inherited from v1 (best-overlap match)
+C07,Embodied task-planning safety,具身任务规划安全,T3 Embodied agents,180,inherited from v1 (best-overlap match)
+C08,Prompt injection detection and model-level defence,提示注入检测与模型层防御,T6 LLM-app prompt injection,178,inherited from v1 (best-overlap match)
+C09,Process evaluation and execution auditing of agents,Agent 过程评测与执行审计,"T1 Tool execution, coding and runtime",170,inherited from v1 (best-overlap match)
+C10,Memory poisoning and long-term memory,记忆投毒与长期记忆安全,T12 Memory poisoning,169,inherited from v1 (best-overlap match)
+C11,Attacks and defences in multi-agent systems,多智能体系统的攻击与防御,T7 Multi-agent societies,150,inherited from v1 (best-overlap match)
+C12,"Agent identity, delegation, decentralised protocols",智能体身份、委托与去中心化协议,"T8 Identity, MCP, governance",149,inherited from v1 (best-overlap match)
+C13,Prompt injection and information leakage in LLM-integrated applications,LLM 集成应用中的提示注入与信息泄露,T6 LLM-app prompt injection,147,reviewed and renamed
+C14,Agentic system architecture and runtime engineering,智能体系统架构与运行时工程,"T1 Tool execution, coding and runtime",144,reviewed and renamed
+C15,"Reward hacking, self-improvement, research agents",奖励投机、自我改进与科研 Agent,"T1 Tool execution, coding and runtime",118,inherited from v1 (best-overlap match)
+C16,Agent skills ecosystem security,Agent 技能生态安全,"T2 Tool-agent injection, skills",114,inherited from v1 (best-overlap match)
+C17,"Human-agent autonomy, governance, trust frameworks",人机自主、治理与信任框架,"T4 Alignment, oversight",112,inherited from v1 (best-overlap match)
+C18,Contextual integrity and privacy leakage,情境完整性与隐私泄露,T13 Contextual privacy,112,inherited from v1 (best-overlap match)
+C19,CoT monitoring and steganography,思维链监控与隐写,"T5 Deception, AI control",107,inherited from v1 (best-overlap match)
+C20,Autonomous driving decisions,自动驾驶决策安全,T3 Embodied agents,105,inherited from v1 (best-overlap match)
+C21,Runtime guardrails and multi-turn trajectories,运行时护栏与多轮轨迹安全,"T9 Evaluation, guardrails",102,inherited from v1 (best-overlap match)
+C22,Coding agents and software engineering,编码 Agent 与软件工程安全,"T1 Tool execution, coding and runtime",101,inherited from v1 (best-overlap match)
+C23,"Safety evaluation of tool use, risk awareness",工具使用的安全评测与风险意识,"T9 Evaluation, guardrails",94,inherited from v1 (best-overlap match)
+C24,Tool-call authorisation and approval,工具调用的授权与审批,"T2 Tool-agent injection, skills",85,inherited from v1 (best-overlap match)
+C25,MCP servers and protocol security,MCP 服务器与协议安全,"T8 Identity, MCP, governance",85,inherited from v1 (best-overlap match)
+C26,AI control and sabotage evaluation,AI 控制与蓄意破坏评估,"T5 Deception, AI control",82,inherited from v1 (best-overlap match)
+C27,Agent red teaming and cross-session threats,Agent 红队与跨会话威胁,"T9 Evaluation, guardrails",78,inherited from v1 (best-overlap match)
+C28,Agent security surveys and threat taxonomies,Agent 安全综述与威胁分类,"T8 Identity, MCP, governance",66,inherited from v1 (best-overlap match)
+C29,Norm reasoning and policy compliance (classic agents),规范推理与策略合规（经典 Agent）,"T4 Alignment, oversight",58,inherited from v1 (best-overlap match)
+C30,"Scalable oversight (weak-to-strong, debate)",可扩展监督（弱到强、辩论）,"T4 Alignment, oversight",56,"reviewed, name kept"
+C31,Offensive cyber capability evaluation,攻击性网络能力评估,T14 Offensive cyber,54,inherited from v1 (best-overlap match)
+C32,Trajectory evaluation and failure attribution,执行轨迹评估与失败归因,"T1 Tool execution, coding and runtime",53,inherited from v1 (best-overlap match)
+C33,Execution control and assurance in agent frameworks,Agent 框架的执行控制与保障,"T1 Tool execution, coding and runtime",51,inherited from v1 (best-overlap match)
+C34,"Enterprise data agents: hallucination, context governance",企业数据 Agent：幻觉与上下文治理,"T1 Tool execution, coding and runtime",49,inherited from v1 (best-overlap match)
+C35,Agents in clinical and healthcare settings,临床与医疗场景中的 Agent,"T1 Tool execution, coding and runtime",46,reviewed and renamed
+C36,Runtime authority and injection diagnosis,运行时权限与注入诊断,"T2 Tool-agent injection, skills",44,inherited from v1 (best-overlap match)
+C37,Runtime governance and policy enforcement,运行时治理与策略执行,"T8 Identity, MCP, governance",42,inherited from v1 (best-overlap match)
+C38,Collusion in markets and trading,市场与交易中的多智能体合谋,T7 Multi-agent societies,41,inherited from v1 (best-overlap match)
+C39,"Indirect prompt injection: toolkits, defence evaluations and accumulating attacks",间接提示注入：评测工具、防御比较与累积式攻击,"T2 Tool-agent injection, skills",37,reviewed and renamed
+C40,Backdoors in agents,Agent 后门攻击,T6 LLM-app prompt injection,35,inherited from v1 (best-overlap match)
+C41,Safety and alignment in reinforcement learning for language agents,语言 Agent 强化学习训练中的安全与对齐,"T4 Alignment, oversight",34,reviewed and renamed
+C42,Security of open agent frameworks (OpenClaw),开放 Agent 框架安全（OpenClaw 等）,"T2 Tool-agent injection, skills",32,inherited from v1 (best-overlap match)
+C43,Verifiable auditing and execution admission,可验证审计与执行准入,"T8 Identity, MCP, governance",29,"reviewed, name kept"
+C44,Autonomous agents in telecom networks,电信网络中的自治 Agent,"T1 Tool execution, coding and runtime",26,inherited from v1 (best-overlap match)
+C45,Access control and verifiable guardrails,访问控制与可验证护栏,"T1 Tool execution, coding and runtime",23,"reviewed, name kept"
+C46,Instruction hierarchy,指令层级,T6 LLM-app prompt injection,21,inherited from v1 (best-overlap match)
+C47,Governance and assurance frameworks for agentic AI,智能体 AI 的治理与保障框架,"T8 Identity, MCP, governance",21,reviewed and renamed
+C48,Reliability of multi-agent deliberation and debate,多智能体协商与辩论的可靠性,T7 Multi-agent societies,18,reviewed and renamed
+C49,Voice assistant security,语音助手安全,"T10 Web, GUI, computer use",17,inherited from v1 (best-overlap match)
+C50,Agent containment and system security (mixed),Agent 约束与系统安全（混合）,T6 LLM-app prompt injection,16,reviewed and renamed
+C51,Human oversight and control of agents,Agent 的人类监督与控制,"T1 Tool execution, coding and runtime",15,reviewed and renamed
+C52,Prompt injection in peer review,同行评审中的提示注入,T6 LLM-app prompt injection,14,inherited from v1 (best-overlap match)
+C53,Statistical risk control and certified runtime monitoring,统计风险控制与可认证的运行时监测,"T1 Tool execution, coding and runtime",13,reviewed and renamed
+C54,Persuasion and influence by and on LLM agents,LLM Agent 的说服与影响（施加与承受）,"T5 Deception, AI control",11,reviewed and renamed
+C55,Runtime contracts and governance for autonomous agents,自主 Agent 的运行时契约与治理,"T4 Alignment, oversight",7,reviewed and renamed
+C56,Task-based permission scoping and policy-as-code,基于任务的权限范围与策略即代码,"T1 Tool execution, coding and runtime",6,reviewed and renamed
+C57,Oversight of self-evolving and self-modifying agents,自我演化与自我修改 Agent 的监督,"T1 Tool execution, coding and runtime",5,reviewed and renamed
+C58,Agent control-loop security and runtime evaluation (mixed),Agent 控制循环安全与运行时评测（混合）,"T1 Tool execution, coding and runtime",5,reviewed and renamed
+C59,Agent execution control and tooling (mixed),Agent 执行控制与工具框架（混合）,"T1 Tool execution, coding and runtime",5,reviewed and renamed
+C60,Bounded autonomy in enterprise orchestration,企业编排中的有界自治,"T1 Tool execution, coding and runtime",5,inherited from v1 (best-overlap match)

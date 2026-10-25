@@ -34,8 +34,11 @@ export function mountSky(host, ctx) {
     size[i] = xyz[i] ? 0.8 + 2.6 * c ** 1.5 + hash(sky.ids[i], 3) * 0.3 : 0;
   }
   // cluster centroids in 3-D for the floating names
-  const cl = sky.topics.map((tp, k) => { let x = 0, y = 0, z = 0, m = 0; for (let i = 0; i < n; i++) if (size[i] && sky.topics_of[i].includes(k)) { x += P[i * 3]; y += P[i * 3 + 1]; z += P[i * 3 + 2]; m += 1; } return {k, name: tp.name, theme: tp.theme, x: x / m, y: y / m, z: z / m, m}; });
-  labelsEl.innerHTML = cl.map(c => `<button class="hs-label" data-hs-topic="${c.k}" style="--c:${css(col[c.theme])}">${ctx.esc(ctx.topicName(c.name))}</button>`).join('');
+  const centre = (k, test, extra) => { let x = 0, y = 0, z = 0, m = 0; for (let i = 0; i < n; i++) if (size[i] && test(i)) { x += P[i * 3]; y += P[i * 3 + 1]; z += P[i * 3 + 2]; m += 1; } return {k, ...extra, x: x / m, y: y / m, z: z / m, m}; };
+  const nt = Math.min(14, sky.themes.length);
+  const cl = [...sky.themes.slice(0, nt).map((th, k) => centre(k, i => theme[i] === k, {kind: 'theme', name: th.en, id: th.id, theme: k})),
+              ...sky.topics.map((tp, j) => centre(nt + j, i => sky.topics_of[i].includes(j), {kind: 'cluster', name: tp.name, theme: tp.theme}))];
+  labelsEl.innerHTML = cl.map(c => `<button class="hs-label" data-hs-topic="${c.k}" data-kind="${c.kind}" ${c.kind === 'cluster' ? 'hidden' : ''} style="--c:${css(col[c.theme])}">${ctx.esc(ctx.topicName(c.name))}</button>`).join('');
   const labelEls = [...labelsEl.children];
   // far dust: a fixed field behind the stars
   const dust = Array.from({length: 420}, (_, i) => [hash('d' + i, 1), hash('d' + i, 2), 0.2 + hash('d' + i, 3) * 0.9, hash('d' + i, 4)]);
@@ -86,7 +89,7 @@ export function mountSky(host, ctx) {
     if (st.hover >= 0) { const i = st.hover; g.globalAlpha = 1; g.strokeStyle = '#f4fbe0'; g.lineWidth = 1.4; g.beginPath(); g.arc(proj[i * 3], proj[i * 3 + 1], size[i] * 2 + 5, 0, 6.2832); g.stroke(); }
     // floating cluster names: in front bright and larger, behind faint
     // nearest names first; a name that would overlap one already placed fades back instead of piling up
-    const placed = [], lab = labelEls.map(el => { const c = cl[+el.dataset.hsTopic], x1 = c.x * cy + c.z * sy, z1 = -c.x * sy + c.z * cy, y1 = c.y * cp - z1 * sp, z2 = c.y * sp + z1 * cp, s = D / (D - z2); return {el, c, x: CX + x1 * R * s, y: CY - y1 * R * s, front: (z2 + 1) / 2}; }).sort((a, b) => b.front - a.front);
+    const placed = [], lab = labelEls.filter(el => !el.hidden).map(el => { const c = cl[+el.dataset.hsTopic], x1 = c.x * cy + c.z * sy, z1 = -c.x * sy + c.z * cy, y1 = c.y * cp - z1 * sp, z2 = c.y * sp + z1 * cp, s = D / (D - z2); return {el, c, x: CX + x1 * R * s, y: CY - y1 * R * s, front: (z2 + 1) / 2}; }).sort((a, b) => b.front - a.front);
     for (const L of lab) {
       const w = (L.el.offsetWidth || 90) * (0.78 + 0.32 * L.front), h = 18, box = [L.x - w / 2, L.y - h / 2, L.x + w / 2, L.y + h / 2];
       const clash = placed.some(b => box[0] < b[2] && b[0] < box[2] && box[1] < b[3] && b[1] < box[3]), dim = st.focusTheme >= 0 && L.c.theme !== st.focusTheme;
@@ -116,7 +119,8 @@ export function mountSky(host, ctx) {
   });
   canvas.addEventListener('pointerup', e => { const d = st.drag; st.drag = null; if (d && !d.moved && st.hover >= 0) ctx.openPaper(sky.ids[st.hover]); });
   canvas.addEventListener('pointerleave', () => { st.hover = -1; tip.hidden = true; });
-  labelsEl.addEventListener('click', e => { const b = e.target.closest('[data-hs-topic]'); if (b) ctx.openCluster(sky.topics[+b.dataset.hsTopic].name); });
+  labelsEl.addEventListener('click', e => { const b = e.target.closest('[data-hs-topic]'); if (b) { const c = cl[+b.dataset.hsTopic]; if (c.kind === 'cluster') ctx.openCluster(c.name); else ctx.openTheme(c.id); } });
+  host.querySelector('[data-hs-clusters]')?.addEventListener('change', e => { for (const el of labelEls) el.hidden = (el.dataset.kind === 'cluster') !== e.target.checked; start(); });
   for (const b of host.querySelectorAll('[data-hs-theme]')) {
     b.addEventListener('mouseenter', () => { st.focusTheme = +b.dataset.hsTheme; start(); });
     b.addEventListener('mouseleave', () => { st.focusTheme = -1; start(); });

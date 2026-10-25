@@ -1,0 +1,6 @@
+approach,control_and_protected_object,examples,inputs_and_conditions_to_recheck
+Training and prompt structure,Interpretation of instructions and data within the model,Meta-SecAlign; Spotlighting,Model response to the attack; formatting or training assumptions
+Detection and filtering,Content before it reaches the agent,PromptArmor and content-filtering records,"Detector, threshold and the attacker's adaptation"
+Isolation and information flow,Control structure and permitted data flows,CaMeL's separation and capability checks,"Task specification, provenance labels, policy and planning requirements"
+Runtime enforcement,Tool calls and arguments at execution,Progent's permission policies,"Policy correctness, task interpretation and tool semantics"
+Authorisation and effect binding,Authority from task specification through realised effects,TraceGrant's task-effect contract,"Trusted task specification, admitted evidence and binding to realised effects"
