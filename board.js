@@ -110,7 +110,7 @@ async function renderStory(v, ch, ctx, H, alive) {
   const lead = `<section class="ln-lead bd-lead"><span class="fd-kicker">${esc(tx(ch.label))} · ${T('frozen map v2', '冻结地图 v2')}</span><h2>${esc(tx(S.q))}</h2>${S.lead ? `<p class="fd-note">${esc(tx(S.lead))}</p>` : ''}</section>`;
   const body = document.querySelector('.bd-body');
   let cs = cards();
-  body.innerHTML = `<div class="fd bd-story pb-lens" data-bd-story="${key}">${lead}${nav}${head}<div class="cr-wrap"><div class="cr-stage bd-stage${sec.ext ? ' is-' + sec.ext : ''}">${view}</div><div class="cr-cards pb-cards-col">${cardList(cs)}${foot}</div></div>${more}</div>`;
+  body.innerHTML = `<div class="fd bd-story pb-lens" data-bd-story="${key}">${lead}${nav}${head}<div class="cr-wrap${sec.stack ? ' bd-stack' : ''}"><div class="cr-stage bd-stage${sec.ext ? ' is-' + sec.ext : ''}">${view}</div><div class="cr-cards pb-cards-col">${cardList(cs)}${foot}</div></div>${more}</div>`;
   if (sec.ext === 'analysis') { body.querySelector('.bd-story').insertAdjacentHTML('beforeend', H.analysis().analysisNotes(anCtx)); H.analysis().bindAnalysis(anCtx); }
   if (sec.ext === 'timemap') H.timemapRender();
   body.querySelectorAll('.bd-story .pp').forEach(r => PM.bindPaper(v, ctx, r));

@@ -395,3 +395,11 @@ html[data-theme="light"] .pp-os .c3, :root:not([data-theme]) .pp-os .c3 { color:
 .bd-stage .an-insights { border: 0; padding: 0; margin-top: 10px; background: none; }
 .bd-stage .an-insights h4, .bd-stage .an-insights ul, .bd-stage .an-insights > .muted { display: none; }  /* the cards on the right carry them */
 .bd-stage .an-heat th { white-space: nowrap; }
+/* a section with a wide view (the film): the view full width on top, its cards in one row below (owner, 10-26) */
+.bd .pb-lens .cr-wrap.bd-stack { grid-template-columns: minmax(0, 1fr); }
+.bd .cr-wrap.bd-stack .cr-stage { position: static; max-height: none; overflow: visible; }
+.bd .cr-wrap.bd-stack .pb-cards-col { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; padding-bottom: 0; align-items: stretch; }
+.bd .cr-wrap.bd-stack .cr-card { margin-bottom: 0; }
+.bd .cr-wrap.bd-stack .pb-foot { grid-column: 1 / -1; margin-top: 4px; }
+.bd .cr-wrap.bd-stack .cr-show { display: none; }
+@media (max-width: 900px) { .bd .cr-wrap.bd-stack .pb-cards-col { grid-template-columns: minmax(0, 1fr); } }
