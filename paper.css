@@ -289,3 +289,57 @@ header.site-header { z-index: 60; }
 .landscape .matrix { display: block; columns: 3 330px; column-gap: 16px; }
 .landscape .matrix > .mcat { break-inside: avoid; width: 100%; margin: 0 0 16px; }
 .view-papers .landscape { margin: 18px 0 22px; }
+
+/* ===================================================================== boards (owner, 2026-10-26)
+   Evolution · Landscape · Foundations & protection · Opportunities & tests share one frame: hero, sticky chapters, cards */
+.view-structure .pagehead { display: none; }
+.bd { --bd-ink: #163b3a; --bd-muted: #5d7270; --bd-line: #d6e1df; --bd-panel: #ffffff; --bd-soft: #eef4f1; --bd-accent: #3d6f1c; --bd-accent-ink: #ffffff; --bd-glow: rgba(61,111,28,.10); --bd-glow2: rgba(48,123,113,.10);
+  color: var(--bd-ink); margin: 6px 0 40px; }
+html[data-theme="dark"] .bd { --bd-ink: #e3f0ee; --bd-muted: #9fb7b3; --bd-line: rgba(160,205,195,.18); --bd-panel: #0f2622; --bd-soft: #14302b; --bd-accent: #d4e966; --bd-accent-ink: #10231f; --bd-glow: rgba(212,233,102,.10); --bd-glow2: rgba(95,191,159,.12); }
+.bd-hero { position: relative; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 32px; align-items: center; padding: 34px 36px; border: 1px solid var(--bd-line); border-radius: 22px; overflow: hidden;
+  background: radial-gradient(120% 140% at 0% 0%, var(--bd-glow), transparent 55%), radial-gradient(90% 120% at 100% 100%, var(--bd-glow2), transparent 60%), var(--bd-panel); }
+.bd-kicker { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--bd-accent); }
+.bd-kicker i { font-style: normal; display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; border: 1px solid currentColor; font-size: 13px; letter-spacing: 0; }
+.bd-hero h1 { font-size: clamp(24px, 2.4vw, 34px); line-height: 1.22; letter-spacing: -.4px; margin: 12px 0 10px; font-weight: 700; }
+.bd-hero-copy p { margin: 0; color: var(--bd-muted); font-size: 15px; line-height: 1.6; max-width: 56ch; }
+.bd-kpis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 0; }
+.bd-kpis > div { padding: 16px 18px; border: 1px solid var(--bd-line); border-radius: 14px; background: var(--bd-soft); min-width: 0; }
+.bd-kpis dt { font-size: 28px; font-weight: 700; letter-spacing: -.6px; line-height: 1.1; color: var(--bd-accent); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.bd-kpis dd { margin: 6px 0 0; font-size: 13px; line-height: 1.45; color: var(--bd-muted); }
+.bd-tabs { position: sticky; top: 0; z-index: 30; display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin: 18px 0 0; padding: 12px 2px;
+  background: linear-gradient(var(--bd-bg, #0b1f1c) 78%, transparent); }
+html[data-theme="light"] .bd-tabs { --bd-bg: #f3f6f7; }
+.bd-tabs::-webkit-scrollbar { display: none; }
+.bd-tabs button { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 999px; border: 1px solid var(--bd-line); background: var(--bd-panel); color: var(--bd-ink); font: inherit; font-size: 14px; cursor: pointer; white-space: nowrap; transition: border-color .15s, background .15s; }
+.bd-tabs button span { font-size: 11px; font-weight: 700; color: var(--bd-muted); font-variant-numeric: tabular-nums; }
+.bd-tabs button:hover { border-color: var(--bd-accent); }
+.bd-tabs button.is-on { background: var(--bd-accent); border-color: var(--bd-accent); color: var(--bd-accent-ink); font-weight: 650; }
+.bd-tabs button.is-on span { color: var(--bd-accent-ink); opacity: .7; }
+.bd-body { display: grid; gap: 18px; margin-top: 8px; }
+.bd-part { min-width: 0; border: 1px solid var(--bd-line); border-radius: 18px; background: var(--bd-panel); padding: 26px 28px; }
+/* parts that bring their own cards are not boxed twice */
+.bd-part.bd-analysis, .bd-part.bd-lens { border: 0; background: none; padding: 0; }
+.bd .an-layout { margin: 0; }
+.bd .panel { border-radius: 18px; border-color: var(--bd-line); background: var(--bd-panel); }
+/* findings sections inside a card: the chapter bar names the section, so no kicker; one heading style */
+.bd .pp-in-board { padding: 0; margin: 0; max-width: none; }
+.bd .pp-in-board .rq-sec { margin: 0; padding: 0; border: 0; }
+.bd .pp-in-board .rq-sec + .rq-sec { margin-top: 30px; padding-top: 26px; border-top: 1px solid var(--bd-line); }
+.bd .pp-in-board .rq-eyebrow { display: none; }
+.bd .pp-in-board .rq-sec-head h2, .bd .ln-lead h2, .bd .an-chart figcaption > b { font-size: 22px; line-height: 1.3; letter-spacing: -.2px; font-weight: 700; max-width: 60ch; margin: 0 0 14px; }
+/* observation parts inside a board: no own tab bars, a calm lead */
+.bd .ln-tabs, .bd .q-mini, .bd [data-q-mini], .bd .ln-lead .fd-kicker { display: none !important; }
+.bd .fd { margin: 0; }
+html .bd .ln-lead, html[data-theme] .bd .ln-lead { padding: 6px 2px 0; border: 0; background: none; margin: 0 0 14px; border-radius: 0; }
+.bd .ln-lead h2 { margin: 0; color: var(--bd-ink); }
+.bd .ln-chapters { margin-top: 0; }
+/* time map inside a board */
+.bd-map .ex-dir { margin-top: 22px; }
+@media (max-width: 900px) {
+  .bd-hero { grid-template-columns: minmax(0, 1fr); padding: 24px 20px; gap: 20px; }
+  .bd-part { padding: 20px 16px; }
+  .bd-kpis dt { font-size: 24px; }
+}
+/* home: four board cards in one row on wide screens */
+@media (min-width: 1180px) { .hm-cards.hm-cards-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .bd-kpis dt { font-size: 21px; white-space: normal; } .bd-kpis > div { padding: 14px; } }

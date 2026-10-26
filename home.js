@@ -11,7 +11,7 @@ export function renderHero({t, counts, themes, galaxyName}) {
     <span class="hs-kicker">AGENT SAFETY ATLAS · ${t('THE FIELD MAP', '领域地图')}</span>
     <h1>${t('Every star<br>is a paper.', '每一颗星，<br>都是一篇论文。')}</h1>
     <p>${t(`${n(counts.works)} works on the safety of AI agents first published through 30 September 2026: a frozen field map of ${counts.galaxies} galaxies (themes) and ${counts.clusters} consensus clusters.`, `截至 2026 年 9 月 30 日首次公开的 ${n(counts.works)} 篇 AI 智能体安全论文，组成冻结的领域地图：${counts.galaxies} 个星系（即主题）和 ${counts.clusters} 个共识星团。`)}</p>
-    <div class="hs-cta"><button class="hs-btn is-primary" data-view="evolution">${t('Findings', '看发现')} →</button><button class="hs-btn" data-view="evidence">${t('Check the evidence', '核查证据')}</button><button class="hs-btn" data-view="papers">${t('Browse the papers', '浏览论文')}</button><button class="hs-btn" data-view="explore">${t('Star map in detail', '详细星图')}</button></div>
+    <div class="hs-cta"><button class="hs-btn is-primary" data-view="evolution">${t('Evolution', '看演化')} →</button><button class="hs-btn" data-view="evidence">${t('Check the evidence', '核查证据')}</button><button class="hs-btn" data-view="papers">${t('Browse the papers', '浏览论文')}</button><button class="hs-btn" data-view="explore">${t('Star map in detail', '详细星图')}</button></div>
     <p class="hs-hint">${t('Drag to turn the sky · hover a star for its title · click a name to list its papers', '拖动旋转星空 · 悬停看论文标题 · 点击名称查看论文')}</p>
     <label class="hs-toggle"><input type="checkbox" data-hs-clusters> ${t(`Show the ${counts.clusters} cluster names instead of the ${counts.galaxies} galaxies`, `显示 ${counts.clusters} 个星团名（代替 ${counts.galaxies} 个星系名）`)}</label>
   </div>
@@ -33,11 +33,12 @@ export function renderHome({t, hero, H}) {
   <section class="hm" id="home-lenses">
     <div class="hm-head"><span class="hm-kicker">${t('HOW TO READ THE MAP', '怎样读这张地图')}</span><h2>${t('Five words, each mapped to something you can count', '五个词，每个都对应可以计数的东西')}</h2></div>
     <div class="hm-words">${words.map(([i, w, d]) => `<div><span class="hm-icon" aria-hidden="true">${i}</span><h3>${w}</h3><p>${d}</p></div>`).join('')}</div>
-    <div class="hm-head"><span class="hm-kicker">${t('THREE FINDINGS', '三项发现')}</span><h2>${t('Each finding opens on its charts and the records behind them', '每项发现都可以展开图表和背后的记录')}</h2></div>
-    <div class="hm-cards">
-      ${card('evolution', '↗', t('Research evolution', '研究演化'), t('Research is turning towards what agents do: external information, persistent state and authorised action.', '研究正转向 Agent 的实际行动：外部信息、持久状态与授权行动。'), H.rq1)}
-      ${card('foundations', '◎', t('Foundations and protection', '基础与保护'), t('New hotspots stand on earlier evaluation tools; their protection rests on inputs that are rarely tested.', '新热点建立在早期的评测工具上；它们的保护依赖很少被检验的输入。'), H.rq2)}
-      ${card('opportunities', '✦', t('Opportunities and tests', '机会与检验'), t('Memory authority across a hand-off is untested; retrieval protection carried over to the final record, at a cost in recovery prompts.', '跨转交的记忆权威尚未被检验；检索保护延续到了最终记录，代价是更多补救提示。'), H.rq3)}
+    <div class="hm-head"><span class="hm-kicker">${t('FOUR BOARDS', '四个看板')}</span><h2>${t('Each board opens on its charts and the records behind them', '每个看板都可以展开图表和背后的记录')}</h2></div>
+    <div class="hm-cards hm-cards-4">
+      ${card('evolution', '↗', t('Evolution', '演化'), t('Research is turning towards what agents do: external information, persistent state and authorised action.', '研究正转向 Agent 的实际行动：外部信息、持久状态与授权行动。'), H.rq1)}
+      ${card('structure', '◎', t('Landscape', '格局'), t('What the field studies, who does it, and how its lines connect.', '这个领域研究什么、谁在做、各条研究线怎样相连。'), H.structure)}
+      ${card('foundations', '⛁', t('Foundations & protection', '基础与保护'), t('New hotspots stand on earlier evaluation tools; their protection rests on inputs that are rarely tested.', '新热点建立在早期的评测工具上；它们的保护依赖很少被检验的输入。'), H.rq2)}
+      ${card('opportunities', '✦', t('Opportunities & tests', '机会与检验'), t('Memory authority across a hand-off is untested; retrieval protection carried over to the final record, at a cost in recovery prompts.', '跨转交的记忆权威尚未被检验；检索保护延续到了最终记录，代价是更多补救提示。'), H.rq3)}
     </div>
     <p class="hm-foot">${t(`Frozen release: data ${esc(H.release)}; field statistics through ${esc(H.cutoff)}; map v2 frozen ${esc(H.frozen)}.`, `冻结版本：数据 ${esc(H.release)}；领域统计截至 ${esc(H.cutoff)}；地图 v2 冻结于 ${esc(H.frozen)}。`)} <button class="linkish" data-view="method">${t('Method and data', '方法与数据')} →</button></p>
   </section>`;

@@ -29,6 +29,16 @@ export function renderPaper(v, ctx) {
   </div>`;
 }
 
+// one or more sections of a page inside a board chapter (board.js); same blocks, no page head
+export function renderSections(v, ids, ctx) {
+  LANG = ctx.lang === 'zh' ? 'zh' : 'en';
+  tables.clear(); RQ?.stopFilm();
+  const P = cache[v];
+  return `<div class="rq pp pp-in-board" data-pp-view="${v}">${P.sections.filter(s => ids.includes(s.id)).map(s => `<section class="rq-sec pp-sec" id="pp-${s.id}"><div class="rq-sec-head"><span class="rq-eyebrow">${esc(tx(s.kicker))}</span><h2>${esc(tx(s.title))}</h2></div>
+  ${s.blocks.map((b, i) => block(b, `${s.id}-${i}`, ctx)).join('')}</section>`).join('')}</div>`;
+}
+export const stopFilm = () => RQ?.stopFilm();
+
 const csvLink = (href, label) => href ? `<a class="pp-csv" href="./${esc(href)}" download>${esc(label || T('Download CSV', '下载 CSV'))}</a>` : '';
 const note = n => n ? `<p class="rq-note pp-note">${esc(tx(n))}</p>` : '';
 const head = (title, csv) => title || csv ? `<div class="pp-bhead">${title ? `<h3>${esc(tx(title))}</h3>` : ''}${csvLink(csv)}</div>` : '';
