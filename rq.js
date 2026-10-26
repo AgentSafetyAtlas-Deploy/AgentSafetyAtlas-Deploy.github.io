@@ -240,7 +240,7 @@ function filmSection(t) {
       <button class="rq-play" id="rq-play" aria-pressed="false">${t('Play', '播放')}</button>
       <input type="range" id="rq-time" min="0" max="${film.months - 1}" step="0.25" value="${film.months - 1}" aria-label="${t('Month', '月份')}">
       <span class="rq-date" id="rq-date"></span>
-      <label>${t('Speed', '速度')} <select id="rq-speed"><option value="2">0.5×</option><option value="4" selected>1×</option><option value="8">2×</option><option value="16">4×</option></select></label>
+      <label>${t('Speed', '速度')} <select id="rq-speed"><option value="2">0.5×</option><option value="4">1×</option><option value="8">2×</option><option value="16" selected>4×</option></select></label>
       <label><input type="checkbox" id="rq-neb" checked> ${t('Nebulae', '星云')}</label>
       <label><input type="checkbox" id="rq-lab" checked> ${t('Cluster names', '星团名')}</label>
       <label><input type="checkbox" id="rq-thm"> ${t('Final themes', '最终主题')}</label>
