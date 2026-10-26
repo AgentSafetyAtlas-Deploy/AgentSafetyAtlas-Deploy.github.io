@@ -285,3 +285,7 @@ header.site-header { z-index: 60; }
 .ex-dir .ex-dir-close, .ex-dir[open] .ex-dir-open { display: none; }
 .ex-dir[open] .ex-dir-close { display: inline; }
 .ex-dir[open] .ex-dir-sum { margin-bottom: 10px; }
+/* research landscape: cards flow in balanced columns, so short themes do not leave empty rows (owner, 10-26) */
+.landscape .matrix { display: block; columns: 3 330px; column-gap: 16px; }
+.landscape .matrix > .mcat { break-inside: avoid; width: 100%; margin: 0 0 16px; }
+.view-papers .landscape { margin: 18px 0 22px; }
