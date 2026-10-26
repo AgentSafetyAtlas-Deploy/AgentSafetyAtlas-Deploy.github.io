@@ -188,8 +188,10 @@ html[data-theme="light"] .pp{--pp-pois:#1E4D49;--pp-clean:#8DBDB6;--pp-c1:#c9dfd
 .tm-ranks .fd-note { margin: 6px 0 0; }
 
 /* Observations drop-down: name and one-line description on separate lines */
-.site-nav-obs .site-nav-panel a b { display: block; font-weight: 650; }
-.site-nav-obs .site-nav-panel a small { display: block; margin-top: 1px; font-size: 12px; opacity: .72; }
+.site-nav-disc .site-nav-panel :is(a, button) b { display: block; font-weight: 650; }
+.site-nav-disc .site-nav-panel :is(a, button) small { display: block; margin-top: 1px; font-size: 12px; opacity: .72; font-weight: 400; }
+/* Explore: paper-form labels on one line */
+.an-frow .lbl { white-space: nowrap; }
 
 /* twin ranking tables beside the map: identical rows, names cut with an ellipsis so every row stays one line */
 .tm-ranks .tm-rank { width: 100%; table-layout: fixed; }
@@ -250,7 +252,28 @@ html[data-theme="light"] .pp{--pp-pois:#1E4D49;--pp-clean:#8DBDB6;--pp-c1:#c9dfd
 /* navigation menus above every sticky bar of the pages (Explore's section bar, lens tabs) */
 header.site-header { z-index: 60; }
 /* Observations menu: eight entries in two columns, all visible without scrolling */
+/* the Findings menu: conclusions on the left, observations from the data in two columns on the right (owner, 10-26) */
 @media (min-width: 760px) {
-  .site-nav-obs .site-nav-panel { width: 480px; max-height: none; }
-  .site-nav-obs .site-nav-group { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 6px; }
+  .site-nav-disc .site-nav-panel { width: 740px; max-height: none; }
+  .site-nav-mega { display: grid; grid-template-columns: 1fr 2fr; gap: 0 18px; }
+  .site-nav-two { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 6px; }
+  .site-nav-mega > .site-nav-group + .site-nav-group { border-left: 1px solid var(--line, rgba(160,205,195,.18)); padding-left: 14px; }
 }
+.site-nav-gl { display: block; font-size: 11px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; opacity: .6; padding: 4px 12px 6px; }
+
+/* consolidated blocks (owner, 10-26): two charts side by side; the heat table's totals row and change column */
+.pp-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; align-items: start; }
+@media (max-width: 900px) { .pp-row { grid-template-columns: minmax(0, 1fr); } }
+.pp-row .pp-fig { margin-top: 6px; }
+.pp-row .pp-seg { max-width: none; }
+.pp-heat .pp-heat-total th, .pp-heat .pp-heat-total td { font-weight: 650; background: none; border-bottom: 2px solid var(--rq-line); }
+.pp-heat .pp-delta-h { white-space: nowrap; padding-left: 14px; }
+.pp-heat td.pp-delta { background: none; font-weight: 650; padding-left: 14px; }
+.pp-heat td.pp-delta.is-up { color: #5fbf9f; }
+.pp-heat td.pp-delta.is-down { color: #d4714b; }
+:root[data-theme=light] .pp-heat td.pp-delta.is-up { color: #1c6a57; }
+:root[data-theme=light] .pp-heat td.pp-delta.is-down { color: #b4532c; }
+/* Explore venue table: angled one-line column heads */
+.an-venues .an-heat thead th.an-vh { height: 104px; min-width: 40px; vertical-align: bottom; position: relative; padding: 0; white-space: nowrap; }
+.an-venues .an-heat thead th.an-vh > span { position: absolute; left: 50%; bottom: 10px; transform: rotate(-45deg); transform-origin: left bottom; white-space: nowrap; font-size: 12px; font-weight: 500; }
+.an-venues .heatwrap { padding-top: 6px; padding-right: 72px; }

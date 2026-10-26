@@ -161,7 +161,7 @@ export function renderStarmap(ctx) {
    <canvas class="sky-canvas" data-sky-canvas role="img" aria-label="${t(`${sky.n.toLocaleString()} stars, one per included paper, placed by content similarity`, `${sky.n.toLocaleString()} 颗星，每颗是一篇纳入论文，按内容相近排布`)}"></canvas>
    <div class="sky-overlay">
     <span class="sky-eyebrow">${t('THE UNIVERSE · STAR MAP', '宇宙 · 星图')}</span>
-    <h2>${t('Every star is a paper.', '每一颗星，都是一篇论文。')}</h2>
+    <h2>${t('The star map: from galaxies to clusters to every paper.', '星图：从星系到星团，再到每一篇论文。')}</h2>
     <p>${t(`${sky.n.toLocaleString()} agent-safety papers of the frozen field map in three dimensions. Drag to turn, double-click to fly closer; click a galaxy name to open it, or any star to see everything related to it.`, `冻结领域地图中的 ${sky.n.toLocaleString()} 篇 Agent 安全论文，放在三维空间里。拖动旋转，双击飞近；点击星系名进入这个星系，点击任意一颗星，查看与它相关的全部论文。`)}</p>
     <form class="sky-search" data-sky-search><input type="search" data-sky-q autocomplete="off" placeholder="${t('Find a paper by title…', '按标题找一篇论文…')}" aria-label="${t('Find a paper on the map', '在星图中找论文')}"><ul class="sky-suggest" data-sky-suggest role="listbox"></ul></form>
    </div>

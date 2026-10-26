@@ -59,6 +59,7 @@ function block(b, id, ctx) {
     case 'vbars': { const m = Math.max(...b.values) || 1; return `<figure class="pp-fig">${head(b.title)}<div class="rq-bars pp-vbars">${b.values.map((n, j) => `<div class="rq-bar"><span style="height:${Math.max(2, 100 * n / m)}%" title="${n}"></span><b>${n.toLocaleString('en-US')}</b><i>${esc(b.cols[j])}</i></div>`).join('')}</div>${note(b.note)}</figure>`; }
     case 'wall': return `<div class="pp-wall">${b.items.map(w => `<div class="pp-wcard"><span class="pp-wicon" aria-hidden="true">${esc(w.icon)}</span><strong>${esc(w.v)}</strong><p>${esc(tx(w.label))}</p></div>`).join('')}</div>`;
     case 'ranges': return ranges(b);
+    case 'row': return `<div class="pp-row">${b.blocks.map((x, i) => block(x, `${id}-r${i}`, ctx)).join('')}</div>`;
     case 'downloads': return `<ul class="pp-downloads">${cache.home.downloads.map(d => `<li>${csvLink(d.file, d.file.replace('tables/', ''))}<span>${esc(d.en)}</span></li>`).join('')}</ul>`;
     default: return '';
   }
@@ -66,10 +67,10 @@ function block(b, id, ctx) {
 
 // ---------------------------------------------------------------- tables: search, filters, pages, links to papers
 const NAMES = {home: ['Universe', '宇宙'], evolution: ['Research evolution', '研究演化'], foundations: ['Foundations & protection', '基础与保护'], opportunities: ['Opportunities & tests', '机会与检验'],
-  evidence: ['Checks', '核查'], versions: ['Data & versions', '数据与版本'], method: ['Method', '方法'], action: ['Problem lines', '问题主线'], themes: ['Themes', '主题'], cases: ['Cases', '案例'],
+  evidence: ['Checks', '核查'], versions: ['Method and data', '方法与数据'], method: ['Method and data', '方法与数据'], action: ['Problem lines', '问题主线'], themes: ['Themes', '主题'], cases: ['Cases', '案例'],
   outcomes: ['Evaluation', '评测'], checks: ['Checks', '核查'], uses: ['Experimental use', '实验使用'], inputs: ['Trusted inputs', '可信输入'], conditions: ['Conditions', '条件'],
   chain: ['Memory and delegation', '记忆与委托'], defences: ['Retrieval defences', '检索防御'], retrieval: ['Retrieval to record', '检索到记录'],
-  wall: ['Checks', '核查'], film: ['Evolution film', '演化片'], quarters: ['Quarter by quarter', '逐季度'], adoption: ['Adoption', '外部采用'], experiment: ['The experiment', '实验']};
+  wall: ['Checks', '核查'], film: ['Evolution film', '演化片'], quarters: ['Evolution film', '演化片'], adoption: ['Adoption', '外部采用'], experiment: ['The experiment', '实验']};
 const nm = k => NAMES[k] ? T(...NAMES[k]) : k;
 function gotoLabel(view, anchor) { return nm(view) + (anchor ? ' · ' + nm(anchor) : ''); }
 function cellHtml(c, v, row, ctx) {
@@ -173,9 +174,12 @@ function coverage(b, ctx) {
 }
 
 function heatmap(b) {
-  const max = Math.max(...b.rows.flatMap(r => r.values)) || 1;
-  return `<figure class="pp-fig">${head(b.title)}<div class="rq-scroll"><table class="rq-heat pp-heat"><thead><tr><th></th>${b.cols.map(c => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${b.rows.map(r =>
-    `<tr><th scope="row"><i class="pp-dot" style="background:${r.color}"></i>${esc(tx(r.label))}</th>${r.values.map((v, j) => `<td style="--h:${Math.round(85 * v / max)}%" title="${esc(r.titles?.[j] || '')}">${pctf(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>${note(b.note)}</figure>`;
+  // optional first row with the period totals and last column with each row's change (owner, 10-26: one table instead of three charts)
+  const max = Math.max(...b.rows.flatMap(r => r.values)) || 1, dl = b.deltaLabel;
+  const dcell = v => v == null ? '<td></td>' : `<td class="pp-delta ${v > 0 ? 'is-up' : v < 0 ? 'is-down' : ''}">${v > 0 ? '+' : ''}${v.toFixed(1)}</td>`;
+  const total = b.totals ? `<tr class="pp-heat-total"><th scope="row">${esc(tx(b.totalsLabel))}</th>${b.totals.map(n => `<td>${Number(n).toLocaleString('en-US')}</td>`).join('')}${dl ? '<td></td>' : ''}</tr>` : '';
+  return `<figure class="pp-fig">${head(b.title)}<div class="rq-scroll"><table class="rq-heat pp-heat"><thead><tr><th></th>${b.cols.map(c => `<th>${esc(c)}</th>`).join('')}${dl ? `<th class="pp-delta-h">${esc(tx(dl))}</th>` : ''}</tr></thead><tbody>${total}${b.rows.map(r =>
+    `<tr><th scope="row"><i class="pp-dot" style="background:${r.color}"></i>${esc(tx(r.label))}</th>${r.values.map((v, j) => `<td style="--h:${Math.round(85 * v / max)}%" title="${esc(r.titles?.[j] || '')}">${pctf(v)}</td>`).join('')}${dl ? dcell(r.delta) : ''}</tr>`).join('')}</tbody></table></div>${note(b.note)}</figure>`;
 }
 
 function ranges(b) {

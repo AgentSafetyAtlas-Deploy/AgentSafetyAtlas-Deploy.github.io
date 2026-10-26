@@ -39,6 +39,6 @@ export function renderHome({t, hero, H}) {
       ${card('foundations', '◎', t('Foundations and protection', '基础与保护'), t('New hotspots stand on earlier evaluation tools; their protection rests on inputs that are rarely tested.', '新热点建立在早期的评测工具上；它们的保护依赖很少被检验的输入。'), H.rq2)}
       ${card('opportunities', '✦', t('Opportunities and tests', '机会与检验'), t('Memory authority across a hand-off is untested; retrieval protection carried over to the final record, at a cost in recovery prompts.', '跨转交的记忆权威尚未被检验；检索保护延续到了最终记录，代价是更多补救提示。'), H.rq3)}
     </div>
-    <p class="hm-foot">${t(`Frozen release: data ${esc(H.release)}; field statistics through ${esc(H.cutoff)}; map v2 frozen ${esc(H.frozen)}.`, `冻结版本：数据 ${esc(H.release)}；领域统计截至 ${esc(H.cutoff)}；地图 v2 冻结于 ${esc(H.frozen)}。`)} <button class="linkish" data-view="versions">${t('Data and versions', '数据与版本')} →</button></p>
+    <p class="hm-foot">${t(`Frozen release: data ${esc(H.release)}; field statistics through ${esc(H.cutoff)}; map v2 frozen ${esc(H.frozen)}.`, `冻结版本：数据 ${esc(H.release)}；领域统计截至 ${esc(H.cutoff)}；地图 v2 冻结于 ${esc(H.frozen)}。`)} <button class="linkish" data-view="method">${t('Method and data', '方法与数据')} →</button></p>
   </section>`;
 }

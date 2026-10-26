@@ -138,6 +138,9 @@ function timeChart(ctx) {
 }
 
 // ---------- venue contributions ----------
+// venue table: short theme names in angled column headers, full names in the tooltip (owner, 10-26: no wrapped labels)
+const VSHORT_MAP = {'Tool execution, coding and runtime': 'Tool execution', 'Tool-agent injection, skills': 'Tool-agent injection', 'Embodied agents': 'Embodied', 'Alignment, oversight': 'Alignment', 'Deception, AI control': 'Deception, control', 'LLM-app prompt injection': 'LLM-app injection', 'Multi-agent societies': 'Multi-agent', 'Identity, MCP, governance': 'Identity, MCP', 'Evaluation, guardrails': 'Evaluation', 'Web, GUI, computer use': 'Web, GUI', 'RAG security': 'RAG', 'Memory poisoning': 'Memory', 'Contextual privacy': 'Privacy', 'Offensive cyber': 'Offensive cyber', '工具执行、编码与运行时（混合主题）': '工具执行与编码', '工具型 Agent 的注入、授权与技能生态': '工具注入与技能', '具身智能：VLA、机器人与自动驾驶': '具身智能', '对齐、监督、自主权与规范': '对齐与监督', '欺骗、思维链监控与 AI 控制': '欺骗与控制', 'LLM 应用中的提示注入、指令层级与后门': 'LLM 应用注入', '多智能体社会与智能体之间的攻击': '多智能体', '身份、委托、协议（MCP）与治理': '身份与 MCP', '安全评测、护栏与红队': '评测与护栏', '网页、GUI、电脑操作与语音 Agent': '网页与 GUI', 'RAG 检索安全': 'RAG 安全', 'Agent 记忆投毒': '记忆投毒', '情境完整性与隐私': '情境隐私', '攻击性网络能力': '攻击性网络'};
+const VSHORT = s => VSHORT_MAP[s] || (s.length > 20 ? s.slice(0, 19) + '…' : s);
 function venueChart(ctx) {
   const {t, escape, state} = ctx, works = ctx.included().filter(verified), mode = state.anVenueMode || 'count', axis = state.anAxis || 'theme';
   const reg = new Map(ctx.data.venueRegistry.map(v => [v.id, v.name])), names = FAMILY_SHORT(t);
@@ -155,9 +158,9 @@ function venueChart(ctx) {
   const val = (r, i) => mode === 'row' ? pct(r.v[i], r.n) : mode === 'col' ? pct(r.v[i], colTot[i]) : r.v[i];
   const max = Math.max(1, ...rows.filter(r => r.cls === 'venue' || (mode !== 'col' && r.cls === 'fam')).flatMap(r => cols.map((_, i) => val(r, i))));
   const controls = `<div class="an-controls">${seg(ctx, 'data-an-axis', [['theme', t('Themes', '主题')], ['topic', t('Clusters', '星团')]], axis, t('Columns', '列'))}
-    ${seg(ctx, 'data-an-vmode', [['count', t('Count', '数量')], ['row', t('Share within venue', '占该来源比例')], ['col', t('Share of theme', '占该星团比例')]], mode, t('Measure', '度量'))}</div>`;
-  return `<figure class="an-chart an-venues"><figcaption><b>${t('Venue contributions by theme', '主流发表来源在各星团的贡献')}</b><span>${t(`${ctx.num(works.length)} works with a verified formal publication; a work in several themes counts once in each. “Share within venue” reads across a row, “share of theme” down a column. ACL and EMNLP include their Findings track.`, `共 ${ctx.num(works.length)} 项具有已核实正式发表的研究；属于多个主题的研究在每个中各计一次。“占该来源比例”按行阅读，“占该星团比例”按列阅读。ACL 与 EMNLP 含 Findings。`)}</span></figcaption>${controls}
-  <div class="heatwrap"><table class="an-heat"><thead><tr><th></th><th class="num">${t('Works', '研究数')}</th>${cols.map(c => `<th><i class="dot" style="--cat:${c.color}"></i>${escape(c.name)}</th>`).join('')}</tr></thead><tbody>
+    ${seg(ctx, 'data-an-vmode', [['count', t('Count', '数量')], ['row', t('Share within venue', '占该来源比例')], ['col', t('Share of column', '占该列比例')]], mode, t('Measure', '度量'))}</div>`;
+  return `<figure class="an-chart an-venues"><figcaption><b>${t('Venue contributions by theme', '主流发表来源在各主题的贡献')}</b><span>${t(`${ctx.num(works.length)} works with a verified formal publication; a work in several themes counts once in each. “Share within venue” reads across a row, “share of column” down a column. ACL and EMNLP include their Findings track.`, `共 ${ctx.num(works.length)} 项具有已核实正式发表的研究；属于多个主题的研究在每个中各计一次。“占该来源比例”按行阅读，“占该列比例”按列阅读。ACL 与 EMNLP 含 Findings。`)}</span></figcaption>${controls}
+  <div class="heatwrap"><table class="an-heat"><thead><tr><th></th><th class="num">${t('Works', '研究数')}</th>${cols.map(c => `<th class="an-vh" title="${escape(c.name)}"><span><i class="dot" style="--cat:${c.color}"></i>${escape(VSHORT(c.name))}</span></th>`).join('')}</tr></thead><tbody>
   ${rows.map((r, ri) => `<tr class="${r.cls}" style="--i:${ri}"><th${goAttr(ctx, r.go)}>${escape(r.label)}</th><td class="num">${ctx.num(r.n)}</td>${cols.map((c, i) => { const v = val(r, i), g = r.go ? merge(r.go, c.go) : c.go; const st = r.cls.includes('total') ? 0 : ramp(v, max); return `<td class="s${st}"${heat(c.color, st)} tabindex="0"${r.v[i] ? goAttr(ctx, g) : ''} data-tip="${escape(`${r.label} · ${c.name}${r.v[i] ? clickHint(ctx) : ''}|${ctx.num(r.v[i])}${mode !== 'count' ? ' · ' + fmtPct(v) : ''}`)}">${r.v[i] ? (mode === 'count' ? ctx.num(r.v[i]) : fmtPct(v)) : ''}</td>`; }).join('')}</tr>`).join('')}</tbody></table></div>${familyNote(ctx)}</figure>`;
 }
 
@@ -166,7 +169,7 @@ function formChart(ctx) {
   const {t, escape} = ctx, works = ctx.included(), forms = ctx.taxonomy.forms;
   const groups = [[t('All works', '全部研究'), works, INK, {}], ...themes(ctx).map(c => [ctx.categoryName(c), works.filter(inTheme(ctx, c)), c.color, {cat: c.id}])];
   const rows = groups.map(([name, ws, color, go]) => ({name, color, go, n: ws.length, v: forms.map(f => ws.filter(p => ctx.formOf(p) === f.id).length)}));
-  return `<figure class="an-chart"><figcaption><b>${t('Paper forms by theme', '各星团的论文形式')}</b><span>${t('Share of each form within a theme; surveys first. One primary form per work (model-labelled from title and abstract, with a verified quote).', '各星团内不同形式的占比；综述排在最前。每项研究一个主要形式（模型依据标题与摘要判定，并附经核对的原文引述）。')}</span></figcaption>
+  return `<figure class="an-chart"><figcaption><b>${t('Paper forms by theme', '各主题的论文形式')}</b><span>${t('Share of each form within a theme; surveys first. One primary form per work (model-labelled from title and abstract, with a verified quote).', '各主题内不同形式的占比；综述排在最前。每项研究一个主要形式（模型依据标题与摘要判定，并附经核对的原文引述）。')}</span></figcaption>
   <div class="an-forms">${rows.map((r, ri) => `<div class="an-frow" style="--i:${ri}"><button class="lbl"${goAttr(ctx, Object.keys(r.go).length ? r.go : null)}><i class="dot" style="--cat:${r.color}"></i>${escape(r.name)}<small>${ctx.num(r.n)}</small></button><span class="an-fbar">${r.v.map((v, i) => v ? `<i style="flex:${v};background:color-mix(in srgb, ${INK} ${FORM_SHADE[i]}%, #fff)" tabindex="0"${goAttr(ctx, merge(r.go, {form: forms[i].id}))} data-tip="${escape(`${r.name} · ${ctx.translated(forms[i].en)}${clickHint(ctx)}|${ctx.num(v)} · ${fmtPct(pct(v, r.n))}`)}">${pct(v, r.n) >= 9 ? `<em${FORM_SHADE[i] < 55 ? ' class="on-light"' : ''}>${fmtPct(pct(v, r.n))}</em>` : ''}</i>` : '').join('')}</span><button class="an-survey"${goAttr(ctx, merge(r.go, {form: 'survey'}))}>${ctx.num(r.v[0])} ${t('surveys', '篇综述')}</button></div>`).join('')}</div>
   <div class="an-legend">${forms.map((f, i) => `<button${goAttr(ctx, {form: f.id})}><i style="background:color-mix(in srgb, ${INK} ${FORM_SHADE[i]}%, #fff)"></i>${escape(ctx.translated(f.en))}</button>`).join('')}</div>
   ${tableView(ctx, [t('Theme', '主题'), ...forms.map(f => ctx.translated(f.en)), t('Works', '研究数')], rows.map(r => [r.name, ...r.v.map(v => ctx.num(v)), ctx.num(r.n)]))}</figure>`;
@@ -233,7 +236,7 @@ function trendData(ctx, works, Y, bins) {
 const measureVal = (m, r, i, D) => m === 'share' ? pct(r.v[i], D.binTot[i]) : m === 'peak' ? pct(r.v[i], Math.max(1, ...r.v)) : r.v[i];
 const fmtPts = d => `${d > 0 ? '+' : d < 0 ? '−' : '±'}${Math.abs(d).toFixed(1)}`;
 const trendViewSeg = ctx => seg(ctx, 'data-an-tview', [['', ctx.t('Heatmap', '热力图')], ['line', ctx.t('Lines', '折线图')]], ctx.state.anTview || '', ctx.t('View', '视图'));
-const seeTime = ctx => ctx.t('For volume and composition by year, see “Research over time” above.', '每年的数量与构成见上方“研究随时间的分布”。');
+const seeTime = ctx => ctx.t('For volume and theme shares by period, see Findings › Research evolution.', '各时期的数量与主题份额见“发现 › 研究演化”。');
 
 function trendChart(ctx) {
   const {t, escape, state} = ctx, works = ctx.included();
@@ -337,7 +340,7 @@ function notes(ctx) {
 }
 
 // separate cards laid out in a grid: wide charts span the row, compact ones sit side by side
-const LAYOUT = [['cross', 'wide'], ['time', 'wide'], ['trends', 'wide'], ['forms', ''], ['code', ''], ['venues', 'wide'], ['people', 'wide']];
+const LAYOUT = [['cross', 'wide'], ['time', 'wide'], ['trends', 'wide'], ['forms', 'wide'], ['code', ''], ['venues', 'wide'], ['people', 'wide']];
 const BODY = {time: timeChart, venues: venueChart, forms: formChart, cross: crossChart, trends: trendChart, people: peopleChart, code: codeChart};
 const RANGE_CARDS = ['time', 'trends', 'cross'];
 
