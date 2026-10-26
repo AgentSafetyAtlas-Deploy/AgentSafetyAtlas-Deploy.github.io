@@ -277,3 +277,11 @@ header.site-header { z-index: 60; }
 .an-venues .an-heat thead th.an-vh { height: 104px; min-width: 40px; vertical-align: bottom; position: relative; padding: 0; white-space: nowrap; }
 .an-venues .an-heat thead th.an-vh > span { position: absolute; left: 50%; bottom: 10px; transform: rotate(-45deg); transform-origin: left bottom; white-space: nowrap; font-size: 12px; font-weight: 500; }
 .an-venues .heatwrap { padding-top: 6px; padding-right: 72px; }
+/* Explore: the institution directory is collapsed until asked for */
+.ex-dir-sum { display: flex; align-items: center; justify-content: space-between; gap: 12px; cursor: pointer; list-style: none; }
+.ex-dir-sum::-webkit-details-marker { display: none; }
+.ex-dir-sum h3 { margin: 0; }
+.ex-dir-sum > span { border: 1px solid currentColor; border-radius: 999px; padding: 4px 12px; font-size: 13px; opacity: .85; }
+.ex-dir .ex-dir-close, .ex-dir[open] .ex-dir-open { display: none; }
+.ex-dir[open] .ex-dir-close { display: inline; }
+.ex-dir[open] .ex-dir-sum { margin-bottom: 10px; }
