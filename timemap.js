@@ -243,7 +243,7 @@ export function renderTimeMap(ctx) {
   <div class="tm-time"><button class="tm-play" data-tm-play aria-label="${timer ? t('Pause', '暂停') : t('Play', '播放')}">${timer ? '❚❚' : '▶'}</button><input type="range" min="0" max="${model.nMonths - 1}" value="${st.month}" data-tm="month" aria-label="${t('Month', '月份')}"><b class="tm-when"></b></div>
   <div class="tm-grid"><div class="tm-main"><div class="tm-map"><div class="tm-zoom" role="group" aria-label="${t('Map zoom', '地图缩放')}"><button data-tm-zoom="in" aria-label="${t('Zoom in', '放大')}">+</button><button data-tm-zoom="out" aria-label="${t('Zoom out', '缩小')}">−</button><button data-tm-zoom="reset" aria-label="${t('Reset view', '复位')}">⟲</button></div><svg viewBox="${view.x} ${view.y} ${view.w} ${view.h}" role="img" aria-label="${t('Countries shaded by agent-safety works', '按 Agent 安全工作着色的国家')}"><path d="${landPath()}" class="tm-land"/>
   <g class="tm-countries">${countries.countries.map(c => `<path d="${c.d}" data-cc="${c.cc}" data-tm-focus="${c.cc}" class="tm-c s0"/>`).join('')}</g><g class="tm-small"></g><g class="tm-dots"></g><g class="tm-labels" aria-hidden="true"></g></svg></div>
-  <div class="tm-legend"></div><p class="fd-note tm-summary"></p><p class="fd-note tm-rank-note">${t('Rankings: papers with institutions in several countries count in part for each; change is in share points against the window 12 months earlier; the share of an institution is its works over all located works. Click to highlight or open the papers.', '右侧排行：多国机构的论文按比例计入各国；变化为与早 12 个月的时间窗相比的份额百分点；机构占比为其参与的工作占已定位工作的比例。点击可高亮或查看论文。')}</p></div>
+  <div class="tm-legend"></div><p class="fd-note tm-summary"></p><p class="fd-note tm-rank-note">${t('Rankings: papers with institutions in several countries count in part for each; change is in share points against the window 12 months earlier; the share of an institution is its works over all located works. Click to highlight or open the papers.', '排行：多国机构的论文按比例计入各国；变化为与早 12 个月的时间窗相比的份额百分点；机构占比为其参与的工作占已定位工作的比例。点击可高亮或查看论文。')}</p></div>
   <aside class="tm-ranks"><div class="tm-side"></div></aside></div>
   <div class="fd-tip" hidden></div><aside class="fd-drawer" hidden aria-live="polite"><div class="fd-drawer-head"><h3></h3><button class="fd-close" aria-label="${t('Close', '关闭')}">×</button></div><div class="fd-drawer-body"></div></aside></div>`;
 }
@@ -338,4 +338,39 @@ function zoom(f) {
   if (!f) { view = {...VB}; return; }
   const cx = view.x + view.w / 2, cy = view.y + view.h / 2, w = clamp(view.w * f, VB.w / 10, VB.w), h = w * VB.h / VB.w;
   view = {w, h, x: clamp(cx - w / 2, VB.x, VB.x + VB.w - w), y: clamp(cy - h / 2, VB.y, VB.y + VB.h - h)};
+}
+
+// finding cards of the Evolution › World map storyline (owner, 10-26): descriptive counts and share changes only (no head-to-head
+// country comparisons, owner 10-25); each card carries the map configuration that shows it
+export function storyCards(ctx, key) {
+  if (!model) { model = build(ctx); model.insights = insights(ctx); }
+  // the field cutoff (30 September 2026): the cards count the works of the frozen map, not the later additions to the collection
+  const {t} = ctx, C = cc => country(ctx, cc), cut = Array.from({length: model.nMonths}, (_, i) => model.label(i)).indexOf('2026-09'), last = cut >= 0 ? cut : model.nMonths - 1;
+  const all = aggregate(pick({month: last, window: 'all', ...ALL}));
+  const now = aggregate(pick({month: last, window: 'rolling', ...ALL})), before = aggregate(pick({month: last - 12, window: 'rolling', ...ALL}));
+  const p1 = x => (100 * x).toFixed(1);
+  if (key === 'shares') {
+    const top = all.countries.slice(0, 8).map(c => c.cc), ch = top.map(cc => [cc, shareOf(now, cc) - shareOf(before, cc)]).sort((x, y) => y[1] - x[1]);
+    const cards = [{q: t('How widely is the work spread?', '研究分布有多广？'), a: t(`${all.n.toLocaleString()} works with a located institution, from ${all.insts.length.toLocaleString()} located institutions in ${all.countries.length} countries and regions, up to the field cutoff (${model.label(last)}).`, `截至领域截止月（${model.label(last)}），${all.n.toLocaleString()} 项有已定位机构的工作，来自 ${all.countries.length} 个国家和地区的 ${all.insts.length.toLocaleString()} 个已定位机构。`), bg: t('Map: all time, shaded by works', '地图：全部时间，按工作数着色'), k: [], cfg: {month: String(last), window: 'all', measure: '', focus: '', dots: ''}},
+      {q: t('How fast did the last year grow?', '最近一年增长多快？'), a: t(`${now.n.toLocaleString()} located works in the 12 months to ${model.label(last)}, against ${before.n.toLocaleString()} in the 12 months before.`, `截至 ${model.label(last)} 的 12 个月有 ${now.n.toLocaleString()} 项已定位工作，之前 12 个月为 ${before.n.toLocaleString()} 项。`), bg: t('Map: 12-month window, shaded by works', '地图：12 个月时间窗，按工作数着色'), k: [], cfg: {month: String(last), window: 'rolling', measure: '', focus: '', dots: ''}}];
+    const [g, l] = [ch[0], ch[ch.length - 1]];
+    if (g && g[1] > 0) cards.push({q: t('Whose share grew the most?', '谁的份额上升最多？'), a: t(`${C(g[0])}: +${p1(g[1])} points in the last 12 months, to ${p1(shareOf(now, g[0]))}% of located works.`, `${C(g[0])}：近 12 个月上升 ${p1(g[1])} 个百分点，占已定位工作的 ${p1(shareOf(now, g[0]))}%。`), bg: t('Map: 12-month window, shaded by share; the country is outlined', '地图：12 个月时间窗，按份额着色；该国家加框'), k: [], cfg: {month: String(last), window: 'rolling', measure: 'share', focus: g[0], dots: ''}});
+    if (l && l[1] < 0) cards.push({q: t('Whose share fell the most?', '谁的份额下降最多？'), a: t(`${C(l[0])}: ${p1(l[1])} points in the last 12 months, to ${p1(shareOf(now, l[0]))}%.`, `${C(l[0])}：近 12 个月下降 ${p1(-l[1])} 个百分点，降到 ${p1(shareOf(now, l[0]))}%。`), bg: t('Map: 12-month window, shaded by share; the country is outlined', '地图：12 个月时间窗，按份额着色；该国家加框'), k: [], cfg: {month: String(last), window: 'rolling', measure: 'share', focus: l[0], dots: ''}});
+    return cards;
+  }
+  if (key === 'insts') {
+    const top10 = new Set(all.insts.slice(0, 10).flatMap(i => i.ids)), many = all.insts.filter(i => i.ids.length >= 20).length, once = all.insts.filter(i => i.ids.length === 1).length;
+    return [{q: t('How many institutions take part?', '有多少机构参与？'), a: t(`${all.insts.length.toLocaleString()} located institutions; ${now.insts.length.toLocaleString()} of them in the last 12 months, against ${before.insts.length.toLocaleString()} in the 12 months before.`, `共 ${all.insts.length.toLocaleString()} 个已定位机构；近 12 个月有 ${now.insts.length.toLocaleString()} 个，之前 12 个月为 ${before.insts.length.toLocaleString()} 个。`), bg: t('Map: institutions as dots, area by works', '地图：机构圆点，面积为工作数'), k: [], cfg: {month: String(last), window: 'all', measure: 'insts', focus: '', dots: '1'}},
+      {q: t('How concentrated is the work?', '研究有多集中？'), a: t(`The ten largest institutions take part in ${p1(top10.size / all.n)}% of located works; ${many} institutions have 20 or more works, ${once.toLocaleString()} have one.`, `规模最大的 10 个机构参与了 ${p1(top10.size / all.n)}% 的已定位工作；${many} 个机构有 20 项以上，${once.toLocaleString()} 个机构只有 1 项。`), bg: t('Below the map: the institution ranking', '地图下方：机构排行'), k: [], cfg: {month: String(last), window: 'all', measure: '', focus: '', dots: '1'}}];
+  }
+  return [];
+}
+export function applyStory(ctx, cfg) {
+  const s = ctx.state;
+  if ('month' in cfg) s.tmMonth = cfg.month;
+  if ('window' in cfg) s.tmWindow = cfg.window === 'rolling' ? 'rolling' : '';
+  if ('measure' in cfg) s.tmMeasure = cfg.measure;
+  if ('focus' in cfg) s.tmFocus = cfg.focus;
+  if ('dots' in cfg) s.tmDots = cfg.dots;
+  stop(); ctx.writeHash();
 }

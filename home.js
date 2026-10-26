@@ -33,12 +33,11 @@ export function renderHome({t, hero, H}) {
   <section class="hm" id="home-lenses">
     <div class="hm-head"><span class="hm-kicker">${t('HOW TO READ THE MAP', '怎样读这张地图')}</span><h2>${t('Five words, each mapped to something you can count', '五个词，每个都对应可以计数的东西')}</h2></div>
     <div class="hm-words">${words.map(([i, w, d]) => `<div><span class="hm-icon" aria-hidden="true">${i}</span><h3>${w}</h3><p>${d}</p></div>`).join('')}</div>
-    <div class="hm-head"><span class="hm-kicker">${t('FOUR BOARDS', '四个看板')}</span><h2>${t('Each board opens on its charts and the records behind them', '每个看板都可以展开图表和背后的记录')}</h2></div>
-    <div class="hm-cards hm-cards-4">
+    <div class="hm-head"><span class="hm-kicker">${t('THREE BOARDS', '三个看板')}</span><h2>${t('Each board opens on its charts and the records behind them', '每个看板都可以展开图表和背后的记录')}</h2></div>
+    <div class="hm-cards hm-cards-3">
       ${card('evolution', '↗', t('Evolution', '演化'), t('Research is turning towards what agents do: external information, persistent state and authorised action.', '研究正转向 Agent 的实际行动：外部信息、持久状态与授权行动。'), H.rq1)}
       ${card('structure', '◎', t('Landscape', '格局'), t('What the field studies, who does it, and how its lines connect.', '这个领域研究什么、谁在做、各条研究线怎样相连。'), H.structure)}
-      ${card('foundations', '⛁', t('Foundations & protection', '基础与保护'), t('New hotspots stand on earlier evaluation tools; their protection rests on inputs that are rarely tested.', '新热点建立在早期的评测工具上；它们的保护依赖很少被检验的输入。'), H.rq2)}
-      ${card('opportunities', '✦', t('Opportunities & tests', '机会与检验'), t('Memory authority across a hand-off is untested; retrieval protection carried over to the final record, at a cost in recovery prompts.', '跨转交的记忆权威尚未被检验；检索保护延续到了最终记录，代价是更多补救提示。'), H.rq3)}
+      ${card('foundations', '⛁', t('Foundations & opportunities', '基础与机会'), t('New hotspots stand on earlier evaluation tools; their protection rests on inputs that are rarely tested, and one such condition was tested end to end.', '新热点建立在早期的评测工具上；它们的保护依赖很少被检验的输入，其中一项条件已经从头到尾测过。'), [H.rq2[1], H.rq3[0]])}
     </div>
     <p class="hm-foot">${t(`Frozen release: data ${esc(H.release)}; field statistics through ${esc(H.cutoff)}; map v2 frozen ${esc(H.frozen)}.`, `冻结版本：数据 ${esc(H.release)}；领域统计截至 ${esc(H.cutoff)}；地图 v2 冻结于 ${esc(H.frozen)}。`)} <button class="linkish" data-view="method">${t('Method and data', '方法与数据')} →</button></p>
   </section>`;

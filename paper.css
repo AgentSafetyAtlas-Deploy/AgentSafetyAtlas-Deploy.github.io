@@ -343,3 +343,55 @@ html .bd .ln-lead, html[data-theme] .bd .ln-lead { padding: 6px 2px 0; border: 0
 /* home: four board cards in one row on wide screens */
 @media (min-width: 1180px) { .hm-cards.hm-cards-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 @media (max-width: 600px) { .bd-kpis dt { font-size: 21px; white-space: normal; } .bd-kpis > div { padding: 14px; } }
+
+/* outcome stacks (owner, 10-26: one clean chart instead of thin bars and grey bounds) */
+.pp-os { --os0: #dfe9e6; --os1: #9fc6bd; --os2: #4c8c86; --os3: #1e4d49; --os-ink: #163b3a; }
+html[data-theme="dark"] .pp-os { --os0: #d9e6e3; --os1: #8cbfb4; --os2: #3f9488; --os3: #d4e966; --os-ink: #10231f; }
+.pp-os-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12.5px; margin: 4px 0 10px; }
+.pp-os-legend i, .pp-os .bar span { display: inline-block; }
+.pp-os-legend i { width: 11px; height: 11px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+.pp-os .c0 { background: var(--os0); } .pp-os .c1 { background: var(--os1); } .pp-os .c2 { background: var(--os2); color: #fff; } .pp-os .c3 { background: var(--os3); color: var(--os-ink); }
+html[data-theme="light"] .pp-os .c3, :root:not([data-theme]) .pp-os .c3 { color: #fff; }
+.pp-os-line + .pp-os-line { margin-top: 12px; }
+.pp-os-line h4 { display: flex; align-items: center; gap: 8px; margin: 0 0 6px; font-size: 13.5px; font-weight: 650; }
+.pp-os-line h4 i { width: 4px; height: 14px; border-radius: 2px; }
+.pp-os-row { display: grid; grid-template-columns: 62px minmax(0, 1fr) 64px; align-items: center; gap: 10px; margin: 3px 0; font-size: 12.5px; font-variant-numeric: tabular-nums; }
+.pp-os-row .bar { display: flex; height: 18px; border-radius: 5px; overflow: hidden; gap: 2px; }
+.pp-os-row .bar span { height: 100%; font-size: 10.5px; line-height: 18px; text-align: center; color: #163b3a; white-space: nowrap; overflow: hidden; }
+.pp-os-row .cnt { text-align: right; opacity: .75; }
+@media (min-width: 1180px) { .hm-cards.hm-cards-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+/* storyline chapters (owner, 10-26: every analysis chapter in the frame of the observation chapters): question, step bar,
+   one view on the left, numbered finding cards on the right; a card lights the marks it talks about, the rest fade */
+.bd-steps { grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); }
+@media (min-width: 1100px) {
+  .bd .pb-lens .cr-wrap { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); }
+  .bd .cr-stage { top: 78px; max-height: calc(100vh - 92px); }
+  .bd .cr-cards { padding-bottom: 12vh; }
+}
+.bd-stage { min-width: 0; padding: 18px 20px 14px; }
+.bd-stage .pp-in-board .pp-fig { margin-top: 0; }
+.bd-stage .pp-row { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+.bd-stage .pp-cases3 { grid-template-columns: minmax(0, 1fr); }
+.bd-stage .tm-grid { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+.bd-stage .an-layout { display: block; }
+.bd-stage .panel, .bd-stage .an-card { border: 0; background: none; padding: 0; box-shadow: none; margin: 0; }
+.bd-stage [data-k] { transition: opacity .2s ease; }
+.bd-stage.has-hl [data-k]:not(.is-hl) { opacity: .18 !important; }  /* !important: the Explore rows fade in by animation */
+.bd-stage.has-hl td[data-k].is-hl, .bd-stage.has-hl .rq-bar.is-hl b { outline: 2px solid var(--bd-accent); outline-offset: -2px; }
+.bd-stage.has-hl tr[data-k].is-hl th, .bd-stage.has-hl .pp-segrow.is-hl .lab, .bd-stage.has-hl .pp-rrow.is-hl .lab, .bd-stage.has-hl .pp-os-row.is-hl .per { color: var(--bd-accent); font-weight: 700; }
+.bd-stage.has-hl .pp-case.is-hl, .bd-stage.has-hl .pp-chain-step.is-hl, .bd-stage.has-hl .pp-chain-link.is-hl { box-shadow: 0 0 0 2px var(--bd-accent); border-radius: 12px; }
+.bd-card .cr-card-head { grid-template-columns: 34px minmax(0, 1fr); padding-bottom: 6px; }
+.bd-card .cr-card-text b { line-height: 1.4; }
+.bd-card.is-active { border-color: var(--bd-accent); box-shadow: 0 0 0 1px var(--bd-accent); }
+.bd-card.is-active .ln-qn { color: var(--bd-accent); border-color: var(--bd-accent); }
+.bd-card .cr-config { margin-bottom: 14px; border-left-color: var(--bd-accent); }
+.bd-more { margin-top: 20px; }
+.bd-more > .pp-in-board { padding-top: 6px; }
+.bd-story .pb-head .fd-note { max-width: 80ch; }
+.bd-stage::before { display: none; }
+.bd-stage .pp-in-board > :first-child, .bd-stage .pp-fig > .pp-bhead:first-child, .bd-stage .pp-bhead h3, .bd-stage .pp-row > :first-child { margin-top: 0; }
+.bd-stage .an-cross-body { display: block; }
+.bd-stage .an-insights { border: 0; padding: 0; margin-top: 10px; background: none; }
+.bd-stage .an-insights h4, .bd-stage .an-insights ul, .bd-stage .an-insights > .muted { display: none; }  /* the cards on the right carry them */
+.bd-stage .an-heat th { white-space: nowrap; }

@@ -38,6 +38,17 @@ export function renderSections(v, ids, ctx) {
   ${s.blocks.map((b, i) => block(b, `${s.id}-${i}`, ctx)).join('')}</section>`).join('')}</div>`;
 }
 export const stopFilm = () => RQ?.stopFilm();
+// storyline chapters of the boards (owner, 10-26: every chapter = question, sections, one view + numbered finding cards); the
+// sections, cards and their views are in page-story.json (review/story_data.py); marks carry data-k keys so a card can light them
+export async function loadStory(film = false) {
+  cache.story ??= await get('page-story.json');
+  cache.home ??= await get('page-home.json');
+  if (film && !RQ) { RQ = await import('./rq.js'); await RQ.loadRq(); }
+  return cache.story;
+}
+export function resetBlocks(ctx) { LANG = ctx.lang === 'zh' ? 'zh' : 'en'; tables.clear(); RQ?.stopFilm(); }
+export const renderBlocks = (blocks, idp, ctx) => blocks.map((b, i) => block(b, `${idp}-${i}`, ctx)).join('');
+const kOf = o => String(typeof o === 'object' && o ? o.en : o ?? '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
 const csvLink = (href, label) => href ? `<a class="pp-csv" href="./${esc(href)}" download>${esc(label || T('Download CSV', '下载 CSV'))}</a>` : '';
 const note = n => n ? `<p class="rq-note pp-note">${esc(tx(n))}</p>` : '';
@@ -66,9 +77,10 @@ function block(b, id, ctx) {
     case 'matrix': return matrix(b);
     case 'film': return `<div class="pp-film">${RQ ? RQ.filmSection(T) : ''}</div>`;
     case 'heat': return heatmap(b);
-    case 'vbars': { const m = Math.max(...b.values) || 1; return `<figure class="pp-fig">${head(b.title)}<div class="rq-bars pp-vbars">${b.values.map((n, j) => `<div class="rq-bar"><span style="height:${Math.max(2, 100 * n / m)}%" title="${n}"></span><b>${n.toLocaleString('en-US')}</b><i>${esc(b.cols[j])}</i></div>`).join('')}</div>${note(b.note)}</figure>`; }
+    case 'vbars': { const m = Math.max(...b.values) || 1; return `<figure class="pp-fig">${head(b.title)}<div class="rq-bars pp-vbars">${b.values.map((n, j) => `<div class="rq-bar" data-k="${kOf(b.cols[j])}"><span style="height:${Math.max(2, 100 * n / m)}%" title="${n}"></span><b>${n.toLocaleString('en-US')}</b><i>${esc(b.cols[j])}</i></div>`).join('')}</div>${note(b.note)}</figure>`; }
     case 'wall': return `<div class="pp-wall">${b.items.map(w => `<div class="pp-wcard"><span class="pp-wicon" aria-hidden="true">${esc(w.icon)}</span><strong>${esc(w.v)}</strong><p>${esc(tx(w.label))}</p></div>`).join('')}</div>`;
     case 'ranges': return ranges(b);
+    case 'outstack': return outstack(b);
     case 'row': return `<div class="pp-row">${b.blocks.map((x, i) => block(x, `${id}-r${i}`, ctx)).join('')}</div>`;
     case 'downloads': return `<ul class="pp-downloads">${cache.home.downloads.map(d => `<li>${csvLink(d.file, d.file.replace('tables/', ''))}<span>${esc(d.en)}</span></li>`).join('')}</ul>`;
     default: return '';
@@ -76,11 +88,11 @@ function block(b, id, ctx) {
 }
 
 // ---------------------------------------------------------------- tables: search, filters, pages, links to papers
-const NAMES = {home: ['Universe', '宇宙'], evolution: ['Research evolution', '研究演化'], foundations: ['Foundations & protection', '基础与保护'], opportunities: ['Opportunities & tests', '机会与检验'],
+const NAMES = {home: ['Universe', '宇宙'], evolution: ['Research evolution', '研究演化'], foundations: ['Foundations & opportunities', '基础与机会'], opportunities: ['Opportunities & tests', '机会与检验'],
   evidence: ['Checks', '核查'], versions: ['Method and data', '方法与数据'], method: ['Method and data', '方法与数据'], action: ['Problem lines', '问题主线'], themes: ['Themes', '主题'], cases: ['Cases', '案例'],
   outcomes: ['Evaluation', '评测'], checks: ['Checks', '核查'], uses: ['Experimental use', '实验使用'], inputs: ['Trusted inputs', '可信输入'], conditions: ['Conditions', '条件'],
   chain: ['Memory and delegation', '记忆与委托'], defences: ['Retrieval defences', '检索防御'], retrieval: ['Retrieval to record', '检索到记录'],
-  wall: ['Checks', '核查'], film: ['Evolution film', '演化片'], quarters: ['Evolution film', '演化片'], adoption: ['Adoption', '外部采用'], experiment: ['The experiment', '实验']};
+  wall: ['Checks', '核查'], shift: ['Turning to action', '转向行动'], film: ['Evolution film', '演化片'], quarters: ['Evolution film', '演化片'], adoption: ['Adoption', '外部采用'], experiment: ['The experiment', '实验']};
 const nm = k => NAMES[k] ? T(...NAMES[k]) : k;
 function gotoLabel(view, anchor) { return nm(view) + (anchor ? ' · ' + nm(anchor) : ''); }
 function cellHtml(c, v, row, ctx) {
@@ -125,8 +137,8 @@ function lines(b) {
   const X = i => L + (W - L - R) * i / (n - 1), Y = v => Tp + (H - Tp - B) * (1 - v / max);
   const grid = [0, 0.1, 0.2, 0.3, 0.4, 0.5].map(v => `<line x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}" class="g"/><text x="${L - 6}" y="${Y(v) + 4}" text-anchor="end">${pctf(v)}</text>`).join('');
   const xs = b.x.map((x, i) => `<text x="${X(i)}" y="${H - 8}" text-anchor="middle">${esc(x)}</text>`).join('');
-  const ser = b.series.map(s => `<polyline points="${s.values.map((v, i) => `${X(i)},${Y(v)}`).join(' ')}" fill="none" stroke="${s.color}" stroke-width="2"/>${s.values.map((v, i) => `<circle cx="${X(i)}" cy="${Y(v)}" r="3.2" fill="${s.color}"><title>${esc(tx(s.name))} · ${esc(b.x[i])}: ${pctf(v, 1)} (${s.counts[i]})</title></circle>`).join('')}`).join('');
-  const leg = b.series.map(s => `<span><i style="background:${s.color}"></i>${esc(tx(s.name))} <b>${pctf(s.values[s.values.length - 1])}</b></span>`).join('');
+  const ser = b.series.map(s => `<g data-k="${kOf(s.name)}"><polyline points="${s.values.map((v, i) => `${X(i)},${Y(v)}`).join(' ')}" fill="none" stroke="${s.color}" stroke-width="2"/>${s.values.map((v, i) => `<circle cx="${X(i)}" cy="${Y(v)}" r="3.2" fill="${s.color}"><title>${esc(tx(s.name))} · ${esc(b.x[i])}: ${pctf(v, 1)} (${s.counts[i]})</title></circle>`).join('')}</g>`).join('');
+  const leg = b.series.map(s => `<span data-k="${kOf(s.name)}"><i style="background:${s.color}"></i>${esc(tx(s.name))} <b>${pctf(s.values[s.values.length - 1])}</b></span>`).join('');
   return `<figure class="pp-fig">${head(b.title)}<svg viewBox="0 0 ${W} ${H}" class="pp-svg" role="img" aria-label="${esc(tx(b.title))}">${grid}${xs}${ser}</svg><div class="pp-legend">${leg}</div>${note(b.note)}</figure>`;
 }
 
@@ -149,19 +161,19 @@ function stack(parts, total, soft = false) {
 
 function flows(b) {
   const d = b.data;
-  return `<figure class="pp-fig">${head(b.title)}<div class="pp-flows">${d.into.map(g => `<div><h4>${esc(tx(g.label))} · ${g.total} ${T('uses from', '次使用，来自')} ${g.works} ${T('works', '篇论文')}</h4>${stack(g.from, g.total, true)}</div>`).join('')}
-  <div><h4>${T(`Purposes of the ${d.cross} cross-theme uses in tool injection and skills`, `工具注入与技能中 ${d.cross} 次跨主题使用的用途`)}</h4>${stack(d.purposes, d.cross)}</div></div>${note(b.note)}</figure>`;
+  return `<figure class="pp-fig">${head(b.title)}<div class="pp-flows">${d.into.map(g => `<div data-k="into-${kOf(g.label)}"><h4>${esc(tx(g.label))} · ${g.total} ${T('uses from', '次使用，来自')} ${g.works} ${T('works', '篇论文')}</h4>${stack(g.from, g.total, true)}</div>`).join('')}
+  <div data-k="purposes"><h4>${T(`Purposes of the ${d.cross} cross-theme uses in tool injection and skills`, `工具注入与技能中 ${d.cross} 次跨主题使用的用途`)}</h4>${stack(d.purposes, d.cross)}</div></div>${note(b.note)}</figure>`;
 }
 
 function segbars(b) {
   const [c0, c1, c2] = b.colors;
   return `<figure class="pp-fig">${head(b.title)}<div class="pp-legend">${b.legend.map((l, i) => `<span><i style="background:${b.colors[i]}"></i>${esc(tx(l))}</span>`).join('')}</div>
-  <div class="pp-seg">${b.rows.map(r => `<div class="pp-segrow"><span class="lab">${esc(tx(r.label))}</span><div class="pp-segbar"><span style="width:${100 * r.segs[0] / r.n}%;background:${c0}"></span><span style="width:${100 * r.segs[1] / r.n}%;background:${c1}"></span><span style="flex:1;background:${c2}"></span></div><span class="num">${r.segs[0] + r.segs[1]}/${r.n}</span></div>`).join('')}</div>${note(b.note)}</figure>`;
+  <div class="pp-seg">${b.rows.map(r => `<div class="pp-segrow" data-k="${kOf(r.label)}"><span class="lab">${esc(tx(r.label))}</span><div class="pp-segbar"><span style="width:${100 * r.segs[0] / r.n}%;background:${c0}"></span><span style="width:${100 * r.segs[1] / r.n}%;background:${c1}"></span><span style="flex:1;background:${c2}"></span></div><span class="num">${r.segs[0] + r.segs[1]}/${r.n}</span></div>`).join('')}</div>${note(b.note)}</figure>`;
 }
 
 function fig4(b) {
-  const a = b.a.map(r => `<div class="pp-segrow"><span class="lab">${esc(tx(r.label))}</span><div class="pp-segbar"><span style="width:${100 * r.v / 90}%;background:var(--pp-pois)"></span><span style="flex:1;background:var(--pp-track)"></span></div><span class="num">${r.v}/90</span></div>`).join('');
-  const bb = b.b.map(g => `<div class="pp-f4g"><span class="lab">${esc(tx(g.label))}</span><div>${g.rows.map(r => `<div class="pp-segrow"><span class="lab2">${esc(tx(r.input))}</span><div class="pp-segbar"><span style="width:${100 * r.yes / 90}%;background:${r.kind === 'clean' ? 'var(--pp-clean)' : 'var(--pp-pois)'}"></span><span class="unc" style="width:${100 * r.unc / 90}%"></span><span style="flex:1;background:var(--pp-track)"></span></div><span class="num">${r.yes}${r.unc ? ` · ${r.unc} ${T('uncertain', '含糊')}` : ''}</span><span class="num rec">${r.recovery}/90</span></div>`).join('')}</div></div>`).join('');
+  const a = b.a.map(r => `<div class="pp-segrow" data-k="a-${kOf(r.label)}"><span class="lab">${esc(tx(r.label))}</span><div class="pp-segbar"><span style="width:${100 * r.v / 90}%;background:var(--pp-pois)"></span><span style="flex:1;background:var(--pp-track)"></span></div><span class="num">${r.v}/90</span></div>`).join('');
+  const bb = b.b.map(g => `<div class="pp-f4g" data-k="b-${kOf(g.label)}"><span class="lab">${esc(tx(g.label))}</span><div>${g.rows.map(r => `<div class="pp-segrow"><span class="lab2">${esc(tx(r.input))}</span><div class="pp-segbar"><span style="width:${100 * r.yes / 90}%;background:${r.kind === 'clean' ? 'var(--pp-clean)' : 'var(--pp-pois)'}"></span><span class="unc" style="width:${100 * r.unc / 90}%"></span><span style="flex:1;background:var(--pp-track)"></span></div><span class="num">${r.yes}${r.unc ? ` · ${r.unc} ${T('uncertain', '含糊')}` : ''}</span><span class="num rec">${r.recovery}/90</span></div>`).join('')}</div></div>`).join('');
   return `<figure class="pp-fig pp-fig4">
   <div class="pp-flowmini"><span class="st">${T('Retrieved Passages', '检索材料')}</span><span class="ar">→</span><span class="st">${T('Knowledge Tool', '知识工具')} <small>${T('Answer + Sources', '答案 + 来源')}</small><em>● ${T('Tool Answer', '工具回答')}</em></span><span class="ar">→</span><span class="st">Agent</span><span class="ar">→</span><span class="st">${T('Final Record', '最终记录')}<em>● ${T('Final Record', '最终记录')}</em></span></div>
   <h3>${T('Target answer in the final record, original poisoning', '目标答案进入最终记录（原始投毒）')}</h3><div class="pp-seg">${a}</div>
@@ -173,7 +185,7 @@ function fig4(b) {
 }
 
 function cases(b, ctx) {
-  return `<div class="pp-cases pp-cases3">${b.cases.map(c => `<article class="pp-case"><span class="pp-case-when">${esc(c.when)}</span><h3>${esc(tx(c.title))}</h3>
+  return `<div class="pp-cases pp-cases3">${b.cases.map(c => `<article class="pp-case" data-k="${kOf(c.title)}"><span class="pp-case-when">${esc(c.when)}</span><h3>${esc(tx(c.title))}</h3>
   <p class="pp-case-n"><b>${esc(c.count)}</b> ${T('later works on the new condition', '篇后期论文涉及新条件')}</p><p>${esc(tx(c.lead))}</p>
   <details><summary>${T(`${c.rows.length} records with passages`, `${c.rows.length} 条记录与原文`)}</summary><ul class="pp-evl">${c.rows.map(r => `<li><span class="pp-tagl">${esc(tx(r.side))} · ${esc(r.date)}</span> ${cellHtml({kind: 'work'}, r.work, r, ctx)}<q class="pp-quote">${esc(r.quote)}</q><small>${esc(r.where)} · ${esc(tx(r.support))}</small></li>`).join('')}</ul></details></article>`).join('')}</div>${b.csv ? `<p class="pp-extra">${csvLink(b.csv)}</p>` : ''}`;
 }
@@ -189,11 +201,18 @@ function heatmap(b) {
   const dcell = v => v == null ? '<td></td>' : `<td class="pp-delta ${v > 0 ? 'is-up' : v < 0 ? 'is-down' : ''}">${v > 0 ? '+' : ''}${v.toFixed(1)}</td>`;
   const total = b.totals ? `<tr class="pp-heat-total"><th scope="row">${esc(tx(b.totalsLabel))}</th>${b.totals.map(n => `<td>${Number(n).toLocaleString('en-US')}</td>`).join('')}${dl ? '<td></td>' : ''}</tr>` : '';
   return `<figure class="pp-fig">${head(b.title)}<div class="rq-scroll"><table class="rq-heat pp-heat"><thead><tr><th></th>${b.cols.map(c => `<th>${esc(c)}</th>`).join('')}${dl ? `<th class="pp-delta-h">${esc(tx(dl))}</th>` : ''}</tr></thead><tbody>${total}${b.rows.map(r =>
-    `<tr><th scope="row"><i class="pp-dot" style="background:${r.color}"></i>${esc(tx(r.label))}</th>${r.values.map((v, j) => `<td style="--h:${Math.round(85 * v / max)}%" title="${esc(r.titles?.[j] || '')}">${pctf(v)}</td>`).join('')}${dl ? dcell(r.delta) : ''}</tr>`).join('')}</tbody></table></div>${note(b.note)}</figure>`;
+    `<tr data-k="${kOf(r.label)}"><th scope="row"><i class="pp-dot" style="background:${r.color}"></i>${esc(tx(r.label))}</th>${r.values.map((v, j) => `<td style="--h:${Math.round(85 * v / max)}%" title="${esc(r.titles?.[j] || '')}">${pctf(v)}</td>`).join('')}${dl ? dcell(r.delta) : ''}</tr>`).join('')}</tbody></table></div>${note(b.note)}</figure>`;
+}
+
+// deepest evaluated outcome as one 100% bar per period: text only → tool call → environment state → consequence
+function outstack(b) {
+  const K = [['text_only', T('Text only', '只测文本')], ['tool_call', T('Tool call', '工具调用')], ['environment_state', T('Environment state', '环境状态')], ['consequence', T('Consequence', '后果')]];
+  const lines = b.lines.map(L => `<div class="pp-os-line"><h4><i style="background:${L.color}"></i>${esc(tx(L.line))}</h4>${L.periods.map(p => `<div class="pp-os-row" data-k="${kOf(L.line).slice(0, 2)}-${kOf(p.period)}"><span class="per">${esc(p.period)}</span><div class="bar">${K.map(([k, l], i) => p[k] ? `<span class="c${i}" style="flex:${p[k]}" title="${esc(`${l}: ${p[k]} / ${p.n}`)}">${p[k] / p.n >= 0.16 ? Math.round(100 * p[k] / p.n) + '%' : ''}</span>` : '').join('')}</div><span class="cnt">${p.n}/${p.n + p.missing}</span></div>`).join('')}</div>`).join('');
+  return `<figure class="pp-fig pp-os">${head(b.title, b.csv)}<div class="pp-os-legend">${K.map(([, l], i) => `<span><i class="c${i}"></i>${esc(l)}</span>`).join('')}</div>${lines}${note(b.note)}</figure>`;
 }
 
 function ranges(b) {
-  return `<figure class="pp-fig">${head(b.title)}<div class="pp-ranges">${b.rows.map(r => `<div class="pp-rrow"><span class="lab">${esc(tx(r.label))}</span>
+  return `<figure class="pp-fig">${head(b.title)}<div class="pp-ranges">${b.rows.map(r => `<div class="pp-rrow" data-k="${kOf(r.label)}"><span class="lab">${esc(tx(r.label))}</span>
   <div class="pp-rbar"><span class="lo" style="width:${100 * r.lo}%;background:${r.color}"></span><span class="hi" style="width:${100 * (r.hi - r.lo)}%;background:${r.color}"></span></div>
   <span class="num"><b>${pctf(r.lo)}–${pctf(r.hi)}</b> <small>n = ${r.n}</small></span></div>`).join('')}</div>${note(b.note)}</figure>`;
 }
@@ -206,19 +225,19 @@ function divbars(b) {
 }
 
 function hbars(b) {
-  return `<figure class="pp-fig">${head(b.title)}<div class="pp-seg">${b.rows.map(r => `<div class="pp-segrow"><span class="lab">${esc(tx(r.label))}</span><div class="pp-segbar"><span style="width:${100 * r.v / b.n}%;background:var(--pp-pois)"></span><span style="flex:1;background:var(--pp-track)"></span></div><span class="num">${r.v} / ${b.n}</span></div>`).join('')}</div></figure>`;
+  return `<figure class="pp-fig">${head(b.title)}<div class="pp-seg">${b.rows.map(r => `<div class="pp-segrow" data-k="${kOf(r.label)}"><span class="lab">${esc(tx(r.label))}</span><div class="pp-segbar"><span style="width:${100 * r.v / b.n}%;background:var(--pp-pois)"></span><span style="flex:1;background:var(--pp-track)"></span></div><span class="num">${r.v} / ${b.n}</span></div>`).join('')}</div></figure>`;
 }
 
 function chain(b, ctx) {
-  const step = (s, i) => `<div class="pp-chain-step"><b>${esc(tx(s.label))}</b><ul>${s.works.map(w => `<li>${ctx.data.papers.some(p => p.id === w.id) ? `<button class="pp-work" data-paper="${esc(w.id)}">${esc(w.name)}</button>` : esc(w.name)}</li>`).join('')}</ul></div>`;
-  const link = i => `<div class="pp-chain-link${i === b.gap ? ' is-gap' : ''}"><span>${i === b.gap ? T('not tested together', '没有被一起检验') : '→'}</span></div>`;
+  const step = (s, i) => `<div class="pp-chain-step" data-k="${kOf(s.label)}"><b>${esc(tx(s.label))}</b><ul>${s.works.map(w => `<li>${ctx.data.papers.some(p => p.id === w.id) ? `<button class="pp-work" data-paper="${esc(w.id)}">${esc(w.name)}</button>` : esc(w.name)}</li>`).join('')}</ul></div>`;
+  const link = i => `<div class="pp-chain-link${i === b.gap ? ' is-gap' : ''}" data-k="${i === b.gap ? 'gap' : 'link'}"><span>${i === b.gap ? T('not tested together', '没有被一起检验') : '→'}</span></div>`;
   return `<figure class="pp-fig">${head(b.title)}<div class="pp-chain">${b.steps.map((s, i) => step(s, i) + (i < b.steps.length - 1 ? link(i) : '')).join('')}</div></figure>`;
 }
 
 function matrix(b) {
   const icon = v => /^yes/i.test(v) ? ['✓', 'yes'] : /^no/i.test(v) ? ['✗', 'no'] : ['◐', 'part'];
   return `<figure class="pp-fig">${head(b.title, b.csv)}<div class="rq-scroll"><table class="pp-tbl pp-matrix"><thead><tr><th></th>${b.cols.map(c => `<th>${esc(tx(c))}</th>`).join('')}</tr></thead>
-  <tbody>${b.rows.map(([m, ...vals]) => `<tr><td>${esc(m)}</td>${vals.map(v => { const [g, k] = icon(v); return `<td class="pp-mark is-${k}" title="${esc(v)}">${g}</td>`; }).join('')}</tr>`).join('')}</tbody></table></div>
+  <tbody>${b.rows.map(([m, ...vals]) => `<tr data-k="${kOf(m)}"><td>${esc(m)}</td>${vals.map(v => { const [g, k] = icon(v); return `<td class="pp-mark is-${k}" title="${esc(v)}">${g}</td>`; }).join('')}</tr>`).join('')}</tbody></table></div>
   <p class="pp-legend"><span>✓ ${T('yes', '是')}</span><span>◐ ${T('partly', '部分')}</span><span>✗ ${T('no', '否')}</span></p></figure>`;
 }
 
@@ -242,8 +261,7 @@ function bindTables(root, ctx) {
   root.querySelectorAll('[data-tf]').forEach(el => el.onchange = () => { const st = tables.get(el.dataset.tf); st.f[el.dataset.key] = el.value; st.page = 1; redraw(el.dataset.tf); });
 }
 
-export function bindPaper(v, ctx) {
-  const root = document.querySelector('.pp');
+export function bindPaper(v, ctx, root = document.querySelector('.pp')) {
   if (!root) return;
   bindTables(root, ctx);
   if (RQ && root.querySelector('#rq-canvas')) RQ.startFilm(ctx, root);
@@ -255,7 +273,7 @@ export function bindPaper(v, ctx) {
     const tg = e.target.closest('[data-tag]');
     if (tg) { ctx.go({tag: tg.dataset.tag}); return; }
     const g = e.target.closest('[data-goto]');
-    if (g) { const [view, anchor] = g.dataset.goto.split('#'); ctx.setView(view); if (anchor) { const t0 = performance.now(), seek = () => { const el = document.getElementById('pp-' + anchor); if (el) el.scrollIntoView({block: 'start'}); else if (performance.now() - t0 < 4000) requestAnimationFrame(seek); }; requestAnimationFrame(seek); } return; }
+    if (g) { const [view, anchor] = g.dataset.goto.split('#'); if (['evolution', 'structure', 'foundations'].includes(view)) { location.hash = '#' + view + (anchor ? '?bc=' + anchor : ''); return; } ctx.setView(view); if (anchor) { const t0 = performance.now(), seek = () => { const el = document.getElementById('pp-' + anchor); if (el) el.scrollIntoView({block: 'start'}); else if (performance.now() - t0 < 4000) requestAnimationFrame(seek); }; requestAnimationFrame(seek); } return; }
     const lr = e.target.closest('[data-load-records]');
     if (lr) { showRecords(lr.closest('[data-records]'), ctx); return; }
     const a = e.target.closest('.rq-toc a');

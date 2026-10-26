@@ -161,7 +161,7 @@ function venueChart(ctx) {
     ${seg(ctx, 'data-an-vmode', [['count', t('Count', '数量')], ['row', t('Share within venue', '占该来源比例')], ['col', t('Share of column', '占该列比例')]], mode, t('Measure', '度量'))}</div>`;
   return `<figure class="an-chart an-venues"><figcaption><b>${t('Venue contributions by theme', '主流发表来源在各主题的贡献')}</b><span>${t(`${ctx.num(works.length)} works with a verified formal publication; a work in several themes counts once in each. “Share within venue” reads across a row, “share of column” down a column. ACL and EMNLP include their Findings track.`, `共 ${ctx.num(works.length)} 项具有已核实正式发表的研究；属于多个主题的研究在每个中各计一次。“占该来源比例”按行阅读，“占该列比例”按列阅读。ACL 与 EMNLP 含 Findings。`)}</span></figcaption>${controls}
   <div class="heatwrap"><table class="an-heat"><thead><tr><th></th><th class="num">${t('Works', '研究数')}</th>${cols.map(c => `<th class="an-vh" title="${escape(c.name)}"><span><i class="dot" style="--cat:${c.color}"></i>${escape(VSHORT(c.name))}</span></th>`).join('')}</tr></thead><tbody>
-  ${rows.map((r, ri) => `<tr class="${r.cls}" style="--i:${ri}"><th${goAttr(ctx, r.go)}>${escape(r.label)}</th><td class="num">${ctx.num(r.n)}</td>${cols.map((c, i) => { const v = val(r, i), g = r.go ? merge(r.go, c.go) : c.go; const st = r.cls.includes('total') ? 0 : ramp(v, max); return `<td class="s${st}"${heat(c.color, st)} tabindex="0"${r.v[i] ? goAttr(ctx, g) : ''} data-tip="${escape(`${r.label} · ${c.name}${r.v[i] ? clickHint(ctx) : ''}|${ctx.num(r.v[i])}${mode !== 'count' ? ' · ' + fmtPct(v) : ''}`)}">${r.v[i] ? (mode === 'count' ? ctx.num(r.v[i]) : fmtPct(v)) : ''}</td>`; }).join('')}</tr>`).join('')}</tbody></table></div>${familyNote(ctx)}</figure>`;
+  ${rows.map((r, ri) => `<tr class="${r.cls}" data-k="v${ri}" style="--i:${ri}"><th${goAttr(ctx, r.go)}>${escape(r.label)}</th><td class="num">${ctx.num(r.n)}</td>${cols.map((c, i) => { const v = val(r, i), g = r.go ? merge(r.go, c.go) : c.go; const st = r.cls.includes('total') ? 0 : ramp(v, max); return `<td class="s${st}"${heat(c.color, st)} tabindex="0"${r.v[i] ? goAttr(ctx, g) : ''} data-tip="${escape(`${r.label} · ${c.name}${r.v[i] ? clickHint(ctx) : ''}|${ctx.num(r.v[i])}${mode !== 'count' ? ' · ' + fmtPct(v) : ''}`)}">${r.v[i] ? (mode === 'count' ? ctx.num(r.v[i]) : fmtPct(v)) : ''}</td>`; }).join('')}</tr>`).join('')}</tbody></table></div>${familyNote(ctx)}</figure>`;
 }
 
 // ---------- paper forms by theme ----------
@@ -170,7 +170,7 @@ function formChart(ctx) {
   const groups = [[t('All works', '全部研究'), works, INK, {}], ...themes(ctx).map(c => [ctx.categoryName(c), works.filter(inTheme(ctx, c)), c.color, {cat: c.id}])];
   const rows = groups.map(([name, ws, color, go]) => ({name, color, go, n: ws.length, v: forms.map(f => ws.filter(p => ctx.formOf(p) === f.id).length)}));
   return `<figure class="an-chart"><figcaption><b>${t('Paper forms by theme', '各主题的论文形式')}</b><span>${t('Share of each form within a theme; surveys first. One primary form per work (model-labelled from title and abstract, with a verified quote).', '各主题内不同形式的占比；综述排在最前。每项研究一个主要形式（模型依据标题与摘要判定，并附经核对的原文引述）。')}</span></figcaption>
-  <div class="an-forms">${rows.map((r, ri) => `<div class="an-frow" style="--i:${ri}"><button class="lbl"${goAttr(ctx, Object.keys(r.go).length ? r.go : null)}><i class="dot" style="--cat:${r.color}"></i>${escape(r.name)}<small>${ctx.num(r.n)}</small></button><span class="an-fbar">${r.v.map((v, i) => v ? `<i style="flex:${v};background:color-mix(in srgb, ${INK} ${FORM_SHADE[i]}%, #fff)" tabindex="0"${goAttr(ctx, merge(r.go, {form: forms[i].id}))} data-tip="${escape(`${r.name} · ${ctx.translated(forms[i].en)}${clickHint(ctx)}|${ctx.num(v)} · ${fmtPct(pct(v, r.n))}`)}">${pct(v, r.n) >= 9 ? `<em${FORM_SHADE[i] < 55 ? ' class="on-light"' : ''}>${fmtPct(pct(v, r.n))}</em>` : ''}</i>` : '').join('')}</span><button class="an-survey"${goAttr(ctx, merge(r.go, {form: 'survey'}))}>${ctx.num(r.v[0])} ${t('surveys', '篇综述')}</button></div>`).join('')}</div>
+  <div class="an-forms">${rows.map((r, ri) => `<div class="an-frow" data-k="f${ri}" style="--i:${ri}"><button class="lbl"${goAttr(ctx, Object.keys(r.go).length ? r.go : null)}><i class="dot" style="--cat:${r.color}"></i>${escape(r.name)}<small>${ctx.num(r.n)}</small></button><span class="an-fbar">${r.v.map((v, i) => v ? `<i style="flex:${v};background:color-mix(in srgb, ${INK} ${FORM_SHADE[i]}%, #fff)" tabindex="0"${goAttr(ctx, merge(r.go, {form: forms[i].id}))} data-tip="${escape(`${r.name} · ${ctx.translated(forms[i].en)}${clickHint(ctx)}|${ctx.num(v)} · ${fmtPct(pct(v, r.n))}`)}">${pct(v, r.n) >= 9 ? `<em${FORM_SHADE[i] < 55 ? ' class="on-light"' : ''}>${fmtPct(pct(v, r.n))}</em>` : ''}</i>` : '').join('')}</span><button class="an-survey"${goAttr(ctx, merge(r.go, {form: 'survey'}))}>${ctx.num(r.v[0])} ${t('surveys', '篇综述')}</button></div>`).join('')}</div>
   <div class="an-legend">${forms.map((f, i) => `<button${goAttr(ctx, {form: f.id})}><i style="background:color-mix(in srgb, ${INK} ${FORM_SHADE[i]}%, #fff)"></i>${escape(ctx.translated(f.en))}</button>`).join('')}</div>
   ${tableView(ctx, [t('Theme', '主题'), ...forms.map(f => ctx.translated(f.en)), t('Works', '研究数')], rows.map(r => [r.name, ...r.v.map(v => ctx.num(v)), ctx.num(r.n)]))}</figure>`;
 }
@@ -188,7 +188,7 @@ function crossChart(ctx) {
     ${seg(ctx, 'data-an-xmode', [['count', t('Count', '数量')], ['row', t('Row %', '行占比')], ['col', t('Column %', '列占比')]], mode, t('Measure', '度量'))}</div>`;
   return `<figure class="an-chart an-cross"><figcaption><b>${t('Cross-tabulate any two dimensions', '任选两个维度交叉统计')}</b><span>${t('Pick rows and columns; click a cell to list its papers. Each work has one theme and at most one cluster; countries are memberships (a work can list several), so rows and columns need not add up.', '选择行与列；点击单元格可查看对应论文。每项研究只有一个主题、至多一个星团；国家为归属计数（一项研究可列多个），因此行列合计不一定相加。')}</span></figcaption>${controls}
   <div class="an-cross-body"><div class="heatwrap"><table class="an-heat"><thead><tr><th></th><th class="num">${t('Works', '研究数')}</th>${C.map(c => `<th${goAttr(ctx, c.go)}>${escape(c.name)}</th>`).join('')}</tr></thead><tbody>
-  ${grid.map((g, ri) => `<tr style="--i:${ri}"><th${goAttr(ctx, g.r.go)}><i class="dot" style="--cat:${g.r.color}"></i>${escape(g.r.name)}</th><td class="num">${ctx.num(g.n)}</td>${C.map((c, i) => { const v = val(g, i), go = g.r.go && c.go ? merge(g.r.go, c.go) : null; const hue = ['theme', 'topic'].includes(rd) ? g.r.color : ['theme', 'topic'].includes(cd) ? c.color : ACCENT; return `<td class="s${ramp(v, max)}${flagged.has(`${ri}:${i}`) ? ' is-flag' : ''}"${heat(hue, ramp(v, max))} tabindex="0"${g.v[i] ? goAttr(ctx, go) : ''} data-tip="${escape(`${g.r.name} · ${c.name}${g.v[i] && go ? clickHint(ctx) : ''}|${ctx.num(g.v[i])}${mode !== 'count' ? ' · ' + fmtPct(v) : ''}`)}">${g.v[i] ? (mode === 'count' ? ctx.num(g.v[i]) : fmtPct(v)) : ''}</td>`; }).join('')}</tr>`).join('')}</tbody></table></div>
+  ${grid.map((g, ri) => `<tr style="--i:${ri}"><th${goAttr(ctx, g.r.go)} title="${escape(g.r.name)}"><i class="dot" style="--cat:${g.r.color}"></i>${escape(VSHORT(g.r.name))}</th><td class="num">${ctx.num(g.n)}</td>${C.map((c, i) => { const v = val(g, i), go = g.r.go && c.go ? merge(g.r.go, c.go) : null; const hue = ['theme', 'topic'].includes(rd) ? g.r.color : ['theme', 'topic'].includes(cd) ? c.color : ACCENT; return `<td data-k="x${ri}-${i}" class="s${ramp(v, max)}${flagged.has(`${ri}:${i}`) ? ' is-flag' : ''}"${heat(hue, ramp(v, max))} tabindex="0"${g.v[i] ? goAttr(ctx, go) : ''} data-tip="${escape(`${g.r.name} · ${c.name}${g.v[i] && go ? clickHint(ctx) : ''}|${ctx.num(g.v[i])}${mode !== 'count' ? ' · ' + fmtPct(v) : ''}`)}">${g.v[i] ? (mode === 'count' ? ctx.num(g.v[i]) : fmtPct(v)) : ''}</td>`; }).join('')}</tr>`).join('')}</tbody></table></div>
   <aside class="an-insights"><h4>${t('What stands out · click for the papers', '值得注意 · 点击查看论文')}</h4>${found.length ? `<ul>${found.map(x => `<li><button class="an-insight an-${x.kind}"${goAttr(ctx, x.go)}${x.go ? '' : ' disabled'}>${escape(x.text)}</button></li>`).join('')}</ul>` : `<p class="muted">${t('Nothing stands out in this table: every cell is close to what its row and column sizes predict, or too small to tell.', '这张表里没有明显偏离：每个单元格都接近按行列规模的预期，或者样本太小无法判断。')}</p>`}
   <p class="an-foot">${t('Expected = row works × column works ÷ all works, as if rows and columns were unrelated. Listed: cells of at least 8 works at 1.5× or more, cells at 0.6× or less where 10 or more were expected, and with a year axis the largest changes in share between the first and last year with 30 or more works. Outlined in the table.', '预期 = 行工作数 × 列工作数 ÷ 全部工作数，即假设行与列无关时的数量。列出的是：至少 8 项且达到预期 1.5 倍以上的单元格、预期 10 项以上但只有 0.6 倍以下的单元格；若有一轴是年份，则列出首末年份（各至少 30 项工作）之间份额变化最大的项。表中已加框标出。')}</p></aside></div>${[rd, cd].includes('family') ? familyNote(ctx) : ''}</figure>`;
 }
@@ -250,7 +250,7 @@ function trendChart(ctx) {
   return `<figure class="an-chart an-trends"><figcaption><b>${t('Cluster trends by year', '各星团的逐年趋势')}</b><span>${t(`Which clusters gain or lose attention, all clusters at once. Count: works per cluster; share of the year's works: removes the overall growth of the field, so it shows where attention moves; relative to peak: each cluster scaled to its own peak. The last column compares the last two complete years (${D.a} with ${D.b}) — percentage points in share mode, count growth otherwise; ${Y.last} is partial.`, `一次看全部星团的热度升降。数量：各星团每年的研究数；占当年研究比例：去掉整个领域的整体增长，显示关注度往哪里移动；相对自身峰值：每个星团按自身峰值缩放。最后一列比较最近两个完整年份（${D.a} 与 ${D.b}）——比例模式为百分点变化，其余为数量增长；${Y.last} 年未完。`)} ${seeTime(ctx)}</span></figcaption>
   <div class="an-controls">${trendViewSeg(ctx)}${seg(ctx, 'data-an-norm', TMEASURES(t).map(([k, l]) => [k === 'count' ? '' : k === 'peak' ? 'topic' : k, l]), state.anNorm || '', t('Measure', '度量'))}${rangeControls(ctx, works)}</div>
   <div class="heatwrap"><table class="an-heat an-trend"><thead><tr><th></th>${bins.map(b => `<th${goAttr(ctx, {year: b})}>${b}</th>`).join('')}<th class="num">${m === 'share' ? t('Share change', '比例变化') : t('Growth', '增长')}</th></tr></thead><tbody>
-  ${rows.map((r, ri) => { const g = last(r); return `<tr style="--i:${ri}"><th${goAttr(ctx, {tag: r.tp})}><i class="dot" style="--cat:${r.c.color}"></i>${escape(ctx.topicName(r.tp))}</th>${r.v.map((v, i) => { const st = ramp(measureVal(m, r, i, D), max); return `<td class="s${st}"${heat(r.c.color, st)} tabindex="0"${v ? goAttr(ctx, {tag: r.tp, year: bins[i]}) : ''} data-tip="${escape(`${ctx.topicName(r.tp)} · ${bins[i]}${v ? clickHint(ctx) : ''}|${ctx.num(v)}${D.binTot[i] ? ` · ${fmtPct(pct(v, D.binTot[i]))} ${t('of the year', '占当年')}` : ''}`)}">${cell(r, i)}</td>`; }).join('')}<td class="num growth ${g > 0 ? 'up' : g < 0 ? 'down' : ''}">${g > 0 ? '▲' : g < 0 ? '▼' : '–'} ${m === 'share' ? fmtPts(g).replace(/^[+−±]/, '') + t(' pts', ' 个百分点') : Math.abs(g * 100).toFixed(0) + '%'}</td></tr>`; }).join('')}</tbody></table></div></figure>`;
+  ${rows.map((r, ri) => { const g = last(r); return `<tr style="--i:${ri}" data-k="${r.tp}"><th${goAttr(ctx, {tag: r.tp})}><i class="dot" style="--cat:${r.c.color}"></i>${escape(ctx.topicName(r.tp))}</th>${r.v.map((v, i) => { const st = ramp(measureVal(m, r, i, D), max); return `<td class="s${st}"${heat(r.c.color, st)} tabindex="0"${v ? goAttr(ctx, {tag: r.tp, year: bins[i]}) : ''} data-tip="${escape(`${ctx.topicName(r.tp)} · ${bins[i]}${v ? clickHint(ctx) : ''}|${ctx.num(v)}${D.binTot[i] ? ` · ${fmtPct(pct(v, D.binTot[i]))} ${t('of the year', '占当年')}` : ''}`)}">${cell(r, i)}</td>`; }).join('')}<td class="num growth ${g > 0 ? 'up' : g < 0 ? 'down' : ''}">${g > 0 ? '▲' : g < 0 ? '▼' : '–'} ${m === 'share' ? fmtPts(g).replace(/^[+−±]/, '') + t(' pts', ' 个百分点') : Math.abs(g * 100).toFixed(0) + '%'}</td></tr>`; }).join('')}</tbody></table></div></figure>`;
 }
 
 // line view: by default the six topics whose share of the year's works changed most (three up, three down); or the
@@ -366,7 +366,7 @@ export function bindAnalysis(ctx) {
   const root = document.getElementById('app'), live = () => ctxRef || ctx;
   root.addEventListener('click', e => {
     const c = live(), card = e.target.closest('[data-an-card]');
-    if (c.state.view !== 'landscape' || !card) return;
+    if (!card) return;
     const g = e.target.closest('[data-go]');
     if (g) { c.go(JSON.parse(g.dataset.go)); return; }
     const b = e.target.closest('[data-an-mode],[data-an-axis],[data-an-vmode],[data-an-xmode],[data-an-norm],[data-an-layout],[data-an-tview],[data-an-lmeasure]');
@@ -385,7 +385,7 @@ export function bindAnalysis(ctx) {
   });
   root.addEventListener('change', e => {
     const c = live(), el = e.target.closest('[data-an]'), card = e.target.closest('[data-an-card]');
-    if (!el || !card || c.state.view !== 'landscape') return;
+    if (!el || !card) return;
     c.state[el.dataset.an] = el.value;
     if (el.dataset.an === 'anBy') c.state.anTheme = '';
     c.writeHash();
@@ -400,8 +400,52 @@ export function bindAnalysis(ctx) {
       tp.style.left = `${right ? cx + 14 : Math.max(8, cx - 14 - tp.offsetWidth)}px`; tp.style.top = `${Math.max(8, r.top + 8)}px`; return;
     }
     tp.style.left = `${Math.max(8, Math.min(window.innerWidth - tp.offsetWidth - 8, r.left + r.width / 2 - tp.offsetWidth / 2))}px`; tp.style.top = `${Math.max(8, r.top - tp.offsetHeight - 8)}px`; };
-  root.addEventListener('pointerover', e => { const el = e.target.closest('.an-card [data-tip]'); if (el && live().state.view === 'landscape') show(el); });
+  root.addEventListener('pointerover', e => { const el = e.target.closest('.an-card [data-tip]'); if (el) show(el); });
   root.addEventListener('pointerout', e => { if (e.target.closest('[data-tip]') && tip()) tip().hidden = true; });
-  root.addEventListener('focusin', e => { const el = e.target.closest('.an-card [data-tip]'); if (el && live().state.view === 'landscape') show(el); });
+  root.addEventListener('focusin', e => { const el = e.target.closest('.an-card [data-tip]'); if (el) show(el); });
   root.addEventListener('focusout', () => { if (tip()) tip().hidden = true; });
+}
+
+// finding cards of the Landscape › Venues & forms storyline (owner, 10-26): computed from the same tables the charts draw,
+// so they follow the controls; k: the keys of the rows or cells a card lights (data-k)
+export function storyCards(ctx, key) {
+  const {t} = ctx, works = ctx.included(), share = (a, b) => b ? fmtPct(pct(a, b)) : '–';
+  if (key === 'cross') {
+    const rd = ctx.state.anRow || 'theme', cd = ctx.state.anCol || 'family';
+    const R = dimension(ctx, rd === 'theme' ? 'themeRows' : rd, works), C = dimension(ctx, cd === 'theme' ? 'themeCols' : cd, works);
+    const grid = R.map(r => { const ws = works.filter(r.has); return {r, n: ws.length, v: C.map(c => ws.filter(c.has).length)}; });
+    const colTot = C.map((_, i) => works.filter(C[i].has).length);
+    const found = crossInsights(ctx, works, rd, cd, grid, C, colTot);
+    if (!found.length) return [{q: t('Does any cell stand out?', '有没有明显偏离的单元格？'), a: t('No: every cell is close to what its row and column sizes predict, or too small to tell.', '没有：每个单元格都接近按行列规模的预期，或者样本太小无法判断。'), bg: t('The whole table', '整张表'), k: []}];
+    return found.map(x => { const s = x.text, i = s.indexOf(ctx.state.lang === 'zh' ? '：' : ': '), cut = i > 0 ? i : 0;
+      return {q: cut ? s.slice(0, cut) : (x.kind === 'over' ? t('More than expected', '高于预期') : t('Fewer than expected', '低于预期')), a: cut ? s.slice(cut + (ctx.state.lang === 'zh' ? 1 : 2)) : s,
+        bg: x.kind === 'over' ? t('Outlined cell: more works than the row and column sizes predict', '加框单元格：多于按行列规模的预期') : t('Outlined cell: fewer works than expected', '加框单元格：少于预期'), k: x.cell ? ['x' + x.cell.replace(':', '-')] : []}; });
+  }
+  if (key === 'forms') {
+    const forms = ctx.taxonomy.forms, fi = id => forms.findIndex(f => f.id === id);
+    const rows = [[t('All works', '全部研究'), works], ...themes(ctx).map(c => [ctx.categoryName(c), works.filter(inTheme(ctx, c))])].map(([name, ws], ri) => ({ri, name, n: ws.length, v: forms.map(f => ws.filter(p => ctx.formOf(p) === f.id).length)}));
+    const all = rows[0], big = rows.slice(1).filter(r => r.n >= 50), top = id => big.slice().sort((a, b) => b.v[fi(id)] / b.n - a.v[fi(id)] / a.n)[0];
+    const cards = [{q: t('What form do the works take?', '研究以什么形式出现？'), a: t(`${share(all.v[fi('method')], all.n)} methods or systems, ${share(all.v[fi('empirical')], all.n)} empirical studies, ${share(all.v[fi('benchmark')], all.n)} benchmarks or datasets and ${share(all.v[fi('survey')], all.n)} surveys, of ${ctx.num(all.n)} works.`, `${ctx.num(all.n)} 项研究中，方法或系统占 ${share(all.v[fi('method')], all.n)}，实证研究 ${share(all.v[fi('empirical')], all.n)}，基准或数据集 ${share(all.v[fi('benchmark')], all.n)}，综述 ${share(all.v[fi('survey')], all.n)}。`), bg: t('Top row: all works', '第一行：全部研究'), k: ['f0']}];
+    for (const [id, q, qz, w, wz] of [['benchmark', 'Which theme builds the most benchmarks?', '哪个主题最常做基准？', 'benchmarks or datasets', '是基准或数据集'], ['survey', 'Which theme has the most surveys?', '哪个主题综述最多？', 'surveys', '是综述'], ['empirical', 'Which theme is the most empirical?', '哪个主题实证研究最多？', 'empirical studies', '是实证研究']]) {
+      const r = top(id); if (!r) continue;
+      cards.push({q: t(q, qz), a: t(`${r.name}: ${share(r.v[fi(id)], r.n)} of its ${ctx.num(r.n)} works are ${w} (${ctx.num(r.v[fi(id)])}).`, `${r.name}：${ctx.num(r.n)} 项中 ${share(r.v[fi(id)], r.n)}${wz}（${ctx.num(r.v[fi(id)])} 项）。`), bg: t('Highlighted row; themes with at least 50 works', '高亮行；只比较至少 50 项研究的主题'), k: ['f' + r.ri]});
+    }
+    return cards;
+  }
+  if (key === 'venues') {
+    const ws = works.filter(verified), names = FAMILY_SHORT(t), reg = new Map(ctx.data.venueRegistry.map(v => [v.id, v.name])), rows = [];
+    for (const [id, vids] of Object.entries(FAMILY_VENUES)) {
+      const fam = ws.filter(p => ctx.famOf(p) === id);
+      rows.push({label: names[id], fam: true, n: fam.length});
+      for (const vid of vids) { const n = fam.filter(p => p.publication.venueId === vid).length; if (n) rows.push({label: VENUE_SHORT[vid] ? t(...VENUE_SHORT[vid]) : plain(reg.get(vid) || vid), n}); }
+    }
+    for (const id of ['journals', 'other']) rows.push({label: names[id], fam: true, n: ws.filter(p => ctx.famOf(p) === id).length});
+    rows.forEach((r, i) => { r.ri = i; });
+    const tot = rows.length, fams = rows.filter(r => r.fam && r.label !== names.other).sort((a, b) => b.n - a.n), vens = rows.filter(r => !r.fam).sort((a, b) => b.n - a.n);
+    const cards = [{q: t('How many works have a formal publication?', '多少研究已正式发表？'), a: t(`${ctx.num(ws.length)} of ${ctx.num(works.length)} works (${share(ws.length, works.length)}) have a verified formal publication; the rest are preprints so far.`, `${ctx.num(works.length)} 项研究中 ${ctx.num(ws.length)} 项（${share(ws.length, works.length)}）有已核实的正式发表，其余目前为预印本。`), bg: t('Bottom row: all verified publications', '最后一行：全部已核实发表'), k: ['v' + tot]}];
+    if (fams[0]) cards.push({q: t('Which venue family publishes the most?', '哪类来源发表最多？'), a: t(`${fams[0].label}: ${ctx.num(fams[0].n)} works, ${share(fams[0].n, ws.length)} of verified publications; then ${fams[1]?.label} (${ctx.num(fams[1]?.n || 0)}).`, `${fams[0].label}：${ctx.num(fams[0].n)} 项，占已核实发表的 ${share(fams[0].n, ws.length)}；其次是${fams[1]?.label}（${ctx.num(fams[1]?.n || 0)} 项）。`), bg: t('Highlighted family rows', '高亮的来源类别行'), k: ['v' + fams[0].ri, ...(fams[1] ? ['v' + fams[1].ri] : [])]});
+    if (vens[0]) cards.push({q: t('Which single venues publish the most?', '哪些会议发表最多？'), a: t(`${vens.slice(0, 3).map(r => `${r.label} ${ctx.num(r.n)}`).join(', ')}.`, `${vens.slice(0, 3).map(r => `${r.label} ${ctx.num(r.n)} 项`).join('，')}。`), bg: t('Highlighted venue rows', '高亮的会议行'), k: vens.slice(0, 3).map(r => 'v' + r.ri)});
+    return cards;
+  }
+  return [];
 }
