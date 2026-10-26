@@ -37,7 +37,7 @@ export function mountSky(host, ctx) {
   const centre = (k, test, extra) => { let x = 0, y = 0, z = 0, m = 0; for (let i = 0; i < n; i++) if (size[i] && test(i)) { x += P[i * 3]; y += P[i * 3 + 1]; z += P[i * 3 + 2]; m += 1; } return {k, ...extra, x: x / m, y: y / m, z: z / m, m}; };
   const nt = Math.min(14, sky.themes.length);
   const cl = [...sky.themes.slice(0, nt).map((th, k) => centre(k, i => theme[i] === k, {kind: 'theme', name: th.en, id: th.id, theme: k})),
-              ...sky.topics.map((tp, j) => centre(nt + j, i => sky.topics_of[i].includes(j), {kind: 'cluster', name: tp.name, theme: tp.theme}))];
+              ...(sky.clusters || sky.topics).map((tp, j) => centre(nt + j, i => (sky.clusters_of || sky.topics_of)[i].includes(j), {kind: 'cluster', name: tp.name, theme: tp.theme}))];
   labelsEl.innerHTML = cl.map(c => `<button class="hs-label" data-hs-topic="${c.k}" data-kind="${c.kind}" ${c.kind === 'cluster' ? 'hidden' : ''} style="--c:${css(col[c.theme])}">${ctx.esc(ctx.topicName(c.name))}</button>`).join('');
   const labelEls = [...labelsEl.children];
   // far dust: a fixed field behind the stars
